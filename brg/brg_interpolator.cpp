@@ -194,18 +194,18 @@ const double brgastro::interpolator::operator()(const double x) const
 			yhi = it->second;
 		}
 
-		return ylo + (yhi-ylo)/(xhi-xlo);
+		return ylo + (x-xlo)*(yhi-ylo)/(xhi-xlo);
 	}
 	else if(_interpolation_type_==LOWER)
 	{
 		if(_data_.size() < 1)
 			throw std::runtime_error("ERROR: Interpolator called before at least 1 point was loaded.\n");
 
-		if(x<sorted_data().front().first)
+		if(x<=sorted_data().front().first)
 		{
 			return _sorted_data_.front().second;
 		}
-		else if(x>_sorted_data_.back().first)
+		else if(x>=_sorted_data_.back().first)
 		{
 			return _sorted_data_.back().second;
 		}
@@ -227,11 +227,11 @@ const double brgastro::interpolator::operator()(const double x) const
 		if(_data_.size() < 1)
 			throw std::runtime_error("ERROR: Interpolator called before at least 1 point was loaded.\n");
 
-		if(x<sorted_data().front().first)
+		if(x<=sorted_data().front().first)
 		{
 			return _sorted_data_.front().second;
 		}
-		else if(x>_sorted_data_.back().first)
+		else if(x>=_sorted_data_.back().first)
 		{
 			return _sorted_data_.back().second;
 		}
