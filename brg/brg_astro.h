@@ -620,6 +620,8 @@ class redshift_obj
 	 **********************************/
 private:
 	double _z_, _z_err_;
+	mutable BRG_UNITS _H_cache_;
+	mutable bool _H_cached_;
 	mutable int _z_grid_;
 	mutable bool _z_grid_cached_;
 	mutable int _local_z_grid_change_num_;
@@ -630,6 +632,8 @@ public:
 	{
 		_z_ = init_z;
 		_z_err_ = init_z_err;
+		_H_cache_ = 0;
+		_H_cached_ = false;
 		_z_grid_ = 0;
 		_z_grid_cached_ = false;
 		_local_z_grid_change_num_ = -1;
@@ -648,6 +652,7 @@ public:
 	virtual const int set_z( const double new_z ) // Sets z
 	{
 		_z_ = new_z;
+		_H_cached_ = false;
 		_z_grid_cached_ = false;
 		return 0;
 	}
@@ -660,19 +665,21 @@ public:
 
 	// Get functions
 #if (1)
-	virtual const double z() const
+	const double z() const
 	{
 		return _z_;
 	}
-	virtual const double z_err() const
+	const double z_err() const
 	{
 		return _z_err_;
 	}
-	virtual const int z_grid() const;
+	const int z_grid() const;
 #endif
 
-	// H(z) at either the redshift of the object or a specified redshift, given in units of m/s^2
-	virtual const BRG_UNITS H( double ztest = -1 ) const;
+	// H(z) at the redshift of the object, given in units of m/s^2
+	const BRG_UNITS H() const;
+	// H(z) at a specified redshift, given in units of m/s^2
+	const BRG_UNITS H( double ztest ) const;
 
 	// Clone function - Not needed in current implementation
 	// virtual redshift_obj *redshift_obj_clone()=0;

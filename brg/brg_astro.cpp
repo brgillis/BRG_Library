@@ -164,18 +164,34 @@ const int brgastro::redshift_obj::z_grid() const
 	return _z_grid_;
 }
 
-const BRG_UNITS brgastro::redshift_obj::H( const double init_test_z ) const
+const BRG_UNITS brgastro::redshift_obj::H() const
 {
-	double test_z = init_test_z;
-	if ( test_z == -1 ) // This means we're taking the default argument here, so use redshift of the object
+	// If not cached, calculate and cache it
+	if(!_H_cached_)
 	{
-		test_z = z();
+		if(_z_==0)
+		{
+			_H_cache_ = H_0;
+		}
+		else
+		{
+			// Friedmann equation, assuming omega = -1
+			_H_cache_ = H_0
+				* std::sqrt( Omega_r * std::pow( 1. + _z_, 4 )
+						+ Omega_m * std::pow( 1. + _z_, 3 )
+						+ Omega_k * std::pow( 1. + _z_, 2 ) + Omega_l );
+		}
+		_H_cached_ = true;
 	}
+	return _H_cache_;
+}
+
+const BRG_UNITS brgastro::redshift_obj::H( const double test_z ) const
+{
 	// Friedmann equation, assuming omega = -1
 	if(test_z==0) return H_0;
 	return H_0
-			* sqrt(
-					Omega_r * std::pow( 1 + test_z, 4 )
+			* sqrt( Omega_r * std::pow( 1 + test_z, 4 )
 							+ Omega_m * std::pow( 1 + test_z, 3 )
 							+ Omega_k * pow( 1 + test_z, 2 ) + Omega_l );
 }
