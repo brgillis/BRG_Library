@@ -63,8 +63,9 @@ double brgastro::stripping_orbit::_default_step_factor_min_ = 0.001; // Minimum 
 
 #if(1)
 // Tuning parameters, for how strong stripping and shocking are and when shocking is active
-double brgastro::stripping_orbit::_default_tidal_stripping_amplification_ = 0.625; // Tuned
-double brgastro::stripping_orbit::_default_tidal_stripping_deceleration_ = 0.15; // Tuned
+double brgastro::stripping_orbit::_default_tidal_stripping_amplification_ = 0.6; // Tuned
+double brgastro::stripping_orbit::_default_tidal_stripping_deceleration_ = 0.175; // Tuned
+double brgastro::stripping_orbit::_default_tidal_stripping_radialness_ = 0; // Tuned
 double brgastro::stripping_orbit::_default_tidal_shocking_amplification_ = 3.0; // Tuned
 double brgastro::stripping_orbit::_default_tidal_shocking_persistance_ = 1.0; // How long shocking is active for
 double brgastro::stripping_orbit::_default_tidal_shocking_power_ = -1.5; // Affects interplay of stripping and satellite halo profile
@@ -150,6 +151,15 @@ void brgastro::interpolator_derivative_functor::swap(
 	swap(_interpolator_functor_set_up_,other._interpolator_functor_set_up_);
 	_interpolator_functor_.swap(other._interpolator_functor_);
 }
+namespace std
+{
+	template <>
+	void swap(brgastro::interpolator_derivative_functor &same,
+			brgastro::interpolator_derivative_functor &other)
+	{
+		same.swap(other);
+	}
+}
 
 // Constructors
 brgastro::interpolator_derivative_functor::interpolator_derivative_functor()
@@ -198,7 +208,7 @@ const int brgastro::interpolator_derivative_functor::operator()(
 		return NOT_SET_UP_ERROR;
 	}
 	BRG_UNITS temp_out_params;
-	BRG_UNITS Jacobian;
+	BRG_UNITS Jacobian=0;
 	unsigned int temp_num_out_params;
 
 	if ( differentiate( &_interpolator_functor_, 1, in_param, temp_num_out_params,
@@ -224,6 +234,15 @@ void brgastro::interpolator_derivative_weight_functor::swap(
 	swap(_t_min_,other._t_min_);
 	swap(_centre_point_,other._centre_point_);
 
+}
+namespace std
+{
+	template <>
+	void swap(brgastro::interpolator_derivative_weight_functor &same,
+			brgastro::interpolator_derivative_weight_functor &other)
+	{
+		same.swap(other);
+	}
 }
 
 
@@ -338,6 +357,15 @@ void brgastro::interpolator_derivative::swap(interpolator_derivative &other)
 	swap(_sample_scale_,other._sample_scale_);
 	swap(_sample_max_width_,other._sample_max_width_);
 	swap(_sample_precision_,other._sample_precision_);
+}
+namespace std
+{
+	template <>
+	void swap(brgastro::interpolator_derivative &same,
+			brgastro::interpolator_derivative &other)
+	{
+		same.swap(other);
+	}
 }
 
 // Constructors
@@ -627,13 +655,13 @@ const double brgastro::interpolator_derivative::operator()( double xval ) const
 
 const int brgastro::stripping_orbit::_pass_parameters_to_segment(
 		brgastro::stripping_orbit_segment & segment,
-		brgastro::density_profile *temp_satellite,
-		brgastro::density_profile *temp_host,
+		brgastro::density_profile *segment_init_satellite,
+		brgastro::density_profile *segment_init_host,
 		unsigned int resolution) const
 {
 	int err_code = 0;
 
-	if(temp_satellite==NULL)
+	if(segment_init_satellite==NULL)
 	{
 		err_code += ( segment.set_init_satellite(
 				_init_satellite_ptr_ ) );
@@ -641,21 +669,21 @@ const int brgastro::stripping_orbit::_pass_parameters_to_segment(
 	else
 	{
 		err_code += ( segment.set_init_satellite(
-				temp_satellite ) );
+				segment_init_satellite ) );
 	}
 
-	if(temp_host==NULL)
+	if(segment_init_host==NULL)
 	{
 		err_code += ( segment.set_init_host( _init_host_ptr_ ) );
 	}
 	else
 	{
-		err_code += ( segment.set_init_host( temp_host ) );
+		err_code += ( segment.set_init_host( segment_init_host ) );
 	}
 
 	if(resolution==0)
 	{
-		err_code += ( segment.set_resolution( _spline_resolution_) );
+		err_code += ( segment.set_resolution( _base_resolution_) );
 	}
 	else
 	{
@@ -670,6 +698,7 @@ const int brgastro::stripping_orbit::_pass_parameters_to_segment(
 	err_code += ( segment.set_step_factor_max(_step_factor_max_ ) );
 	err_code += ( segment.set_tidal_stripping_amplification(_tidal_stripping_amplification_ ) );
 	err_code += ( segment.set_tidal_stripping_deceleration(_tidal_stripping_deceleration_ ) );
+	err_code += ( segment.set_tidal_stripping_radialness(_tidal_stripping_radialness_ ) );
 	err_code += ( segment.set_tidal_shocking_amplification(_tidal_shocking_amplification_ ) );
 	err_code += ( segment.set_tidal_shocking_persistance(_tidal_shocking_persistance_ ) );
 	err_code += ( segment.set_tidal_shocking_power(_tidal_shocking_power_ ) );
@@ -698,7 +727,7 @@ void brgastro::stripping_orbit::swap(stripping_orbit &other)
 
 	// Integration parameters
 #if(1)
-	swap(_spline_resolution_, other._spline_resolution_);
+	swap(_base_resolution_, other._base_resolution_);
 	swap(_interpolation_type_, other._interpolation_type_);
 	swap(_v_0_, other._v_0_);
 	swap(_r_0_, other._r_0_);
@@ -711,6 +740,7 @@ void brgastro::stripping_orbit::swap(stripping_orbit &other)
 #if(1)
 	swap(_tidal_stripping_amplification_, other._tidal_stripping_amplification_);
 	swap(_tidal_stripping_deceleration_, other._tidal_stripping_deceleration_);
+	swap(_tidal_stripping_radialness_, other._tidal_stripping_radialness_);
 	swap(_tidal_shocking_amplification_, other._tidal_shocking_amplification_);
 	swap(_tidal_shocking_persistance_, other._tidal_shocking_persistance_);
 	swap(_tidal_shocking_power_, other._tidal_shocking_power_);
@@ -806,6 +836,15 @@ void brgastro::stripping_orbit::swap(stripping_orbit &other)
 		other._init_satellite_ptr_ = &(other._private_tNFW_init_satellite_);
 	}
 }
+namespace std
+{
+	template <>
+	void swap(brgastro::stripping_orbit &same,
+			brgastro::stripping_orbit &other)
+	{
+		same.swap(other);
+	}
+}
 
 brgastro::stripping_orbit::stripping_orbit()
 {
@@ -817,7 +856,7 @@ brgastro::stripping_orbit::stripping_orbit(
 {
 	// Integration parameters
 #if(1)
-	_spline_resolution_ = other._spline_resolution_;
+	_base_resolution_ = other._base_resolution_;
 	_interpolation_type_ = other._interpolation_type_;
 	_v_0_ = other._v_0_;
 	_r_0_ = other._r_0_;
@@ -830,6 +869,7 @@ brgastro::stripping_orbit::stripping_orbit(
 #if(1)
 	_tidal_stripping_amplification_ = other._tidal_stripping_amplification_;
 	_tidal_stripping_deceleration_ = other._tidal_stripping_deceleration_;
+	_tidal_stripping_radialness_ = other._tidal_stripping_radialness_;
 	_tidal_shocking_amplification_ = other._tidal_shocking_amplification_;
 	_tidal_shocking_persistance_ = other._tidal_shocking_persistance_;
 	_tidal_shocking_power_ = other._tidal_shocking_power_;
@@ -953,7 +993,7 @@ brgastro::stripping_orbit::stripping_orbit( const density_profile *init_init_hos
 	clear();
 	_init_host_ptr_ = init_init_host;
 	_init_satellite_ptr_ = init_init_satellite;
-	_spline_resolution_ = init_resolution;
+	_base_resolution_ = init_resolution;
 	_host_loaded_ = true;
 	_satellite_loaded_ = true;
 
@@ -975,7 +1015,7 @@ const int brgastro::stripping_orbit::clear()
 
 	// Integration parameters
 #if(1)
-	_spline_resolution_ = _default_spline_resolution_;
+	_base_resolution_ = _default_spline_resolution_;
 	_interpolation_type_ = _default_interpolation_type_;
 	_v_0_ = _default_v_0_;
 	_r_0_ = _default_r_0_;
@@ -988,6 +1028,7 @@ const int brgastro::stripping_orbit::clear()
 #if(1)
 	_tidal_stripping_amplification_ = _default_tidal_stripping_amplification_;
 	_tidal_stripping_deceleration_ = _default_tidal_stripping_deceleration_;
+	_tidal_stripping_radialness_ = _default_tidal_stripping_radialness_;
 	_tidal_shocking_amplification_ = _default_tidal_shocking_amplification_;
 	_tidal_shocking_persistance_ = _default_tidal_shocking_persistance_;
 	_tidal_shocking_power_ = _default_tidal_shocking_power_;
@@ -1524,7 +1565,8 @@ const int brgastro::stripping_orbit::set_default_tidal_stripping_amplification(
 	}
 	_default_tidal_stripping_amplification_ = new_default_tidal_stripping_amplification;
 
-	reset_tidal_stripping_amplification();
+	if(override_current)
+		reset_tidal_stripping_amplification();
 	return 0;
 }
 const int brgastro::stripping_orbit::set_default_tidal_stripping_deceleration(
@@ -1543,7 +1585,28 @@ const int brgastro::stripping_orbit::set_default_tidal_stripping_deceleration(
 		return 0;
 	_default_tidal_stripping_deceleration_ = new_default_tidal_stripping_deceleration;
 
-	reset_tidal_stripping_deceleration();
+	if(override_current)
+			reset_tidal_stripping_deceleration();
+	return 0;
+}
+const int brgastro::stripping_orbit::set_default_tidal_stripping_radialness(
+		const double new_default_tidal_stripping_radialness)
+{
+	_default_tidal_stripping_radialness_ = new_default_tidal_stripping_radialness;
+	return 0;
+}
+const int brgastro::stripping_orbit::set_default_tidal_stripping_radialness(
+		const double new_default_tidal_stripping_radialness,
+		const bool override_current,
+		const bool silent )
+{
+	// Check if anything is actually changing here
+	if ( new_default_tidal_stripping_radialness == _default_tidal_stripping_radialness_ )
+		return 0;
+	_default_tidal_stripping_radialness_ = new_default_tidal_stripping_radialness;
+
+	if(override_current)
+			reset_tidal_stripping_radialness();
 	return 0;
 }
 const int brgastro::stripping_orbit::set_default_tidal_shocking_amplification(
@@ -1570,8 +1633,8 @@ const int brgastro::stripping_orbit::set_default_tidal_shocking_amplification(
 	}
 	_default_tidal_shocking_amplification_ = new_default_tidal_shocking_amplification;
 
-	reset_tidal_shocking_amplification();
-
+	if(override_current)
+			reset_tidal_shocking_amplification();
 	return 0;
 }
 const int brgastro::stripping_orbit::set_default_tidal_shocking_persistance(
@@ -1598,8 +1661,8 @@ const int brgastro::stripping_orbit::set_default_tidal_shocking_persistance(
 	}
 	_default_tidal_shocking_persistance_ = new_default_tidal_shocking_persistance;
 
-	reset_tidal_shocking_persistance();
-
+	if(override_current)
+			reset_tidal_shocking_persistance();
 	return 0;
 }
 const int brgastro::stripping_orbit::set_default_tidal_shocking_power(
@@ -1618,8 +1681,8 @@ const int brgastro::stripping_orbit::set_default_tidal_shocking_power(
 		return 0;
 	_default_tidal_shocking_power_ = new_default_tidal_shocking_power;
 
-	reset_tidal_shocking_power();
-
+	if(override_current)
+			reset_tidal_shocking_power();
 	return 0;
 }
 #endif
@@ -1630,7 +1693,7 @@ const int brgastro::stripping_orbit::set_resolution( const int new_resolution,
 		const bool silent )
 {
 	// Check if anything is actually changing here
-	if ( new_resolution == _spline_resolution_ )
+	if ( new_resolution == _base_resolution_ )
 		return 0;
 
 	if ( new_resolution < 2 )
@@ -1641,7 +1704,7 @@ const int brgastro::stripping_orbit::set_resolution( const int new_resolution,
 		return INVALID_ARGUMENTS_ERROR;
 	}
 	clear_calcs();
-	_spline_resolution_ = new_resolution;
+	_base_resolution_ = new_resolution;
 	return 0;
 }
 const int brgastro::stripping_orbit::set_interpolation_type(
@@ -1775,6 +1838,18 @@ const int brgastro::stripping_orbit::set_tidal_stripping_deceleration(
 	_tidal_stripping_deceleration_ = new_tidal_stripping_deceleration;
 	return 0;
 }
+const int brgastro::stripping_orbit::set_tidal_stripping_radialness(
+		const double new_tidal_stripping_radialness,
+		const bool silent )
+{
+	// Check if anything is actually changing here
+	if ( new_tidal_stripping_radialness == _tidal_stripping_radialness_ )
+		return 0;
+
+	clear_calcs();
+	_tidal_stripping_radialness_ = new_tidal_stripping_radialness;
+	return 0;
+}
 const int brgastro::stripping_orbit::set_tidal_shocking_amplification(
 		const double new_tidal_shocking_amplification,
 		const bool silent )
@@ -1833,11 +1908,11 @@ const int brgastro::stripping_orbit::set_tidal_shocking_power(
 const int brgastro::stripping_orbit::reset_resolution()
 {
 	// Check if anything is actually changing here
-	if ( _spline_resolution_ == _default_spline_resolution_ )
+	if ( _base_resolution_ == _default_spline_resolution_ )
 		return 0;
 
 	clear_calcs();
-	_spline_resolution_ = _default_spline_resolution_;
+	_base_resolution_ = _default_spline_resolution_;
 	return 0;
 }
 const int brgastro::stripping_orbit::reset_interpolation_type()
@@ -1923,6 +1998,16 @@ const int brgastro::stripping_orbit::reset_tidal_stripping_deceleration()
 
 	clear_calcs();
 	_tidal_stripping_deceleration_ = _default_tidal_stripping_deceleration_;
+	return 0;
+}
+const int brgastro::stripping_orbit::reset_tidal_stripping_radialness()
+{
+	// Check if anything is actually changing here
+	if ( _default_tidal_stripping_radialness_ == _tidal_stripping_radialness_ )
+		return 0;
+
+	clear_calcs();
+	_tidal_stripping_radialness_ = _default_tidal_stripping_radialness_;
 	return 0;
 }
 const int brgastro::stripping_orbit::reset_tidal_shocking_amplification()
@@ -2222,7 +2307,7 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 		_orbit_segments_.at( i ).set_t_max( new_t_max );
 
 		// Adjust resolution for each segment
-		int segment_resolution = (int)( _spline_resolution_
+		int segment_resolution = (int)( _base_resolution_
 				* std::fabs( new_t_max - new_t_min )
 				/ std::fabs( t_max_to_use - t_min_to_use ) ) + 1;
 		segment_resolutions.at( i ) = segment_resolution;
@@ -2340,7 +2425,7 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 					// Record this as the final good segment, in case we don't find any more afterward
 					_final_good_segment_ = _orbit_segments_.begin() + i;
 				}
-				catch (const exception &e) {
+				catch (const std::exception &e) {
 					if( !silent )
 						std::cerr << e.what();
 					if(_likely_disrupted_)
@@ -2957,6 +3042,7 @@ void brgastro::stripping_orbit_segment::swap(stripping_orbit_segment &other)
 #if(1)
 	swap(_tidal_stripping_amplification_, other._tidal_stripping_amplification_);
 	swap(_tidal_stripping_deceleration_, other._tidal_stripping_deceleration_);
+	swap(_tidal_stripping_radialness_, other._tidal_stripping_radialness_);
 	swap(_tidal_shocking_amplification_, other._tidal_shocking_amplification_);
 	swap(_tidal_shocking_persistance_, other._tidal_shocking_persistance_);
 	swap(_tidal_shocking_power_, other._tidal_shocking_power_);
@@ -3039,6 +3125,15 @@ void brgastro::stripping_orbit_segment::swap(stripping_orbit_segment &other)
 		other._init_satellite_ptr_ = &other._private_tNFW_init_satellite_;
 	}
 }
+namespace std
+{
+	template <>
+	void swap(brgastro::stripping_orbit_segment &same,
+			brgastro::stripping_orbit_segment &other)
+	{
+		same.swap(other);
+	}
+}
 
 brgastro::stripping_orbit_segment::stripping_orbit_segment(
 		const stripping_orbit_segment &other )
@@ -3059,6 +3154,7 @@ brgastro::stripping_orbit_segment::stripping_orbit_segment(
 #if(1)
 	_tidal_stripping_amplification_ = other._tidal_stripping_amplification_;
 	_tidal_stripping_deceleration_ = other._tidal_stripping_deceleration_;
+	_tidal_stripping_radialness_ = other._tidal_stripping_radialness_;
 	_tidal_shocking_amplification_ = other._tidal_shocking_amplification_;
 	_tidal_shocking_persistance_ = other._tidal_shocking_persistance_;
 	_tidal_shocking_power_ = other._tidal_shocking_power_;
@@ -3210,6 +3306,7 @@ const int brgastro::stripping_orbit_segment::clear()
 #if(1)
 	_tidal_stripping_amplification_ = brgastro::stripping_orbit::default_tidal_stripping_amplification();
 	_tidal_stripping_deceleration_ = brgastro::stripping_orbit::default_tidal_stripping_deceleration();
+	_tidal_stripping_radialness_ = brgastro::stripping_orbit::default_tidal_stripping_radialness();
 	_tidal_shocking_amplification_ = brgastro::stripping_orbit::default_tidal_shocking_amplification();
 	_tidal_shocking_persistance_ = brgastro::stripping_orbit::default_tidal_shocking_persistance();
 	_tidal_shocking_power_ = brgastro::stripping_orbit::default_tidal_shocking_power();
@@ -3440,6 +3537,18 @@ const int brgastro::stripping_orbit_segment::set_tidal_stripping_deceleration(
 
 	clear_calcs();
 	_tidal_stripping_deceleration_ = new_tidal_stripping_deceleration;
+	return 0;
+}
+const int brgastro::stripping_orbit_segment::set_tidal_stripping_radialness(
+		const double new_tidal_stripping_radialness,
+		const bool silent )
+{
+	// Check if anything is actually changing here
+	if ( new_tidal_stripping_radialness == _tidal_stripping_radialness_ )
+		return 0;
+
+	clear_calcs();
+	_tidal_stripping_radialness_ = new_tidal_stripping_radialness;
 	return 0;
 }
 const int brgastro::stripping_orbit_segment::set_tidal_shocking_amplification(
@@ -4611,8 +4720,7 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 	int num_columns = num_columns_base + num_extra_satellite_columns
 			+ num_extra_host_columns;
 
-	if ( make_array1d( header, num_columns ) )
-		return 1;
+	header.resize( num_columns );
 	if ( make_array2d( data, num_columns, num_rows ) )
 		return 1;
 
@@ -4898,7 +5006,7 @@ const BRG_UNITS brgastro::stripping_orbit_segment::_delta_rho(
 		}
 		throw std::runtime_error("ERROR: Could not calculate delta_rho in stripping_orbit_segment::_delta_rho.\n");
 	}
-	return max( result, 0 );
+	return max( result, 0. );
 }
 
 const double brgastro::stripping_orbit_segment::_step_length_factor( const BRG_VELOCITY & v, const BRG_DISTANCE & r ) const
@@ -5426,6 +5534,15 @@ void brgastro::gabdt::swap(gabdt &other)
 
 	swap(_dv_, other._dv_);
 }
+namespace std
+{
+	template <>
+	void swap(brgastro::gabdt &same,
+			brgastro::gabdt &other)
+	{
+		same.swap(other);
+	}
+}
 
 brgastro::gabdt::gabdt( void )
 {
@@ -5786,9 +5903,16 @@ const double brgastro::stripping_orbit_segment::_tidal_strip_retained( const den
 		const BRG_TIME &time_step, const long double &sum_delta_rho ) const
 {
 	BRG_DISTANCE new_rt;
-	BRG_TIME inst_orbital_period, hm_period, stripping_period;
+	BRG_TIME inst_tangential_orbital_period, inst_full_orbital_period,
+		inst_orbital_period, hm_period, stripping_period;
 	double mass_frac_retained, mass_frac_lost_total;
-	inst_orbital_period = 2 * pi * r / safe_d(vt);
+	inst_tangential_orbital_period = 2 * pi * r / safe_d(vt);
+	inst_full_orbital_period = 2 * pi * r / safe_d(quad_add(vt,vr));
+
+	inst_orbital_period = inst_tangential_orbital_period *
+			std::pow(inst_full_orbital_period/safe_d(inst_tangential_orbital_period),
+				_tidal_stripping_radialness_);
+
 	hm_period = satellite->othm();
 
 	if(isbad(hm_period) or (hm_period<=0))
@@ -5804,13 +5928,13 @@ const double brgastro::stripping_orbit_segment::_tidal_strip_retained( const den
 	else
 	{
 		mass_frac_lost_total = max(
-				1 - satellite->enc_mass( new_rt ) / safe_d(satellite->mtot()), 0 );
+				1. - satellite->enc_mass( new_rt ) / safe_d(satellite->mtot()), 0. );
 	}
 	mass_frac_retained = max(
 			min(
-					1
+					1.
 							- mass_frac_lost_total * time_step / stripping_period
-									* _tidal_stripping_amplification_, 1 ), 0 );
+									* _tidal_stripping_amplification_, 1 ), 0. );
 
 	return mass_frac_retained;
 }

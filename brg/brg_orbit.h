@@ -255,7 +255,7 @@ namespace brgastro
 // which order they're declared in. (Order does still matter for classes containing other
 // classes, though.)
 //
-// Classes are document further in the definitions
+// Classes are documented further in the definitions
 class stripping_orbit;
 class stripping_orbit_segment;
 
@@ -695,7 +695,7 @@ private:
 	// Integration parameters
 #if(1)
 	// Number of steps for which stripping is calculated
-	int _spline_resolution_;
+	int _base_resolution_;
 
 	// Interpolation method
 	allowed_interpolation_type _interpolation_type_;
@@ -717,6 +717,9 @@ private:
 	static double _default_tidal_stripping_amplification_; // Amplifies tidal stripping by this factor
 	static double _default_tidal_stripping_deceleration_; // If positive, increase tidal stripping near pericentre,
 														  // if negative, decrease near pericentre
+	static double _default_tidal_stripping_radialness_; /**< How much tidal stripping depends on full velocity
+	                                                         versus tangential velocity. Larger value of this
+	                                                         increases stripping of more radial orbits preferentially */
 	static double _default_tidal_shocking_amplification_; // Amplifies tidal heating by this factor
 	static double _default_tidal_shocking_persistance_; // How long shocking is active for
 	static double _default_tidal_shocking_power_; // Affects interplay of stripping and satellite halo profile
@@ -728,6 +731,9 @@ private:
 	double _tidal_stripping_amplification_; // Amplifies tidal stripping by this factor
 	double _tidal_stripping_deceleration_; // If positive, increase tidal stripping near pericentre,
 	  	  	  	  	  	  	  	  	  	   // if negative, decrease near pericentre
+	double _tidal_stripping_radialness_; // How much tidal stripping depends on full velocity
+	                                     // versus tangential velocity. Larger value of this
+	                                     // increases stripping of more radial orbits preferentially
 	double _tidal_shocking_amplification_; // Amplifies tidal heating by this factor
 	double _tidal_shocking_persistance_; // How long shocking is active for
 	double _tidal_shocking_power_; // Affects interplay of stripping and satellite halo profile
@@ -809,33 +815,33 @@ public:
 #if(1)
 	static const int set_default_resolution( const int new_default_spline_resolution);
 	const int set_default_resolution( const int new_default_spline_resolution,
-			const bool override_current=false,
+			const bool override_current,
 			const bool silent=false );
 	static const int set_default_interpolation_type(
 			const allowed_interpolation_type new_default_interpolation_type);
 	const int set_default_interpolation_type(
 			const allowed_interpolation_type new_default_interpolation_type,
-			const bool override_current=false,
+			const bool override_current,
 			const bool silent=false );
 	static const int set_default_v_0( const double new_default_v_0);
 	const int set_default_v_0( const double new_default_v_0,
-			const bool override_current=false,
+			const bool override_current,
 			const bool silent=false );
 	static const int set_default_r_0( const double new_default_r_0);
 	const int set_default_r_0( const double new_default_r_0,
-			const bool override_current=false,
+			const bool override_current,
 			const bool silent=false );
 	static const int set_default_step_length_power( const double new_default_step_length_power);
 	const int set_default_step_length_power( const double new_default_step_length_power,
-			const bool override_current=false,
+			const bool override_current,
 			const bool silent=false );
 	static const int set_default_step_factor_max( const double new_default_step_factor_max);
 	const int set_default_step_factor_max( const double new_default_step_factor_max,
-			const bool override_current=false,
+			const bool override_current,
 			const bool silent=false );
 	static const int set_default_step_factor_min( const double new_default_step_factor_min);
 	const int set_default_step_factor_min( const double new_default_step_factor_min,
-			const bool override_current=false,
+			const bool override_current,
 			const bool silent=false );
 #endif
 
@@ -852,6 +858,12 @@ public:
 			const double new_default_tidal_stripping_deceleration);
 	const int set_default_tidal_stripping_deceleration(
 			const double new_default_tidal_stripping_deceleration,
+			const bool override_current,
+			const bool silent=false );
+	static const int set_default_tidal_stripping_radialness(
+			const double new_default_tidal_stripping_radialness);
+	const int set_default_tidal_stripping_radialness(
+			const double new_default_tidal_stripping_radialness,
 			const bool override_current,
 			const bool silent=false );
 	static const int set_default_tidal_shocking_amplification(
@@ -899,6 +911,8 @@ public:
 			const bool silent=false );
 	const int set_tidal_stripping_deceleration( const double new_tidal_stripping_deceleration,
 			const bool silent=false );
+	const int set_tidal_stripping_radialness( const double new_tidal_stripping_radialness,
+			const bool silent=false );
 	const int set_tidal_shocking_amplification( const double new_tidal_shocking_amplification,
 			const bool silent=false );
 	const int set_tidal_shocking_persistance( const double new_tidal_shocking_persistance,
@@ -923,6 +937,7 @@ public:
 	// Tuning parameters, for how strong stripping and shocking are and when shocking is active
 	const int reset_tidal_stripping_amplification();
 	const int reset_tidal_stripping_deceleration();
+	const int reset_tidal_stripping_radialness();
 	const int reset_tidal_shocking_amplification();
 	const int reset_tidal_shocking_persistance();
 	const int reset_tidal_shocking_power();
@@ -1008,44 +1023,46 @@ public:
 	static const int & default_spline_resolution() {return _default_spline_resolution_;}
 	static const allowed_interpolation_type & default_interpolation_type()
 		{return _default_interpolation_type_;}
-	static const double & default_v_0() {return _default_v_0_;}
-	static const double & default_r_0() {return _default_r_0_;}
-	static const double & default_step_length_power() {return _default_step_length_power_;}
-	static const double & default_step_factor_max() {return _default_step_factor_max_;}
-	static const double & default_step_factor_min() {return _default_step_factor_min_;}
+	static const BRG_VELOCITY & default_v_0() {return _default_v_0_;}
+	static const BRG_DISTANCE & default_r_0() {return _default_r_0_;}
+	static const double  default_step_length_power() {return _default_step_length_power_;}
+	static const double  default_step_factor_max() {return _default_step_factor_max_;}
+	static const double  default_step_factor_min() {return _default_step_factor_min_;}
 #endif
 
 	// Default tuning parameters
 #if(1)
 	// Tuning parameters, for how strong stripping and shocking are and when shocking is active
-	static const double & default_tidal_stripping_amplification() {return _default_tidal_stripping_amplification_;}
-	static const double & default_tidal_stripping_deceleration() {return _default_tidal_stripping_deceleration_;}
-	static const double & default_tidal_shocking_amplification() {return _default_tidal_shocking_amplification_;}
-	static const double & default_tidal_shocking_persistance() {return _default_tidal_shocking_persistance_;}
-	static const double & default_tidal_shocking_power() {return _default_tidal_shocking_power_;}
+	static const double  default_tidal_stripping_amplification() {return _default_tidal_stripping_amplification_;}
+	static const double  default_tidal_stripping_deceleration() {return _default_tidal_stripping_deceleration_;}
+	static const double  default_tidal_stripping_radialness() {return _default_tidal_stripping_radialness_;}
+	static const double  default_tidal_shocking_amplification() {return _default_tidal_shocking_amplification_;}
+	static const double  default_tidal_shocking_persistance() {return _default_tidal_shocking_persistance_;}
+	static const double  default_tidal_shocking_power() {return _default_tidal_shocking_power_;}
 #endif
 
 
 	// Integration parameters
 #if(1)
-	const int & spline_resolution() const {return _spline_resolution_;}
+	const int & base_resolution() const {return _base_resolution_;}
 	const allowed_interpolation_type & interpolation_type()
 		{return _interpolation_type_;}
-	const double & v_0() const {return _v_0_;}
-	const double & r_0() const {return _r_0_;}
-	const double & step_length_power() const {return _step_length_power_;}
-	const double & step_factor_max() const {return _step_factor_max_;}
-	const double & step_factor_min() const {return _step_factor_min_;}
+	const BRG_VELOCITY & v_0() const {return _v_0_;}
+	const BRG_DISTANCE & r_0() const {return _r_0_;}
+	const double  step_length_power() const {return _step_length_power_;}
+	const double  step_factor_max() const {return _step_factor_max_;}
+	const double  step_factor_min() const {return _step_factor_min_;}
 #endif
 
 	// Tuning parameters
 #if(1)
 	// Tuning parameters, for how strong stripping and shocking are and when shocking is active
-	const double & tidal_stripping_amplification() const {return _tidal_stripping_amplification_;}
-	const double & tidal_stripping_deceleration() const {return _tidal_stripping_deceleration_;}
-	const double & tidal_shocking_amplification() const {return _tidal_shocking_amplification_;}
-	const double & tidal_shocking_persistance() const {return _tidal_shocking_persistance_;}
-	const double & tidal_shocking_power() const {return _tidal_shocking_power_;}
+	const double  tidal_stripping_amplification() const {return _tidal_stripping_amplification_;}
+	const double  tidal_stripping_deceleration() const {return _tidal_stripping_deceleration_;}
+	const double  tidal_stripping_radialness() const {return _tidal_stripping_radialness_;}
+	const double  tidal_shocking_amplification() const {return _tidal_shocking_amplification_;}
+	const double  tidal_shocking_persistance() const {return _tidal_shocking_persistance_;}
+	const double  tidal_shocking_power() const {return _tidal_shocking_power_;}
 #endif
 
 	const int & num_segments() const {return _num_segments_;};
@@ -1193,6 +1210,9 @@ private:
 	double _tidal_stripping_amplification_; // Amplifies tidal stripping by this factor
 	double _tidal_stripping_deceleration_; // If positive, increase tidal stripping near pericentre,
 	  	  	  	  	  	  	  	  	  	   // if negative, decrease near pericentre
+	double _tidal_stripping_radialness_; // How much tidal stripping depends on full velocity
+	                                     // versus tangential velocity. Larger value of this
+	                                     // increases stripping of more radial orbits preferentially
 	double _tidal_shocking_amplification_; // Amplifies tidal heating by this factor
 	double _tidal_shocking_persistance_; // How long shocking is active for
 	double _tidal_shocking_power_; // Affects interplay of stripping and satellite halo profile
@@ -1329,6 +1349,8 @@ public:
 			const bool silent=false );
 	const int set_tidal_stripping_deceleration( const double new_tidal_stripping_deceleration,
 			const bool silent=false );
+	const int set_tidal_stripping_radialness( const double new_tidal_stripping_radialness,
+			const bool silent=false );
 	const int set_tidal_shocking_amplification( const double new_tidal_shocking_amplification,
 			const bool silent=false );
 	const int set_tidal_shocking_persistance( const double new_tidal_shocking_persistance,
@@ -1403,8 +1425,8 @@ public:
 	const int & spline_resolution() const {return _spline_resolution_;}
 	const stripping_orbit::allowed_interpolation_type & interpolation_type()
 		{return _interpolation_type_;}
-	const double & v_0() const {return _v_0_;}
-	const double & r_0() const {return _r_0_;}
+	const BRG_VELOCITY & v_0() const {return _v_0_;}
+	const BRG_DISTANCE & r_0() const {return _r_0_;}
 	const double & step_length_power() const {return _step_length_power_;}
 	const double & step_factor_max() const {return _step_factor_max_;}
 	const double & step_factor_min() const {return _step_factor_min_;}
@@ -1415,6 +1437,7 @@ public:
 	// Tuning parameters, for how strong stripping and shocking are and when shocking is active
 	const double & tidal_stripping_amplification() const {return _tidal_stripping_amplification_;}
 	const double & tidal_stripping_deceleration() const {return _tidal_stripping_deceleration_;}
+	const double & tidal_stripping_radialness() const {return _tidal_stripping_radialness_;}
 	const double & tidal_shocking_amplification() const {return _tidal_shocking_amplification_;}
 	const double & tidal_shocking_persistance() const {return _tidal_shocking_persistance_;}
 	const double & tidal_shocking_power() const {return _tidal_shocking_power_;}
