@@ -128,8 +128,8 @@ public:
 	}
 	vector<T,A> & push_back (const T & val)
 	{
-		if(_num_dim_ != 1)
-			throw std::out_of_range("Can't push_back to num_dim!=1 vector.");
+		if(_num_dim_ > 1)
+			throw std::out_of_range("Can't push_back to num_dim>1 vector.");
 		_shape_[0] += 1;
 		try
 		{
@@ -522,8 +522,8 @@ public:
 		    // There's a slim chance this will throw on a valid size, but unlikely
 
 		vec::resize(new_size,new_val);
-		_num_dim_ = _shape_.size();
 		_shape_ = new_shape;
+		_num_dim_ = _shape_.size();
 	}
 
 #endif // New methods
@@ -553,13 +553,15 @@ public:
 	vector(const vector<T_o, A_o> & other)
 	: vec(other)
 	{
-		_reshape(other.shape());
+		reshape(other.shape());
+		for(vsize_t i=0; i<size(); i++) vec::operator[](i) = other[i];
 	}
 	template<typename T_o, typename A_o>
 	vector(const std::vector<T_o, A_o> & other)
 	: vec(other)
 	{
-		_resize(other.size());
+		resize(other.size());
+		for(vsize_t i=0; i<size(); i++) vec::operator[](i) = other[i];
 	}
 	template<typename T_o, size_t N>
 	vector( const T_o (&array)[N], const A& alloc = A() )
