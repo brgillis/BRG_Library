@@ -9,13 +9,13 @@
  *  This file contains element-wise operations for vectors, plus mathematical operations for vectors.
  */
 
-// !!! Not fully tested yet
-
 #ifndef __BRG_VECTOR_FUNCTIONS_HPP_INCLUDED__
 #define __BRG_VECTOR_FUNCTIONS_HPP_INCLUDED__
 
+#include <algorithm>
 #include <cstdlib>
 #include <cmath>
+#include <vector>
 
 #include "brg_global.h"
 

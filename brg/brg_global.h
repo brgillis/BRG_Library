@@ -88,6 +88,14 @@ const double pi = 3.14159265358979323846;
 #define BRG_ANGLE brgastro::unit_angle
 #define BRG_CHARGE brgastro::unit_charge
 #define BRG_VELOCITY brgastro::unit_velocity
+
+#define CONST_BRG_UNITS_REF const brgastro::unit_obj &
+#define CONST_BRG_DISTANCE_REF const brgastro::unit_distance &
+#define CONST_BRG_TIME_REF const brgastro::unit_time &
+#define CONST_BRG_MASS_REF const brgastro::unit_mass &
+#define CONST_BRG_ANGLE_REF const brgastro::unit_angle &
+#define CONST_BRG_CHARGE_REF const brgastro::unit_charge &
+#define CONST_BRG_VELOCITY_REF const brgastro::unit_velocity &
 #else
 #define BRG_UNITS double
 #define BRG_DISTANCE double
@@ -96,6 +104,14 @@ const double pi = 3.14159265358979323846;
 #define BRG_ANGLE double
 #define BRG_CHARGE double
 #define BRG_VELOCITY double
+
+#define CONST_BRG_UNITS_REF const double
+#define CONST_BRG_DISTANCE_REF const double
+#define CONST_BRG_TIME_REF const double
+#define CONST_BRG_MASS_REF const double
+#define CONST_BRG_ANGLE_REF const double
+#define CONST_BRG_CHARGE_REF const double
+#define CONST_BRG_VELOCITY_REF const double
 #endif // #ifdef _BRG_USE_UNITS_
 
 #ifdef _BRG_USE_CPP_11_STD_

@@ -11,6 +11,7 @@ brg_functpr.hpp
 #ifndef __BRG_FUNCTOR_HPP_INCLUDED__
 #define __BRG_FUNCTOR_HPP_INCLUDED__
 
+#include <iostream>
 #include <vector>
 
 #include "brg_global.h"

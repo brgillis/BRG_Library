@@ -72,22 +72,6 @@ struct phase
 
 #endif // end class declarations
 
-/** Global function declarations **/
-#if (1)
-
-// Returns a random variable from a Gaussian distribution
-const double Gaus_rand( const double mean = 0, const double stddev = 1 );
-
-// Returns a random variable from a Gaussian distribution in log space
-// Note that "mean" here is the desired mean, NOT the peak of the function (which differ in log space). If you want to use
-// the peak, simply use the standard Gaus_rand version instead.
-const double log10Gaus_rand( const double mean = 0, const double stddev = 1 );
-
-// Returns a Poisson random variable.
-const int Pois_rand( const double lambda = 1 );
-
-#endif // End global function declarations
-
 }
 
 #endif // __BRG_PHASE_HPP_INCLUDED__

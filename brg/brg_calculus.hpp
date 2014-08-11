@@ -13,6 +13,8 @@
 
 #include "brg_global.h"
 
+#include "brg_functor.hpp"
+#include "brg_misc_functions.hpp"
 #include "brg_phase.hpp"
 #ifdef _BRG_USE_UNITS
 #include "brg_units.h"
@@ -53,7 +55,7 @@ inline const int differentiate( const f * func,
 	bool power_flag = false;
 	bool zero_in_flag = false;
 
-	int order_to_use = (int)max( order, 1 );
+	int order_to_use = max( order, 1 );
 
 	if ( ( order_to_use > 1 ) )
 	{

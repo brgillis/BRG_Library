@@ -241,6 +241,8 @@ const T safe_sqrt( const T a )
 }
 inline const double safe_sqrt( const int a ) // Special case for integers due to -INT_MIN > INT_MAX
 {
+	using std::sqrt;
+
 	int res;
 
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
@@ -328,7 +330,7 @@ inline const double Gaus_pdf( const Tx x, const Tmean mean = 0,
 		const Tstddev std_dev = 1 )
 {
 	return exp( -square( x - mean ) / ( 2 * std_dev * std_dev ) )
-			/ ( std_dev * sqrt( 2 * pi ) );
+			/ ( std_dev * std::sqrt( 2 * pi ) );
 }
 
 // Function to integrate a Gaussian from min to max

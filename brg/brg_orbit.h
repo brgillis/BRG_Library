@@ -235,16 +235,20 @@
 #ifndef __BRG_ORBIT_H_INCLUDED__
 #define __BRG_ORBIT_H_INCLUDED__
 
-#include "brg_global.h"
-
 #include <cstdlib>
 #include <cmath>
 #include <vector>
 #include <stdexcept>
-#include "brg_interpolator.h"
+
+#include "brg_global.h"
+
 #include "brg_astro.h"
+#include "brg_functor.hpp"
+#include "brg_interpolator.h"
 #include "brg_phase.hpp"
 #include "brg_units.h"
+#include "density_profile/density_profile.h"
+#include "density_profile/tNFW_profile.h"
 
 namespace brgastro
 {
