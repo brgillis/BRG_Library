@@ -511,6 +511,8 @@ public:
 
  \**********************************************************************/
 
+const BRG_UNITS H( const double z );
+
 // Functions to get grid integers or grid boundaries from integers
 const int get_ra_grid( const BRG_ANGLE &ra );
 const int get_dec_grid( const BRG_ANGLE &dec );
@@ -563,30 +565,6 @@ const double integrate_Ld( const double z );
 const double integrate_ltd( const double z );
 const double integrate_distance( const double z1, const double z2,
 		const int mode, const int resolution = 10000 );
-
-// Functions relating to tNFW profiles
-inline const double cfm( const BRG_MASS mass, const double z = 0 ) // Concentration from mass relationship, from Neto
-{
-	return 4.67 * std::pow( mass * unitconv::kgtottMsun / ( 1e4 ), -0.11 );
-}
-inline const double mftau( const double tau, const double conc ) // Mtot/Mvir from tau
-{
-	if(tau<=0) return 0;
-	double M0oM200 = 1 / ( log( 1 + conc ) - conc / ( 1 + conc ) );
-	double tautau = tau*tau;
-	double result =
-			M0oM200 * tautau / square( tautau + 1 )
-					* ( ( tautau - 1 ) * log( tau ) + tau * pi
-							- ( tautau + 1 ) );
-	return result;
-}
-const double taufm( const double mratio, double c, double tau_init = 0, double precision = 0.00001,
-		const bool silent = false ); // tau from Mtot/Mvir
-inline const double delta_c( const double conc ) // Simple function of concentration used as a step in calculating NFW densities
-{
-	return ( 200. / 3. ) * cube( conc )
-			/ ( log( 1 + conc ) - conc / ( 1 + conc ) );
-}
 
 // Function to estimate orbital period from current position and velocity in a density profile
 // Note that this is merely an estimate from analogy to calculations in a Keplerian potential
@@ -679,8 +657,6 @@ public:
 
 	// H(z) at the redshift of the object, given in units of m/s^2
 	const BRG_UNITS H() const;
-	// H(z) at a specified redshift, given in units of m/s^2
-	const BRG_UNITS H( double ztest ) const;
 
 	// Clone function - Not needed in current implementation
 	// virtual redshift_obj *redshift_obj_clone()=0;
@@ -1321,6 +1297,42 @@ private:
 
 #endif // end private member variables
 
+	const double _taufm( const double mratio, double precision = 0.00001,
+			const bool silent = false ) const; // tau from Mtot/Mvir
+	const double _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
+	{
+		return ( 200. / 3. ) * cube( _c_ )
+				/ ( log( 1 + _c_ ) - _c_ / ( 1 + _c_ ) );
+	}
+
+	// Functions relating to tNFW profiles
+	const double _cfm( const BRG_MASS mass, const double z=0 ) const // Concentration from mass relationship, from Neto
+	{
+		return 4.67 * std::pow( mass * unitconv::kgtottMsun / ( 1e4 ), -0.11 );
+	}
+	const double _cfm() const // Concentration from mass relationship, from Neto
+	{
+		return _cfm(_mvir0_,z());
+	}
+	const double _mftau( const double tau, const double conc ) const // Mtot/Mvir from tau
+	{
+		if(tau<=0) return 0;
+		double M0oM200 = 1 / ( log( 1 + conc ) - conc / ( 1 + conc ) );
+		double tautau = tau*tau;
+		double result =
+				M0oM200 * tautau / square( tautau + 1 )
+						* ( ( tautau - 1 ) * log( tau ) + tau * pi
+								- ( tautau + 1 ) );
+		return result;
+	}
+	const double _mftau( const double tau ) const // Mtot/Mvir from tau
+	{
+		return _mftau(tau,_c_);
+	}
+	const double _mftau() const // Mtot/Mvir from tau
+	{
+		return _mftau(_tau_,_c_);
+	}
 public:
 #if (1) // public variables and functions
 

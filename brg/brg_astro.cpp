@@ -175,27 +175,12 @@ const BRG_UNITS brgastro::redshift_obj::H() const
 		}
 		else
 		{
-			double zp1 = 1.+_z_;
 			// Friedmann equation, assuming omega = -1
-			_H_cache_ = H_0
-				* std::sqrt( Omega_r * quart( zp1 )
-						+ Omega_m * cube( zp1 )
-						+ Omega_k * square( zp1 ) + Omega_l );
+			_H_cache_ = brgastro::H(_z_);
 		}
 		_H_cached_ = true;
 	}
 	return _H_cache_;
-}
-
-const BRG_UNITS brgastro::redshift_obj::H( const double test_z ) const
-{
-	// Friedmann equation, assuming omega = -1
-	if(test_z==0) return H_0;
-	double zp1 = 1.+test_z;
-	return H_0
-			* std::sqrt( Omega_r * quart( zp1 )
-							+ Omega_m * cube( zp1 )
-							+ Omega_k * square( zp1 ) + Omega_l );
 }
 
 #endif
@@ -726,6 +711,40 @@ const BRG_UNITS brgastro::density_profile::group_WLsig( const BRG_DISTANCE &r,
 // brgastro::tNFW_profile class methods
 #if (1)
 
+const double brgastro::tNFW_profile::_taufm( const double m_ratio,
+		double precision, const bool silent ) const
+{
+	double m_target = m_ratio * _mftau();
+	double taustepsize = _tau_ / 2;
+	double tautest[3];
+	double mtest, mbest;
+	int i, ibest;
+
+	tautest[0] = _tau_ / 2;
+	mbest = 1e99;
+
+	while ( taustepsize > precision * _c_ )
+	{
+		taustepsize /= 2;
+		tautest[1] = tautest[0] - taustepsize;
+		tautest[2] = tautest[0] + taustepsize;
+		ibest = 0;
+		for ( i = 0; i < 3; i++ )
+		{
+			mtest = _mftau( tautest[i] );
+			if ( fabs( mtest - m_target ) <= fabs( mbest - m_target ) )
+			{
+				ibest = i;
+				mbest = mtest;
+			}
+		}
+		tautest[0] = tautest[ibest];
+	}
+
+	return tautest[0];
+
+}
+
 #if (1) // Constructors
 brgastro::tNFW_profile::tNFW_profile()
 {
@@ -741,7 +760,7 @@ brgastro::tNFW_profile::tNFW_profile( const BRG_MASS &init_mvir0,
 	_mvir0_ = init_mvir0;
 	if ( init_c <= 0 )
 	{
-		_c_ = cfm( init_mvir0, init_z );
+		_c_ = _cfm();
 	}
 	else
 	{
@@ -816,7 +835,7 @@ const int brgastro::tNFW_profile::set_parameters(
 		return errorNOS( silent );
 	if ( parameters.at( 2 ) <= 0 )
 	{
-		if ( set_c( cfm( parameters.at( 0 ), parameters.at( 1 ) ) ) )
+		if ( set_c( _cfm( parameters.at( 0 ), parameters.at( 1 ) ) ) )
 			return errorNOS( silent );
 	}
 	else
@@ -859,7 +878,7 @@ const double brgastro::tNFW_profile::c() const
 
 const BRG_MASS brgastro::tNFW_profile::mtot() const
 {
-	return _mvir0_ * brgastro::mftau( _tau_, _c_ );
+	return _mvir0_ * _mftau();
 }
 
 const BRG_VELOCITY brgastro::tNFW_profile::vvir() const
@@ -928,7 +947,7 @@ const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
 		tau_use = default_tau_factor * _c_;
 	else
 		tau_use = _tau_;
-	d_c = delta_c( _c_ );
+	d_c = _delta_c();
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
 
@@ -949,7 +968,7 @@ const BRG_UNITS brgastro::tNFW_profile::proj_dens( const BRG_DISTANCE &r,
 	else
 		tau_use = _tau_;
 
-	d_c = delta_c( _c_ );
+	d_c = _delta_c();
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
 	double xx = x*x;
@@ -1005,7 +1024,7 @@ const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
 
 	double tau_sq = square(tau_use);
 
-	d_c = delta_c( _c_ );
+	d_c = _delta_c();
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
 
@@ -1029,7 +1048,7 @@ const BRG_UNITS brgastro::tNFW_profile::proj_enc_dens( const BRG_DISTANCE &r,
 	else
 		tau_use = _tau_;
 
-	d_c = delta_c( _c_ );
+	d_c = _delta_c();
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
 	double xx = x*x;
@@ -1115,7 +1134,7 @@ const int brgastro::tNFW_profile::truncate_to_fraction( const double f,
 	}
 	else
 	{
-		double new_tau_val = brgastro::taufm( f, _c_, _tau_, min(std::fabs(0.1*(1-f)),0.00001) );
+		double new_tau_val = _taufm( f, min(std::fabs(0.1*(1-f)),0.00001) );
 		if ( new_tau_val < 0 )
 		{
 			if ( !silent )
@@ -1511,7 +1530,7 @@ const int brgastro::tNFW_sig_cache::unload()
 const int brgastro::tNFW_sig_cache::calc( const bool silent )
 {
 	int i, j, k;
-	double mass, conc, tau;
+	double mass;
 
 	// Test that range is sane
 	if ( ( halo_z_max <= halo_z_min ) || ( halo_z_step <= 0 )
@@ -1538,14 +1557,11 @@ const int brgastro::tNFW_sig_cache::calc( const bool silent )
 		for ( double m = halo_m_min; m < halo_m_max; m += halo_m_step )
 		{
 			mass = std::pow( 10, m ) * unitconv::Msuntokg;
-			conc = brgastro::cfm( mass, z );
-			tau = default_tau_factor * conc;
+			brgastro::tNFW_profile profile(mass,z);
 			for ( double r = r_min; r < r_max; r += r_step )
 			{
 
-				signal[i][j][k] =
-						brgastro::tNFW_profile( mass, z, conc, tau ).deltasigma(
-								r );
+				signal[i][j][k] = profile.deltasigma( r );
 				k++;
 			}
 			k = 0;
@@ -1881,7 +1897,7 @@ const int brgastro::tNFW_offset_sig_cache::unload()
 const int brgastro::tNFW_offset_sig_cache::calc( const bool silent )
 {
 	double z, lm, r, l_offset_r;
-	double mass, conc, tau, offset_r;
+	double mass, offset_r;
 
 	// Test that range is sane
 	if ( ( halo_z_max <= halo_z_min ) || ( halo_z_step <= 0 )
@@ -1911,8 +1927,7 @@ const int brgastro::tNFW_offset_sig_cache::calc( const bool silent )
 		for ( int j = 0; j < halo_m_res; j++ )
 		{
 			mass = std::pow( 10, lm ) * unitconv::Msuntokg;
-			conc = brgastro::cfm( mass, z );
-			tau = default_tau_factor * conc;
+			brgastro::tNFW_profile profile(mass,z);
 			r = r_min;
 			for ( int k = 0; k < r_res; k++ )
 			{
@@ -1920,8 +1935,7 @@ const int brgastro::tNFW_offset_sig_cache::calc( const bool silent )
 				for ( int l = 0; l < offset_r_res; l++ )
 				{
 					offset_r = std::pow( 10, l_offset_r ) * unitconv::kpctom;
-					signal[i][j][k][l] = brgastro::tNFW_profile( mass, z, conc,
-							tau ).offset_WLsig( r, offset_r );
+					signal[i][j][k][l] = profile.offset_WLsig( r, offset_r );
 					l_offset_r += offset_r_step;
 				}
 				r += r_step;
@@ -2996,6 +3010,18 @@ brgastro::offset_WLsig_weight_function::offset_WLsig_weight_function(
 
 /** Global Function Definitions **/
 #if (1)
+
+const BRG_UNITS brgastro::H( const double test_z )
+{
+	// Friedmann equation, assuming omega = -1
+	if(test_z==0) return H_0;
+	double zp1 = 1.+test_z;
+	return H_0
+			* std::sqrt( Omega_r * quart( zp1 )
+							+ Omega_m * cube( zp1 )
+							+ Omega_k * square( zp1 ) + Omega_l );
+}
+
 // grid functions
 #if (1)
 const int brgastro::get_ra_grid( const BRG_ANGLE &ra )
@@ -3275,51 +3301,6 @@ const double brgastro::integrate_distance( const double z1_init,
 
 // Other functions
 #if (1)
-
-const double brgastro::taufm( const double m_ratio, double conc,
-		double tau_init, double precision, const bool silent )
-{
-
-	//Gives tau for a given Mtot/Mvir.
-	if ( conc <= 0 )
-	{
-		conc = default_c;
-		if ( !silent )
-			std::cerr
-					<< "WARNING: Invalid c value passed to taufm function.\n";
-	}
-	if ( tau_init <= 0 )
-		tau_init = default_tau_factor * conc;
-	double m_target = m_ratio * mftau( tau_init, conc );
-	double taustepsize = tau_init / 2;
-	double tautest[3];
-	double mtest, mbest;
-	int i, ibest;
-
-	tautest[0] = tau_init / 2;
-	mbest = 1e99;
-
-	while ( taustepsize > precision * conc )
-	{
-		taustepsize /= 2;
-		tautest[1] = tautest[0] - taustepsize;
-		tautest[2] = tautest[0] + taustepsize;
-		ibest = 0;
-		for ( i = 0; i < 3; i++ )
-		{
-			mtest = mftau( tautest[i], conc );
-			if ( fabs( mtest - m_target ) <= fabs( mbest - m_target ) )
-			{
-				ibest = i;
-				mbest = mtest;
-			}
-		}
-		tautest[0] = tautest[ibest];
-	}
-
-	return tautest[0];
-
-}
 
 const BRG_TIME brgastro::period( const brgastro::density_profile *host,
 		const BRG_DISTANCE &r, const BRG_VELOCITY &vr, const BRG_VELOCITY &vt )
