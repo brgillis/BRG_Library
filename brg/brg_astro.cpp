@@ -177,9 +177,9 @@ const BRG_UNITS brgastro::redshift_obj::H() const
 		{
 			// Friedmann equation, assuming omega = -1
 			_H_cache_ = H_0
-				* std::sqrt( Omega_r * std::pow( 1. + _z_, 4 )
-						+ Omega_m * std::pow( 1. + _z_, 3 )
-						+ Omega_k * std::pow( 1. + _z_, 2 ) + Omega_l );
+				* std::sqrt( Omega_r * quart( 1. + _z_ )
+						+ Omega_m * cube( 1. + _z_ )
+						+ Omega_k * square( 1. + _z_ ) + Omega_l );
 		}
 		_H_cached_ = true;
 	}
@@ -191,9 +191,9 @@ const BRG_UNITS brgastro::redshift_obj::H( const double test_z ) const
 	// Friedmann equation, assuming omega = -1
 	if(test_z==0) return H_0;
 	return H_0
-			* sqrt( Omega_r * std::pow( 1 + test_z, 4 )
-							+ Omega_m * std::pow( 1 + test_z, 3 )
-							+ Omega_k * pow( 1 + test_z, 2 ) + Omega_l );
+			* std::sqrt( Omega_r * quart( 1 + test_z )
+							+ Omega_m * cube( 1 + test_z )
+							+ Omega_k * square( 1 + test_z ) + Omega_l );
 }
 
 #endif
@@ -930,9 +930,9 @@ const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
 	rho_c = 3 * H() * H() / ( 8 * pi * Gc );
 	x = r / rs();
 
-	result = ( d_c * rho_c ) / ( x * std::pow( 1 + x, 2 ) )
-			* std::pow( tau_use, 2 )
-			/ ( std::pow( tau_use, 2 ) + std::pow( x, 2 ) );
+	result = ( d_c * rho_c ) / ( x * square( 1 + x ) )
+			* square( tau_use )
+			/ ( square( tau_use ) + square( x ) );
 
 	return result;
 }
@@ -948,46 +948,51 @@ const BRG_UNITS brgastro::tNFW_profile::proj_dens( const BRG_DISTANCE &r,
 		tau_use = _tau_;
 
 	d_c = delta_c( _c_ );
-	rho_c = 3 * H() * H() / ( 8 * pi * Gc );
+	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
+	double xx = x*x;
+	double tautau = tau_use*tau_use;
+	double tautaup1 = tautau + 1.;
+	double sqrt_tautaupxx = std::sqrt(tautau + xx);
 
-	if ( x == 1 )
-		fx = 1;
-	else if ( x > 1 )
-		fx = acos( 1 / x ) / sqrt( x * x - 1 );
+	if ( x == 1. )
+		fx = 1.;
+	else if ( x > 1. )
+		fx = acos( 1. / x ) / std::sqrt( xx - 1. );
 	else
-		fx = -log( 1 / x - sqrt( 1 / ( x * x ) - 1 ) ) / sqrt( 1 - x * x );
-	lx = log( x / ( sqrt( tau_use * tau_use + x * x ) + tau_use ) );
+		fx = -log( 1. / x - std::sqrt( 1. / ( xx ) - 1. ) ) / std::sqrt( 1. - xx );
+	lx = log( x / ( sqrt_tautaupxx + tau_use ) );
 	if ( x == 1 )
 		result =
-				( 4 * pi * rs() * d_c * rho_c ) * tau_use * tau_use
-						/ ( 2 * pi * std::pow( tau_use * tau_use + 1, 2 ) )
-						* ( ( tau_use * tau_use + 1 ) / 3 + 2 * fx
-								- pi / sqrt( tau_use * tau_use + x * x )
-								+ ( tau_use * tau_use - 1 ) * lx
+				( 4 * pi * rs() * d_c * rho_c ) * tautau
+						/ ( 2 * pi * square( tautaup1 ) )
+						* ( tautaup1/3 + 2 * fx
+								- pi / sqrt_tautaupxx
+								+ ( tautau - 1 ) * lx
 										/ ( tau_use
-												* sqrt(
-														tau_use * tau_use
-																+ x * x ) ) );
+												* sqrt_tautaupxx ) );
 	else
 		result =
-				( 4 * pi * rs() * d_c * rho_c ) * tau_use * tau_use
-						/ ( 2 * pi * std::pow( tau_use * tau_use + 1, 2 ) )
-						* ( ( tau_use * tau_use + 1 ) / ( x * x - 1 )
+				( 4 * pi * rs() * d_c * rho_c ) * tautau
+						/ ( 2 * pi * square( tautaup1 ) )
+						* ( tautaup1 / ( xx - 1 )
 								* ( 1 - fx ) + 2 * fx
-								- pi / sqrt( tau_use * tau_use + x * x )
-								+ ( tau_use * tau_use - 1 ) * lx
+								- pi / sqrt_tautaupxx
+								+ ( tautau - 1 ) * lx
 										/ ( tau_use
-												* sqrt(
-														tau_use * tau_use
-																+ x * x ) ) );
+												* sqrt_tautaupxx ) );
 	return result;
 }
 const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
 		const bool silent ) const
 {
-	BRG_UNITS result, rho_c;
-	BRG_MASS m0;
+	using brgastro::square;
+	using brgastro::cube;
+	using std::log;
+	using std::atan;
+
+	BRG_UNITS rho_c;
+	BRG_MASS m0, mx;
 	// Result here integrated with Wolfram Alpha
 	double d_c, x, tau_use;
 	if ( _tau_ < 0 )
@@ -997,28 +1002,19 @@ const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
 	else
 		tau_use = _tau_;
 
+	double tau_sq = square(tau_use);
+
 	d_c = delta_c( _c_ );
-	rho_c = 3 * H() * H() / ( 8 * pi * Gc );
+	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
 
-	m0 = ( std::pow( rs(), 3 ) * d_c * rho_c )
-			* ( 2 * pi * std::pow( tau_use, 2 )
-					* ( 2 * ( 1 + std::pow( tau_use, 2 ) )
-							- ( -1 + std::pow( tau_use, 2 ) ) * 2
-									* log( tau_use ) ) )
-			/ std::pow( 1 + std::pow( tau_use, 2 ), 2 );
-	result = ( std::pow( rs(), 3 ) * d_c * rho_c )
-			* ( 2 * pi * std::pow( tau_use, 2 )
-					* ( ( 2 * ( 1 + std::pow( tau_use, 2 ) ) ) / ( 1 + x )
-							+ 4 * tau_use * atan( x / tau_use )
-							+ 2 * ( -1 + std::pow( tau_use, 2 ) )
-									* log( 1 + x )
-							- ( -1 + std::pow( tau_use, 2 ) )
-									* log(
-											std::pow( tau_use, 2 )
-													+ std::pow( x, 2 ) ) ) )
-			/ std::pow( 1 + std::pow( tau_use, 2 ), 2 ) - m0;
-	return result;
+	m0 = (2 * (1 + tau_sq) - (-1 + tau_sq) * 2 * log(tau_use));
+	mx = ((2 * (1 + tau_sq)) / (1 + x)
+							+ 4 * tau_use * atan(x / tau_use)
+							+ 2 * (-1 + tau_sq) * log(1 + x)
+							- (-1 + tau_sq) * log(tau_sq + square(x))) - m0;
+	return cube(rs()) * d_c * rho_c * 2 * pi * tau_sq * mx
+			/ square(1 + tau_sq);
 }
 const BRG_UNITS brgastro::tNFW_profile::proj_enc_dens( const BRG_DISTANCE &r,
 		const bool silent ) const
@@ -1032,24 +1028,29 @@ const BRG_UNITS brgastro::tNFW_profile::proj_enc_dens( const BRG_DISTANCE &r,
 		tau_use = _tau_;
 
 	d_c = delta_c( _c_ );
-	rho_c = 3 * H() * H() / ( 8 * pi * Gc );
+	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
-	if ( x == 1 )
-		fx = 1;
-	else if ( x > 1 )
-		fx = acos( 1 / x ) / sqrt( x * x - 1 );
+	double xx = x*x;
+	double tautau = tau_use*tau_use;
+	double tautaup1 = tautau + 1.;
+	double sqrt_tautaupxx = std::sqrt(tautau + xx);
+
+	if ( x == 1. )
+		fx = 1.;
+	else if ( x > 1. )
+		fx = acos( 1. / x ) / std::sqrt( xx - 1. );
 	else
-		fx = -log( 1 / x - sqrt( 1 / ( x * x ) - 1 ) ) / sqrt( 1 - x * x );
-	lx = log( x / ( sqrt( tau_use * tau_use + x * x ) + tau_use ) );
+		fx = -log( 1 / x - std::sqrt( 1 / ( xx ) - 1 ) ) / std::sqrt( 1 - xx );
+	lx = log( x / ( sqrt_tautaupxx + tau_use ) );
 
 	result =
-			( 4 * pi * rs() * d_c * rho_c ) * tau_use * tau_use
-					/ ( pi * x * x * std::pow( tau_use * tau_use + 1, 2 ) )
-					* ( ( tau_use * tau_use + 1 + 2 * ( x * x - 1 ) ) * fx
+			( 4 * pi * rs() * d_c * rho_c ) * tautau
+					/ ( pi * xx * square( tautaup1 ) )
+					* ( ( tautaup1 + 2 * ( xx - 1 ) ) * fx
 							+ pi * tau_use
-							+ ( tau_use * tau_use - 1 ) * log( tau_use )
-							+ sqrt( tau_use * tau_use + x * x )
-									* ( lx * ( tau_use * tau_use - 1 )
+							+ ( tautau - 1 ) * log( tau_use )
+							+ sqrt_tautaupxx
+									* ( lx * ( tautau - 1 )
 											/ tau_use - pi ) );
 	return result;
 }
@@ -1254,7 +1255,7 @@ const BRG_UNITS brgastro::point_mass_profile::enc_dens(
 		const BRG_DISTANCE &r,
 		const bool silent ) const
 {
-	return enc_mass( r ) / ( 4. / 3. * pi * std::pow( r, 3 ) );
+	return enc_mass( r ) / ( 4. / 3. * pi * cube( r ) );
 }
 const BRG_MASS brgastro::point_mass_profile::enc_mass(
 		const BRG_DISTANCE &r,
@@ -2612,7 +2613,7 @@ const int brgastro::spherical_density_function::operator()(
 					<< "ERROR: Host must be assigned to spherical_density_function before function can be called.\n";
 		return NOT_SET_UP_ERROR;
 	}
-	out_param = 4 * pi * std::pow( in_param, 2 )
+	out_param = 4 * pi * square( in_param )
 			* _host_ptr_->dens( in_param );
 	return 0;
 }
@@ -3211,12 +3212,11 @@ const double brgastro::integrate_distance( const double z1_init,
 		a2 = 1 / ( 1 + z2 );
 		z = ( a1 / a2 ) - 1;
 		h1 = H_0
-				* sqrt(
-						OR0 * std::pow( a1, -4 ) + OM0 * std::pow( a1, -3 )
-								+ OK0 * std::pow( a1, -2 ) + OL0 );
-		OM = OM0 * std::pow( H_0 / h1, 2 ) * std::pow( a1, -3 );
-		OR = OR0 * std::pow( H_0 / h1, 2 ) * std::pow( a1, -4 );
-		OL = OL0 * std::pow( H_0 / h1, 2 );
+				* std::sqrt( OR0 * inv_quart( a1 ) + OM0 * inv_cube( a1 )
+								+ OK0 * inv_square( a1 ) + OL0 );
+		OM = OM0 * square( H_0 / h1 ) * inv_cube( a1 );
+		OR = OR0 * square( H_0 / h1 ) * inv_quart( a1 );
+		OL = OL0 * square( H_0 / h1 );
 		OK = 1 - OM - OR - OL;
 	}
 
@@ -3226,10 +3226,8 @@ const double brgastro::integrate_distance( const double z1_init,
 	{
 		a = ( i - 0.5 ) / n;              // Steadily decrease the scale factor
 		// Comoving formula (See section 4 of Hogg, but I've added a radiation term too):
-		adot = a
-				* sqrt(
-						OM * std::pow( 1 / a, 3 ) + OK * std::pow( 1 / a, 2 )
-								+ OL + OR * std::pow( 1 / a, 4 ) ); // Note that "a" is equivalent to 1/(1+z)
+		adot = a * std::sqrt( OM * cube(1./a) + OK * square(1./a)
+								+ OL + OR * quart(1./a) ); // Note that "a" is equivalent to 1/(1+z)
 		 // Collect DC and DT until the correct scale is reached
 		DCC = DCC + 1 / ( a * adot ) / n; // Running total of the comoving distance
 		DTT = DTT + 1 / adot / n; // Running total of the light travel time (see section 10 of Hogg)
@@ -3244,9 +3242,9 @@ const double brgastro::integrate_distance( const double z1_init,
 
 	// Transverse comoving distance DM from section 5 of Hogg:
 	if ( OK > 0.0001 )
-		DM = ( 1 / sqrt( OK ) ) * sinh( sqrt( OK ) * DC );
+		DM = ( 1 / std::sqrt( OK ) ) * sinh( std::sqrt( OK ) * DC );
 	else if ( OK < -0.0001 )
-		DM = ( 1 / sqrt( fabs( OK ) ) ) * sin( sqrt( fabs( OK ) ) * DC );
+		DM = ( 1 / std::sqrt( fabs( OK ) ) ) * sin( std::sqrt( fabs( OK ) ) * DC );
 	else
 		DM = DC;
 
@@ -3328,7 +3326,7 @@ const BRG_TIME brgastro::period( const brgastro::density_profile *host,
 	BRG_VELOCITY v = quad_add( vr, vt );
 	BRG_DISTANCE a = -mu / 2 / safe_d( v * v / 2 - mu / safe_d( r ) );
 	BRG_TIME result = (
-			a > 0 ? 2 * pi * sqrt( std::pow( a, 3 ) / mu ) : BRG_TIME( 0 ) );
+			a > 0 ? 2 * pi * std::sqrt( cube(a) / mu ) : BRG_TIME( 0 ) );
 	return result;
 }
 
@@ -3345,7 +3343,7 @@ const BRG_DISTANCE brgastro::ad_distance( double z1, double z2 )
 const BRG_UNITS brgastro::sigma_crit( const double z_lens,
 		const double z_source )
 {
-	return pow( c, 2 ) / ( 4. * pi * Gc )
+	return square( c ) / ( 4. * pi * Gc )
 			* brgastro::ad_distance( 0, z_source )
 			/ ( brgastro::ad_distance( 0, z_lens )
 					* brgastro::ad_distance( z_lens, z_source ) );

@@ -573,17 +573,18 @@ inline const double mftau( const double tau, const double conc ) // Mtot/Mvir fr
 {
 	if(tau<=0) return 0;
 	double M0oM200 = 1 / ( log( 1 + conc ) - conc / ( 1 + conc ) );
+	double tautau = tau*tau;
 	double result =
-			M0oM200 * tau * tau / std::pow( tau * tau + 1, 2 )
-					* ( ( tau * tau - 1 ) * log( tau ) + tau * pi
-							- ( tau * tau + 1 ) );
+			M0oM200 * tautau / square( tautau + 1 )
+					* ( ( tautau - 1 ) * log( tau ) + tau * pi
+							- ( tautau + 1 ) );
 	return result;
 }
 const double taufm( const double mratio, double c, double tau_init = 0, double precision=0.00001,
 		const bool silent = false ); // tau from Mtot/Mvir
 inline const double delta_c( const double conc ) // Simple function of concentration used as a step in calculating NFW densities
 {
-	return ( 200. / 3. ) * std::pow( conc, 3 )
+	return ( 200. / 3. ) * cube( conc )
 			/ ( log( 1 + conc ) - conc / ( 1 + conc ) );
 }
 
@@ -976,7 +977,7 @@ private:
 		a = accel( fabs( r ) );
 		if ( a >= 0 )
 			return 0;
-		return sqrt( -a * fabs( r ) );
+		return std::sqrt( -a * fabs( r ) );
 	}
 #endif
 
@@ -1176,7 +1177,7 @@ public:
 		double virial_density_factor = 200;
 
 		return safe_pow(
-				2 * mvir() * Gc / ( pow( H(), 2 ) * virial_density_factor ),
+				2 * mvir() * Gc / ( square( H() ) * virial_density_factor ),
 				1. / 3. );
 	}
 	const BRG_MASS hmvir() const // Half virial mass
@@ -1196,14 +1197,14 @@ public:
 	{
 		BRG_DISTANCE r_to_use = max( std::fabs( r ), SMALL_FACTOR );
 		return enc_mass( r_to_use, silent )
-				/ ( 4. / 3. * pi * std::pow( std::fabs( r_to_use ), 3 ) );
+				/ ( 4. / 3. * pi * cube( std::fabs( r_to_use ) ) );
 	}
 	virtual const BRG_UNITS proj_enc_dens( const BRG_DISTANCE &R,
 			const bool silent = false ) const // Mean surface density enclosed within a cylinder of radius R
 	{
 		BRG_DISTANCE R_to_use = max( std::fabs( R ), SMALL_FACTOR );
 		return proj_enc_mass( R_to_use, silent )
-				/ ( pi * std::pow( std::fabs( R_to_use ), 2 ) );
+				/ ( pi * square( std::fabs( R_to_use ) ) );
 	}
 	virtual const BRG_DISTANCE rhmvir( const bool silent = false ) const; // Half-virial-mass radius
 	virtual const BRG_DISTANCE rhmtot( const bool silent = false ) const; // Half-total-mass radius
@@ -1263,7 +1264,7 @@ public:
 	const BRG_UNITS accel( const BRG_DISTANCE &r,
 			const bool silent = false ) const // Gravitational acceleration at radius r
 	{
-		return r == 0 ? 0 : -Gc * enc_mass( r, silent ) / std::pow( r, 2 );
+		return r == 0 ? 0 : -Gc * enc_mass( r, silent ) / square( r );
 	}
 	virtual const BRG_UNITS Daccel( const BRG_DISTANCE &r, const bool silent =
 			false ) const; // Derivative of acceleration at radius r

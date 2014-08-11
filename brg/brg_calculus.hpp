@@ -850,24 +850,24 @@ inline const int integrate_Rhomberg( const f * func,
 		{
 			// Get R[n][0]
 
-			for ( int k = 1; k <= std::pow( 2, n - 1 ); k++ )
+			for ( int k = 1; k <= ipow( 2, n - 1 ); k++ )
 			{
 				in_params = a0
-						+ ( 2 * k - 1 ) * ( b0 - a0 ) / std::pow( 2., n );
+						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2, n );
 				if ( int errcode = ( *func )( in_params, temp_out_params,
 						silent ) )
 					return errcode + LOWER_LEVEL_ERROR;
 				ftot += temp_out_params;
 			}
 
-			Rnm = 0.5 * R[n - 1][0] + ( b0 - a0 ) / std::pow( 2, n ) * ftot;
+			Rnm = 0.5 * R[n - 1][0] + ( b0 - a0 ) / ipow( 2, n ) * ftot;
 
 			Rn.push_back( Rnm );
 
 			for ( int m = 1; m <= n; m++ )
 			{
-				Rnm = ( std::pow( 4, m ) * Rn[m - 1] - R[n - 1][m - 1] )
-						/ ( std::pow( 4, m ) - 1 );
+				Rnm = ( ipow( 4, m ) * Rn[m - 1] - R[n - 1][m - 1] )
+						/ ( ipow( 4, m ) - 1 );
 				Rn.push_back( Rnm );
 			}
 
@@ -995,10 +995,10 @@ inline const int integrate_Rhomberg( const f * func,
 			// Get R[n][0]
 
 			make_array( ftot, num_out_params );
-			for ( int k = 1; k <= std::pow( 2, n - 1 ); k++ )
+			for ( int k = 1; k <= ipow( 2, n - 1 ); k++ )
 			{
 				in_params[param_starting_index] = a0
-						+ ( 2 * k - 1 ) * ( b0 - a0 ) / std::pow( 2., n );
+						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2, n );
 				if ( int errcode = ( *func )( in_params, temp_out_params,
 						silent ) )
 					return errcode + LOWER_LEVEL_ERROR;
@@ -1008,15 +1008,15 @@ inline const int integrate_Rhomberg( const f * func,
 
 			for ( unsigned int i = 0; i < num_out_params; i++ )
 				Rnm[i] = 0.5 * R[n - 1][0][i]
-						+ ( b0 - a0 ) / std::pow( 2, n ) * ftot[i];
+						+ ( b0 - a0 ) / ipow( 2, n ) * ftot[i];
 
 			Rn.push_back( Rnm );
 
 			for ( int m = 1; m <= n; m++ )
 			{
 				for ( unsigned int i = 0; i < num_out_params; i++ )
-					Rnm[i] = ( std::pow( 4, m ) * Rn[m - 1][i]
-							- R[n - 1][m - 1][i] ) / ( std::pow( 4, m ) - 1 );
+					Rnm[i] = ( ipow( 4, m ) * Rn[m - 1][i]
+							- R[n - 1][m - 1][i] ) / ( ipow( 4, m ) - 1 );
 				Rn.push_back( Rnm );
 			}
 
@@ -1109,10 +1109,10 @@ inline const int integrate_Rhomberg( const f * func,
 			// Get R[n][0]
 
 			make_array( ftot, num_out_params );
-			for ( int k = 1; k <= std::pow( 2, n - 1 ); k++ )
+			for ( int k = 1; k <= ipow( 2, n - 1 ); k++ )
 			{
 				new_passed_in_params[new_num_passed_params - 1] = a0
-						+ ( 2 * k - 1 ) * ( b0 - a0 ) / std::pow( 2., n );
+						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2., n );
 				if ( int errcode = brgastro::integrate_Rhomberg( func,
 						new_num_in_params, new_min_in_params,
 						new_max_in_params, num_out_params, temp_out_params,
@@ -1125,15 +1125,15 @@ inline const int integrate_Rhomberg( const f * func,
 
 			for ( unsigned int i = 0; i < num_out_params; i++ )
 				Rnm[i] = 0.5 * R[n - 1][0][i]
-						+ ( b0 - a0 ) / std::pow( 2, n ) * ftot[i];
+						+ ( b0 - a0 ) / ipow( 2, n ) * ftot[i];
 
 			Rn.push_back( Rnm );
 
 			for ( int m = 1; m <= n; m++ )
 			{
 				for ( unsigned int i = 0; i < num_out_params; i++ )
-					Rnm[i] = ( std::pow( 4, m ) * Rn[m - 1][i]
-							- R[n - 1][m - 1][i] ) / ( std::pow( 4, m ) - 1 );
+					Rnm[i] = ( ipow( 4, m ) * Rn[m - 1][i]
+							- R[n - 1][m - 1][i] ) / ( ipow( 4, m ) - 1 );
 				Rn.push_back( Rnm );
 			}
 

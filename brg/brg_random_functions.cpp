@@ -40,7 +40,7 @@ const double brgastro::log10Gaus_rand( double mean, double stddev )
 		return mean;
 
 	stddev *= log( 10 ); // Converts dex to natural log
-	fact = exp( -std::pow( stddev, 2 ) / 2 );
+	fact = exp( -square( stddev ) / 2 );
 
 	do
 	{

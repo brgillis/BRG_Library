@@ -5434,7 +5434,7 @@ const int brgastro::solve_rt_grid_functor::operator()(
 	BRG_MASS delta_M;
 	r = std::fabs( in_param );
 
-	delta_M = sum_delta_rho * 4. / 3. * pi * std::pow( r, 3 );
+	delta_M = sum_delta_rho * 4. / 3. * pi * cube( r );
 
 	if ( r == 0 )
 	{
@@ -5445,7 +5445,7 @@ const int brgastro::solve_rt_grid_functor::operator()(
 		out_param = std::fabs(
 				Gc * ( satellite_ptr->enc_mass( r ) - delta_M )
 						/ safe_d(
-								( omega * omega + Daccel ) * std::pow( r, 3 ) )
+								( omega * omega + Daccel ) * cube( r ) )
 						- 1 );
 	}
 	return 0;
@@ -5480,7 +5480,7 @@ const int brgastro::solve_rt_it_functor::operator()(
 
 	r = std::fabs( in_param );
 
-	delta_M = sum_delta_rho * 4. / 3. * pi * std::pow( r, 3 );
+	delta_M = sum_delta_rho * 4. / 3. * pi * cube( r );
 
 	r3 = Gc * ( satellite_ptr->enc_mass( r ) - delta_M )
 			/ safe_d( omega * omega + Daccel );

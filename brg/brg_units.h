@@ -145,7 +145,7 @@ brg_units.h
 
  Set the value of the variable in default units, or in the units
  specified by the conv_factor parameter. For instance,
- x.set_value(4, unitconv::kmtom/pow(unitconv::hrtos,2)) will assign
+ x.set_value(4, unitconv::kmtom/squarew(unitconv::hrtos)) will assign
  x a value of 4 km/hr^2, but it WILL NOT change the unit powers of
  x correspondingly. Use this only if you are sure x already has
  the correct unit powers. Always returns a value of 0.

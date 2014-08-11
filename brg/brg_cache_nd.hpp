@@ -465,17 +465,8 @@ public:
 		xlo = SPCP(name)->_mins_ + SPCP(name)->_steps_ * x_i;
 		xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
 
-		const unsigned int num_surrounding_points = std::pow(2,SPCP(name)->_num_dim_);
-		std::vector< std::vector<bool> > use_high(SPCP(name)->_num_dim_);
-		for(unsigned int i=0; i < SPCP(name)->_num_dim_; i++)
-		{
-			int divisor = std::pow(2,i);
-			use_high[i].resize(num_surrounding_points);
-			for(unsigned int j=0; j<num_surrounding_points; j++)
-			{
-				use_high[i][j] = divisible(j/divisor,2);
-			}
-		}
+		unsigned int num_surrounding_points = 2;
+		for(int i=0; i<SPCP(name)->_num_dim_-1; ++i ) num_surrounding_points*=2;
 
 		result = 0;
 		double total_weight = 0;
@@ -484,9 +475,10 @@ public:
 		for(unsigned int j=0; j < num_surrounding_points; j++)
 		{
 			double weight = 1;
+			unsigned int divisor = 1;
 			for(unsigned int i=0; i < SPCP(name)->_num_dim_; i++)
 			{
-				if(use_high[i][j])
+				if(divisible(j/divisor,2))
 				{
 					position[i] = x_i[i]+1;
 					weight *= x[i]-xlo[i];
@@ -496,6 +488,7 @@ public:
 					position[i] = x_i[i];
 					weight *= xhi[i]-x[i];
 				}
+				divisor *= 2;
 			}
 			result += SPCP(name)->_results_.at(position) * weight;
 			total_weight += weight;

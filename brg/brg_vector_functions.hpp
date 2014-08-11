@@ -113,33 +113,27 @@ const std::vector<T1> rand_vector_of_size(const f func, const T1 & v1, const T2 
 }
 
 template<typename f, typename T1>
-const std::vector<T1> rand_vector(const f func, const std::vector<T1> & v1)
+const std::vector<T1> rand_vector(const f func, std::vector<T1> v1)
 {
-	std::vector<T1> result(v1.size());
+	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = func(v1[i]);
 
-	for(unsigned int i = 0; i < v1.size(); i++) result[i] = func(v1[i]);
-
-	return result;
+	return v1;
 }
 
 template<typename f, typename T1, typename T2>
-const std::vector<T1> rand_vector(const f func, const std::vector<T1> & v1, const std::vector<T2> & v2)
+const std::vector<T1> rand_vector(const f func, std::vector<T1> v1, const std::vector<T2> & v2)
 {
-	std::vector<T1> result(v1.size());
+	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = (func)(v1[i],v2.at(i));
 
-	for(unsigned int i = 0; i < v1.size(); i++) result[i] = (func)(v1[i],v2.at(i));
-
-	return result;
+	return v1;
 }
 
 template<typename f, typename T1, typename T2>
-const std::vector<T1> rand_vector(const f func, const std::vector<T1> & v1, const T2 & v2)
+const std::vector<T1> rand_vector(const f func, std::vector<T1> v1, const T2 & v2)
 {
-	std::vector<T1> result(v1.size());
+	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = func(v1[i],v2);
 
-	for(unsigned int i = 0; i < v1.size(); i++) result[i] = func(v1[i],v2);
-
-	return result;
+	return v1;
 }
 
 template<typename f, typename T1, typename T2>
@@ -161,42 +155,36 @@ const std::vector<T1> rand_vector(const f func, const T1 & v1, const std::vector
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> add( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> add( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = v1[i] + v2.at(i);
+		v1[i] = add(v1[i], v2.at(i));
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> add( const std::vector<T1> & v1, const T2 &v2 )
+const std::vector<T1> add( std::vector<T1> v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = v1[i] + v2;
+		v1[i] = add(v1[i], v2);
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> add( const T2 & v1, const std::vector<T1> &v2 )
+const std::vector<T2> add( const T1 & v1, std::vector<T2> v2 )
 {
-	std::vector<T1> result(v2.size());
-
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		result[i] = v2[i] + v1;
+		v2[i] = add(v1,v2[i]);
 	}
 
-	return result;
+	return v2;
 }
 
 template< typename T1, typename T2 >
@@ -211,42 +199,36 @@ const T1 add( const T1 & v1, const T2 & v2 )
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> subtract( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> subtract( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = v1[i] - v2.at(i);
+		v1[i] = subtract(v1[i], v2.at(i));
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> subtract( const std::vector<T1> & v1, const T2 &v2 )
+const std::vector<T1> subtract( std::vector<T1> v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = v1[i] - v2;
+		v1[i] = subtract(v1[i], v2);
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> subtract( const T2 & v1, const std::vector<T1> &v2 )
+const std::vector<T2> subtract( const T1 & v1, std::vector<T2> v2 )
 {
-	std::vector<T1> result(v2.size());
-
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		result[i] = v1 - v2[i];
+		v2[i] = subtract(v1, v2[i]);
 	}
 
-	return result;
+	return v2;
 }
 
 template< typename T1, typename T2 >
@@ -261,42 +243,36 @@ const T1 subtract( const T1 & v1, const T2 & v2 )
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> multiply( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> multiply( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = v1[i] * v2.at(i);
+		v1[i] = multiply(v1[i], v2.at(i));
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> multiply( const std::vector<T1> & v1, const T2 &v2 )
+const std::vector<T1> multiply( std::vector<T1> v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = v1[i] * v2;
+		v1[i] = multiply(v1[i], v2);
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> multiply( const T2 & v1, const std::vector<T1> &v2 )
+const std::vector<T2> multiply( const T1 & v1, std::vector<T2> v2 )
 {
-	std::vector<T1> result(v2.size());
-
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		result[i] = v2[i] * v1;
+		v2[i] = multiply(v1,v2[i]);
 	}
 
-	return result;
+	return v2;
 }
 
 template< typename T1, typename T2 >
@@ -311,42 +287,37 @@ const T1 multiply( const T1 & v1, const T2 & v2 )
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> divide( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> divide( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = v1[i] / v2.at(i);
+		v1[i] = divide(v1[i],v2.at(i));
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> divide( const std::vector<T1> & v1, const T2 &v2 )
+const std::vector<T1> divide( std::vector<T1> v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = v1[i] / v2;
+		v1[i] = divide(v1[i],v2);
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> divide( const T2 & v1, const std::vector<T1> &v2 )
+const std::vector<T2> divide( const T1 & v1, std::vector<T2> v2 )
 {
-	std::vector<T1> result(v2.size());
-
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		result[i] = v1 / v2[i];
+		v2[i] = divide(v1,v2[i]);
 	}
 
-	return result;
+	return v2;
 }
 
 template< typename T1, typename T2 >
@@ -361,42 +332,36 @@ const T1 divide( const T1 & v1, const T2 & v2 )
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> pow( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> pow( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = std::pow(v1[i], v2.at(i));
+		v1[i] = pow(v1[i], v2.at(i));
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> pow( const std::vector<T1> & v1, const T2 &v2 )
+const std::vector<T1> pow( std::vector<T1> v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
-
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = std::pow(v1[i], v2);
+		v1[i] = pow(v1[i], v2);
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> pow( const T2 & v1, const std::vector<T1> &v2 )
+const std::vector<T1> pow( const T1 & v1, std::vector<T2> v2 )
 {
-	std::vector<T1> result(v2.size());
-
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		result[i] = std::pow(v1, v2[i]);
+		v2[i] = pow(v1, v2[i]);
 	}
 
-	return result;
+	return v2;
 }
 
 template< typename T1, typename T2 >
@@ -405,48 +370,77 @@ const T1 pow( const T1 & v1, const T2 & v2 )
 	return std::pow(v1, v2);
 }
 
+template< typename T1, typename T2 >
+const std::vector<T1> ipow( std::vector<T1> v1, const std::vector<T2> &v2 )
+{
+	for(unsigned int i = 0; i < v1.size(); i++)
+	{
+		v1[i] = ipow(v1[i], v2.at(i));
+	}
+
+	return v1;
+}
+
+template< typename T1, typename T2 >
+const std::vector<T1> ipow( std::vector<T1> v1, const T2 &v2 )
+{
+	for(unsigned int i = 0; i < v1.size(); i++)
+	{
+		v1[i] = ipow(v1[i], v2);
+	}
+
+	return v1;
+}
+
+template< typename T1, typename T2 >
+const std::vector<T2> ipow( const T1 & v1, std::vector<T2> v2 )
+{
+	for(unsigned int i = 0; i < v2.size(); i++)
+	{
+		v2[i] = ipow(v1, v2[i]);
+	}
+
+	return v2;
+}
+
 #endif // Element-wise power
 
 // Element-wise safe power
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> safe_pow( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> safe_pow( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
-	std::vector<T1> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = safe_pow(v1[i], v2.at(i));
+		v1[i] = safe_pow(v1[i], v2.at(i));
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> safe_pow( const std::vector<T1> & v1, const T2 &v2 )
+const std::vector<T1> safe_pow( std::vector<T1> v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = safe_pow(v1[i], v2);
+		v1[i] = safe_pow(v1[i], v2);
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> safe_pow( const T2 & v1, const std::vector<T1> &v2 )
+const std::vector<T2> safe_pow( const T1 & v1, std::vector<T2> v2 )
 {
-	std::vector<T1> result(v2.size());
-
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		result[i] = safe_pow(v1, v2[i]);
+		v2[i] = safe_pow(v1, v2[i]);
 	}
 
-	return result;
+	return v2;
 }
 
 #endif // Element-wise safe power
@@ -455,42 +449,38 @@ const std::vector<T1> safe_pow( const T2 & v1, const std::vector<T1> &v2 )
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> max( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> max( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
-	std::vector<T1> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = max(v1[i], v2.at(i));
+		v1[i] = max(v1[i], v2.at(i));
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> max( const std::vector<T1> & v1, const T2 &v2 )
+const std::vector<T1> max( std::vector<T1> v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = max(v1[i], v2);
+		v1[i] = max(v1[i], v2);
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> max( const T2 & v1, const std::vector<T1> &v2 )
+const std::vector<T2> max( const T1 & v1, std::vector<T2> v2 )
 {
-	std::vector<T1> result(v2.size());
-
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		result[i] = max(v1, v2[i]);
+		v2[i] = max(v1, v2[i]);
 	}
 
-	return result;
+	return v2;
 }
 
 #endif // Element-wise max
@@ -499,42 +489,38 @@ const std::vector<T1> max( const T2 & v1, const std::vector<T1> &v2 )
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> min( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> min( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
-	std::vector<T1> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = min(v1[i], v2.at(i));
+		v1[i] = min(v1[i], v2.at(i));
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> min( const std::vector<T1> & v1, const T2 &v2 )
+const std::vector<T1> min( std::vector<T1> v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = min(v1[i], v2);
+		v1[i] = min(v1[i], v2);
 	}
 
-	return result;
+	return v1;
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> min( const T2 & v1, const std::vector<T1> &v2 )
+const std::vector<T2> min( const T1 & v1, std::vector<T2> v2 )
 {
-	std::vector<T1> result(v2.size());
-
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		result[i] = min(v1, v2[i]);
+		v2[i] = min(v1, v2[i]);
 	}
 
-	return result;
+	return v2;
 }
 
 #endif // Element-wise min
@@ -543,16 +529,14 @@ const std::vector<T1> min( const T2 & v1, const std::vector<T1> &v2 )
 #if (1)
 
 template< typename T >
-const std::vector<T> negate( const std::vector<T> & v )
+const std::vector<T> negate( std::vector<T> v )
 {
-	std::vector<T> result(v.size(),0);
-
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
-		result[i] = -v[i];
+		v[i] = negate(v[i]);
 	}
 
-	return result;
+	return v;
 }
 
 template< typename T >
@@ -567,22 +551,17 @@ const T negate( const T & v )
 #if (1)
 
 template< typename T >
-const std::vector<T> abs( const std::vector<T> & v )
+const std::vector<T> abs( std::vector<T> v )
 {
-	std::vector<T> result(v.size(),0);
+	using std::abs;
+	using brgastro::abs;
 
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
-		result[i] = std::abs(v[i]);
+		v[i] = abs(v[i]);
 	}
 
-	return result;
-}
-
-template< typename T >
-const T abs( const T & v )
-{
-	return std::abs(v);
+	return v;
 }
 
 #endif // Element-wise abs
@@ -591,22 +570,17 @@ const T abs( const T & v )
 #if (1)
 
 template< typename T >
-const std::vector<T> sqrt( const std::vector<T> & v )
+const std::vector<T> sqrt( std::vector<T> v )
 {
-	std::vector<T> result(v.size(),0);
+	using std::sqrt;
+	using brgastro::sqrt;
 
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
-		result[i] = std::sqrt(v[i]);
+		v[i] = sqrt(v[i]);
 	}
 
-	return result;
-}
-
-template< typename T >
-const T sqrt( const T & v )
-{
-	return std::sqrt(v);
+	return v;
 }
 
 #endif // Element-wise square root
@@ -615,7 +589,7 @@ const T sqrt( const T & v )
 #if (1)
 
 template< typename T >
-const std::vector<T> safe_sqrt( const std::vector<T> & v )
+const std::vector<T> safe_sqrt( std::vector<T> v )
 {
 	std::vector<T> result(v.size(),0);
 
@@ -633,23 +607,130 @@ const std::vector<T> safe_sqrt( const std::vector<T> & v )
 #if (1)
 
 template< typename T >
-const std::vector<T> exp( const std::vector<T> & v )
+const std::vector<T> exp( std::vector<T> v )
 {
-	std::vector<T> result(v.size());
+	using std::exp;
+	using brgastro::exp;
 
 	for(unsigned int i = 0; i < v.size(); i++)
-		result[i] = std::exp(v[i]);
+		v[i] = exp(v[i]);
 
-	return result;
-}
-
-template< typename T >
-const T exp( const T & v )
-{
-	return std::exp(v);
+	return v;
 }
 
 #endif // Element-wise exponential
+
+// Element-wise square
+#if (1)
+
+template< typename T >
+const std::vector<T> square( std::vector<T> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = square(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise square
+
+// Element-wise cube
+#if (1)
+
+template< typename T >
+const std::vector<T> cube( std::vector<T> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = cube(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise cube
+
+// Element-wise quart
+#if (1)
+
+template< typename T >
+const std::vector<T> quart( std::vector<T> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = quart(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise quart
+
+// Element-wise inverse
+#if (1)
+
+template< typename T >
+const std::vector<T> inverse( std::vector<T> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = inverse(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise inverse
+
+// Element-wise inv_square
+#if (1)
+
+template< typename T >
+const std::vector<T> inv_square( std::vector<T> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = inv_square(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise inv_square
+
+// Element-wise inv_cube
+#if (1)
+
+template< typename T >
+const std::vector<T> inv_cube( std::vector<T> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = inv_cube(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise inv_cube
+
+// Element-wise inv_quart
+#if (1)
+
+template< typename T >
+const std::vector<T> inv_quart( std::vector<T> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = inv_quart(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise inv_quart
 
 // Element-wise safe_d
 #if (1)
@@ -1057,7 +1138,7 @@ const T std(const std::vector<T> &v)
 {
 	if(v.size()<=1) return 0;
 
-	return sqrt( divide(subtract(sum( pow(v,2) ), pow(sum(v),2) ), v.size() ) );
+	return sqrt( divide(subtract(sum( square(v) ), square(sum(v)) ), v.size() ) );
 }
 
 template< typename T >
