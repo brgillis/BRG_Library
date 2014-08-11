@@ -175,11 +175,12 @@ const BRG_UNITS brgastro::redshift_obj::H() const
 		}
 		else
 		{
+			double zp1 = 1.+_z_;
 			// Friedmann equation, assuming omega = -1
 			_H_cache_ = H_0
-				* std::sqrt( Omega_r * quart( 1. + _z_ )
-						+ Omega_m * cube( 1. + _z_ )
-						+ Omega_k * square( 1. + _z_ ) + Omega_l );
+				* std::sqrt( Omega_r * quart( zp1 )
+						+ Omega_m * cube( zp1 )
+						+ Omega_k * square( zp1 ) + Omega_l );
 		}
 		_H_cached_ = true;
 	}
@@ -190,10 +191,11 @@ const BRG_UNITS brgastro::redshift_obj::H( const double test_z ) const
 {
 	// Friedmann equation, assuming omega = -1
 	if(test_z==0) return H_0;
+	double zp1 = 1.+test;
 	return H_0
-			* std::sqrt( Omega_r * quart( 1 + test_z )
-							+ Omega_m * cube( 1 + test_z )
-							+ Omega_k * square( 1 + test_z ) + Omega_l );
+			* std::sqrt( Omega_r * quart( zp1 )
+							+ Omega_m * cube( zp1 )
+							+ Omega_k * square( zp1 ) + Omega_l );
 }
 
 #endif
@@ -927,7 +929,7 @@ const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
 	else
 		tau_use = _tau_;
 	d_c = delta_c( _c_ );
-	rho_c = 3 * H() * H() / ( 8 * pi * Gc );
+	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
 
 	result = ( d_c * rho_c ) / ( x * square( 1 + x ) )
@@ -993,7 +995,6 @@ const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
 
 	BRG_UNITS rho_c;
 	BRG_MASS m0, mx;
-	// Result here integrated with Wolfram Alpha
 	double d_c, x, tau_use;
 	if ( _tau_ < 0 )
 		tau_use = default_tau_factor * _c_;
@@ -1008,6 +1009,7 @@ const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
 	x = r / rs();
 
+	// Result here integrated with Wolfram Alpha
 	m0 = (2 * (1 + tau_sq) - (-1 + tau_sq) * 2 * log(tau_use));
 	mx = ((2 * (1 + tau_sq)) / (1 + x)
 							+ 4 * tau_use * atan(x / tau_use)
@@ -3226,8 +3228,8 @@ const double brgastro::integrate_distance( const double z1_init,
 	{
 		a = ( i - 0.5 ) / n;              // Steadily decrease the scale factor
 		// Comoving formula (See section 4 of Hogg, but I've added a radiation term too):
-		adot = a * std::sqrt( OM * cube(1./a) + OK * square(1./a)
-								+ OL + OR * quart(1./a) ); // Note that "a" is equivalent to 1/(1+z)
+		adot = a * std::sqrt( OM * inv_cube(a) + OK * inv_square(a)
+								+ OL + OR * inv_quart(a) ); // Note that "a" is equivalent to 1/(1+z)
 		 // Collect DC and DT until the correct scale is reached
 		DCC = DCC + 1 / ( a * adot ) / n; // Running total of the comoving distance
 		DTT = DTT + 1 / adot / n; // Running total of the light travel time (see section 10 of Hogg)

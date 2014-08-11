@@ -9,7 +9,11 @@
 // so just undef this for release builds if you're satisfied
 // there's no actual problem.
 
-#undef _BRG_USE_CPP_11_STD_ // Use C++11 standard. This enables the use of unique_ptrs primarily
+#if(__cplusplus==201103L)
+#define _BRG_USE_CPP_11_STD_
+#else
+#undef _BRG_USE_CPP_11_STD_
+#endif
 
 #undef _BRG_USE_UNITS_ // Will use "number-with-units" class for applicable values in code
 // This slows things down a bit, but can be useful in debugging.

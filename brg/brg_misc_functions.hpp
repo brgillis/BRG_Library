@@ -215,10 +215,11 @@ inline const long double inv_quart(long double v1)
 // Integer power - use only when you know it'll be an integer, but not the specific value,
 // and when it isn't likely to be too high
 template< typename T >
-const T ipow( T v, unsigned int p )
+const T ipow( T v, int p )
 {
 	if(p>=2) return v*ipow(v,p-1);
 	if(p==1) return v;
+	if(p<0) return 1/ipow(v,-p);
 	return 1;
 }
 

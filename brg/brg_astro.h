@@ -580,7 +580,7 @@ inline const double mftau( const double tau, const double conc ) // Mtot/Mvir fr
 							- ( tautau + 1 ) );
 	return result;
 }
-const double taufm( const double mratio, double c, double tau_init = 0, double precision=0.00001,
+const double taufm( const double mratio, double c, double tau_init = 0, double precision = 0.00001,
 		const bool silent = false ); // tau from Mtot/Mvir
 inline const double delta_c( const double conc ) // Simple function of concentration used as a step in calculating NFW densities
 {

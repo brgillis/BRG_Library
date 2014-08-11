@@ -181,7 +181,7 @@ private:
 				for(unsigned int d=0; d<SPCP(name)->_num_dim_; d++)
 				{
 					position[d]++;
-					if(position[d] != SPCP(name)->_resolutions_)
+					if(position[d] != SPCP(name)->_resolutions_[d])
 						break;
 					position[d] = 0;
 					// If we get here, we'll go on to increase the next index by 1
@@ -254,7 +254,7 @@ private:
 			for(unsigned int d=0; d<SPCP(name)->_num_dim_; d++)
 			{
 				position[d]++;
-				if(position[d] != SPCP(name)->_resolutions_)
+				if(position[d] != SPCP(name)->_resolutions_[d])
 					break;
 				position[d] = 0;
 				// If we get here, we'll go on to increase the next index by 1
@@ -311,7 +311,7 @@ private:
 			for(unsigned int d=0; d<SPCP(name)->_num_dim_; d++)
 			{
 				position[d]++;
-				if(position[d] != SPCP(name)->_resolutions_)
+				if(position[d] != SPCP(name)->_resolutions_[d])
 					break;
 				position[d] = 0;
 				// If we get here, we'll go on to increase the next index by 1

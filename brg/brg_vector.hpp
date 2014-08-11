@@ -59,6 +59,19 @@ private:
 		}
 		return p;
 	}
+	// Soft resize - only affects internal variables to this class, not the data
+	void _resize (vsize_t n)
+	{
+		_num_dim_ = 1;
+		_shape_.resize(_num_dim_);
+		_shape_[0] = n;
+	}
+	// Soft reshape
+	void _reshape(const shape_t & new_shape, const T & new_val = T())
+	{
+		_shape_ = new_shape;
+		_num_dim_ = _shape_.size();
+	}
 public:
 
     // Using all vector functions except operator=, resize, assign, insert, erase, clear,
@@ -87,7 +100,7 @@ public:
 
 	using vec::get_allocator;
 
-#ifdef _BRG_USE_CPP_11_STD_
+#if(_BRG_USE_CPP_11_STD_)
 	using vec::cbegin;
 	using vec::cend;
 	using vec::crbegin;
@@ -206,10 +219,8 @@ public:
 	}
 	void resize (vsize_t n, T val = T())
 	{
-		_num_dim_ = 1;
-		_shape_.resize(_num_dim_);
-		_shape_[0] = n;
 		vec::resize(n,val);
+		_resize(n);
 	}
 	const T & pop_back()
 	{
@@ -300,6 +311,15 @@ public:
 			vec::operator[](i) += other[i];
 		return *this;
 	}
+	template<typename T_o, typename A_o>
+	vector<T, A> & operator+=( const std::vector<T_o, A_o> & other )
+	{
+		if(size() != other.size())
+			throw std::out_of_range("Cannot add vectors of different sizes.");
+		for(vsize_t i=0; i<size(); i++)
+			vec::operator[](i) += other[i];
+		return *this;
+	}
 	template<typename T_o>
 	vector<T, A> & operator+=( T_o other )
 	{
@@ -313,6 +333,15 @@ public:
 	{
 		if(_shape_ != other.shape())
 			throw std::out_of_range("Cannot subtract vectors of different shapes.");
+		for(vsize_t i=0; i<size(); i++)
+			vec::operator[](i) -= other[i];
+		return *this;
+	}
+	template<typename T_o, typename A_o>
+	vector<T, A> & operator-=( const std::vector<T_o, A_o> & other )
+	{
+		if(size() != other.size())
+			throw std::out_of_range("Cannot subtrace vectors of different sizes.");
 		for(vsize_t i=0; i<size(); i++)
 			vec::operator[](i) -= other[i];
 		return *this;
@@ -334,6 +363,15 @@ public:
 			vec::operator[](i) *= other[i];
 		return *this;
 	}
+	template<typename T_o, typename A_o>
+	vector<T, A> & operator*=( const std::vector<T_o, A_o> & other )
+	{
+		if(size() != other.size())
+			throw std::out_of_range("Cannot multiply vectors of different sizes.");
+		for(vsize_t i=0; i<size(); i++)
+			vec::operator[](i) *= other[i];
+		return *this;
+	}
 	template<typename T_o>
 	vector<T, A> & operator*=( T_o other )
 	{
@@ -347,6 +385,15 @@ public:
 	{
 		if(_shape_ != other.shape())
 			throw std::out_of_range("Cannot divide vectors of different shapes.");
+		for(vsize_t i=0; i<size(); i++)
+			vec::operator[](i) /= other[i];
+		return *this;
+	}
+	template<typename T_o, typename A_o>
+	vector<T, A> & operator/=( const std::vector<T_o, A_o> & other )
+	{
+		if(size() != other.size())
+			throw std::out_of_range("Cannot divide vectors of different sizes.");
 		for(vsize_t i=0; i<size(); i++)
 			vec::operator[](i) /= other[i];
 		return *this;
@@ -385,6 +432,7 @@ public:
 	std::vector<T,A> v() const
 	{
 		std::vector<T,A> v;
+		v.reserve(size());
 		for(vsize_t i=0;i<size();++i) v.push_back(vec::operator[](i));
 		return v;
 	}
@@ -462,66 +510,76 @@ public:
 		// Check if no reshaping is necessary
 		if(_shape_==new_shape) return;
 
-		_shape_ = new_shape;
-		if(_shape_.size() > std::numeric_limits<dsize_t>::max())
+		if(new_shape.size() > std::numeric_limits<dsize_t>::max())
 			throw std::out_of_range("Cannot reshape vector: Dimensions array too large.");
-		_num_dim_ = _shape_.size();
 
 		vsize_t new_size = 1;
 		for(shape_t::const_iterator itr=new_shape.begin(); itr!=new_shape.end();++itr)
 			new_size *= *itr;
 
-		if(new_size >= std::vector<T,A>::max_size())
+		if(new_size >= vec::max_size())
 			throw std::out_of_range("Cannot reshape vector: Too large to be indexed by this implementation.");
 		    // There's a slim chance this will throw on a valid size, but unlikely
 
 		vec::resize(new_size,new_val);
+		_num_dim_ = _shape_.size();
+		_shape_ = new_shape;
 	}
 
 #endif // New methods
 
 	// Constructors and destructors
 #if (1)
-	vector()
-	: _num_dim_(0)
+	vector(const A& alloc = A())
+	: vec(alloc), _num_dim_(0)
 	{
 	}
-	vector( vsize_t init_size, T init_val )
+	vector( vsize_t init_size, T init_val, const A& alloc = A() )
+	: vec(init_size, init_val, alloc)
 	{
-		resize(init_size,init_val);
+		_resize(init_size);
 	}
-	vector( shape_t init_shape, T init_val )
+	vector( shape_t init_shape, T init_val, const A& alloc = A() )
+	: vec(alloc)
 	{
 		reshape(init_shape,init_val);
 	}
 	vector(const vector<T, A> & other)
+	: vec(other)
 	{
-		reshape(other.shape());
-		for(vsize_t i=0; i<other.size(); i++) vec::operator[](i) = other[i];
+		_reshape(other.shape());
 	}
 	template<typename T_o, typename A_o>
 	vector(const vector<T_o, A_o> & other)
+	: vec(other)
 	{
-		reshape(other.shape());
-		for(vsize_t i=0; i<other.size(); i++) vec::operator[](i) = other[i];
+		_reshape(other.shape());
 	}
 	template<typename T_o, typename A_o>
 	vector(const std::vector<T_o, A_o> & other)
+	: vec(other)
 	{
-		resize(other.size());
-		for(vsize_t i=0; i<other.size(); i++) vec::operator[](i) = other[i];
+		_resize(other.size());
 	}
 	template<typename T_o, size_t N>
-	vector( const T_o (&array)[N] )
+	vector( const T_o (&array)[N], const A& alloc = A() )
+	: vec(alloc)
 	{
 		resize(N);
 		for(vsize_t i=0; i<N; i++) vec::operator[](i) = array[i];
 	}
 	template<typename T_o>
-	vector(const T_o & other)
+	vector(const T_o & other, const A& alloc = A())
+	: vec(alloc)
 	{
-		resize((vsize_t)1);
+		resize(1);
 		vec::operator[](0) = other;
+	}
+	template<typename iT_o>
+	vector(iT_o first, iT_o last, const A& alloc = A())
+	: vec(first, last, alloc)
+	{
+		_resize(vec::size());
 	}
 	virtual ~vector()
 	{
@@ -532,13 +590,13 @@ public:
 #ifdef _BRG_USE_CPP_11_
 	template<typename T_o, typename A_o>
 	vector(std::vector<T_o, A_o> && other)
-	: vector()
+	: vec()
 	{
 		swap(*this,other);
 	}
 	template<typename T_o, typename A_o>
 	vector(vector<T_o, A_o> && other)
-	: vector()
+	: vec()
 	{
 		swap(*this,other);
 	}
@@ -548,7 +606,7 @@ public:
 
 }; // class vector
 
-// Global functions
+// Global brgastro functions
 #if (1)
 
 template<typename T, typename A>
@@ -557,7 +615,7 @@ void swap(vector<T, A> & v1, vector<T, A> & v2)
 	v1.swap(v2);
 }
 
-#endif // Global functions
+#endif // Global brgastro functions
 
 // Overloaded operators
 #if (1)
@@ -570,6 +628,18 @@ const vector<T1, A1> operator+( vector<T1, A1> v1, const vector<T2, A2> & v2 )
 {
 	v1 += v2;
 	return v1;
+}
+template<typename T1, typename A1, typename T2, typename A2>
+const vector<T1, A1> operator+( vector<T1, A1> v1, const std::vector<T2, A2> & v2 )
+{
+	v1 += v2;
+	return v1;
+}
+template<typename T1, typename A1, typename T2, typename A2>
+const vector<T1, A1> operator+( const std::vector<T1, A1> & v1, vector<T2, A2> v2 )
+{
+	v2 += v1;
+	return v2;
 }
 template<typename T1, typename A1, typename T2>
 const vector<T1, A1> operator+( vector<T1, A1> v1, T2 v2 )
@@ -588,6 +658,21 @@ const vector<T1, A1> operator-( vector<T1, A1> v1, const vector<T2, A2> & v2 )
 {
 	v1 -= v2;
 	return v1;
+}
+template<typename T1, typename A1, typename T2, typename A2>
+const vector<T1, A1> operator-( vector<T1, A1> v1, const std::vector<T2, A2> & v2 )
+{
+	v1 -= v2;
+	return v1;
+}
+template<typename T1, typename A1, typename T2, typename A2>
+const vector<T1, A1> operator-( const std::vector<T1, A1> &v1, vector<T2, A2> v2 )
+{
+	if(v1.size() != v2.size())
+		throw std::out_of_range("Cannot subtract vectors of different sizes.");
+	for(typename vector<T2,A2>::size_t i=0; i<v2.size(); ++i)
+		v2[i] = v1[i]-v2[i];
+	return v2;
 }
 template<typename T1, typename A1, typename T2>
 const vector<T1, A1> operator-( vector<T1, A1> v1, T2 v2 )
@@ -608,6 +693,18 @@ const vector<T1, A1> operator*( vector<T1, A1> v1, const vector<T2, A2> & v2 )
 	v1 *= v2;
 	return v1;
 }
+template<typename T1, typename A1, typename T2, typename A2>
+const vector<T1, A1> operator*( vector<T1, A1> v1, const std::vector<T2, A2> & v2 )
+{
+	v1 *= v2;
+	return v1;
+}
+template<typename T1, typename A1, typename T2, typename A2>
+const vector<T1, A1> operator*( const std::vector<T1, A1> & v1, vector<T2, A2> v2 )
+{
+	v2 *= v1;
+	return v2;
+}
 template<typename T1, typename A1, typename T2>
 const vector<T1, A1> operator*( vector<T1, A1> v1, T2 v2 )
 {
@@ -625,6 +722,21 @@ const vector<T1, A1> operator/( vector<T1, A1> v1, const vector<T2, A2> & v2 )
 {
 	v1 /= v2;
 	return v1;
+}
+template<typename T1, typename A1, typename T2, typename A2>
+const vector<T1, A1> operator/( vector<T1, A1> v1, const std::vector<T2, A2> & v2 )
+{
+	v1 /= v2;
+	return v1;
+}
+template<typename T1, typename A1, typename T2, typename A2>
+const vector<T1, A1> operator/( const std::vector<T1, A1> &v1, vector<T2, A2> v2 )
+{
+	if(v1.size() != v2.size())
+		throw std::out_of_range("Cannot divide vectors of different sizes.");
+	for(typename vector<T2,A2>::size_t i=0; i<v2.size(); ++i)
+		v2[i] = v1[i]/v2[i];
+	return v2;
 }
 template<typename T1, typename A1, typename T2>
 const vector<T1, A1> operator/( vector<T1, A1> v1, T2 v2 )
@@ -649,33 +761,29 @@ const vector<T2, A2> operator/( T1 v1, vector<T2, A2> v2 )
 template<typename T1, typename A1, typename T2, typename A2>
 const std::vector<bool> & operator==( const vector<T1, A1> & v1, const vector<T2, A2> & v2 )
 {
-	if(v1.size()==1)
-	{
-		std::vector<bool> result(v2.size());
-		// Special handling for scalars
-		T1 val = v1[0];
-		for(typename brgastro::vector<T2,A2>::vsize_t i=0; i<v2.size(); i++)
-			result[i] = (val == v2[i]);
-		return result;
-	}
-	else if(v2.size()==1)
-	{
-		std::vector<bool> result(v1.size());
-		// Special handling for scalars
-		T1 val = v2[0];
-		for(typename brgastro::vector<T1,A1>::vsize_t i=0; i<v1.size(); i++)
-			result[i] = (v1[i] == val);
-		return result;
-	}
-	else
-	{
-		if(v1.shape()!= v2.shape())
-			throw std::out_of_range("Cannot compare vectors of different shapes element-wise.");
-		std::vector<bool> result(v1.size());
-		for(typename brgastro::vector<T1,A1>::vsize_t i=0; i<v1.size(); i++)
-			result[i] = (v1[i] == v2[i]);
-		return result;
-	}
+	if(v1.shape()!= v2.shape())
+		throw std::out_of_range("Cannot compare vectors of different shapes element-wise.");
+	std::vector<bool> result(v1.size());
+	for(typename brgastro::vector<T1,A1>::vsize_t i=0; i<v1.size(); i++)
+		result[i] = (v1[i] == v2[i]);
+	return result;
+}
+template<typename T1, typename A1, typename T2>
+const std::vector<bool> & operator==( const vector<T1, A1> & v1, const T2 v2 )
+{
+	std::vector<bool> result(v1.size());
+	for(typename brgastro::vector<T1,A1>::vsize_t i=0; i<v1.size(); i++)
+		result[i] = (v1[i] == v2);
+	return result;
+}
+template<typename T1, typename T2, typename A2>
+const std::vector<bool> & operator==( const T1 v1, const vector<T2, A2> & v2 )
+{
+	std::vector<bool> result(v2.size());
+	// Special handling for scalars
+	for(typename brgastro::vector<T2,A2>::vsize_t i=0; i<v2.size(); i++)
+		result[i] = (v2[i] == v1);
+	return result;
 }
 
 // Element-wise not equal
@@ -684,38 +792,44 @@ const std::vector<bool> & operator!=( const vector<T1, A1> & v1, const vector<T2
 {
 	return !operator==(v1,v2);
 }
+template<typename T1, typename A1, typename T2>
+const std::vector<bool> & operator!=( const vector<T1, A1> & v1, const T2 v2 )
+{
+	return !operator==(v1,v2);
+}
+template<typename T1, typename T2, typename A2>
+const std::vector<bool> & operator!=( const T1 v1, const vector<T2, A2> & v2 )
+{
+	return !operator==(v1,v2);
+}
 
 // Element-wise less-than
 template<typename T1, typename A1, typename T2, typename A2>
 const std::vector<bool> & operator<( const vector<T1, A1> & v1, const vector<T2, A2> & v2 )
 {
-	if(v1.size()==1)
-	{
-		std::vector<bool> result(v2.size());
-		// Special handling for scalars
-		T1 val = v1[0];
-		for(typename brgastro::vector<T2,A2>::vsize_t i=0; i<v2.size(); i++)
-			result[i] = (val < v2[i]);
-		return result;
-	}
-	else if(v2.size()==1)
-	{
-		std::vector<bool> result(v1.size());
-		// Special handling for scalars
-		T1 val = v2[0];
-		for(typename brgastro::vector<T1,A1>::vsize_t i=0; i<v1.size(); i++)
-			result[i] = (v1[i] < val);
-		return result;
-	}
-	else
-	{
-		if(v1.shape()!= v2.shape())
-			throw std::out_of_range("Cannot compare vectors of different shapes element-wise.");
-		std::vector<bool> result(v1.size());
-		for(typename brgastro::vector<T1,A1>::vsize_t i=0; i<v1.size(); i++)
-			result[i] = (v1[i] < v2[i]);
-		return result;
-	}
+	if(v1.shape()!= v2.shape())
+		throw std::out_of_range("Cannot compare vectors of different shapes element-wise.");
+	std::vector<bool> result(v1.size());
+	for(typename brgastro::vector<T1,A1>::vsize_t i=0; i<v1.size(); i++)
+		result[i] = (v1[i] < v2[i]);
+	return result;
+}
+template<typename T1, typename A1, typename T2>
+const std::vector<bool> & operator<( const vector<T1, A1> & v1, const T2 v2 )
+{
+	std::vector<bool> result(v1.size());
+	for(typename brgastro::vector<T1,A1>::vsize_t i=0; i<v1.size(); i++)
+		result[i] = (v1[i] < v2);
+	return result;
+}
+template<typename T1, typename T2, typename A2>
+const std::vector<bool> & operator<( const T1 v1, const vector<T2, A2> & v2 )
+{
+	std::vector<bool> result(v2.size());
+	// Special handling for scalars
+	for(typename brgastro::vector<T2,A2>::vsize_t i=0; i<v2.size(); i++)
+		result[i] = (v2 < v1[i]);
+	return result;
 }
 
 // Element-wise greater-than
@@ -724,19 +838,49 @@ const std::vector<bool> & operator>( const vector<T1, A1> & v1, const vector<T2,
 {
 	return operator<(v2,v1);
 }
+template<typename T1, typename A1, typename T2>
+const std::vector<bool> & operator>( const vector<T1, A1> & v1, const T2 v2 )
+{
+	return operator<(v2,v1);
+}
+template<typename T1, typename T2, typename A2>
+const std::vector<bool> & operator>( const T1 v1, const vector<T2, A2> & v2 )
+{
+	return operator<(v2,v1);
+}
 
 // Element-wise less-than or equal to
 template<typename T1, typename A1, typename T2, typename A2>
 const std::vector<bool> & operator<=( const vector<T1, A1> & v1, const vector<T2, A2> & v2 )
 {
-	return !operator>(v1,v2);
+	return v_not(operator>(v1,v2));
+}
+template<typename T1, typename A1, typename T2>
+const std::vector<bool> & operator<=( const vector<T1, A1> & v1, T2 v2 )
+{
+	return v_not(operator>(v1,v2));
+}
+template<typename T1, typename T2, typename A2>
+const std::vector<bool> & operator<=( const T1 v1, const vector<T2, A2> & v2 )
+{
+	return v_not(operator>(v1,v2));
 }
 
 // Element-wise greater-than or equal to
 template<typename T1, typename A1, typename T2, typename A2>
 const std::vector<bool> & operator>=( const vector<T1, A1> & v1, const vector<T2, A2> & v2 )
 {
-	return !operator<(v1,v2);
+	return v_not(operator<(v1,v2));
+}
+template<typename T1, typename A1, typename T2>
+const std::vector<bool> & operator>=( const vector<T1, A1> & v1, const T2 v2 )
+{
+	return v_not(operator<(v1,v2));
+}
+template<typename T1, typename T2, typename A2>
+const std::vector<bool> & operator>=( const T1 v1, const vector<T2, A2> & v2 )
+{
+	return v_not(operator<(v1,v2));
 }
 
 #endif // Comparison operators
@@ -754,6 +898,25 @@ vector<T,A> min( vector<T,A> v1, const vector<T_o,A_o> & v2 )
 	for(typename brgastro::vector<T,A>::vsize_t i=0; i<v1.size(); i++)
 		v1[i] = min(v1[i],v2[i]);
 	return v1;
+}
+template<typename T, typename A, typename T_o, typename A_o>
+vector<T,A> min( vector<T,A> v1, const std::vector<T_o,A_o> & v2 )
+{
+	if(v1.size()!= v2.size())
+		throw std::out_of_range("Cannot compare vectors of different sizes element-wise.");
+	for(typename brgastro::vector<T,A>::vsize_t i=0; i<v1.size(); i++)
+		v1[i] = min(v1[i],v2[i]);
+	return v1;
+}
+template<typename T, typename A, typename T_o, typename A_o>
+vector<T,A> min( const std::vector<T,A> & v1, const vector<T_o,A_o> & v2 )
+{
+	if(v1.shape()!= v2.shape())
+		throw std::out_of_range("Cannot compare vectors of different sizes element-wise.");
+	vector<T,A> result(v1);
+	for(typename brgastro::vector<T,A>::vsize_t i=0; i<v1.size(); i++)
+		result[i] = min(result[i],v2[i]);
+	return result;
 }
 template<typename T, typename T_o, typename A_o>
 vector<T_o,A_o> min( T v1, vector<T_o,A_o> v2 )
@@ -781,6 +944,25 @@ vector<T,A> max( vector<T,A> v1, const vector<T_o,A_o> & v2 )
 		v1[i] = max(v1[i],v2[i]);
 	return v1;
 }
+template<typename T, typename A, typename T_o, typename A_o>
+vector<T,A> max( vector<T,A> v1, const std::vector<T_o,A_o> & v2 )
+{
+	if(v1.size()!= v2.size())
+		throw std::out_of_range("Cannot compare vectors of different sizes element-wise.");
+	for(typename brgastro::vector<T,A>::vsize_t i=0; i<v1.size(); i++)
+		v1[i] = max(v1[i],v2[i]);
+	return v1;
+}
+template<typename T, typename A, typename T_o, typename A_o>
+vector<T,A> max( const std::vector<T,A> & v1, const vector<T_o,A_o> & v2 )
+{
+	if(v1.shape()!= v2.shape())
+		throw std::out_of_range("Cannot compare vectors of different sizes element-wise.");
+	vector<T,A> result(v1);
+	for(typename brgastro::vector<T,A>::vsize_t i=0; i<v1.size(); i++)
+		result[i] = max(result[i],v2[i]);
+	return result;
+}
 template<typename T, typename T_o, typename A_o>
 vector<T_o,A_o> max( const T v1, vector<T_o,A_o> v2 )
 {
@@ -798,12 +980,6 @@ vector<T,A> max( vector<T,A> v1, const T_o v2 )
 	return v1;
 }
 
-template<typename T_1, typename A_1, typename T_2, typename A_2, typename T_3, typename A_3>
-vector<T_2,A_2> bound( const vector<T_1,A_1> & v1, const vector<T_2,A_2> & v2, const vector<T_3,A_3> & v3 )
-{
-	return min(max(v2,v1),v3);
-}
-
 #endif // Element-wise min/max/bound
 
 // Math and safe functions
@@ -812,8 +988,8 @@ vector<T_2,A_2> bound( const vector<T_1,A_1> & v1, const vector<T_2,A_2> & v2, c
 // Element-wise power
 #if (1)
 
-template< typename T1, typename T2 >
-const vector<T1> pow( vector<T1> v1, const vector<T2> &v2 )
+template< typename T1, typename A1, typename T2, typename A2 >
+const vector<T1,A1> pow( vector<T1,A1> v1, const vector<T2,A2> &v2 )
 {
 	if(v1.shape()!= v2.shape())
 		throw std::out_of_range("Cannot raise vector to power vector of different shape element-wise.");
@@ -825,8 +1001,8 @@ const vector<T1> pow( vector<T1> v1, const vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const vector<T1> pow( const vector<T1> & v1, const T2 &v2 )
+template< typename T1, typename A1, typename T2 >
+const vector<T1,A1> pow( const vector<T1,A1> & v1, const T2 &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
@@ -836,8 +1012,8 @@ const vector<T1> pow( const vector<T1> & v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const vector<T1> pow( const T2 & v1, vector<T1> v2 )
+template< typename T1, typename T2, typename A2 >
+const vector<T2,A2> pow( const T1 & v1, vector<T2,A2> v2 )
 {
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
@@ -852,8 +1028,8 @@ const vector<T1> pow( const T2 & v1, vector<T1> v2 )
 // Element-wise safe power
 #if (1)
 
-template< typename T1, typename T2 >
-const vector<T1> safe_pow( vector<T1> v1, const vector<T2> &v2 )
+template< typename T1, typename A1, typename T2, typename A2 >
+const vector<T1,A1> safe_pow( vector<T1,A1> v1, const vector<T2,A2> &v2 )
 {
 	if(v1.shape()!= v2.shape())
 		throw std::out_of_range("Cannot raise vector to power vector of different shape element-wise.");
@@ -865,8 +1041,8 @@ const vector<T1> safe_pow( vector<T1> v1, const vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const vector<T1> safe_pow( const vector<T1> & v1, const T2 &v2 )
+template< typename T1, typename A1, typename T2 >
+const vector<T1,A1> safe_pow( const vector<T1,A1> & v1, const T2 &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
@@ -876,8 +1052,8 @@ const vector<T1> safe_pow( const vector<T1> & v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const vector<T1> safe_pow( const T2 & v1, vector<T1> v2 )
+template< typename T1, typename T2, typename A2 >
+const vector<T2,A2> safe_pow( const T1 & v1, vector<T2,A2> v2 )
 {
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
@@ -892,8 +1068,8 @@ const vector<T1> safe_pow( const T2 & v1, vector<T1> v2 )
 // Element-wise negate
 #if (1)
 
-template< typename T >
-const vector<T> operator-( vector<T> v )
+template< typename T, typename A >
+const vector<T,A> operator-( vector<T,A> v )
 {
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
@@ -907,12 +1083,15 @@ const vector<T> operator-( vector<T> v )
 // Element-wise abs
 #if (1)
 
-template< typename T >
-const vector<T> abs( vector<T> v )
+template< typename T, typename A >
+const vector<T,A> abs( vector<T,A> v )
 {
+	using std::abs;
+	using brgastro::abs;
+
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
-		v[i] = std::abs(v[i]);
+		v[i] = abs(v[i]);
 	}
 
 	return v;
@@ -923,12 +1102,15 @@ const vector<T> abs( vector<T> v )
 // Element-wise square root
 #if (1)
 
-template< typename T >
-const vector<T> sqrt( vector<T> v )
+template< typename T, typename A >
+const vector<T,A> sqrt( vector<T,A> v )
 {
+	using std::sqrt;
+	using brgastro::sqrt;
+
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
-		v[i] = std::sqrt(v[i]);
+		v[i] = sqrt(v[i]);
 	}
 
 	return v;
@@ -939,8 +1121,8 @@ const vector<T> sqrt( vector<T> v )
 // Element-wise safe square root
 #if (1)
 
-template< typename T >
-const vector<T> safe_sqrt( vector<T> v )
+template< typename T, typename A >
+const vector<T,A> safe_sqrt( vector<T,A> v )
 {
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
@@ -955,22 +1137,137 @@ const vector<T> safe_sqrt( vector<T> v )
 // Element-wise exponential
 #if (1)
 
-template< typename T >
-const vector<T> exp( vector<T> v )
+template< typename T, typename A >
+const vector<T,A> exp( vector<T,A> v )
 {
+	using std::exp;
+	using brgastro::exp;
+
 	for(unsigned int i = 0; i < v.size(); i++)
-		v[i] = std::exp(v[i]);
+		v[i] = exp(v[i]);
 
 	return v;
 }
 
 #endif // Element-wise exponential
 
+// Element-wise square
+#if (1)
+
+template< typename T, typename A >
+const vector<T,A> square( vector<T,A> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = square(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise square
+
+// Element-wise cube
+#if (1)
+
+template< typename T, typename A >
+const vector<T,A> cube( vector<T,A> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = cube(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise cube
+
+// Element-wise quart
+#if (1)
+
+template< typename T, typename A >
+const vector<T,A> quart( vector<T,A> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = quart(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise quart
+
+// Element-wise inverse
+#if (1)
+
+template< typename T, typename A >
+const vector<T,A> inverse( vector<T,A> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = inverse(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise inverse
+
+// Element-wise inv_square
+#if (1)
+
+template< typename T, typename A >
+const vector<T,A> inv_square( vector<T,A> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = inv_square(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise inv_square
+
+// Element-wise inv_cube
+#if (1)
+
+template< typename T, typename A >
+const vector<T,A> inv_cube( vector<T,A> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = inv_cube(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise inv_cube
+
+// Element-wise inv_quart
+#if (1)
+
+template< typename T, typename A >
+const vector<T,A> inv_quart( vector<T,A> v )
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = inv_quart(v[i]);
+	}
+
+	return v;
+}
+
+#endif // Element-wise inv_quart
+
 // Element-wise safe_d
 #if (1)
 
-template< typename T >
-const vector<T> safe_d( vector<T> v )
+template< typename T, typename A >
+const vector<T,A> safe_d( vector<T,A> v )
 {
 	for(unsigned int i = 0; i < v.size(); i++)
 		v[i] = safe_d(v[i]);
@@ -1037,7 +1334,7 @@ const T std(const brgastro::vector<T,A> &v)
 {
 	if(v.size()<=1) return 0;
 
-	return sqrt( ((sum( pow(v,2) ) - pow(sum(v),2) ) / v.size() ) );
+	return sqrt( ((sum( square(v) ) - square(sum(v)) ) / v.size() ) );
 }
 template< typename T, typename A >
 const T stddev(const brgastro::vector<T,A> &v)

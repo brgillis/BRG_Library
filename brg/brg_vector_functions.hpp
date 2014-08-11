@@ -14,11 +14,10 @@
 #ifndef __BRG_VECTOR_FUNCTIONS_HPP_INCLUDED__
 #define __BRG_VECTOR_FUNCTIONS_HPP_INCLUDED__
 
-#include "brg_global.h"
-
 #include <cstdlib>
 #include <cmath>
-#include <functional>
+
+#include "brg_global.h"
 
 namespace brgastro {
 
@@ -1163,6 +1162,24 @@ const T stddev(const T v)
 
 // Functions on bool vectors
 #if (1)
+
+// not
+#if (1)
+template<typename T>
+inline const std::vector<T> v_not(const std::vector<T> v)
+{
+	for(unsigned int i=0; i < v.size(); i++)
+	{
+		v[i] = v_not(v[i]);
+	}
+	return v;
+}
+
+inline const bool v_not(const bool v)
+{
+	return !v;
+}
+#endif // not
 
 // all_true
 #if (1)
