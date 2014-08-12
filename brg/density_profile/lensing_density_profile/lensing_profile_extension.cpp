@@ -147,3 +147,22 @@ const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( const BRG_DIST
 	}
 	return out_params;
 }
+const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( const BRG_DISTANCE &r,
+		const double group_c, const bool silent ) const
+{
+	BRG_DISTANCE r_to_use = std::fabs( r );
+	brgastro::quick_offset_WLsig_functor func( this, r_to_use );
+	brgastro::offset_WLsig_weight_functor weight_func( this, group_c );
+	unsigned int num_in_params = 1, num_out_params = 0;
+	BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( rvir() ),
+			out_params( 0 );
+	if ( brgastro::integrate_weighted_Rhomberg( &func, &weight_func,
+			num_in_params, min_in_params, max_in_params, num_out_params,
+			out_params ) )
+	{
+		if ( !silent )
+			std::cerr
+					<< "WARNING: Could not integrate group deltasigma of density profile.\n";
+	}
+	return out_params;
+}

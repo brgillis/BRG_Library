@@ -10,7 +10,7 @@
 #ifndef __BRG_CACHE_ND_HPP_INCLUDED__
 #define __BRG_CACHE_ND_HPP_INCLUDED__
 
-#define BRG_CACHE_ND_NAME_SIZE 8
+#define BRG_CACHE_ND_NAME_SIZE 9 // Needs an end character, so will only actually allow 8 chars
 
 #include <cstdlib>
 #include <iostream>
@@ -55,7 +55,7 @@
 		max( (((brgastro::class_name::_maxes_-brgastro::class_name::_mins_) /                    \
 				safe_d(brgastro::class_name::_steps_))+1), 1);                                   \
 	std::string brgastro::class_name::_file_name_ = "";					     	                 \
-	unsigned int brgastro::class_name::_version_number_ = 0;		     		                 \
+	unsigned int brgastro::class_name::_version_number_ = 1;		     		                 \
 	brgastro::vector<double> brgastro::class_name::_results_;                                    \
 	unsigned short int brgastro::class_name::_num_dim_ = init_num_dim;
 

@@ -116,10 +116,7 @@ public:
 		return offset_WLsig( R, offset_R, silent );
 	}
 	virtual const BRG_UNITS semiquick_group_WLsig( const BRG_DISTANCE &R,
-			const double group_c, const bool silent = true ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
-	{
-		return group_WLsig( R, group_c, silent );
-	}
+			const double group_c, const bool silent = true ) const; // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
 	virtual const BRG_UNITS quick_group_WLsig( const BRG_DISTANCE &R,
 			const double group_c, const bool silent = true ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
 	{

@@ -7,24 +7,34 @@
  *      Author: brg
  */
 
+#include <vector>
+
+#include "../../brg_global.h"
 #include "lensing_tNFW_profile.h"
 #include "lensing_tNFW_caches.h"
 
 const BRG_UNITS brgastro::lensing_tNFW_profile::quick_WLsig( const BRG_DISTANCE &r,
 		const bool silent ) const
 {
-	BRG_UNITS result;
+	std::vector<double> in_params;
+	in_params.push_back(std::log(mvir0()));
+	in_params.push_back(z());
+	in_params.push_back(std::log(r));
 
-	result = brgastro::tNFW_sig_cache().get( z(), mvir0(), r, silent );
+	BRG_UNITS result = brgastro::tNFW_sig_cache().get( in_params, silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::quick_offset_WLsig(
 		const BRG_DISTANCE &r, const BRG_DISTANCE &offset_r,
 		const bool silent ) const
 {
-	BRG_UNITS result;
-	result = brgastro::tNFW_offset_sig_cache().get( z(), mvir0(), r, offset_r,
-			silent );
+	std::vector<double> in_params;
+	in_params.push_back(std::log(mvir0()));
+	in_params.push_back(z());
+	in_params.push_back(std::log(r));
+	in_params.push_back(std::log(offset_r));
+
+	BRG_UNITS result = brgastro::tNFW_offset_sig_cache().get( in_params, silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::semiquick_group_WLsig(
@@ -39,9 +49,13 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::semiquick_group_WLsig(
 const BRG_UNITS brgastro::lensing_tNFW_profile::quick_group_WLsig(
 		const BRG_DISTANCE &r, const double group_c, const bool silent ) const
 {
-	BRG_UNITS result;
-	result = brgastro::tNFW_group_sig_cache().get( z(), mvir0(), r, group_c,
-			silent );
+	std::vector<double> in_params;
+	in_params.push_back(std::log(mvir0()));
+	in_params.push_back(z());
+	in_params.push_back(std::log(r));
+	in_params.push_back(group_c);
+
+	BRG_UNITS result = brgastro::tNFW_group_sig_cache().get( in_params, silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::proj_dens( const BRG_DISTANCE &r,

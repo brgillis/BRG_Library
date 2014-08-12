@@ -229,7 +229,7 @@ private:
 
 	DECLARE_BRG_CACHE_STATIC_VARS();
 
-	friend class brg_cache;
+	friend class brg_cache<dfa_cache>;
 
 protected:
 
@@ -267,13 +267,13 @@ private:
 
 	DECLARE_BRG_CACHE_ND_STATIC_VARS();
 
-	friend class brg_cache_nd;
+	friend class brg_cache_nd<add_cache>;
 
 protected:
 
 	const std::string _name_base() const throw()
 	{
-		char name_base[BRG_CACHE_ND_NAME_SIZE] = "angdi_d";
+		char name_base[BRG_CACHE_ND_NAME_SIZE] = "ang_di_d";
 		return name_base;
 	}
 
@@ -306,7 +306,7 @@ private:
 
 	DECLARE_BRG_CACHE_STATIC_VARS();
 
-	friend class brg_cache;
+	friend class brg_cache<tfa_cache>;
 
 protected:
 

@@ -181,6 +181,37 @@ public:
 
 };
 
+class quick_offset_WLsig_functor: public functor< BRG_UNITS >
+{
+
+private:
+
+	const lensing_profile_extension *_host_ptr_;
+	BRG_DISTANCE _R_;
+
+public:
+
+	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	const lensing_profile_extension * host_ptr()
+	{
+		return _host_ptr_;
+	}
+
+	const int set_R( const BRG_DISTANCE &new_R );
+	const BRG_DISTANCE & R()
+	{
+		return _R_;
+	}
+
+	const int operator()( const BRG_UNITS & in_param,
+	BRG_UNITS & out_param, const bool silent = false ) const;
+
+	quick_offset_WLsig_functor();
+	quick_offset_WLsig_functor( const lensing_profile_extension *init_host,
+			const BRG_DISTANCE &new_R = 0 );
+
+};
+
 class offset_WLsig_weight_functor: public functor< BRG_UNITS >
 {
 

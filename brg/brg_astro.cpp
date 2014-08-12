@@ -79,7 +79,54 @@ const BRG_UNITS brgastro::redshift_obj::H() const
 	return _H_cache_;
 }
 
-#endif
+#endif// brgastro::dfa_cache class methods
+#if (1)
+const int brgastro::dfa_cache::_calculate( const double in_params, double & out_params ) const
+{
+	try
+	{
+		out_params = brgastro::integrate_add( 0, in_params );
+	}
+	catch( const std::exception &e)
+	{
+		return LOWER_LEVEL_ERROR;
+	}
+
+	return 0;
+}
+
+#endif // end brgastro::dfa_cache functions
+
+// brgastro::add_cache class methods
+const int brgastro::add_cache::_calculate( const brgastro::vector<double> in_params,
+		double  & out_params ) const
+{
+	try
+	{
+		out_params = brgastro::integrate_add(in_params.at(0),in_params.at(1));
+	}
+	catch(const std::out_of_range &e)
+	{
+		return INVALID_ARGUMENTS_ERROR;
+	}
+	return 0;
+}
+
+const int brgastro::tfa_cache::_calculate( const double in_params, double & out_params ) const
+{
+	try
+	{
+		out_params = -brgastro::integrate_ltd( 0, brgastro::zfa( in_params ) ) / c;
+	}
+	catch(const std::exception &e)
+	{
+		std::cerr << "ERROR: Could not calculate cache for " << _name_base() << "\n"
+				<< "Exception: " << e.what() << "\n";
+		std::cerr.flush();
+		return UNSPECIFIED_ERROR;
+	}
+	return 0;
+}
 
 #endif // end class methods
 

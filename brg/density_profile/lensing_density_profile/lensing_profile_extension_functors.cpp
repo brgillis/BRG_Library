@@ -269,6 +269,54 @@ brgastro::offset_WLsig_functor::offset_WLsig_functor(
 
 #endif
 
+// brgastro::quick_offset_WLsig_functor class methods
+#if (1)
+
+const int brgastro::quick_offset_WLsig_functor::set_R( const BRG_DISTANCE &new_R )
+{
+	_R_ = new_R;
+	return 0;
+}
+
+const int brgastro::quick_offset_WLsig_functor::operator()(
+		const BRG_UNITS &in_param,
+		BRG_UNITS & out_param, const bool silent ) const
+{
+	if ( _host_ptr_ == NULL )
+	{
+		if ( !silent )
+			std::cerr
+					<< "ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n";
+		return NOT_SET_UP_ERROR;
+	}
+
+	out_param = _host_ptr_->quick_offset_WLsig( _R_, in_param, silent );
+
+	return 0;
+}
+
+const int brgastro::quick_offset_WLsig_functor::set_host_ptr(
+		const lensing_profile_extension *new_host )
+{
+	_host_ptr_ = new_host;
+	return 0;
+}
+
+brgastro::quick_offset_WLsig_functor::quick_offset_WLsig_functor()
+{
+	_host_ptr_ = NULL;
+	_R_ = 0;
+}
+
+brgastro::quick_offset_WLsig_functor::quick_offset_WLsig_functor(
+		const lensing_profile_extension *new_host, const BRG_DISTANCE &new_R )
+{
+	_host_ptr_ = new_host;
+	_R_ = new_R;
+}
+
+#endif
+
 // brgastro::offset_WLsig_weight_functor class methods
 #if (1)
 
