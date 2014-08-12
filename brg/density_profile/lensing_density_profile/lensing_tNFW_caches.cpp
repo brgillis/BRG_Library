@@ -13,13 +13,13 @@
 #include <string>
 #include <vector>
 
-#include "../brg_global.h"
+#include "../../brg_global.h"
 
-#include "../brg_astro.h"
-#include "../brg_units.h"
-#include "tNFW_profile.h"
+#include "../../brg_astro.h"
+#include "../../brg_units.h"
+#include "lensing_tNFW_profile.h"
 
-#include "tNFW_caches.h"
+#include "lensing_tNFW_caches.h"
 
 // Initialisation for brgastro::tNFW_sig_cache
 #if (1)
@@ -327,7 +327,7 @@ const int brgastro::tNFW_sig_cache::calc( const bool silent )
 		for ( double m = halo_m_min; m < halo_m_max; m += halo_m_step )
 		{
 			mass = std::pow( 10, m ) * unitconv::Msuntokg;
-			brgastro::tNFW_profile profile(mass,z);
+			brgastro::lensing_tNFW_profile profile(mass,z);
 			for ( double r = r_min; r < r_max; r += r_step )
 			{
 
@@ -697,7 +697,7 @@ const int brgastro::tNFW_offset_sig_cache::calc( const bool silent )
 		for ( int j = 0; j < halo_m_res; j++ )
 		{
 			mass = std::pow( 10, lm ) * unitconv::Msuntokg;
-			brgastro::tNFW_profile profile(mass,z);
+			brgastro::lensing_tNFW_profile profile(mass,z);
 			r = r_min;
 			for ( int k = 0; k < r_res; k++ )
 			{
@@ -1111,7 +1111,7 @@ const int brgastro::tNFW_group_sig_cache::calc( const bool silent )
 				{
 					group_c = std::pow( 10, l_group_c ) * unitconv::kpctom;
 					signal[i][j][k][l] =
-							brgastro::tNFW_profile( mass, z ).group_WLsig( r,
+							brgastro::lensing_tNFW_profile( mass, z ).group_WLsig( r,
 									group_c );
 					l_group_c += group_c_step;
 				}

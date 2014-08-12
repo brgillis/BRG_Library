@@ -48,6 +48,8 @@ private:
 
 #endif // end private member variables
 
+protected:
+
 	const double _taufm( const double mratio, double precision = 0.00001,
 			const bool silent = false ) const; // tau from Mtot/Mvir
 	const double _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
@@ -133,22 +135,8 @@ public:
 #if (1) // advanced get functions
 
 	const BRG_UNITS dens( const BRG_DISTANCE &r ) const;
-	const BRG_UNITS proj_dens( const BRG_DISTANCE &R,
-			const bool silent = false ) const;
 	const BRG_MASS enc_mass( const BRG_DISTANCE &r,
 			const bool silent = false ) const;
-	const BRG_UNITS proj_enc_dens( const BRG_DISTANCE &R, const bool silent =
-			false ) const;
-	const BRG_MASS proj_enc_mass( const BRG_DISTANCE &R, const bool silent =
-			false ) const;
-	const BRG_UNITS quick_WLsig( const BRG_DISTANCE &R, const bool silent =
-			false ) const;
-	const BRG_UNITS quick_offset_WLsig( const BRG_DISTANCE &R,
-			const BRG_DISTANCE &offset_R, const bool silent = false ) const;
-	const BRG_UNITS semiquick_group_WLsig( const BRG_DISTANCE &R,
-			const double group_c, const bool silent = false ) const;
-	const BRG_UNITS quick_group_WLsig( const BRG_DISTANCE &R,
-			const double group_c, const bool silent = false ) const;
 	const unsigned int num_parameters() const
 	{
 		return 4; // Mass, redshift, c, and tau

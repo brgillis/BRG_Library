@@ -119,20 +119,6 @@ const BRG_UNITS brgastro::point_mass_profile::dens(
 
 	return result;
 }
-const BRG_UNITS brgastro::point_mass_profile::proj_dens(
-		const BRG_DISTANCE &r,
-		const bool silent ) const
-{
-#ifdef _BRG_USE_UNITS_
-	BRG_UNITS result(0,-2,0,1,0,0,0);
-#else
-	double result = 0;
-#endif
-
-	result = ( r == 0 ? DBL_MAX : 0 );
-
-	return result;
-}
 const BRG_UNITS brgastro::point_mass_profile::enc_dens(
 		const BRG_DISTANCE &r,
 		const bool silent ) const
@@ -140,18 +126,6 @@ const BRG_UNITS brgastro::point_mass_profile::enc_dens(
 	return enc_mass( r ) / ( 4. / 3. * pi * cube( r ) );
 }
 const BRG_MASS brgastro::point_mass_profile::enc_mass(
-		const BRG_DISTANCE &r,
-		const bool silent ) const
-{
-	return _mass_;
-}
-const BRG_UNITS brgastro::point_mass_profile::proj_enc_dens(
-		const BRG_DISTANCE &r,
-		const bool silent ) const
-{
-	return proj_enc_mass( r ) / ( pi * r * r );
-}
-const BRG_MASS brgastro::point_mass_profile::proj_enc_mass(
 		const BRG_DISTANCE &r,
 		const bool silent ) const
 {

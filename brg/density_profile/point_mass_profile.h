@@ -82,16 +82,10 @@ public:
 
 #if (1) // advanced get functions
 	const BRG_UNITS dens( const BRG_DISTANCE &r ) const;
-	const BRG_UNITS proj_dens( const BRG_DISTANCE &R,
-			const bool silent = false ) const;
 	const BRG_UNITS enc_dens( const BRG_DISTANCE &r,
 			const bool silent = false ) const;
 	const BRG_MASS enc_mass( const BRG_DISTANCE &r, const bool silent =
 				true ) const; // Mass enclosed with sphere of radius r
-	const BRG_UNITS proj_enc_dens( const BRG_DISTANCE &R,
-			const bool silent = false ) const;
-	const BRG_MASS proj_enc_mass( const BRG_DISTANCE &R,
-			const bool silent = false ) const;
 	const unsigned int num_parameters() const
 	{
 		return 2; // Mass and redshift

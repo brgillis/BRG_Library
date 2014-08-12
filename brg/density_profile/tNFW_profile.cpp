@@ -14,7 +14,6 @@
 #include "../brg_misc_functions.hpp"
 #include "../brg_units.h"
 #include "tNFW_profile.h"
-#include "tNFW_caches.h"
 
 // brgastro::tNFW_profile class methods
 #if (1)
@@ -211,41 +210,6 @@ const BRG_MASS brgastro::tNFW_profile::hmvir() const
 	return enc_mass( rvir() ) / 2;
 }
 
-const BRG_UNITS brgastro::tNFW_profile::quick_WLsig( const BRG_DISTANCE &r,
-		const bool silent ) const
-{
-	BRG_UNITS result;
-
-	result = brgastro::tNFW_sig_cache().get( z(), _mvir0_, r, silent );
-	return result;
-}
-const BRG_UNITS brgastro::tNFW_profile::quick_offset_WLsig(
-		const BRG_DISTANCE &r, const BRG_DISTANCE &offset_r,
-		const bool silent ) const
-{
-	BRG_UNITS result;
-	result = brgastro::tNFW_offset_sig_cache().get( z(), _mvir0_, r, offset_r,
-			silent );
-	return result;
-}
-const BRG_UNITS brgastro::tNFW_profile::semiquick_group_WLsig(
-		const BRG_DISTANCE &r, const double group_c, const bool silent ) const
-{
-	BRG_UNITS result;
-	if ( !silent )
-		std::cerr << "ERROR: Placeholder function being used.\n";
-	result = 0; // Placeholder!!!
-	return result;
-}
-const BRG_UNITS brgastro::tNFW_profile::quick_group_WLsig(
-		const BRG_DISTANCE &r, const double group_c, const bool silent ) const
-{
-	BRG_UNITS result;
-	result = brgastro::tNFW_group_sig_cache().get( z(), _mvir0_, r, group_c,
-			silent );
-	return result;
-}
-
 const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
 {
 	BRG_UNITS result, rho_c;
@@ -263,53 +227,6 @@ const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
 			* square( tau_use )
 			/ ( square( tau_use ) + square( x ) );
 
-	return result;
-}
-const BRG_UNITS brgastro::tNFW_profile::proj_dens( const BRG_DISTANCE &r,
-		const bool silent ) const
-{
-	BRG_UNITS result, rho_c;
-	double d_c, x, tau_use, fx, lx;
-
-	if ( _tau_ <= 0 )
-		tau_use = default_tau_factor * _c_;
-	else
-		tau_use = _tau_;
-
-	d_c = _delta_c();
-	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
-	x = r / rs();
-	double xx = x*x;
-	double tautau = tau_use*tau_use;
-	double tautaup1 = tautau + 1.;
-	double sqrt_tautaupxx = std::sqrt(tautau + xx);
-
-	if ( x == 1. )
-		fx = 1.;
-	else if ( x > 1. )
-		fx = acos( 1. / x ) / std::sqrt( xx - 1. );
-	else
-		fx = -log( 1. / x - std::sqrt( 1. / ( xx ) - 1. ) ) / std::sqrt( 1. - xx );
-	lx = log( x / ( sqrt_tautaupxx + tau_use ) );
-	if ( x == 1 )
-		result =
-				( 4 * pi * rs() * d_c * rho_c ) * tautau
-						/ ( 2 * pi * square( tautaup1 ) )
-						* ( tautaup1/3 + 2 * fx
-								- pi / sqrt_tautaupxx
-								+ ( tautau - 1 ) * lx
-										/ ( tau_use
-												* sqrt_tautaupxx ) );
-	else
-		result =
-				( 4 * pi * rs() * d_c * rho_c ) * tautau
-						/ ( 2 * pi * square( tautaup1 ) )
-						* ( tautaup1 / ( xx - 1 )
-								* ( 1 - fx ) + 2 * fx
-								- pi / sqrt_tautaupxx
-								+ ( tautau - 1 ) * lx
-										/ ( tau_use
-												* sqrt_tautaupxx ) );
 	return result;
 }
 const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
@@ -344,49 +261,6 @@ const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
 							- (-1 + tau_sq) * log(tau_sq + square(x))) - m0;
 	return cube(rs()) * d_c * rho_c * 2 * pi * tau_sq * mx
 			/ square(1 + tau_sq);
-}
-const BRG_UNITS brgastro::tNFW_profile::proj_enc_dens( const BRG_DISTANCE &r,
-		const bool silent ) const
-{
-	BRG_UNITS result, rho_c;
-	//Takes M in kg, r in kpc
-	double d_c, x, tau_use, fx, lx;
-	if ( _tau_ <= 0 )
-		tau_use = default_tau_factor * _c_;
-	else
-		tau_use = _tau_;
-
-	d_c = _delta_c();
-	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
-	x = r / rs();
-	double xx = x*x;
-	double tautau = tau_use*tau_use;
-	double tautaup1 = tautau + 1.;
-	double sqrt_tautaupxx = std::sqrt(tautau + xx);
-
-	if ( x == 1. )
-		fx = 1.;
-	else if ( x > 1. )
-		fx = acos( 1. / x ) / std::sqrt( xx - 1. );
-	else
-		fx = -log( 1 / x - std::sqrt( 1 / ( xx ) - 1 ) ) / std::sqrt( 1 - xx );
-	lx = log( x / ( sqrt_tautaupxx + tau_use ) );
-
-	result =
-			( 4 * pi * rs() * d_c * rho_c ) * tautau
-					/ ( pi * xx * square( tautaup1 ) )
-					* ( ( tautaup1 + 2 * ( xx - 1 ) ) * fx
-							+ pi * tau_use
-							+ ( tautau - 1 ) * log( tau_use )
-							+ sqrt_tautaupxx
-									* ( lx * ( tautau - 1 )
-											/ tau_use - pi ) );
-	return result;
-}
-const BRG_MASS brgastro::tNFW_profile::proj_enc_mass( const BRG_DISTANCE &r,
-		const bool silent ) const
-{
-	return proj_enc_dens( r, silent ) * pi * r * r;
 }
 
 const int brgastro::tNFW_profile::get_parameters( std::vector< BRG_UNITS > & parameters,
