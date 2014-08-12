@@ -54,7 +54,7 @@ DEFINE_BRG_CACHE_ND_STATIC_VARS( tNFW_offset_sig_cache, tNFW_offset_sig_cache_mi
 double tNFW_group_sig_cache_mins[] =  {std::log(1e10*unitconv::Msuntokg),
 									   0.1,
 									   std::log(0.1*unitconv::kpctom),
-									   4};
+									   1};
 double tNFW_group_sig_cache_maxes[] = {std::log(1e16*unitconv::Msuntokg),
 									   1.5,
 									   std::log(20000*unitconv::kpctom),
@@ -62,7 +62,7 @@ double tNFW_group_sig_cache_maxes[] = {std::log(1e16*unitconv::Msuntokg),
 double tNFW_group_sig_cache_steps[] = {(std::log(1e16)-std::log(1e7))/100,
 									   0.1,
 									   (std::log(20000)-std::log(0.1))/1000,
-									   0.1};
+									   0.2};
 DEFINE_BRG_CACHE_ND_STATIC_VARS( tNFW_group_sig_cache, tNFW_group_sig_cache_mins, tNFW_group_sig_cache_maxes,
 		tNFW_group_sig_cache_steps, 4 );
 
