@@ -13,6 +13,8 @@
 #include "lensing_tNFW_profile.h"
 #include "lensing_tNFW_caches.h"
 
+const double min_x = 0.0001;
+
 const BRG_UNITS brgastro::lensing_tNFW_profile::quick_WLsig( const BRG_DISTANCE &r,
 		const bool silent ) const
 {
@@ -71,7 +73,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::proj_dens( const BRG_DISTANCE &r
 
 	d_c = _delta_c();
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
-	x = r / rs();
+	x = max(r / rs(),min_x);
 	double xx = x*x;
 	double tautau = tau_use*tau_use;
 	double tautaup1 = tautau + 1.;
@@ -118,7 +120,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::proj_enc_dens( const BRG_DISTANC
 
 	d_c = _delta_c();
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
-	x = r / rs();
+	x = max(r / rs(),min_x);
 	double xx = x*x;
 	double tautau = tau_use*tau_use;
 	double tautaup1 = tautau + 1.;

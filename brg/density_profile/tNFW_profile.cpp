@@ -15,6 +15,8 @@
 #include "../brg_units.h"
 #include "tNFW_profile.h"
 
+const double min_x = 0.0001;
+
 // brgastro::tNFW_profile class methods
 #if (1)
 
@@ -221,7 +223,7 @@ const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
 		tau_use = _tau_;
 	d_c = _delta_c();
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
-	x = r / rs();
+	x = max(r / rs(),min_x);
 
 	result = ( d_c * rho_c ) / ( x * square( 1 + x ) )
 			* square( tau_use )
@@ -251,7 +253,7 @@ const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
 
 	d_c = _delta_c();
 	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
-	x = r / rs();
+	x = max(r / rs(),min_x);
 
 	// Result here integrated with Wolfram Alpha
 	m0 = (2 * (1 + tau_sq) - (-1 + tau_sq) * 2 * log(tau_use));

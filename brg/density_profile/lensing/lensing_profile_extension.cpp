@@ -96,6 +96,8 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( const BRG_DIS
 	min_in_params_ring = 0;
 	max_in_params_ring = pi; // We'll double it later, due to symmetry
 
+	// TODO: Redo to use smarter integration for circle.
+
 	min_in_params_circ[0] = R_to_use * precision;
 	max_in_params_circ[0] = R_to_use;
 	min_in_params_circ[1] = 0;
@@ -112,7 +114,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( const BRG_DIS
 	ringmean = 2 * out_params_ring / pi;
 
 	if ( brgastro::integrate_Rhomberg( &circfunc, 2, min_in_params_circ,
-			max_in_params_circ, num_out_params, out_params_circ, precision ) )
+			max_in_params_circ, num_out_params, out_params_circ, std::sqrt(precision) ) )
 
 	{
 		if ( !silent )

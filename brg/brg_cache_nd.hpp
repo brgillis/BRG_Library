@@ -234,6 +234,12 @@ private:
 			}
 		}
 
+		// Print a message that we're generating the cache if not silent
+		if(!silent)
+		{
+			std::cout << "Generating " << SPCP(name)->_file_name_ << ". This may take some time.\n";
+		}
+
 		// Set up data
 		SPCP(name)->_resolutions_.resize(SPCP(name)->_num_dim_);
 		SPCP(name)->_resolutions_ = max( (((SPCP(name)->_maxes_-SPCP(name)->_mins_) / safe_d(SPCP(name)->_steps_))+1.), 1.);
@@ -241,6 +247,7 @@ private:
 
 		brgastro::vector<unsigned int> position(SPCP(name)->_num_dim_,0);
 		brgastro::vector<double> x(SPCP(name)->_num_dim_,0);
+		// TODO: Reprogram so this part can be run in parallel
 		for ( unsigned int i = 0; i < SPCP(name)->_results_.size(); i++ )
 		{
 			x = SPCP(name)->_mins_ + SPCP(name)->_steps_*position;
@@ -259,6 +266,12 @@ private:
 				position[d] = 0;
 				// If we get here, we'll go on to increase the next index by 1
 			}
+		}
+
+		// Print a message that we've finished generating the cache if not silent.
+		if(!silent)
+		{
+			std::cout << "Finished generating " << SPCP(name)->_file_name_ << "!\n";
 		}
 
 		SPCP(name)->_loaded_ = true;
