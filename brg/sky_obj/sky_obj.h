@@ -10,9 +10,10 @@
 #ifndef _BRG_SKY_OBJ_H_
 #define _BRG_SKY_OBJ_H_
 
-#include "../brg_astro.h"
-
 #include "../brg_global.h"
+
+#include "../position_grid_cache.h"
+#include "../brg_astro.h"
 
 namespace brgastro {
 
