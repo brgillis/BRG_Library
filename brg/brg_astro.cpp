@@ -4,45 +4,12 @@
 
 #include "brg_global.h"
 
+#include "astro_caches.h"
 #include "brg_units.h"
 #include "brg_astro.h"
 #include "cache/brg_cache.hpp"
 #include "cache/brg_cache_2d.hpp"
 
-using namespace std;
-
-/** Static Class Initialisation **/
-#if (1)
-// Initialisation for brgastro::grid_cache
-#if (1)
-int brgastro::grid_cache::_ra_grid_change_num_ = 0;
-int brgastro::grid_cache::_dec_grid_change_num_ = 0;
-int brgastro::grid_cache::_z_grid_change_num_ = 0;
-BRG_ANGLE brgastro::grid_cache::_ra_grid_min_ = -pi;
-BRG_ANGLE brgastro::grid_cache::_ra_grid_max_ = pi;
-BRG_ANGLE brgastro::grid_cache::_ra_grid_step_ = pi / 8;
-BRG_ANGLE brgastro::grid_cache::_dec_grid_min_ = -pi / 2;
-BRG_ANGLE brgastro::grid_cache::dec_grid_max_val = pi / 2;
-BRG_ANGLE brgastro::grid_cache::_dec_grid_step_ = pi / 8;
-double brgastro::grid_cache::_z_grid_min_ = 0;
-double brgastro::grid_cache::_z_grid_max_ = 2;
-double brgastro::grid_cache::_z_grid_step_ = 0.1;
-#endif // End initialisation for brgastro::grid_cache
-
-// Initialisation for brgastro::dfa_cache
-DEFINE_BRG_CACHE_STATIC_VARS( dfa_cache, 0, 5, 0.01 );
-
-// Initialisation for brgastro::add_cache
-DEFINE_BRG_CACHE_2D_STATIC_VARS( add_cache, 0, 5, 0.01,
-		                                    0, 5, 0.01);
-
-// Initialisation for brgastro::tfa_cache
-DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
-
-#endif // end Static Class Initialisation
-
-/** Class Method Definitions **/
-#if (1)
 // brgastro::redshift_obj class methods
 #if (1)
 const int brgastro::redshift_obj::z_grid() const
@@ -77,49 +44,7 @@ const BRG_UNITS brgastro::redshift_obj::H() const
 	return _H_cache_;
 }
 
-#endif// brgastro::dfa_cache class methods
-#if (1)
-const int brgastro::dfa_cache::_calculate( const double in_params, double & out_params ) const
-{
-	try
-	{
-		out_params = brgastro::integrate_add( 0, in_params );
-	}
-	catch( const std::exception &e)
-	{
-		return LOWER_LEVEL_ERROR;
-	}
-
-	return 0;
-}
-
-#endif // end brgastro::dfa_cache functions
-
-// brgastro::add_cache class methods
-const int brgastro::add_cache::_calculate( const double in_param_1, const double in_param_2,
-		double  & out_param ) const
-{
-	out_param = brgastro::integrate_add(in_param_1,in_param_2);
-	return 0;
-}
-
-const int brgastro::tfa_cache::_calculate( const double in_params, double & out_params ) const
-{
-	try
-	{
-		out_params = -brgastro::integrate_ltd( 0, brgastro::zfa( in_params ) ) / c;
-	}
-	catch(const std::exception &e)
-	{
-		std::cerr << "ERROR: Could not calculate cache for " << _name_base() << "\n"
-				<< "Exception: " << e.what() << "\n";
-		std::cerr.flush();
-		return UNSPECIFIED_ERROR;
-	}
-	return 0;
-}
-
-#endif // end class methods
+#endif // brgastro::redshift_obj class methods
 
 /** Global Function Definitions **/
 #if (1)

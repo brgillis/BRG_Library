@@ -9,6 +9,7 @@
 
 #include "../brg_global.h"
 
+#include "../astro_caches.h"
 #include "../brg_astro.h"
 
 #include "sky_obj.h"
