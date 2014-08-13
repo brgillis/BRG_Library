@@ -1,12 +1,12 @@
 /*
- * brg_cache_2d.h
+ * cache_4d.hpp
  *
  *  Created on: 25 Apr 2014
  *      Author: brg
  */
 
-#ifndef __BRG_CACHE_2D_HPP_INCLUDED__
-#define __BRG_CACHE_2D_HPP_INCLUDED__
+#ifndef __BRG_CACHE_4D_HPP_INCLUDED__
+#define __BRG_CACHE_4D_HPP_INCLUDED__
 
 #ifndef BRG_CACHE_ND_NAME_SIZE
 #define BRG_CACHE_ND_NAME_SIZE 9 // Needs an end character, so will only actually allow 8 chars
@@ -32,11 +32,15 @@
 // SPP: "Static Polymorphic Pointer"
 #define SPP(name) static_cast<name*>(this)
 
-#define DECLARE_BRG_CACHE_2D_STATIC_VARS()		               \
+#define DECLARE_BRG_CACHE_3D_STATIC_VARS()		               \
 	static double _min_1_, _max_1_, _step_1_;                  \
 	static unsigned int _resolution_1_;                        \
 	static double _min_2_, _max_2_, _step_2_;                  \
 	static unsigned int _resolution_2_;                        \
+	static double _min_3_, _max_3_, _step_3_;                  \
+	static unsigned int _resolution_3_;                        \
+	static double _min_4_, _max_4_, _step_4_;                  \
+	static unsigned int _resolution_4_;                        \
 	static std::vector< std::vector< double > > _results_;     \
 											                   \
 	static std::string _file_name_;                            \
@@ -44,16 +48,26 @@
 											                   \
 	static bool _loaded_, _initialised_;
 
-#define DEFINE_BRG_CACHE_2D_STATIC_VARS(class_name,init_min_1,init_max_1,init_step_1, \
-                                        init_min_2, init_max_2, init_step_2)\
+#define DEFINE_BRG_CACHE_3D_STATIC_VARS(class_name,init_min_1,init_max_1,init_step_1, \
+                                        init_min_2, init_max_2, init_step_2,\
+                                        init_min_3, init_max_3, init_step_3,\
+                                        init_min_4, init_max_4, init_step_4)\
 	double brgastro::class_name::_min_1_ = init_min_1;						\
 	double brgastro::class_name::_max_1_ = init_max_1; 						\
 	double brgastro::class_name::_step_1_ = init_step_1;					\
 	unsigned int brgastro::class_name::_resolution_1_ = 0;					\
-	double brgastro::class_name::_min_2_ = init_min_1;						\
-	double brgastro::class_name::_max_2_ = init_max_1; 						\
-	double brgastro::class_name::_step_2_ = init_step_1;					\
+	double brgastro::class_name::_min_2_ = init_min_2;						\
+	double brgastro::class_name::_max_2_ = init_max_2; 						\
+	double brgastro::class_name::_step_2_ = init_step_2;					\
 	unsigned int brgastro::class_name::_resolution_2_ = 0;					\
+	double brgastro::class_name::_min_3_ = init_min_3;						\
+	double brgastro::class_name::_max_3_ = init_max_3; 						\
+	double brgastro::class_name::_step_3_ = init_step_3;					\
+	unsigned int brgastro::class_name::_resolution_3_ = 0;					\
+	double brgastro::class_name::_min_4_ = init_min_4;						\
+	double brgastro::class_name::_max_4_ = init_max_4; 						\
+	double brgastro::class_name::_step_4_ = init_step_4;					\
+	unsigned int brgastro::class_name::_resolution_4_ = 0;					\
 	bool brgastro::class_name::_loaded_ = false;							\
 	bool brgastro::class_name::_initialised_ = false;						\
 	std::string brgastro::class_name::_file_name_ = "";						\
@@ -64,14 +78,14 @@ namespace brgastro
 {
 
 template<typename name>
-class brg_cache_2d
+class brg_cache_4d
 {
 private:
 
 	// Private variables
 #if (1)
 
-	DECLARE_BRG_CACHE_2D_STATIC_VARS();
+	DECLARE_BRG_CACHE_4D_STATIC_VARS();
 
 #endif // Private variables
 
@@ -82,6 +96,9 @@ private:
 		if(SPCP(name)->_initialised_) return 0;
 
 		SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 1);
+		SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 1);
+		SPCP(name)->_resolution_3_ = (unsigned int) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 1);
+		SPCP(name)->_resolution_4_ = (unsigned int) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 1);
 		SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
 		SPCP(name)->_version_number_ = 1; // This should be changed when there are changes to this code
 
@@ -148,33 +165,53 @@ private:
 			in_file.read((char *)&(SPCP(name)->_min_2_),sizeof(SPCP(name)->_min_2_));
 			in_file.read((char *)&(SPCP(name)->_max_2_),sizeof(SPCP(name)->_max_2_));
 			in_file.read((char *)&(SPCP(name)->_step_2_),sizeof(SPCP(name)->_step_2_));
+			in_file.read((char *)&(SPCP(name)->_min_3_),sizeof(SPCP(name)->_min_3_));
+			in_file.read((char *)&(SPCP(name)->_max_3_),sizeof(SPCP(name)->_max_3_));
+			in_file.read((char *)&(SPCP(name)->_step_3_),sizeof(SPCP(name)->_step_3_));
+			in_file.read((char *)&(SPCP(name)->_min_4_),sizeof(SPCP(name)->_min_4_));
+			in_file.read((char *)&(SPCP(name)->_max_4_),sizeof(SPCP(name)->_max_4_));
+			in_file.read((char *)&(SPCP(name)->_step_4_),sizeof(SPCP(name)->_step_4_));
 
 			// Set up data
 			SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
 			SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
-			make_array2d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
+			SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ) + 1;
+			SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / SPCP(name)->_step_4_ ) + 1;
+			make_array4d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
+					SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ );
 
 			// Read in data
 
 			// Initialise
-			const std::streamsize size = sizeof(SPCP(name)->_results_[0][0]); // Store the size for speed
-			unsigned int i_1=0, i_2=0;
+			const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0][0]); // Store the size for speed
+			unsigned int i_1=0, i_2=0, i_3=0, i_4=0;
 
-			while ( ( !in_file.eof() ) && ( i_2 < SPCP(name)->_resolution_2_ )
+			while ( ( !in_file.eof() ) && ( i_4 < SPCP(name)->_resolution_4_ )
 					&& (in_file) )
 			{
-				in_file.read((char *)&(SPCP(name)->_results_[i_1][i_2]),size);
+				in_file.read((char *)&(SPCP(name)->_results_[i_1][i_2][i_3][i_4]),size);
 
 				++i_1;
 				if(i_1==SPCP(name)->_resolution_1_)
 				{
 					++i_2;
+					if(i_2==SPCP(name)->_resolution_2_)
+					{
+						++i_3;
+						if(i_3==SPCP(name)->_resolution_3_)
+						{
+							++i_4;
+							i_3=0;
+						}
+						i_2=0;
+					}
 					i_1=0;
 				}
 			}
 
 			// Check that it was all read properly
-			if ( (i_2 != SPCP(name)->_resolution_2_) || (i_1 != 0) || (!in_file) )
+			if ( (i_4 != SPCP(name)->_resolution_3_) || (i_3 != 0) || (i_2 != 0) || (i_1 != 0)
+					|| (!in_file) )
 			{
 				need_to_calc = true;
 				if ( SPCP(name)->_calc( silent ) )
@@ -203,11 +240,13 @@ private:
 
 		// Test that range is sane
 		if ( ( SPCP(name)->_max_1_ <= SPCP(name)->_min_1_ ) || ( SPCP(name)->_step_1_ <= 0 ) ||
-			 ( SPCP(name)->_max_2_ <= SPCP(name)->_min_2_ ) || ( SPCP(name)->_step_2_ <= 0 ) )
+				 ( SPCP(name)->_max_2_ <= SPCP(name)->_min_2_ ) || ( SPCP(name)->_step_2_ <= 0 ) ||
+				 ( SPCP(name)->_max_3_ <= SPCP(name)->_min_3_ ) || ( SPCP(name)->_step_3_ <= 0 ) ||
+				 ( SPCP(name)->_max_4_ <= SPCP(name)->_min_4_ ) || ( SPCP(name)->_step_4_ <= 0 ) )
 		{
 			if ( !silent )
 				std::cerr
-						<< "ERROR: Bad range passed to brg_cache_2d::_calc() for " + SPCP(name)->_name_base() + "\n";
+						<< "ERROR: Bad range passed to brg_cache_4d::_calc() for " + SPCP(name)->_name_base() + "\n";
 			return INVALID_ARGUMENTS_ERROR;
 		}
 
@@ -220,7 +259,10 @@ private:
 		// Set up data
 		SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
 		SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
-		if ( make_array2d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ ) )
+		SPCP(name)->_resolution_3_ = (int)( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ) + 1;
+		SPCP(name)->_resolution_4_ = (int)( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / SPCP(name)->_step_4_ ) + 1;
+		if ( make_array3d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
+				SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ ) )
 			return 1;
 
 		// Calculate data
@@ -232,12 +274,20 @@ private:
 			for( unsigned int i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
 			{
 				double x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
-				double result = 0;
-				if(SPCP(name)->_calculate(x_1, x_2, result))
+				for( unsigned int i_3 = 0; i_3 < SPCP(name)->_resolution_3_; ++i_3)
 				{
-					bad_result = true;
+					double x_3 = SPCP(name)->_min_3_ + i_3*SPCP(name)->_step_3_;
+					for( unsigned int i_4 = 0; i_4 < SPCP(name)->_resolution_4_; ++i_4)
+					{
+						double x_4 = SPCP(name)->_min_4_ + i_4*SPCP(name)->_step_4_;
+						double result = 0;
+						if(SPCP(name)->_calculate(x_1, x_2, x_3, x_4, result))
+						{
+							bad_result = true;
+						}
+						SPCP(name)->_results_[i_1][i_2][i_3][i_4] = result;
+					}
 				}
-				SPCP(name)->_results_[i_1][i_2] = result;
 			}
 		}
 
@@ -282,21 +332,37 @@ private:
 		out_file.write((char *)&(SPCP(name)->_min_2_),sizeof(SPCP(name)->_min_2_));
 		out_file.write((char *)&(SPCP(name)->_max_2_),sizeof(SPCP(name)->_max_2_));
 		out_file.write((char *)&(SPCP(name)->_step_2_),sizeof(SPCP(name)->_step_2_));
+		out_file.write((char *)&(SPCP(name)->_min_3_),sizeof(SPCP(name)->_min_3_));
+		out_file.write((char *)&(SPCP(name)->_max_3_),sizeof(SPCP(name)->_max_3_));
+		out_file.write((char *)&(SPCP(name)->_step_3_),sizeof(SPCP(name)->_step_3_));
+		out_file.write((char *)&(SPCP(name)->_min_4_),sizeof(SPCP(name)->_min_4_));
+		out_file.write((char *)&(SPCP(name)->_max_4_),sizeof(SPCP(name)->_max_4_));
+		out_file.write((char *)&(SPCP(name)->_step_4_),sizeof(SPCP(name)->_step_4_));
 
 		// Output data
 
 		// Initialize
-		const std::streamsize size = sizeof(SPCP(name)->_results_[0][0]);
-		unsigned int i_1=0, i_2=0;
+		const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0]);
+		unsigned int i_1=0, i_2=0, i_3=0, i_4=0;
 
-		while ( i_2<SPCP(name)->_resolution_2_ )
+		while ( i_4<SPCP(name)->_resolution_4_ )
 		{
-			out_file.write((char *)&(SPCP(name)->_results_[i_1][i_2]),size);
+			out_file.write((char *)&(SPCP(name)->_results_[i_1][i_2][i_3]),size);
 
 			++i_1;
 			if(i_1==(SPCP(name)->_resolution_1_))
 			{
 				++i_2;
+				if(i_2==(SPCP(name)->_resolution_2_))
+				{
+					++i_3;
+					if(i_3==(SPCP(name)->_resolution_3_))
+					{
+						++i_4;
+						i_3 = 0;
+					}
+					i_2 = 0;
+				}
 				i_1 = 0;
 			}
 		}
@@ -349,8 +415,10 @@ public:
 	} // const int set_file_name()
 
 	const int set_range( const double new_min_1, const double new_max_1, const double new_step_1,
-			 	         const double new_min_2, const double new_max_2, const double new_step_2,
-			             const bool silent = false )
+	         const double new_min_2, const double new_max_2, const double new_step_2,
+ 	         const double new_min_3, const double new_max_3, const double new_step_3,
+ 	         const double new_min_4, const double new_max_4, const double new_step_4,
+			 const bool silent = false )
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -363,11 +431,24 @@ public:
 		if ( ( SPCP(name)->_min_1_ != new_min_1 ) || ( SPCP(name)->_max_1_ != new_max_1 )
 				|| ( SPCP(name)->_step_1_ != new_step_1 ) ||
 			 ( SPCP(name)->_min_2_ != new_min_2 ) || ( SPCP(name)->_max_2_ != new_max_2 )
-				|| ( SPCP(name)->_step_2_ != new_step_2 ) )
+				|| ( SPCP(name)->_step_2_ != new_step_2 ) ||
+			 ( SPCP(name)->_min_3_ != new_min_3 ) || ( SPCP(name)->_max_3_ != new_max_3 )
+				|| ( SPCP(name)->_step_3_ != new_step_3 ) ||
+			 ( SPCP(name)->_min_3_ != new_min_4 ) || ( SPCP(name)->_max_4_ != new_max_4 )
+				|| ( SPCP(name)->_step_4_ != new_step_4 ))
 		{
 			SPP(name)->_min_1_ = new_min_1;
 			SPP(name)->_max_1_ = new_max_1;
 			SPP(name)->_step_1_ = new_step_1;
+			SPP(name)->_min_2_ = new_min_2;
+			SPP(name)->_max_2_ = new_max_2;
+			SPP(name)->_step_2_ = new_step_2;
+			SPP(name)->_min_3_ = new_min_3;
+			SPP(name)->_max_3_ = new_max_3;
+			SPP(name)->_step_3_ = new_step_3;
+			SPP(name)->_min_4_ = new_min_4;
+			SPP(name)->_max_4_ = new_max_4;
+			SPP(name)->_step_4_ = new_step_4;
 
 			if ( SPCP(name)->_unload() )
 				return errorNOS( silent );
@@ -377,13 +458,18 @@ public:
 		return 0;
 	} // const int set_range()
 
-	const BRG_UNITS get( const double x_1, const double x_2, const bool silent = false ) const
+	const BRG_UNITS get( const double x_1, const double x_2, const double x_3, const double x_4,
+			const bool silent = false ) const
 	{
 
 		double xlo_1, xhi_1;
 		unsigned int xi_1; // Lower nearby array point
 		double xlo_2, xhi_2;
 		unsigned int xi_2; // Lower nearby array point
+		double xlo_3, xhi_3;
+		unsigned int xi_3; // Lower nearby array point
+		double xlo_4, xhi_4;
+		unsigned int xi_4; // Lower nearby array point
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
@@ -407,7 +493,7 @@ public:
 			}
 			if ( result == -1 )
 			{
-				std::string err = "ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache::get()\n";
+				std::string err = "ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache_4d::get()\n";
 				if ( !silent )
 					std::cerr << err;
 				throw std::runtime_error(err);
@@ -418,20 +504,80 @@ public:
 		xi_1 = bound(0, xi_1, SPCP(name)->_resolution_1_ - 2 );
 		xi_2 = (unsigned int)( ( x_2 - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ );
 		xi_2 = bound(0, xi_2, SPCP(name)->_resolution_2_ - 2 );
+		xi_3 = (unsigned int)( ( x_3 - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ );
+		xi_3 = bound(0, xi_3, SPCP(name)->_resolution_3_ - 2 );
+		xi_4 = (unsigned int)( ( x_4 - SPCP(name)->_min_4_ ) / SPCP(name)->_step_4_ );
+		xi_4 = bound(0, xi_4, SPCP(name)->_resolution_4_ - 2 );
 
 		xlo_1 = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * xi_1;
 		xhi_1 = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( xi_1 + 1 );
-		xlo_2 = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * xi_2;
-		xhi_2 = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( xi_2 + 1 );
+		xlo_2 = SPCP(name)->_min_2_ + SPCP(name)->_step_2_ * xi_2;
+		xhi_2 = SPCP(name)->_min_2_ + SPCP(name)->_step_2_ * ( xi_2 + 1 );
+		xlo_2 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * xi_3;
+		xhi_2 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * ( xi_3 + 1 );
+		xlo_2 = SPCP(name)->_min_4_ + SPCP(name)->_step_4_ * xi_4;
+		xhi_2 = SPCP(name)->_min_4_ + SPCP(name)->_step_4_ * ( xi_4 + 1 );
 
-		result += SPCP(name)->_results_[xi_1][xi_2] * (xhi_1-x_1)*(xhi_2-x_2);
-		total_weight += (xhi_1-x_1)*(xhi_2-x_2);
-		result += SPCP(name)->_results_[xi_1+1][xi_2] * (x_1-xlo_1)*(xhi_2-x_2);
-		total_weight += (x_1-xlo_1)*(xhi_2-x_2);
-		result += SPCP(name)->_results_[xi_1][xi_2+1] * (xhi_1-x_1)*(x_2-xlo_2);
-		total_weight += (xhi_1-x_1)*(x_2-xlo_2);
-		result += SPCP(name)->_results_[xi_1+1][xi_2+1] * (x_1-xlo_1)*(x_2-xlo_2);
-		total_weight += (x_1-xlo_1)*(x_2-xlo_2);
+		result += SPCP(name)->_results_[xi_1][xi_2][xi_3][xi_4] *
+				(xhi_1-x_1)*(xhi_2-x_2)*(xhi_3-x_3)*(xhi_4-x_4);
+		total_weight += (xhi_1-x_1)*(xhi_2-x_2)*(xhi_3-x_3)*(xhi_4-x_4);
+		result += SPCP(name)->_results_[xi_1+1][xi_2][xi_3][xi_4] *
+				(x_1-xlo_1)*(xhi_2-x_2)*(xhi_3-x_3)*(xhi_4-x_4);
+		total_weight += (x_1-xlo_1)*(xhi_2-x_2)*(xhi_3-x_3)*(xhi_4-x_4);
+
+		result += SPCP(name)->_results_[xi_1][xi_2+1][xi_3][xi_4] *
+				(xhi_1-x_1)*(x_2-xlo_2)*(xhi_3-x_3)*(xhi_4-x_4);
+		total_weight += (xhi_1-x_1)*(x_2-xlo_2)*(xhi_3-x_3)*(xhi_4-x_4);
+		result += SPCP(name)->_results_[xi_1+1][xi_2+1][xi_3][xi_4] *
+				(x_1-xlo_1)*(x_2-xlo_2)*(xhi_3-x_3)*(xhi_4-x_4);
+		total_weight += (x_1-xlo_1)*(x_2-xlo_2)*(xhi_3-x_3)*(xhi_4-x_4);
+
+
+		result += SPCP(name)->_results_[xi_1][xi_2][xi_3+1][xi_4] *
+				(xhi_1-x_1)*(xhi_2-x_2)*(x_3-xlo_3)*(xhi_4-x_4);
+		total_weight += (xhi_1-x_1)*(xhi_2-x_2)*(x_3-xlo_3)*(xhi_4-x_4);
+		result += SPCP(name)->_results_[xi_1+1][xi_2][xi_3+1][xi_4] *
+				(x_1-xlo_1)*(xhi_2-x_2)*(x_3-xlo_3)*(xhi_4-x_4);
+		total_weight += (x_1-xlo_1)*(xhi_2-x_2)*(x_3-xlo_3)*(xhi_4-x_4);
+
+		result += SPCP(name)->_results_[xi_1][xi_2+1][xi_3+1][xi_4] *
+				(xhi_1-x_1)*(x_2-xlo_2)*(x_3-xlo_3)*(xhi_4-x_4);
+		total_weight += (xhi_1-x_1)*(x_2-xlo_2)*(x_3-xlo_3)*(xhi_4-x_4);
+		result += SPCP(name)->_results_[xi_1+1][xi_2+1][xi_3+1][xi_4] *
+				(x_1-xlo_1)*(x_2-xlo_2)*(x_3-xlo_3)*(xhi_4-x_4);
+		total_weight += (x_1-xlo_1)*(x_2-xlo_2)*(x_3-xlo_3)*(xhi_4-x_4);
+
+
+
+
+		result += SPCP(name)->_results_[xi_1][xi_2][xi_3][xi_4+1] *
+				(xhi_1-x_1)*(xhi_2-x_2)*(xhi_3-x_3)*(x_4-xlo_4);
+		total_weight += (xhi_1-x_1)*(xhi_2-x_2)*(xhi_3-x_3)*(x_4-xlo_4);
+		result += SPCP(name)->_results_[xi_1+1][xi_2][xi_3][xi_4+1] *
+				(x_1-xlo_1)*(xhi_2-x_2)*(xhi_3-x_3)*(x_4-xlo_4);
+		total_weight += (x_1-xlo_1)*(xhi_2-x_2)*(xhi_3-x_3)*(x_4-xlo_4);
+
+		result += SPCP(name)->_results_[xi_1][xi_2+1][xi_3][xi_4+1] *
+				(xhi_1-x_1)*(x_2-xlo_2)*(xhi_3-x_3)*(x_4-xlo_4);
+		total_weight += (xhi_1-x_1)*(x_2-xlo_2)*(xhi_3-x_3)*(x_4-xlo_4);
+		result += SPCP(name)->_results_[xi_1+1][xi_2+1][xi_3][xi_4+1] *
+				(x_1-xlo_1)*(x_2-xlo_2)*(xhi_3-x_3)*(x_4-xlo_4);
+		total_weight += (x_1-xlo_1)*(x_2-xlo_2)*(xhi_3-x_3)*(x_4-xlo_4);
+
+
+		result += SPCP(name)->_results_[xi_1][xi_2][xi_3+1][xi_4+1] *
+				(xhi_1-x_1)*(xhi_2-x_2)*(x_3-xlo_3)*(x_4-xlo_4);
+		total_weight += (xhi_1-x_1)*(xhi_2-x_2)*(x_3-xlo_3)*(x_4-xlo_4);
+		result += SPCP(name)->_results_[xi_1+1][xi_2][xi_3+1][xi_4+1] *
+				(x_1-xlo_1)*(xhi_2-x_2)*(x_3-xlo_3)*(x_4-xlo_4);
+		total_weight += (x_1-xlo_1)*(xhi_2-x_2)*(x_3-xlo_3)*(x_4-xlo_4);
+
+		result += SPCP(name)->_results_[xi_1][xi_2+1][xi_3+1][xi_4+1] *
+				(xhi_1-x_1)*(x_2-xlo_2)*(x_3-xlo_3)*(x_4-xlo_4);
+		total_weight += (xhi_1-x_1)*(x_2-xlo_2)*(x_3-xlo_3)*(x_4-xlo_4);
+		result += SPCP(name)->_results_[xi_1+1][xi_2+1][xi_3+1][xi_4+1] *
+				(x_1-xlo_1)*(x_2-xlo_2)*(x_3-xlo_3)*(x_4-xlo_4);
+		total_weight += (x_1-xlo_1)*(x_2-xlo_2)*(x_3-xlo_3)*(x_4-xlo_4);
 
 		result /= safe_d(total_weight);
 
@@ -452,12 +598,12 @@ public:
 	}
 
 	// Constructor
-	brg_cache_2d() throw()
+	brg_cache_4d() throw()
 	{
 	}
 
 	// Deconstructor
-	virtual ~brg_cache_2d()
+	virtual ~brg_cache_4d()
 	{
 	}
 
@@ -466,40 +612,6 @@ public:
 }; // class brg_cache
 
 } // namespace brgastro
-
-// Initialisation of static members
-#if (1)
-
-// These ones should be specialised for default values
-template<typename name>
-double brgastro::brg_cache_2d<name>::_min_1_ = 0;
-
-template<typename name>
-double brgastro::brg_cache_2d<name>::_max_1_ = 0;
-
-template<typename name>
-double brgastro::brg_cache_2d<name>::_step_1_ = 1; // To avoid divide-by-zero issues
-
-// These ones don't need to be altered for each child, but they should be copied
-template<typename name>
-bool brgastro::brg_cache_2d<name>::_loaded_ = false;
-
-template<typename name>
-bool brgastro::brg_cache_2d<name>::_initialised_ = false;
-
-template<typename name>
-unsigned int brgastro::brg_cache_2d<name>::_resolution_1_ = 0;
-
-template<typename name>
-std::string brgastro::brg_cache_2d<name>::_file_name_ = "";
-
-template<typename name>
-unsigned int brgastro::brg_cache_2d<name>::_version_number_ = 0;
-
-template<typename name>
-std::vector< std::vector<double> > brgastro::brg_cache_2d<name>::_results_;
-
-#endif
 
 // Undef macros
 #undef SPP

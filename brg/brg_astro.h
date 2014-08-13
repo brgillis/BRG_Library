@@ -25,15 +25,14 @@ brg_astro.h
 #ifndef __BRG_ASTRO_H_INCLUDED__
 #define __BRG_ASTRO_H_INCLUDED__
 
-#include "brg_global.h"
-
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "cache/brg_cache.hpp"
-#include "cache/brg_cache_2d.hpp"
+
+#include "brg_global.h"
+
 #include "brg_units.h"
 
 /** Constant Definitions **/

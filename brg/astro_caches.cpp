@@ -7,8 +7,8 @@
 
 #include "brg_units.h"
 #include "brg_astro.h"
-#include "cache/brg_cache.hpp"
-#include "cache/brg_cache_2d.hpp"
+#include "cache/cache.hpp"
+#include "cache/cache_2d.hpp"
 #include "astro_caches.h"
 
 /** Static Class Initialisation **/

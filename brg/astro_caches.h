@@ -14,8 +14,8 @@ brg_astro_caches.h
 
 #include "brg_global.h"
 
-#include "cache/brg_cache.hpp"
-#include "cache/brg_cache_2d.hpp"
+#include "cache/cache.hpp"
+#include "cache/cache_2d.hpp"
 #include "brg_units.h"
 
 namespace brgastro

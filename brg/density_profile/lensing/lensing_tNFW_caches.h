@@ -15,7 +15,7 @@
 
 #include "../../brg_global.h"
 
-#include "../../cache/brg_cache_nd.hpp"
+#include "../../cache/cache_nd.hpp"
 
 namespace brgastro {
 

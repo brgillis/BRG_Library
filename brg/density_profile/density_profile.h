@@ -10,11 +10,13 @@
 #ifndef _BRG_DENSITY_PROFILE_H_
 #define _BRG_DENSITY_PROFILE_H_
 
+#include <stdexcept>
 #include <vector>
 
 #include "../brg_global.h"
 
 #include "../brg_astro.h"
+#include "../brg_misc_functions.hpp"
 #include "../brg_units.h"
 
 namespace brgastro {
