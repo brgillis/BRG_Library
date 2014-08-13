@@ -811,7 +811,7 @@ inline const int integrate_Rhomberg( const f * func,
 	T d;
 
 	// Check that we have a sane number of input parameters
-	if ( ( num_in_params < 1 ) || ( num_in_params > MAX_STACK_DEPTH ) )
+	if ( ( num_in_params != 1 ) || ( num_in_params > MAX_STACK_DEPTH ) )
 	{
 		if ( !silent )
 			std::cerr
@@ -1162,6 +1162,49 @@ inline const int integrate_Rhomberg( const f * func,
 	{
 		return errorNOS( silent );
 	} // else
+
+	return 0;
+}
+
+// Scalar-in, scalar-out version
+template< typename f_in_1, typename f_in_2, typename T >
+inline const int integrate_product_Rhomberg( const f_in_1 * func1,
+		const f_in_2 * func2, const unsigned int num_in_params,
+		const T & min_in_params, const T & max_in_params,
+		unsigned int & num_out_params, T & out_params, const double precision =
+				0.00001, const bool tighten_precision = false,
+		const unsigned int num_passed_in_params = 0,
+		const T & passed_in_params = T( 0 ), const bool silent = false )
+{
+	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
+
+	if ( int errcode = integrate_Rhomberg( &fprod, num_in_params,
+			min_in_params, max_in_params, num_out_params, out_params,
+			precision, tighten_precision, num_passed_in_params,
+			passed_in_params ) )
+		return errcode + LOWER_LEVEL_ERROR;
+
+	return 0;
+}
+
+// Vector-in, vector-out version
+template< typename f_in_1, typename f_in_2, typename T >
+inline const int integrate_product_Rhomberg( const f_in_1 * func1,
+		const f_in_2 * func2, const unsigned int num_in_params,
+		const std::vector< T > & min_in_params,
+		const std::vector< T > & max_in_params, unsigned int & num_out_params,
+		std::vector< T > & out_params, const double precision = 0.00001,
+		const bool tighten_precision = false,
+		const unsigned int num_passed_in_params = 0,
+		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
+		const bool silent = false )
+{
+	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
+
+	if ( int errcode = integrate_Rhomberg( &fprod, num_in_params,
+			min_in_params, max_in_params, num_out_params, out_params,
+			precision, tighten_precision, num_passed_in_params,
+			passed_in_params ) )
 
 	return 0;
 }

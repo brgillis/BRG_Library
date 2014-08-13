@@ -7,6 +7,7 @@
  *      Author: brg
  */
 
+#include <cmath>
 #include <iostream>
 
 #include "../../brg_global.h"
@@ -164,6 +165,22 @@ brgastro::offset_ring_dens_functor::offset_ring_dens_functor(
 // brgastro::offset_circ_dens_functor class methods
 #if (1)
 
+CONST_BRG_DISTANCE_REF brgastro::offset_circ_dens_functor::_arc_length_in_circle(
+		CONST_BRG_DISTANCE_REF R2 ) const
+{
+	// Check for complete enclosure
+	if( _R0_ + R2 <= _R_)
+	{
+		return 2.*pi*R2;
+	}
+	else
+	{
+		BRG_DISTANCE result = 2.*R2 * std::acos( (square(_R0_)-square(_R_)+square(R2)) / (2.*_R0_*R2) );
+		if(result>0) return result;
+		return 0.; // We'll get here only in cases due to round-off error, where it should actually be zero
+	}
+}
+
 const int brgastro::offset_circ_dens_functor::set_R0(
 		const BRG_DISTANCE &new_R_0 )
 {
@@ -171,9 +188,16 @@ const int brgastro::offset_circ_dens_functor::set_R0(
 	return 0;
 }
 
+const int brgastro::offset_circ_dens_functor::set_R(
+		const BRG_DISTANCE &new_R )
+{
+	_R_ = new_R;
+	return 0;
+}
+
 const int brgastro::offset_circ_dens_functor::operator()(
-		const std::vector< BRG_UNITS > &in_params,
-		std::vector< BRG_UNITS > & out_params, const bool silent ) const
+		const BRG_UNITS & in_param,
+		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
@@ -182,20 +206,10 @@ const int brgastro::offset_circ_dens_functor::operator()(
 					<< "ERROR: Host must be assigned to offset_circ_dens_functor before function can be called.\n";
 		return NOT_SET_UP_ERROR;
 	}
-	if ( in_params.size() != 2 )
-	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: in_params.size() must == 2 in offset_circ_dens_functor.\n";
-		return INVALID_ARGUMENTS_ERROR;
-	}
-	out_params.clear();
 
-	BRG_DISTANCE R = in_params[0];
-	BRG_DISTANCE d = lc_add( _R0_, R, in_params[1] );
+	BRG_DISTANCE L = _arc_length_in_circle(in_param);
 
-	BRG_UNITS result = _host_ptr_->proj_dens( d, silent );
-	out_params.push_back( result );
+	out_param = L * _host_ptr_->proj_dens( in_param, silent );
 
 	return 0;
 }
@@ -211,13 +225,16 @@ brgastro::offset_circ_dens_functor::offset_circ_dens_functor()
 {
 	_host_ptr_ = NULL;
 	_R0_ = 0;
+	_R_ = 0;
 }
 
 brgastro::offset_circ_dens_functor::offset_circ_dens_functor(
-		const lensing_profile_extension *new_host, const BRG_DISTANCE &new_R_0 )
+		const lensing_profile_extension *new_host, const BRG_DISTANCE &new_R_0,
+		const BRG_DISTANCE &new_R )
 {
 	_host_ptr_ = new_host;
 	_R0_ = new_R_0;
+	_R_ = new_R;
 }
 #endif // end brgastro::offset_circ_dens_functor function implementations
 

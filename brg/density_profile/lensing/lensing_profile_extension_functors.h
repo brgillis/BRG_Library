@@ -64,7 +64,7 @@ class cylindrical_density_functor: public functor< BRG_UNITS >
 	 cylindrical_density_functor class
 	 -----------------------------
 
-	 Function class integrating density in a cylinder
+	 Function class for integrating density in a cylinder
 
 	 Parent class: function_class (from brg_functors)
 
@@ -93,7 +93,9 @@ public:
 class offset_ring_dens_functor: public functor< BRG_UNITS >
 {
 
-	const lensing_profile_extension *_host_ptr_;BRG_DISTANCE _R0_, _R_;
+	const lensing_profile_extension *_host_ptr_;
+	BRG_DISTANCE _R0_, _R_;
+
 public:
 
 	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
@@ -123,10 +125,13 @@ public:
 
 };
 
-class offset_circ_dens_functor: public functor< std::vector< BRG_UNITS > >
+class offset_circ_dens_functor: public functor< BRG_UNITS >
 {
 private:
-	const lensing_profile_extension *_host_ptr_;BRG_DISTANCE _R0_;
+	const lensing_profile_extension *_host_ptr_;
+	BRG_DISTANCE _R0_, _R_;
+
+	CONST_BRG_DISTANCE_REF _arc_length_in_circle( CONST_BRG_DISTANCE_REF R2 ) const;
 
 public:
 
@@ -142,13 +147,19 @@ public:
 		return _R0_;
 	}
 
-	const int operator()( const std::vector< BRG_UNITS > & in_params,
-			std::vector< BRG_UNITS > & out_params,
+	const int set_R( const BRG_DISTANCE &new_R );
+	const BRG_DISTANCE & R()
+	{
+		return _R_;
+	}
+
+	const int operator()( const BRG_UNITS & in_param,
+			BRG_UNITS & out_param,
 			const bool silent = false ) const;
 
 	offset_circ_dens_functor();
 	offset_circ_dens_functor( const lensing_profile_extension *new_host,
-			const BRG_DISTANCE &new_R_0 = 0 );
+			const BRG_DISTANCE & new_R_0 = 0, const BRG_DISTANCE &new_R = 0  );
 };
 
 class offset_WLsig_functor: public functor< BRG_UNITS >

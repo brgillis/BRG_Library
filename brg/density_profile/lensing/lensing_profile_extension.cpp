@@ -81,40 +81,32 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( const BRG_DIS
 	offset_ring_dens_functor ringfunc( this, offset_R_to_use, R_to_use );
 	offset_circ_dens_functor circfunc( this, offset_R_to_use );
 
-	BRG_UNITS min_in_params_ring( 0 );
-	BRG_UNITS max_in_params_ring( 0 );
-	BRG_UNITS out_params_ring( 0 );
-	std::vector< BRG_UNITS > min_in_params_circ( 2, 0 );
-	std::vector< BRG_UNITS > max_in_params_circ( 2, 0 );
-	std::vector< BRG_UNITS > out_params_circ( 1, 0 );
+	BRG_UNITS out_param_ring = 0;
+	BRG_UNITS out_param_circ = 0;
 	BRG_UNITS circmean;
 	BRG_UNITS ringmean;
 	BRG_UNITS result;
 
 	double precision = 0.001;
 
-	min_in_params_ring = 0;
-	max_in_params_ring = pi; // We'll double it later, due to symmetry
-
-	// TODO: Redo to use smarter integration for circle.
-
-	min_in_params_circ[0] = R_to_use * precision;
-	max_in_params_circ[0] = R_to_use;
-	min_in_params_circ[1] = 0;
-	max_in_params_circ[1] = pi; // We'll double it later, due to symmetry
+	BRG_UNITS min_in_params_ring = 0;
+	BRG_UNITS max_in_params_ring = pi;
 
 	if ( brgastro::integrate_Rhomberg( &ringfunc, 1, min_in_params_ring,
-			max_in_params_ring, num_out_params, out_params_ring, precision ) )
+			max_in_params_ring, num_out_params, out_param_ring, precision ) )
 	{
 		if ( !silent )
 			std::cerr << "ERROR: Could not integrate in offset_WLsig" << std::endl;
 		return 0;
 	}
 
-	ringmean = 2 * out_params_ring / pi;
+	ringmean = out_param_ring / pi;
 
-	if ( brgastro::integrate_Rhomberg( &circfunc, 2, min_in_params_circ,
-			max_in_params_circ, num_out_params, out_params_circ, std::sqrt(precision) ) )
+	BRG_UNITS min_in_params_circ = max(offset_R_to_use-R_to_use,0.);
+	BRG_UNITS max_in_params_circ = offset_R_to_use+R_to_use;
+
+	if ( brgastro::integrate_Rhomberg( &circfunc, 1, min_in_params_circ,
+			max_in_params_circ, num_out_params, out_param_circ, precision ) )
 
 	{
 		if ( !silent )
@@ -124,7 +116,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( const BRG_DIS
 		return 0;
 	}
 
-	circmean = out_params_circ[0] / ( pi * R_to_use );
+	circmean = out_param_circ / ( pi * square(R_to_use) );
 
 	result = circmean - ringmean;
 
@@ -149,11 +141,11 @@ const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( const BRG_DIST
 	}
 	return out_params;
 }
-const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( const BRG_DISTANCE &r,
+const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( const BRG_DISTANCE &R,
 		const double group_c, const bool silent ) const
 {
-	BRG_DISTANCE r_to_use = std::fabs( r );
-	brgastro::quick_offset_WLsig_functor func( this, r_to_use );
+	BRG_DISTANCE R_to_use = std::fabs( R );
+	brgastro::quick_offset_WLsig_functor func( this, R_to_use );
 	brgastro::offset_WLsig_weight_functor weight_func( this, group_c );
 	unsigned int num_in_params = 1, num_out_params = 0;
 	BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( rvir() ),
