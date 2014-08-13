@@ -13,8 +13,10 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "brg_global.h"
-#include "brg_file_functions.h"
+
+#include "../brg_global.h"
+
+#include "../brg_file_functions.h"
 #ifdef _BRG_USE_UNITS_
 #include "brg_units.h"
 #endif
@@ -30,8 +32,8 @@
 #define SPP(name) static_cast<name*>(this)
 
 #define DECLARE_BRG_CACHE_STATIC_VARS()		\
-	static double _mins_, _maxes_, _steps_; \
-	static unsigned int _resolutions_;      \
+	static double _min_1_, _max_1_, _step_1_; \
+	static unsigned int _resolution_1_;      \
 	static std::vector< double > _results_; \
 											\
 	static std::string _file_name_;         \
@@ -42,14 +44,14 @@
 											\
 	static unsigned int _sig_digits_;
 #define DEFINE_BRG_CACHE_STATIC_VARS(class_name,init_min,init_max,init_step) \
-	double brgastro::class_name::_mins_ = init_min;							\
-	double brgastro::class_name::_maxes_ = init_max; 						\
-	double brgastro::class_name::_steps_ = init_step; 						\
+	double brgastro::class_name::_min_1_ = init_min;						\
+	double brgastro::class_name::_max_1_ = init_max; 						\
+	double brgastro::class_name::_step_1_ = init_step; 						\
 	bool brgastro::class_name::_loaded_ = false;							\
 	bool brgastro::class_name::_initialised_ = false;						\
 	short int brgastro::class_name::_is_monotonic_ = 0;						\
 	unsigned int brgastro::class_name::_sig_digits_ = 8;					\
-	unsigned int brgastro::class_name::_resolutions_ = 0;					\
+	unsigned int brgastro::class_name::_resolution_1_ = 0;					\
 	std::string brgastro::class_name::_file_name_ = "";						\
 	std::string brgastro::class_name::_header_string_ = "";					\
 	std::vector<double> brgastro::class_name::_results_;
@@ -75,7 +77,7 @@ private:
 	{
 		if(SPCP(name)->_initialised_) return 0;
 
-		SPCP(name)->_resolutions_ = (unsigned int) max( ( ( SPCP(name)->_maxes_ - SPCP(name)->_mins_ ) / safe_d(SPCP(name)->_steps_)) + 1, 1);
+		SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 1);
 		SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.dat";
 		SPCP(name)->_header_string_ = "# " + SPCP(name)->_name_base() + "_cache v1.0";
 
@@ -100,7 +102,7 @@ private:
 			{
 				if ( !silent )
 					std::cerr
-							<< "ERROR: infinite loop detected trying to load " + _file_name_ + " in brgastro::brg_cache.\n";
+							<< "ERROR: infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in brgastro::brg_cache.\n";
 				return INFINITE_LOOP_ERROR;
 			}
 			else
@@ -143,7 +145,7 @@ private:
 			}
 
 			// Load range parameters;
-			if ( !( in_file >> SPCP(name)->_mins_ >> SPCP(name)->_maxes_ >> SPCP(name)->_steps_ ) )
+			if ( !( in_file >> SPCP(name)->_min_1_ >> SPCP(name)->_max_1_ >> SPCP(name)->_step_1_ ) )
 			{
 				need_to_calc = true;
 				if ( SPCP(name)->_calc( silent ) )
@@ -154,8 +156,8 @@ private:
 			}
 
 			// Set up data
-			SPCP(name)->_resolutions_ = (int)( ( SPCP(name)->_maxes_ - SPCP(name)->_mins_ ) / SPCP(name)->_steps_ ) + 1;
-			make_array( SPCP(name)->_results_, SPCP(name)->_resolutions_ );
+			SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
+			make_array( SPCP(name)->_results_, SPCP(name)->_resolution_1_ );
 
 			// Read in data
 
@@ -164,7 +166,7 @@ private:
 
 			i = 0;
 			SPCP(name)->_is_monotonic_ = 0;
-			while ( ( !in_file.eof() ) && ( i < SPCP(name)->_resolutions_ ) )
+			while ( ( !in_file.eof() ) && ( i < SPCP(name)->_resolution_1_ ) )
 			{
 				in_file >> temp_data;
 				SPCP(name)->_results_.at(i) = temp_data;
@@ -207,7 +209,7 @@ private:
 			}
 
 			// Check that it was all read properly
-			if ( i < SPCP(name)->_resolutions_ )
+			if ( i < SPCP(name)->_resolution_1_ )
 			{
 				need_to_calc = true;
 				if ( SPCP(name)->_calc( silent ) )
@@ -234,7 +236,7 @@ private:
 	{
 
 		// Test that range is sane
-		if ( ( SPCP(name)->_maxes_ <= SPCP(name)->_mins_ ) || ( SPCP(name)->_steps_ <= 0 ) )
+		if ( ( SPCP(name)->_max_1_ <= SPCP(name)->_min_1_ ) || ( SPCP(name)->_step_1_ <= 0 ) )
 		{
 			if ( !silent )
 				std::cerr
@@ -243,15 +245,15 @@ private:
 		}
 
 		// Set up data
-		SPCP(name)->_resolutions_ = (int)( ( SPCP(name)->_maxes_ - SPCP(name)->_mins_ ) / SPCP(name)->_steps_ ) + 1;
-		if ( make_array( SPCP(name)->_results_, SPCP(name)->_resolutions_ ) )
+		SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
+		if ( make_array( SPCP(name)->_results_, SPCP(name)->_resolution_1_ ) )
 			return 1;
 
 		// Calculate data
-		double x = SPCP(name)->_mins_;
+		double x = SPCP(name)->_min_1_;
 		bool bad_result = false;
 #pragma omp parallel for
-		for ( unsigned int i = 0; i < SPCP(name)->_resolutions_; i++ )
+		for ( unsigned int i = 0; i < SPCP(name)->_resolution_1_; i++ )
 		{
 			double result = 0;
 			if(SPCP(name)->_calculate(x, result))
@@ -259,7 +261,7 @@ private:
 				bad_result = true;
 			}
 			SPCP(name)->_results_.at(i) = result;
-			x += SPCP(name)->_steps_;
+			x += SPCP(name)->_step_1_;
 		}
 
 		if(bad_result) return UNSPECIFIED_ERROR;
@@ -289,10 +291,10 @@ private:
 		out_file.precision(_sig_digits_);
 
 		// Output range
-		out_file << SPCP(name)->_mins_ << "\t" << SPCP(name)->_maxes_ << "\t" << SPCP(name)->_steps_ << "\n";
+		out_file << SPCP(name)->_min_1_ << "\t" << SPCP(name)->_max_1_ << "\t" << SPCP(name)->_step_1_ << "\n";
 
 		// Output data
-		for ( unsigned int i = 0; i < SPCP(name)->_resolutions_; i++ )
+		for ( unsigned int i = 0; i < SPCP(name)->_resolution_1_; i++ )
 		{
 			if ( !( out_file << SPCP(name)->_results_.at(i) << "\n" ) )
 				return errorNOS( silent );
@@ -359,12 +361,12 @@ public:
 			SPCP(name)->_load( true );
 
 		// Go through variables, check if any are actually changed. If so, recalculate cache
-		if ( ( SPCP(name)->_mins_ != new_mins ) || ( SPCP(name)->_maxes_ != new_maxes )
-				|| ( SPCP(name)->_steps_ != new_steps ) )
+		if ( ( SPCP(name)->_min_1_ != new_mins ) || ( SPCP(name)->_max_1_ != new_maxes )
+				|| ( SPCP(name)->_step_1_ != new_steps ) )
 		{
-			SPP(name)->_mins_ = new_mins;
-			SPP(name)->_maxes_ = new_maxes;
-			SPP(name)->_steps_ = new_steps;
+			SPP(name)->_min_1_ = new_mins;
+			SPP(name)->_max_1_ = new_maxes;
+			SPP(name)->_step_1_ = new_steps;
 
 			if ( SPCP(name)->_unload() )
 				return errorNOS( silent );
@@ -426,15 +428,15 @@ public:
 			}
 		}
 
-		x_i = (unsigned int)( ( x - SPCP(name)->_mins_ ) / SPCP(name)->_steps_ );
+		x_i = (unsigned int)( ( x - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ );
 		x_i = max( x_i, (unsigned)0 );
-		x_i = min( x_i, SPCP(name)->_resolutions_ - 2 );
+		x_i = min( x_i, SPCP(name)->_resolution_1_ - 2 );
 
-		xlo = SPCP(name)->_mins_ + SPCP(name)->_steps_ * x_i;
-		xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
+		xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
+		xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
 
 		result = ( ( x - xlo ) * SPCP(name)->_results_.at(x_i + 1) + ( xhi - x ) * SPCP(name)->_results_.at(x_i) )
-				/ SPCP(name)->_steps_;
+				/ SPCP(name)->_step_1_;
 
 		return result;
 
@@ -482,16 +484,16 @@ public:
 		if(SPCP(name)->_is_monotonic_==1)
 		{
 
-			for ( unsigned int x_i = 0; x_i < SPCP(name)->_resolutions_ - 1; x_i++ )
+			for ( unsigned int x_i = 0; x_i < SPCP(name)->_resolution_1_ - 1; x_i++ )
 			{
 				// Loop through till we find the proper y or reach the end
 				yhi = SPCP(name)->_results_.at(x_i);
-				if ( ( yhi > y ) || (x_i >= SPCP(name)->_resolutions_ - 2) )
+				if ( ( yhi > y ) || (x_i >= SPCP(name)->_resolution_1_ - 2) )
 				{
 					ylo = SPCP(name)->_results_.at(x_i + 1);
 
-					xlo = SPCP(name)->_mins_ + SPCP(name)->_steps_ * x_i;
-					xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
+					xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
+					xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
 					result = xlo + ( xhi - xlo ) * ( y - ylo ) / safe_d( yhi - ylo );
 					break;
 				}
@@ -500,16 +502,16 @@ public:
 		else
 		{
 
-			for ( unsigned int x_i = 0; x_i < SPCP(name)->_resolutions_ - 1; x_i++ )
+			for ( unsigned int x_i = 0; x_i < SPCP(name)->_resolution_1_ - 1; x_i++ )
 			{
 				// Loop through till we find the proper y or reach the end
 				ylo = SPCP(name)->_results_.at(x_i);
-				if ( ( ylo < y ) || (x_i >= SPCP(name)->_resolutions_ - 2) )
+				if ( ( ylo < y ) || (x_i >= SPCP(name)->_resolution_1_ - 2) )
 				{
 					yhi = SPCP(name)->_results_.at(x_i + 1);
 
-					xlo = SPCP(name)->_mins_ + SPCP(name)->_steps_ * x_i;
-					xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
+					xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
+					xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
 					result = xlo + ( xhi - xlo ) * ( y - ylo ) / safe_d( yhi - ylo );
 					break;
 				}
@@ -555,13 +557,13 @@ public:
 
 // These ones should be specialised for default values
 template<typename name>
-double brgastro::brg_cache<name>::_mins_ = 0;
+double brgastro::brg_cache<name>::_min_1_ = 0;
 
 template<typename name>
-double brgastro::brg_cache<name>::_maxes_ = 0;
+double brgastro::brg_cache<name>::_max_1_ = 0;
 
 template<typename name>
-double brgastro::brg_cache<name>::_steps_ = 1; // To avoid divide-by-zero issues
+double brgastro::brg_cache<name>::_step_1_ = 1; // To avoid divide-by-zero issues
 
 // These ones don't need to be altered for each child, but they should be copied
 template<typename name>
@@ -577,7 +579,7 @@ template<typename name>
 unsigned int brgastro::brg_cache<name>::_sig_digits_ = 12;
 
 template<typename name>
-unsigned int brgastro::brg_cache<name>::_resolutions_ = 0;
+unsigned int brgastro::brg_cache<name>::_resolution_1_ = 0;
 
 template<typename name>
 std::string brgastro::brg_cache<name>::_file_name_ = "";

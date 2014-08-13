@@ -5,22 +5,26 @@
  *      Author: brg
  */
 
-// !!! UNTESTED
-
 #ifndef __BRG_CACHE_ND_HPP_INCLUDED__
 #define __BRG_CACHE_ND_HPP_INCLUDED__
 
+#ifndef BRG_CACHE_ND_NAME_SIZE
 #define BRG_CACHE_ND_NAME_SIZE 9 // Needs an end character, so will only actually allow 8 chars
+#endif
 
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <sstream>
 #include <exception>
-#include "brg_vector.hpp"
-#include "brg_vector_functions.hpp"
-#include "brg_global.h"
-#include "brg_units.h"
+
+#include "../brg_global.h"
+
+#include "../brg_file_functions.h"
+#include "../brg_vector.hpp"
+#include "../brg_vector_functions.hpp"
+#include "../brg_units.h"
 
 // Macro definitions
 
@@ -82,7 +86,7 @@ private:
 
 		SPCP(name)->_resolutions_ = max( (((SPCP(name)->_maxes_-SPCP(name)->_mins_) / safe_d(SPCP(name)->_steps_))+1), 1);
 		SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
-		SPCP(name)->_version_number_ = 0; // This should be changed when there are changes to this code
+		SPCP(name)->_version_number_ = 1; // This should be changed when there are changes to this code
 
 		SPCP(name)->_initialised_ = true;
 
@@ -104,7 +108,7 @@ private:
 			{
 				if ( !silent )
 					std::cerr
-							<< "ERROR: infinite loop detected trying to load " + _file_name_ + " in brgastro::brg_cache.\n";
+							<< "ERROR: infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in brgastro::brg_cache_nd.\n";
 				return INFINITE_LOOP_ERROR;
 			}
 			else
@@ -418,24 +422,6 @@ public:
 		}
 		return 0;
 	} // const int set_range()
-
-	const int set_precision( const unsigned int new_precision,
-			const bool silent = false )
-	{
-		if(!SPCP(name)->_initialised_) SPP(name)->_init();
-
-		if ( new_precision > 0 )
-		{
-			SPP(name)->_sig_digits_ = min( new_precision, DBL_MAX_PRECISION );
-			return 0;
-		}
-		else
-		{
-			if ( !silent )
-				std::cerr << "ERROR: Precision for dfa_cache must be > 0.\n";
-			return INVALID_ARGUMENTS_ERROR;
-		}
-	} // const int set_precision()
 
 	const BRG_UNITS get( const brgastro::vector<double> & x, const bool silent = false ) const
 	{

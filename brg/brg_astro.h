@@ -32,8 +32,8 @@ brg_astro.h
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "brg_cache.hpp"
-#include "brg_cache_nd.hpp"
+#include "cache/brg_cache.hpp"
+#include "cache/brg_cache_2d.hpp"
 #include "brg_units.h"
 
 /** Constant Definitions **/
@@ -260,14 +260,14 @@ public:
 };
 // class dfa_cache
 
-class add_cache : public brg_cache_nd<add_cache>
+class add_cache : public brg_cache_2d<add_cache>
 {
 	// Angular diameter distance
 private:
 
-	DECLARE_BRG_CACHE_ND_STATIC_VARS();
+	DECLARE_BRG_CACHE_2D_STATIC_VARS();
 
-	friend class brg_cache_nd<add_cache>;
+	friend class brg_cache_2d<add_cache>;
 
 protected:
 
@@ -292,7 +292,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const int _calculate( const brgastro::vector<double> in_params, double & out_params ) const;
+	const int _calculate( const double in_param_1, const double in_param_2, double & out_param ) const;
 
 public:
 

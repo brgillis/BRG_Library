@@ -15,6 +15,8 @@
 
 #include "../../brg_global.h"
 
+#include "../../cache/brg_cache_nd.hpp"
+
 namespace brgastro {
 
 class tNFW_sig_cache : public brg_cache_nd<tNFW_sig_cache>

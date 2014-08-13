@@ -6,8 +6,8 @@
 
 #include "brg_units.h"
 #include "brg_astro.h"
-#include "brg_cache.hpp"
-#include "brg_cache_nd.hpp"
+#include "cache/brg_cache.hpp"
+#include "cache/brg_cache_2d.hpp"
 
 using namespace std;
 
@@ -33,10 +33,8 @@ double brgastro::grid_cache::_z_grid_step_ = 0.1;
 DEFINE_BRG_CACHE_STATIC_VARS( dfa_cache, 0, 5, 0.01 );
 
 // Initialisation for brgastro::add_cache
-double temp_mins[] = {0,0};
-double temp_maxes[] = {5,5};
-double temp_steps[] = {0.01,0.01};
-DEFINE_BRG_CACHE_ND_STATIC_VARS( add_cache, temp_mins, temp_maxes, temp_steps, 2 );
+DEFINE_BRG_CACHE_2D_STATIC_VARS( add_cache, 0, 5, 0.01,
+		                                    0, 5, 0.01);
 
 // Initialisation for brgastro::tfa_cache
 DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
@@ -98,17 +96,10 @@ const int brgastro::dfa_cache::_calculate( const double in_params, double & out_
 #endif // end brgastro::dfa_cache functions
 
 // brgastro::add_cache class methods
-const int brgastro::add_cache::_calculate( const brgastro::vector<double> in_params,
-		double  & out_params ) const
+const int brgastro::add_cache::_calculate( const double in_param_1, const double in_param_2,
+		double  & out_param ) const
 {
-	try
-	{
-		out_params = brgastro::integrate_add(in_params.at(0),in_params.at(1));
-	}
-	catch(const std::out_of_range &e)
-	{
-		return INVALID_ARGUMENTS_ERROR;
-	}
+	out_param = brgastro::integrate_add(in_param_1,in_param_2);
 	return 0;
 }
 
@@ -416,10 +407,7 @@ const BRG_DISTANCE brgastro::ad_distance( double z1, double z2 )
 {
 	if ( z2 < z1 )
 		std::swap( z1, z2 );
-	brgastro::vector<double> in_params(0,0);
-	in_params.push_back(z1);
-	in_params.push_back(z2);
-	return brgastro::add_cache().get( in_params );
+	return brgastro::add_cache().get( z1, z2 );
 }
 
 const BRG_UNITS brgastro::sigma_crit( const double z_lens,
