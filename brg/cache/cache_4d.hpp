@@ -32,7 +32,7 @@
 // SPP: "Static Polymorphic Pointer"
 #define SPP(name) static_cast<name*>(this)
 
-#define DECLARE_BRG_CACHE_3D_STATIC_VARS()		               \
+#define DECLARE_BRG_CACHE_4D_STATIC_VARS()		               \
 	static double _min_1_, _max_1_, _step_1_;                  \
 	static unsigned int _resolution_1_;                        \
 	static double _min_2_, _max_2_, _step_2_;                  \
@@ -41,14 +41,14 @@
 	static unsigned int _resolution_3_;                        \
 	static double _min_4_, _max_4_, _step_4_;                  \
 	static unsigned int _resolution_4_;                        \
-	static std::vector< std::vector< double > > _results_;     \
+	static std::vector< std::vector< std::vector< std::vector< double > > > > _results_;     \
 											                   \
 	static std::string _file_name_;                            \
 	static unsigned int _version_number_;                      \
 											                   \
 	static bool _loaded_, _initialised_;
 
-#define DEFINE_BRG_CACHE_3D_STATIC_VARS(class_name,init_min_1,init_max_1,init_step_1, \
+#define DEFINE_BRG_CACHE_4D_STATIC_VARS(class_name,init_min_1,init_max_1,init_step_1, \
                                         init_min_2, init_max_2, init_step_2,\
                                         init_min_3, init_max_3, init_step_3,\
                                         init_min_4, init_max_4, init_step_4)\
@@ -72,7 +72,7 @@
 	bool brgastro::class_name::_initialised_ = false;						\
 	std::string brgastro::class_name::_file_name_ = "";						\
 	unsigned int brgastro::class_name::_version_number_ = 1;		        \
-	std::vector< std::vector< double > > brgastro::class_name::_results_;
+	std::vector< std::vector< std::vector< std::vector< double > > > > brgastro::class_name::_results_;
 
 namespace brgastro
 {
@@ -175,8 +175,8 @@ private:
 			// Set up data
 			SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
 			SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
-			SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ) + 1;
-			SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / SPCP(name)->_step_4_ ) + 1;
+			SPCP(name)->_resolution_3_ = (int)( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ) + 1;
+			SPCP(name)->_resolution_4_ = (int)( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / SPCP(name)->_step_4_ ) + 1;
 			make_array4d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 					SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ );
 
@@ -210,7 +210,7 @@ private:
 			}
 
 			// Check that it was all read properly
-			if ( (i_4 != SPCP(name)->_resolution_3_) || (i_3 != 0) || (i_2 != 0) || (i_1 != 0)
+			if ( (i_4 != SPCP(name)->_resolution_4_) || (i_3 != 0) || (i_2 != 0) || (i_1 != 0)
 					|| (!in_file) )
 			{
 				need_to_calc = true;
@@ -261,7 +261,7 @@ private:
 		SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
 		SPCP(name)->_resolution_3_ = (int)( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ) + 1;
 		SPCP(name)->_resolution_4_ = (int)( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / SPCP(name)->_step_4_ ) + 1;
-		if ( make_array3d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
+		if ( make_array4d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 				SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ ) )
 			return 1;
 
@@ -347,7 +347,7 @@ private:
 
 		while ( i_4<SPCP(name)->_resolution_4_ )
 		{
-			out_file.write((char *)&(SPCP(name)->_results_[i_1][i_2][i_3]),size);
+			out_file.write((char *)&(SPCP(name)->_results_[i_1][i_2][i_3][i_4]),size);
 
 			++i_1;
 			if(i_1==(SPCP(name)->_resolution_1_))
@@ -513,10 +513,10 @@ public:
 		xhi_1 = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( xi_1 + 1 );
 		xlo_2 = SPCP(name)->_min_2_ + SPCP(name)->_step_2_ * xi_2;
 		xhi_2 = SPCP(name)->_min_2_ + SPCP(name)->_step_2_ * ( xi_2 + 1 );
-		xlo_2 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * xi_3;
-		xhi_2 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * ( xi_3 + 1 );
-		xlo_2 = SPCP(name)->_min_4_ + SPCP(name)->_step_4_ * xi_4;
-		xhi_2 = SPCP(name)->_min_4_ + SPCP(name)->_step_4_ * ( xi_4 + 1 );
+		xlo_3 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * xi_3;
+		xhi_3 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * ( xi_3 + 1 );
+		xlo_4 = SPCP(name)->_min_4_ + SPCP(name)->_step_4_ * xi_4;
+		xhi_4 = SPCP(name)->_min_4_ + SPCP(name)->_step_4_ * ( xi_4 + 1 );
 
 		result += SPCP(name)->_results_[xi_1][xi_2][xi_3][xi_4] *
 				(xhi_1-x_1)*(xhi_2-x_2)*(xhi_3-x_3)*(xhi_4-x_4);

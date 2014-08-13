@@ -39,7 +39,7 @@
 	static unsigned int _resolution_2_;                        \
 	static double _min_3_, _max_3_, _step_3_;                  \
 	static unsigned int _resolution_3_;                        \
-	static std::vector< std::vector< double > > _results_;     \
+	static std::vector< std::vector< std::vector< double > > > _results_;     \
 											                   \
 	static std::string _file_name_;                            \
 	static unsigned int _version_number_;                      \
@@ -65,7 +65,7 @@
 	bool brgastro::class_name::_initialised_ = false;						\
 	std::string brgastro::class_name::_file_name_ = "";						\
 	unsigned int brgastro::class_name::_version_number_ = 1;		        \
-	std::vector< std::vector< double > > brgastro::class_name::_results_;
+	std::vector< std::vector< std::vector< double > > > brgastro::class_name::_results_;
 
 namespace brgastro
 {
@@ -164,7 +164,7 @@ private:
 			// Set up data
 			SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
 			SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
-			SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ) + 1;
+			SPCP(name)->_resolution_3_ = (int)( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ) + 1;
 			make_array3d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 					SPCP(name)->_resolution_3_ );
 
@@ -471,8 +471,8 @@ public:
 		xhi_1 = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( xi_1 + 1 );
 		xlo_2 = SPCP(name)->_min_2_ + SPCP(name)->_step_2_ * xi_2;
 		xhi_2 = SPCP(name)->_min_2_ + SPCP(name)->_step_2_ * ( xi_2 + 1 );
-		xlo_2 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * xi_3;
-		xhi_2 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * ( xi_3 + 1 );
+		xlo_3 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * xi_3;
+		xhi_3 = SPCP(name)->_min_3_ + SPCP(name)->_step_3_ * ( xi_3 + 1 );
 
 		result += SPCP(name)->_results_[xi_1][xi_2][xi_3] * (xhi_1-x_1)*(xhi_2-x_2)*(xhi_3-x_3);
 		total_weight += (xhi_1-x_1)*(xhi_2-x_2)*(xhi_3-x_3);

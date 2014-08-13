@@ -79,7 +79,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( const BRG_DIS
 	BRG_DISTANCE R_to_use = std::fabs( R );
 	BRG_DISTANCE offset_R_to_use = std::fabs( R );
 	offset_ring_dens_functor ringfunc( this, offset_R_to_use, R_to_use );
-	offset_circ_dens_functor circfunc( this, offset_R_to_use );
+	offset_circ_dens_functor circfunc( this, offset_R_to_use, R_to_use );
 
 	BRG_UNITS out_param_ring = 0;
 	BRG_UNITS out_param_circ = 0;

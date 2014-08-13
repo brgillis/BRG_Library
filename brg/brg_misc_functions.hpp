@@ -561,7 +561,8 @@ inline const int set_zero( std::string obj )
 template< class T >
 inline const int set_zero( std::vector< T > vec )
 {
-	return vec.clear();
+	vec.clear();
+	return 0;
 }
 template< class T >
 inline const int set_zero( T *obj )

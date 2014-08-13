@@ -15,18 +15,19 @@
 
 #include "../../brg_global.h"
 
-#include "../../cache/cache_nd.hpp"
+#include "../../cache/cache_3d.hpp"
+#include "../../cache/cache_4d.hpp"
 
 namespace brgastro {
 
-class tNFW_sig_cache : public brg_cache_nd<tNFW_sig_cache>
+class tNFW_sig_cache : public brg_cache_3d<tNFW_sig_cache>
 {
 	// Weak lensing signal delta-sigma from truncated NFW profile, using default c and tau
 private:
 
-	DECLARE_BRG_CACHE_ND_STATIC_VARS();
+	DECLARE_BRG_CACHE_3D_STATIC_VARS();
 
-	friend class brg_cache_nd<tNFW_sig_cache>;
+	friend class brg_cache_3d<tNFW_sig_cache>;
 
 protected:
 
@@ -47,21 +48,22 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const int _calculate( const brgastro::vector<double> in_params, double & out_params ) const;
+	const int _calculate( const double in_param_1, const double in_param_2,
+			const double in_param_3, double & out_params ) const;
 
 public:
 
 }; // class tNFW_sig_cache
 
-class tNFW_offset_sig_cache : public brg_cache_nd<tNFW_offset_sig_cache>
+class tNFW_offset_sig_cache : public brg_cache_4d<tNFW_offset_sig_cache>
 {
 	// Weak lensing signal delta-sigma from truncated NFW profile, using default c and tau,
 	// offset from the centre of it by a distance R
 private:
 
-	DECLARE_BRG_CACHE_ND_STATIC_VARS();
+	DECLARE_BRG_CACHE_4D_STATIC_VARS();
 
-	friend class brg_cache_nd<tNFW_offset_sig_cache>;
+	friend class brg_cache_4d<tNFW_offset_sig_cache>;
 
 protected:
 
@@ -82,21 +84,22 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const int _calculate( const brgastro::vector<double> in_params, double & out_params ) const;
+	const int _calculate( const double in_param_1, const double in_param_2,
+			const double in_param_3, const double in_param_4, double & out_params ) const;
 
 public:
 
 }; // class tNFW_offset_sig_cache
 
-class tNFW_group_sig_cache : public brg_cache_nd<tNFW_group_sig_cache>
+class tNFW_group_sig_cache : public brg_cache_4d<tNFW_group_sig_cache>
 {
 	// Weak lensing signal delta-sigma from truncated NFW profile, using default c and tau,
 	// averaged over the positions of possible satellites of it
 private:
 
-	DECLARE_BRG_CACHE_ND_STATIC_VARS();
+	DECLARE_BRG_CACHE_4D_STATIC_VARS();
 
-	friend class brg_cache_nd<tNFW_group_sig_cache>;
+	friend class brg_cache_4d<tNFW_group_sig_cache>;
 
 protected:
 
@@ -117,7 +120,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const int _calculate( const brgastro::vector<double> in_params, double & out_params ) const;
+	const int _calculate( const double in_param_1, const double in_param_2,
+			const double in_param_3, const double in_param_4, double & out_params ) const;
 
 public:
 
