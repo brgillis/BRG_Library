@@ -852,6 +852,8 @@ inline const int integrate_Rhomberg( const f * func,
 		{
 			// Get R[n][0]
 
+			ftot = 0;
+
 			for ( int k = 1; k <= ipow( 2, n - 1 ); k++ )
 			{
 				in_params = a0

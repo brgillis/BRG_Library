@@ -77,7 +77,7 @@ private:
 	{
 		if(SPCP(name)->_initialised_) return 0;
 
-		SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 1);
+		SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
 		SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.dat";
 		SPCP(name)->_header_string_ = "# " + SPCP(name)->_name_base() + "_cache v1.0";
 
@@ -156,7 +156,7 @@ private:
 			}
 
 			// Set up data
-			SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
+			SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
 			make_array( SPCP(name)->_results_, SPCP(name)->_resolution_1_ );
 
 			// Read in data
@@ -245,7 +245,7 @@ private:
 		}
 
 		// Set up data
-		SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
+		SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
 		if ( make_array( SPCP(name)->_results_, SPCP(name)->_resolution_1_ ) )
 			return 1;
 
@@ -393,6 +393,55 @@ public:
 			return INVALID_ARGUMENTS_ERROR;
 		}
 	} // const int set_precision()
+
+	const int print( std::ostream & out, const bool silent = false ) const
+	{
+
+		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
+
+		// Load if necessary
+		if ( !SPCP(name)->_loaded_ )
+		{
+			bool good_load=true;;
+			// Critical section here, since we can't load multiple times simultaneously
+			#pragma omp critical(load_brg_cache)
+			{
+				if ( SPCP(name)->_load( silent ) )
+				{
+					good_load = false;
+				}
+			}
+			if ( !good_load )
+			{
+				std::string err = "ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache::print()\n";
+				if ( !silent )
+					std::cerr << err;
+				throw std::runtime_error(err);
+			}
+		}
+
+		// Fill up header
+		std::vector< std::string > header(3);
+		header[0] = "#";
+		header[1] = "x_1";
+		header[2] = "y";
+
+		// Fill up data
+		std::vector< std::vector<std::string> > data(3);
+		std::stringstream ss;
+		for(unsigned int i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
+		{
+			data[0].push_back("");
+			ss.str("");
+			ss << SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
+			data[1].push_back(ss.str());
+			ss.str("");
+			ss << SPCP(name)->_results_[i_1];
+			data[2].push_back(ss.str());
+		}
+
+		return print_table(out,data.size(),data[0].size(),header,data,false,silent);
+	}
 
 	const BRG_UNITS get( const double x, const bool silent = false ) const
 	{

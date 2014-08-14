@@ -26,20 +26,20 @@
 
 // Initialisation for brgastro::tNFW_sig_cache
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_sig_cache,
-	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/1000,
+	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/100,
 	0.1,1.5,0.1,
-	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/1000);
+	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/100);
 
 // Initialisation for brgastro::tNFW_offset_sig_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_offset_sig_cache,
-	std::log(1e10*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/100,
+	std::log(1e10*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e10))/10,
 	0.1,1.5,0.4,
 	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/100,
-	std::log(0.1*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.1))/300);
+	std::log(0.1*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.1))/10);
 
 // Initialisation for brgastro::tNFW_group_sig_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_sig_cache,
-	std::log(1e10*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/100,
+	std::log(1e10*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e10))/10,
 	0.1,1.5,0.4,
 	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/100,
 	2.5,10.,2.5);
