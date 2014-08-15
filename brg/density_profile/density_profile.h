@@ -80,7 +80,6 @@ public:
 		hmvir_cached = false;
 		_rhmtot_cache_ = 0;
 		hmtot_cached = false;
-		set_z( 0 );
 	}
 #endif
 

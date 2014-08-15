@@ -184,7 +184,7 @@ private:
 			// Read in data
 
 			// Initialise
-			const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0][0]); // Store the size for speed
+			const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0][0]); // Store the size
 			unsigned int i_1=0, i_2=0, i_3=0, i_4=0;
 
 			while ( ( !in_file.eof() ) && ( i_4 < SPCP(name)->_resolution_4_ )
@@ -343,7 +343,7 @@ private:
 		// Output data
 
 		// Initialize
-		const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0]);
+		const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0][0]);
 		unsigned int i_1=0, i_2=0, i_3=0, i_4=0;
 
 		while ( i_4<SPCP(name)->_resolution_4_ )

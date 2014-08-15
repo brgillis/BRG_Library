@@ -63,8 +63,7 @@ brgastro::tNFW_profile::tNFW_profile()
 }
 
 brgastro::tNFW_profile::tNFW_profile( const BRG_MASS &init_mvir0,
-		const double init_z, const double init_c, const double init_tau ) :
-		brgastro::redshift_obj( init_z )
+		const double init_z, const double init_c, const double init_tau )
 {
 	_mvir0_ = init_mvir0;
 	if ( init_c <= 0 )
@@ -83,6 +82,7 @@ brgastro::tNFW_profile::tNFW_profile( const BRG_MASS &init_mvir0,
 	{
 		_tau_ = init_tau;
 	}
+	set_z(init_z);
 }
 
 #endif // End constructors

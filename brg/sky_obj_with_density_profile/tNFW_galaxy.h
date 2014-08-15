@@ -7,6 +7,8 @@
  *      Author: brg
  */
 
+// TODO: Implement proper merging so we don't have to use virtual inheritance
+
 #ifndef _BRG_TNFW_GALAXY_H_
 #define _BRG_TNFW_GALAXY_H_
 
@@ -21,7 +23,8 @@ namespace brgastro {
 
 class tNFW_galaxy: public tNFW_profile, public galaxy
 {
-	// Simple combination of the two classes.
+	// Simple combination of the two classes, with a little complication to avoid
+	// virtual inheritance
 public:
 	tNFW_galaxy()
 	{
