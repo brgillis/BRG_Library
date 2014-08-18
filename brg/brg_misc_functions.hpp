@@ -217,10 +217,12 @@ inline const long double inv_quart(long double v1)
 template< typename T >
 const T ipow( T v, int p )
 {
-	if(p>=2) return v*ipow(v,p-1);
 	if(p==1) return v;
+	if(p==0) return 1;
 	if(p<0) return 1/ipow(v,-p);
-	return 1;
+	T tmp=ipow(v,p/2);
+	if(p%2==0) return tmp*=tmp;
+	return v*=(tmp*=tmp);
 }
 
 // "Safe" functions - perform the operation specified, but will

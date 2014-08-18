@@ -764,7 +764,8 @@ void brgastro::stripping_orbit::swap(stripping_orbit &other)
 	swap(_override_t_min_, other._override_t_min_);
 	swap(_override_t_max_, other._override_t_max_);
 
-	swap(_final_fmret_list_, other._final_fmret_list_);
+	swap(_final_frac_m_ret_list_, other._final_frac_m_ret_list_);
+	swap(_final_frac_m_vir_ret_list_, other._final_frac_m_vir_ret_list_);
 
 	swap(_x_points_, other._x_points_);
 	swap(_y_points_, other._y_points_);
@@ -788,6 +789,8 @@ void brgastro::stripping_orbit::swap(stripping_orbit &other)
 			other._host_parameter_points_);
 	_m_ret_interpolator_.swap(
 			other._m_ret_interpolator_);
+	_m_vir_ret_interpolator_.swap(
+			other._m_vir_ret_interpolator_);
 
 	swap(_t_points_, other._t_points_);
 	swap(_host_param_t_points_, other._host_param_t_points_);
@@ -893,7 +896,8 @@ brgastro::stripping_orbit::stripping_orbit(
 	_override_t_min_ = other._override_t_min_;
 	_override_t_max_ = other._override_t_max_;
 
-	_final_fmret_list_ = other._final_fmret_list_;
+	_final_frac_m_ret_list_ = other._final_frac_m_ret_list_;
+	_final_frac_m_vir_ret_list_ = other._final_frac_m_vir_ret_list_;
 
 	_x_points_ = other._x_points_;
 	_y_points_ = other._y_points_;
@@ -917,6 +921,8 @@ brgastro::stripping_orbit::stripping_orbit(
 			other._host_parameter_points_;
 	_m_ret_interpolator_ =
 			other._m_ret_interpolator_;
+	_m_vir_ret_interpolator_ =
+			other._m_vir_ret_interpolator_;
 
 	_t_points_ = other._t_points_;
 	_host_param_t_points_ = other._host_param_t_points_;
@@ -1063,8 +1069,10 @@ const int brgastro::stripping_orbit::clear_calcs() const
 	_orbit_segments_.clear();
 	_num_segments_ = 0;
 	_final_good_segment_ = _orbit_segments_.end();
-	_final_fmret_list_.clear();
+	_final_frac_m_ret_list_.clear();
+	_final_frac_m_vir_ret_list_.clear();
 	_m_ret_interpolator_.clear();
+	_m_vir_ret_interpolator_.clear();
 
 	_calculated_ = false;
 	_bad_result_ = false;
@@ -1257,6 +1265,7 @@ const int brgastro::stripping_orbit::clear_discontinuity_times()
 const int brgastro::stripping_orbit::clear_host_parameter_points()
 {
 	_host_parameter_points_.clear();
+	_host_param_t_points_.clear();
 	_calculated_ = false;
 	return 0;
 }
@@ -2341,7 +2350,8 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 	{
 		for ( int i = 0; i < _num_segments_; i++ )
 		{
-			double fmret = 1;
+			double frac_m_ret = 1;
+			double fmvirret = 1;
 			if ( !( segments_to_skip.at( i ) ) )
 			{
 
@@ -2391,7 +2401,8 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 					{
 						_likely_disrupted_ = true;
 						_bad_result_ = true;
-						fmret = 0;
+						frac_m_ret = 0;
+						fmvirret = 0;
 						throw std::runtime_error("WARNING: Satellite halo likely disrupted.\n");
 					}
 					if (_orbit_segments_.at( i ).bad_result() )
@@ -2404,14 +2415,19 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 					if(_record_full_data_)
 					{
 						std::vector< std::pair< double, double > > new_m_rets =
-								_orbit_segments_[i].mret_points();
+								_orbit_segments_[i].m_ret_points();
+						std::vector< std::pair< double, double > > new_m_vir_rets =
+								_orbit_segments_[i].m_vir_ret_points();
 						for(size_t j=0; j<new_m_rets.size(); j++)
 						{
 							try
 							{
 								_m_ret_interpolator_.try_add_point(
 										new_m_rets[j].first,
-										fmret*new_m_rets[j].second);
+										frac_m_ret*new_m_rets[j].second);
+								_m_vir_ret_interpolator_.try_add_point(
+										new_m_vir_rets[j].first,
+										fmvirret*new_m_vir_rets[j].second);
 							}
 							catch(const std::exception &e)
 							{
@@ -2421,7 +2437,8 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 						}
 					}
 
-					_orbit_segments_.at( i ).get_final_fmret( fmret );
+					_orbit_segments_.at( i ).get_final_frac_m_ret( frac_m_ret );
+					_orbit_segments_.at( i ).get_final_frac_m_vir_ret( fmvirret );
 
 					// Record this as the final good segment, in case we don't find any more afterward
 					_final_good_segment_ = _orbit_segments_.begin() + i;
@@ -2431,29 +2448,42 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 						std::cerr << e.what();
 					if(_likely_disrupted_)
 					{
-						fmret = 0;
+						frac_m_ret = 0;
 					}
 					else
 					{
-						fmret = 1;
+						frac_m_ret = 1;
 					}
-					if ( _final_fmret_list_.size() > 0 )
-						_final_fmret_list_.push_back( fmret * _final_fmret_list_.back() );
+					if ( _final_frac_m_ret_list_.size() > 0 )
+					{
+						_final_frac_m_ret_list_.push_back( frac_m_ret * _final_frac_m_ret_list_.back() );
+						_final_frac_m_vir_ret_list_.push_back( fmvirret * _final_frac_m_vir_ret_list_.back() );
+					}
 					else
-						_final_fmret_list_.push_back( fmret );
+					{
+						_final_frac_m_ret_list_.push_back( frac_m_ret );
+						_final_frac_m_vir_ret_list_.push_back( fmvirret );
+					}
 					break;
 				}
 
 			}
 			else
 			{
-				fmret = 1;
+				frac_m_ret = 1;
+				fmvirret = 1;
 			}
 
-			if ( _final_fmret_list_.size() > 0 )
-				_final_fmret_list_.push_back( fmret * _final_fmret_list_.back() );
+			if ( _final_frac_m_ret_list_.size() > 0 )
+			{
+				_final_frac_m_ret_list_.push_back( frac_m_ret * _final_frac_m_ret_list_.back() );
+				_final_frac_m_vir_ret_list_.push_back( fmvirret * _final_frac_m_vir_ret_list_.back() );
+			}
 			else
-				_final_fmret_list_.push_back( fmret );
+			{
+				_final_frac_m_ret_list_.push_back( frac_m_ret );
+				_final_frac_m_vir_ret_list_.push_back( fmvirret );
+			}
 		}
 
 		del_obj(temp_satellite);
@@ -2568,25 +2598,25 @@ const int brgastro::stripping_orbit::print_full_data( std::ostream *out ) const
 			if ( first_good_segment ) // Special handling for first segment
 			{
 				if ( _orbit_segments_.at( i ).print_full_data( out, true, 1 ) )
-					return 1; // Print header, mret_multiplier = 1
+					return 1; // Print header, m_ret_multiplier = 1
 				first_good_segment = false;
 			}
 			else
 			{
 				if ( _orbit_segments_.at( i ).print_full_data( out, false,
-						_final_fmret_list_.at( i - 1 ) ) )
-					return 1; // Don't print header, mret_multiplier = fmret after last segment
+						_final_frac_m_ret_list_.at( i - 1 ), _final_frac_m_vir_ret_list_.at( i - 1 ) ) )
+					return 1; // Don't print header, m_ret_multiplier = frac_m_ret after last segment
 			}
 		}
 	}
 	return 0;
 }
 
-const int brgastro::stripping_orbit::get_final_mret( BRG_MASS & mret ) const
+const int brgastro::stripping_orbit::get_final_m_ret( BRG_MASS & m_ret ) const
 {
 	if(likely_disrupted())
 	{
-		mret = 0;
+		m_ret = 0;
 	}
 	else
 	{
@@ -2599,11 +2629,11 @@ const int brgastro::stripping_orbit::get_final_mret( BRG_MASS & mret ) const
 		{
 			return UNSPECIFIED_ERROR;
 		}
-		mret = _init_satellite_ptr_->mvir()*_final_fmret_list_.back();
+		m_ret = _init_satellite_ptr_->mtot()*_final_frac_m_ret_list_.back();
 	}
 	return 0;
 }
-const int brgastro::stripping_orbit::get_mret_at_t( const BRG_TIME & t, BRG_MASS & mret) const
+const int brgastro::stripping_orbit::get_m_ret_at_t( const BRG_TIME & t, BRG_MASS & m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2616,14 +2646,14 @@ const int brgastro::stripping_orbit::get_mret_at_t( const BRG_TIME & t, BRG_MASS
 	{
 		return UNSPECIFIED_ERROR;
 	}
-	mret = _init_satellite_ptr_->mvir()*max( _m_ret_interpolator_(t), 0. );
+	m_ret = _init_satellite_ptr_->mtot()*max( _m_ret_interpolator_(t), 0. );
 	return 0;
 }
-const int brgastro::stripping_orbit::get_final_fmret( double & fmret ) const
+const int brgastro::stripping_orbit::get_final_frac_m_ret( double & frac_m_ret ) const
 {
 	if(likely_disrupted())
 	{
-		fmret = 0;
+		frac_m_ret = 0;
 	}
 	else
 	{
@@ -2636,11 +2666,11 @@ const int brgastro::stripping_orbit::get_final_fmret( double & fmret ) const
 		{
 			return UNSPECIFIED_ERROR;
 		}
-		fmret = _final_fmret_list_.back();
+		frac_m_ret = _final_frac_m_ret_list_.back();
 	}
 	return 0;
 }
-const int brgastro::stripping_orbit::get_fmret_at_t( const BRG_TIME & t, double & fmret) const
+const int brgastro::stripping_orbit::get_frac_m_ret_at_t( const BRG_TIME & t, double & frac_m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2653,14 +2683,90 @@ const int brgastro::stripping_orbit::get_fmret_at_t( const BRG_TIME & t, double 
 	{
 		return UNSPECIFIED_ERROR;
 	}
-	fmret = max( _m_ret_interpolator_(t), 0. );
+	frac_m_ret = max( _m_ret_interpolator_(t), 0. );
 	return 0;
 }
-const int brgastro::stripping_orbit::get_comp_fmret_at_t( const BRG_TIME & t, double & fmret) const
+const int brgastro::stripping_orbit::get_final_m_vir_ret( BRG_MASS & m_ret ) const
+{
+	if(likely_disrupted())
+	{
+		m_ret = 0;
+	}
+	else
+	{
+		if ( !_calculated_ )
+		{
+			if ( calc() )
+				return UNSPECIFIED_ERROR;
+		}
+		if( _bad_result_ )
+		{
+			return UNSPECIFIED_ERROR;
+		}
+		m_ret = _init_satellite_ptr_->enc_mass(_init_satellite_ptr_->rvir()) *
+				_final_frac_m_vir_ret_list_.back();
+	}
+	return 0;
+}
+const int brgastro::stripping_orbit::get_m_vir_ret_at_t( const BRG_TIME & t, BRG_MASS & m_ret) const
+{
+	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
+	{
+		if ( int errcode = set_record_full_data( true ) )
+			return errcode + LOWER_LEVEL_ERROR;
+		if ( calc() )
+			return UNSPECIFIED_ERROR;
+	}
+	if( _bad_result_ )
+	{
+		return UNSPECIFIED_ERROR;
+	}
+	m_ret = _init_satellite_ptr_->enc_mass(_init_satellite_ptr_->rvir()) *
+			max( _m_vir_ret_interpolator_(t), 0. );
+	return 0;
+}
+const int brgastro::stripping_orbit::get_final_frac_m_vir_ret( double & frac_m_ret ) const
+{
+	if(likely_disrupted())
+	{
+		frac_m_ret = 0;
+	}
+	else
+	{
+		if ( !_calculated_ )
+		{
+			if ( calc() )
+				return UNSPECIFIED_ERROR;
+		}
+		if( _bad_result_ )
+		{
+			return UNSPECIFIED_ERROR;
+		}
+		frac_m_ret = _final_frac_m_vir_ret_list_.back();
+	}
+	return 0;
+}
+const int brgastro::stripping_orbit::get_frac_m_vir_ret_at_t( const BRG_TIME & t, double & frac_m_ret) const
+{
+	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
+	{
+		if ( int errcode = set_record_full_data( true ) )
+			return errcode + LOWER_LEVEL_ERROR;
+		if ( calc() )
+			return UNSPECIFIED_ERROR;
+	}
+	if( _bad_result_ )
+	{
+		return UNSPECIFIED_ERROR;
+	}
+	frac_m_ret = max( _m_vir_ret_interpolator_(t), 0. );
+	return 0;
+}
+const int brgastro::stripping_orbit::get_comp_frac_m_ret_at_t( const BRG_TIME & t, double & frac_m_ret) const
 {
 	try
 	{
-		fmret = _test_mass_interpolator_(t);
+		frac_m_ret = _test_mass_interpolator_(t);
 	}
 	catch(const std::exception &e)
 	{
@@ -2668,11 +2774,11 @@ const int brgastro::stripping_orbit::get_comp_fmret_at_t( const BRG_TIME & t, do
 	}
 	return 0;
 }
-const int brgastro::stripping_orbit::get_comp_fmret_error_at_t( const BRG_TIME & t, double & fmret) const
+const int brgastro::stripping_orbit::get_comp_frac_m_ret_error_at_t( const BRG_TIME & t, double & frac_m_ret) const
 {
 	try
 	{
-		fmret = _test_mass_error_interpolator_(t);
+		frac_m_ret = _test_mass_error_interpolator_(t);
 	}
 	catch(const std::exception &e)
 	{
@@ -2820,27 +2926,78 @@ const int brgastro::stripping_orbit::clone_final_host(
 }
 
 // Get final data (throws exception on failure)
-const BRG_MASS brgastro::stripping_orbit::final_mret() const
+const BRG_MASS brgastro::stripping_orbit::final_m_ret() const
 {
 	BRG_MASS result = -1;
 
 	if(likely_disrupted()) return 0;
 
-	if ( get_final_mret( result ) )
+	if ( get_final_m_ret( result ) )
 	{
-		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_mret.\n");
+		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_m_ret.\n");
 	}
 	return result;
 }
-const BRG_MASS brgastro::stripping_orbit::mret_at_t(const BRG_TIME & t) const
+const BRG_MASS brgastro::stripping_orbit::m_ret_at_t(const BRG_TIME & t) const
 {
 	BRG_MASS result = -1;
 
-	if ( get_mret_at_t( t, result ) )
+	if ( get_m_ret_at_t( t, result ) )
 	{
-		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_mret.\n");
+		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_m_ret.\n");
 	}
 	return result;
+}
+const BRG_MASS brgastro::stripping_orbit::final_m_vir_ret() const
+{
+	BRG_MASS result = -1;
+
+	if(likely_disrupted()) return 0;
+
+	if ( get_final_m_vir_ret( result ) )
+	{
+		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_m_ret.\n");
+	}
+	return result;
+}
+const BRG_MASS brgastro::stripping_orbit::m_vir_ret_at_t(const BRG_TIME & t) const
+{
+	BRG_MASS result = -1;
+
+	if ( get_m_vir_ret_at_t( t, result ) )
+	{
+		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_m_ret.\n");
+	}
+	return result;
+}
+
+const double brgastro::stripping_orbit::final_frac_m_vir_ret() const
+{
+	double result = -1;
+
+	if ( get_final_frac_m_vir_ret( result ) )
+	{
+		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_frac_m_ret.\n");
+	}
+	return result;
+}
+const double brgastro::stripping_orbit::frac_m_vir_ret_at_t(const BRG_TIME &t) const
+{
+	double result = -1;
+
+	if ( get_frac_m_vir_ret_at_t( t, result ) )
+	{
+		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_frac_m_ret.\n");
+	}
+	return result;
+}
+const double brgastro::stripping_orbit::comp_frac_m_ret_at_t(const BRG_TIME & t) const
+{
+	return _test_mass_interpolator_(t);
+}
+const double brgastro::stripping_orbit::comp_frac_m_ret_error_at_t(const BRG_TIME & t) const
+{
+	return _test_mass_error_interpolator_(t);
 }
 
 const BRG_UNITS brgastro::stripping_orbit::final_sum_deltarho() const
@@ -2852,35 +3009,6 @@ const BRG_UNITS brgastro::stripping_orbit::final_sum_deltarho() const
 		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_sum_deltarho.\n");
 	}
 	return result;
-}
-
-const double brgastro::stripping_orbit::final_fmret() const
-{
-	double result = -1;
-
-	if ( get_final_fmret( result ) )
-	{
-		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_fmret.\n");
-	}
-	return result;
-}
-const double brgastro::stripping_orbit::fmret_at_t(const BRG_TIME &t) const
-{
-	double result = -1;
-
-	if ( get_fmret_at_t( t, result ) )
-	{
-		throw std::runtime_error("ERROR: Could not calculate stripping in stripping_orbit::final_fmret.\n");
-	}
-	return result;
-}
-const double brgastro::stripping_orbit::comp_fmret_at_t(const BRG_TIME & t) const
-{
-	return _test_mass_interpolator_(t);
-}
-const double brgastro::stripping_orbit::comp_fmret_error_at_t(const BRG_TIME & t) const
-{
-	return _test_mass_error_interpolator_(t);
 }
 
 const brgastro::gabdt brgastro::stripping_orbit::final_sum_gabdt() const
@@ -2905,7 +3033,7 @@ const BRG_TIME brgastro::stripping_orbit::last_infall_time() const
 	return result;
 }
 
-const bool & brgastro::stripping_orbit::likely_disrupted() const
+const bool brgastro::stripping_orbit::likely_disrupted() const
 {
 	if(!_calculated_)
 	{
@@ -2967,7 +3095,8 @@ const brgastro::density_profile * brgastro::stripping_orbit::final_host() const
 		return _final_good_segment()->final_host();
 }
 
-const int brgastro::stripping_orbit::get_quality_of_fit( double & Q, const unsigned int samples)
+const int brgastro::stripping_orbit::get_quality_of_fit( double & Q, const bool use_virial,
+		const unsigned int samples)
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2983,10 +3112,18 @@ const int brgastro::stripping_orbit::get_quality_of_fit( double & Q, const unsig
 	double temp_Q = 0;
 	double t_step = (t_max()-t_min())/samples;
 
+	interpolator * interp=NULL;
+	if(use_virial)
+		interp = &_m_vir_ret_interpolator_;
+	else
+		interp = &_m_ret_interpolator_;
+
+
+
 	for(double t=t_min(), tm=t_max(); t<tm; t+=t_step)
 	{
-		temp_Q += std::pow((_m_ret_interpolator_(t) - _test_mass_interpolator_(t))
-				/safe_d( _test_mass_error_interpolator_(t) ) ,2);
+		temp_Q += square(((*interp)(t) - _test_mass_interpolator_(t))
+				/safe_d( _test_mass_error_interpolator_(t) ));
 	}
 
 	Q = temp_Q/safe_d(samples);
@@ -2994,7 +3131,7 @@ const int brgastro::stripping_orbit::get_quality_of_fit( double & Q, const unsig
 	return 0;
 }
 
-const double brgastro::stripping_orbit::quality_of_fit(const unsigned int samples)
+const double brgastro::stripping_orbit::quality_of_fit(const bool use_virial, const unsigned int samples)
 {
 	double Q=-1;
 	if(get_quality_of_fit(Q,samples))
@@ -3064,7 +3201,8 @@ void brgastro::stripping_orbit_segment::swap(stripping_orbit_segment &other)
 	swap(_satellite_parameter_data_, other._satellite_parameter_data_);
 	swap(_host_parameter_data_, other._host_parameter_data_);
 	swap(_num_parameters_, other._num_parameters_);
-	swap(_mret_list_, other._mret_list_);
+	swap(_m_ret_list_, other._m_ret_list_);
+	swap(_m_vir_ret_list_, other._m_vir_ret_list_);
 	swap(_satellite_parameter_unitconvs_,
 			other._satellite_parameter_unitconvs_);
 	swap(_satellite_output_parameters_,
@@ -3176,7 +3314,7 @@ brgastro::stripping_orbit_segment::stripping_orbit_segment(
 	_satellite_parameter_data_ = other._satellite_parameter_data_;
 	_host_parameter_data_ = other._host_parameter_data_;
 	_num_parameters_ = other._num_parameters_;
-	_mret_list_ = other._mret_list_;
+	_m_vir_ret_list_ = other._m_vir_ret_list_;
 	_satellite_parameter_unitconvs_ =
 			other._satellite_parameter_unitconvs_;
 	_satellite_output_parameters_ =
@@ -3377,7 +3515,8 @@ const int brgastro::stripping_orbit_segment::clear_calcs() const
 	_rt_list_.clear();
 	_rt_ratio_list_.clear();
 	_phase_output_list_.clear();
-	_mret_list_.clear();
+	_m_ret_list_.clear();
+	_m_vir_ret_list_.clear();
 	_delta_rho_list_.clear();
 	_sum_delta_rho_list_.clear();
 	_gabdt_list_.clear();
@@ -4015,7 +4154,8 @@ const int brgastro::stripping_orbit_segment::_reserve( const int n,
 		return INVALID_ARGUMENTS_ERROR;
 	}
 	_phase_list_.reserve( n );
-	_mret_list_.reserve( n );
+	_m_ret_list_.reserve( n );
+	_m_vir_ret_list_.reserve( n );
 	_phase_output_list_.reserve( n );
 	_rt_list_.reserve( n );
 	_rt_ratio_list_.reserve( n );
@@ -4266,7 +4406,7 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 	int num_host_parameters = 0;
 	int counter = 0;
 	double step_length_factor = 1;
-	double mret = 1;
+	double m_ret = 1;
 
 	if ( ( !_host_loaded_ ) || ( !_satellite_loaded_ ) )
 	{
@@ -4330,7 +4470,8 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 	// Set up interpolation type
 	_pass_interpolation_type();
 
-	_mret_list_.push_back( 1 );
+	_m_ret_list_.push_back( 1 );
+	_m_vir_ret_list_.push_back( 1 );
 	_delta_rho_list_.push_back( current_deltarho );
 	_sum_delta_rho_list_.push_back( _init_sum_delta_rho_ );
 
@@ -4399,7 +4540,8 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 		}
 	}
 
-	BRG_MASS init_mtot = _current_satellite_ptr_->mtot();
+	const BRG_MASS init_mtot = _current_satellite_ptr_->mtot();
+	const BRG_MASS init_mvir = _current_satellite_ptr_->enc_mass(_current_satellite_ptr_->rvir());
 
 	// Loop over time
 	for ( t = t_min_to_use; t < t_max_to_use;
@@ -4449,21 +4591,24 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 
 			// Calculate effects of tidal stripping and shocks
 			// Effects of stripping
-			mret = _tidal_strip_retained( _current_host_ptr_,
+			m_ret = _tidal_strip_retained( _current_host_ptr_,
 					_current_satellite_ptr_, r, vr, vt,
 					t_step * step_length_factor,
 					_sum_delta_rho_list_.at( counter - 1 ) );
-			_mret_list_.push_back( _mret_list_.at( counter - 1 ) * mret );
+			_m_ret_list_.push_back( _m_ret_list_.at( counter - 1 ) * m_ret );
 
 			// Calculate adjusted fraction (so numerical errors don't cause a consistent
 			// offset to add up).
 
-			double adjusted_mret = _mret_list_.back() * init_mtot/safe_d(_current_satellite_ptr_->mtot());
-			if( isbad(adjusted_mret) or (adjusted_mret>1.1) or (adjusted_mret<0)) adjusted_mret = 0;
+			double adjusted_m_ret = _m_ret_list_.back() * init_mtot/safe_d(_current_satellite_ptr_->mtot());
+			if( isbad(adjusted_m_ret) or (adjusted_m_ret>1.1) or (adjusted_m_ret<0)) adjusted_m_ret = 0;
 
-			_current_satellite_ptr_->truncate_to_fraction( adjusted_mret );
+			_current_satellite_ptr_->truncate_to_fraction( adjusted_m_ret );
 
-			if(mret == 0)
+			_m_vir_ret_list_.push_back( _current_satellite_ptr_->enc_mass(_current_satellite_ptr_->rvir()) /
+					init_mvir);
+
+			if(m_ret == 0)
 			{
 				_likely_disrupted_ = true;
 				_bad_result_ = true;
@@ -4603,9 +4748,9 @@ const int brgastro::stripping_orbit_segment::clear_host_parameter_unitconvs()
 
 const int brgastro::stripping_orbit_segment::print_full_data(
 		std::ostream *out, const bool include_header,
-		const double mret_multiplier, const bool silent ) const
+		const double m_ret_multiplier, const double m_vir_ret_multiplier, const bool silent ) const
 {
-	const int num_columns_base = 16;
+	const int num_columns_base = 18;
 	int num_extra_satellite_columns = 0;
 	int num_extra_host_columns = 0;
 	int num_rows = 0;
@@ -4737,10 +4882,12 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 	header[9] = "v";
 	header[10] = "m_ret";
 	header[11] = "m_frac_lost";
-	header[12] = "comp_m_ret";
-	header[13] = "comp_m_frac_lost";
-	header[14] = "rt";
-	header[15] = "rt/rvir";
+	header[12] = "m_vir_ret";
+	header[13] = "m_vir_frac_lost";
+	header[14] = "comp_m_ret";
+	header[15] = "comp_m_frac_lost";
+	header[16] = "rt";
+	header[17] = "rt/rvir";
 
 	if ( num_extra_satellite_columns > 0 )
 	{
@@ -4876,20 +5023,34 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 						* unitconv::mtokpc / unitconv::stoGyr;
 		data[9][i] = ss.str();
 		ss.str( "" );
-		ss << _mret_list_.at( i ) * mret_multiplier;
+		ss << _m_ret_list_.at( i ) * m_ret_multiplier;
 		data[10][i] = ss.str();
 		ss.str( "" );
 		if ( i > 0 )
-			ss
-					<< ( 1 - _mret_list_.at( i ) / _mret_list_.at( i - 1 ) )
+			ss << ( 1 - _m_ret_list_.at( i ) / _m_ret_list_.at( i - 1 ) )
 							/ ( _phase_output_list_.at( i ).t
 									- _phase_output_list_.at( i - 1 ).t );
 		else
-			ss << 0;
+			ss << ( 1 - _m_ret_list_.at( i+1 ) / _m_ret_list_.at( i ) )
+							/ ( _phase_output_list_.at( i+1 ).t
+									- _phase_output_list_.at( i ).t );
 		data[11][i] = ss.str();
 		ss.str( "" );
-		ss << _test_mass_spline_( _phase_output_list_.at( i ).t );
+		ss << _m_vir_ret_list_.at( i ) * m_vir_ret_multiplier;
 		data[12][i] = ss.str();
+		ss.str( "" );
+		if ( i > 0 )
+			ss << ( 1 - _m_vir_ret_list_.at( i ) / _m_vir_ret_list_.at( i - 1 ) )
+							/ ( _phase_output_list_.at( i ).t
+									- _phase_output_list_.at( i - 1 ).t );
+		else
+			ss << ( 1 - _m_vir_ret_list_.at( i+1 ) / _m_vir_ret_list_.at( i ) )
+							/ ( _phase_output_list_.at( i+1 ).t
+									- _phase_output_list_.at( i ).t );
+		data[13][i] = ss.str();
+		ss.str( "" );
+		ss << _test_mass_spline_( _phase_output_list_.at( i ).t );
+		data[14][i] = ss.str();
 		ss.str( "" );
 		if ( i > 0 )
 			ss
@@ -4904,13 +5065,13 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 									- _phase_output_list_.at( i - 1 ).t );
 		else
 			ss << 0;
-		data[13][i] = ss.str();
+		data[15][i] = ss.str();
 		ss.str( "" );
 		ss << _rt_list_.at( i ) * unitconv::mtokpc;
-		data[14][i] = ss.str();
+		data[16][i] = ss.str();
 		ss.str( "" );
 		ss << _rt_ratio_list_.at( i );
-		data[15][i] = ss.str();
+		data[17][i] = ss.str();
 
 		if ( num_extra_satellite_columns > 0 )
 		{
@@ -5117,8 +5278,8 @@ const int brgastro::stripping_orbit_segment::_pass_interpolation_type() const
 	return 0;
 }
 
-const int brgastro::stripping_orbit_segment::get_final_mret(
-BRG_MASS & mret, const bool silent ) const
+const int brgastro::stripping_orbit_segment::get_final_m_ret(
+BRG_MASS & m_ret, const bool silent ) const
 {
 	if ( !_calculated_ )
 	{
@@ -5129,10 +5290,10 @@ BRG_MASS & mret, const bool silent ) const
 	{
 		return UNSPECIFIED_ERROR;
 	}
-	mret = _init_satellite_ptr_->mvir()*_mret_list_.back();
+	m_ret = _init_satellite_ptr_->mtot()*_m_ret_list_.back();
 	return 0;
 }
-const int brgastro::stripping_orbit_segment::get_final_fmret( double & fmret,
+const int brgastro::stripping_orbit_segment::get_final_frac_m_ret( double & frac_m_ret,
 		const bool silent ) const
 {
 	if ( !_calculated_ )
@@ -5144,11 +5305,11 @@ const int brgastro::stripping_orbit_segment::get_final_fmret( double & fmret,
 	{
 		return UNSPECIFIED_ERROR;
 	}
-	fmret = _mret_list_.back() / safe_d(_mret_list_.front());
+	frac_m_ret = _m_ret_list_.back() / safe_d(_m_ret_list_.front());
 	return 0;
 }
-const int brgastro::stripping_orbit_segment::get_mret_points(
-		std::vector< std::pair<double,double> > & mret_points,
+const int brgastro::stripping_orbit_segment::get_m_ret_points(
+		std::vector< std::pair<double,double> > & m_ret_points,
 		const bool silent ) const
 {
 	if ( (!_calculated_) || (!_record_full_data_) )
@@ -5162,12 +5323,68 @@ const int brgastro::stripping_orbit_segment::get_mret_points(
 		return UNSPECIFIED_ERROR;
 	}
 
-	mret_points.clear();
+	m_ret_points.clear();
 	for(size_t i = 0; i<_phase_output_list_.size(); i++)
 	{
-		mret_points.push_back( std::make_pair(
+		m_ret_points.push_back( std::make_pair(
 				_phase_output_list_[i].t,
-				_mret_list_.at(i)));
+				_m_ret_list_.at(i)));
+	}
+
+	return 0;
+}
+
+const int brgastro::stripping_orbit_segment::get_final_m_vir_ret(
+BRG_MASS & m_ret, const bool silent ) const
+{
+	if ( !_calculated_ )
+	{
+		if ( calc() )
+			return UNSPECIFIED_ERROR;
+	}
+	if( _bad_result_ )
+	{
+		return UNSPECIFIED_ERROR;
+	}
+	m_ret = _init_satellite_ptr_->enc_mass(_init_satellite_ptr_->rvir())*_m_vir_ret_list_.back();
+	return 0;
+}
+const int brgastro::stripping_orbit_segment::get_final_frac_m_vir_ret( double & frac_m_ret,
+		const bool silent ) const
+{
+	if ( !_calculated_ )
+	{
+		if ( calc() )
+			return UNSPECIFIED_ERROR;
+	}
+	if( _bad_result_ )
+	{
+		return UNSPECIFIED_ERROR;
+	}
+	frac_m_ret = _m_vir_ret_list_.back() / safe_d(_m_vir_ret_list_.front());
+	return 0;
+}
+const int brgastro::stripping_orbit_segment::get_m_vir_ret_points(
+		std::vector< std::pair<double,double> > & m_ret_points,
+		const bool silent ) const
+{
+	if ( (!_calculated_) || (!_record_full_data_) )
+	{
+		set_record_full_data(true);
+		if ( calc() )
+			return UNSPECIFIED_ERROR;
+	}
+	if( _bad_result_ )
+	{
+		return UNSPECIFIED_ERROR;
+	}
+
+	m_ret_points.clear();
+	for(size_t i = 0; i<_phase_output_list_.size(); i++)
+	{
+		m_ret_points.push_back( std::make_pair(
+				_phase_output_list_[i].t,
+				_m_vir_ret_list_.at(i)));
 	}
 
 	return 0;
@@ -5295,16 +5512,72 @@ const int brgastro::stripping_orbit_segment::clone_final_host(
 
 #if (1) // Get final data (throws exception on error)
 
-const BRG_MASS brgastro::stripping_orbit_segment::final_mret() const
+const BRG_MASS brgastro::stripping_orbit_segment::final_m_ret() const
 {
 	BRG_MASS result = -1;
 
-	if ( get_final_mret( result ) )
+	if ( get_final_m_ret( result ) )
 	{
-		std::cerr << "ERROR: Could not calculate in stripping_orbit_segment::final_mret.\n";
+		std::cerr << "ERROR: Could not calculate in stripping_orbit_segment::final_m_ret.\n";
 		std::cerr.flush();
-		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::final_mret.\n");
+		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::final_m_ret.\n");
 	}
+	return result;
+}
+const double brgastro::stripping_orbit_segment::final_frac_m_ret() const
+{
+	double result = -1;
+
+	if ( get_final_frac_m_ret( result ) )
+	{
+		std::cerr << "ERROR: Could not calculate in stripping_orbit_segment::final_frac_m_ret.\n";
+		std::cerr.flush();
+		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::final_frac_m_ret.\n");
+	}
+	return result;
+}
+const std::vector< std::pair<double,double> > brgastro::stripping_orbit_segment::m_ret_points() const
+{
+	std::vector< std::pair<double,double> > result;
+	if( get_m_ret_points(result) )
+	{
+		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::m_ret_points.\n");
+	}
+
+	return result;
+}
+const BRG_MASS brgastro::stripping_orbit_segment::final_m_vir_ret() const
+{
+	BRG_MASS result = -1;
+
+	if ( get_final_m_vir_ret( result ) )
+	{
+		std::cerr << "ERROR: Could not calculate in stripping_orbit_segment::final_m_vir_ret.\n";
+		std::cerr.flush();
+		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::final_m_vir_ret.\n");
+	}
+	return result;
+}
+const double brgastro::stripping_orbit_segment::final_frac_m_vir_ret() const
+{
+	double result = -1;
+
+	if ( get_final_frac_m_vir_ret( result ) )
+	{
+		std::cerr << "ERROR: Could not calculate in stripping_orbit_segment::final_frac_m_vir_ret.\n";
+		std::cerr.flush();
+		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::final_frac_m_vir_ret.\n");
+	}
+	return result;
+}
+const std::vector< std::pair<double,double> > brgastro::stripping_orbit_segment::m_vir_ret_points() const
+{
+	std::vector< std::pair<double,double> > result;
+	if( get_m_vir_ret_points(result) )
+	{
+		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::m_vir_ret_points.\n");
+	}
+
 	return result;
 }
 
@@ -5319,29 +5592,6 @@ const long double brgastro::stripping_orbit_segment::final_sum_deltarho() const
 		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::final_sum_deltarho.\n");
 		result = -1;
 	}
-	return result;
-}
-
-const double brgastro::stripping_orbit_segment::final_fmret() const
-{
-	double result = -1;
-
-	if ( get_final_fmret( result ) )
-	{
-		std::cerr << "ERROR: Could not calculate in stripping_orbit_segment::final_fmret.\n";
-		std::cerr.flush();
-		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::final_fmret.\n");
-	}
-	return result;
-}
-const std::vector< std::pair<double,double> > brgastro::stripping_orbit_segment::mret_points() const
-{
-	std::vector< std::pair<double,double> > result;
-	if( get_mret_points(result) )
-	{
-		throw std::runtime_error("ERROR: Could not calculate in stripping_orbit_segment::mret_points.\n");
-	}
-
 	return result;
 }
 
@@ -5835,6 +6085,15 @@ void brgastro::gabdt_functor::swap(gabdt_functor &other)
 {
 	using std::swap;
 	swap(host_ptr,other.host_ptr);
+}
+namespace std
+{
+	template <>
+	void swap(brgastro::gabdt_functor &same,
+			brgastro::gabdt_functor &other)
+	{
+		same.swap(other);
+	}
 }
 
 // Constructors
