@@ -64,9 +64,9 @@ double brgastro::stripping_orbit::_default_step_factor_min_ = 0.001; // Minimum 
 
 #if(1)
 // Tuning parameters, for how strong stripping and shocking are and when shocking is active
-double brgastro::stripping_orbit::_default_tidal_stripping_amplification_ = 0.6; // Tuned
-double brgastro::stripping_orbit::_default_tidal_stripping_deceleration_ = 0.175; // Tuned
-double brgastro::stripping_orbit::_default_tidal_stripping_radialness_ = 0; // Tuned
+double brgastro::stripping_orbit::_default_tidal_stripping_amplification_ = 0.666; // Tuned
+double brgastro::stripping_orbit::_default_tidal_stripping_deceleration_ = 0.; // Tuned
+double brgastro::stripping_orbit::_default_tidal_stripping_radialness_ = 0.; // Tuned
 double brgastro::stripping_orbit::_default_tidal_shocking_amplification_ = 3.0; // Tuned
 double brgastro::stripping_orbit::_default_tidal_shocking_persistance_ = 1.0; // How long shocking is active for
 double brgastro::stripping_orbit::_default_tidal_shocking_power_ = -1.5; // Affects interplay of stripping and satellite halo profile
@@ -2703,7 +2703,7 @@ const int brgastro::stripping_orbit::get_final_m_vir_ret( BRG_MASS & m_ret ) con
 		{
 			return UNSPECIFIED_ERROR;
 		}
-		m_ret = _init_satellite_ptr_->enc_mass(_init_satellite_ptr_->rvir()) *
+		m_ret = _init_satellite_ptr_->mvir() *
 				_final_frac_m_vir_ret_list_.back();
 	}
 	return 0;
@@ -2721,7 +2721,7 @@ const int brgastro::stripping_orbit::get_m_vir_ret_at_t( const BRG_TIME & t, BRG
 	{
 		return UNSPECIFIED_ERROR;
 	}
-	m_ret = _init_satellite_ptr_->enc_mass(_init_satellite_ptr_->rvir()) *
+	m_ret = _init_satellite_ptr_->mvir() *
 			max( _m_vir_ret_interpolator_(t), 0. );
 	return 0;
 }
@@ -4541,7 +4541,7 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 	}
 
 	const BRG_MASS init_mtot = _current_satellite_ptr_->mtot();
-	const BRG_MASS init_mvir = _current_satellite_ptr_->enc_mass(_current_satellite_ptr_->rvir());
+	const BRG_MASS init_mvir = _current_satellite_ptr_->mvir();
 
 	// Loop over time
 	for ( t = t_min_to_use; t < t_max_to_use;
@@ -4605,7 +4605,7 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 
 			_current_satellite_ptr_->truncate_to_fraction( adjusted_m_ret );
 
-			_m_vir_ret_list_.push_back( _current_satellite_ptr_->enc_mass(_current_satellite_ptr_->rvir()) /
+			_m_vir_ret_list_.push_back( _current_satellite_ptr_->mvir() /
 					init_mvir);
 
 			if(m_ret == 0)
@@ -5346,7 +5346,7 @@ BRG_MASS & m_ret, const bool silent ) const
 	{
 		return UNSPECIFIED_ERROR;
 	}
-	m_ret = _init_satellite_ptr_->enc_mass(_init_satellite_ptr_->rvir())*_m_vir_ret_list_.back();
+	m_ret = _init_satellite_ptr_->mvir()*_m_vir_ret_list_.back();
 	return 0;
 }
 const int brgastro::stripping_orbit_segment::get_final_frac_m_vir_ret( double & frac_m_ret,

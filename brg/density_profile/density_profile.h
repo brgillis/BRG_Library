@@ -21,6 +21,11 @@
 
 namespace brgastro {
 
+#ifndef _BRG_VIRIAL_DENSITY_FACTOR_DEFFED_
+#define _BRG_VIRIAL_DENSITY_FACTOR_DEFFED_
+const double virial_density_factor = 200;
+#endif
+
 class density_profile: public virtual redshift_obj
 {
 	/**********************************
@@ -230,7 +235,6 @@ public:
 
 	virtual const BRG_DISTANCE rvir() const // Virial radius (exact definition can be chosen per profile if preferred)
 	{
-		double virial_density_factor = 200;
 
 		return safe_pow(
 				2 * mvir() * Gc / ( square( H() ) * virial_density_factor ),

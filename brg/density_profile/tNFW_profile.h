@@ -44,11 +44,15 @@ class tNFW_profile: public density_profile
 private:
 #if (1) // Private member variables specific to this class
 	BRG_MASS _mvir0_;
+	mutable BRG_DISTANCE _rvir_cache_;
+	mutable bool _rvir_cached_;
 	double _c_, _tau_;
 
 #endif // end private member variables
 
 protected:
+
+	void _uncache_mass();
 
 	const double _taufm( const double mratio, double precision = 0.00001,
 			const bool silent = false ) const; // tau from Mtot/Mvir
@@ -116,17 +120,18 @@ public:
 
 #if (1) //Basic get functions
 
+	const BRG_MASS mvir() const;
 	const BRG_MASS mvir0() const;
 
-	const BRG_MASS hmvir() const;
-	const BRG_MASS mvir() const;
 	const BRG_MASS mtot() const;
 
 	const BRG_DISTANCE rvir() const;
+	const BRG_DISTANCE rvir0() const;
 	const BRG_DISTANCE rt( const bool silent = false ) const;
 	const BRG_DISTANCE rs() const;
 
 	const BRG_VELOCITY vvir() const;
+	const BRG_VELOCITY vvir0() const;
 
 	const double c() const;
 	const double tau() const;

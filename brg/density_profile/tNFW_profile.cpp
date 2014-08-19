@@ -7,18 +7,29 @@
  *      Author: brg
  */
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
+#include <stdexcept>
 #include <vector>
 
 #include "../brg_misc_functions.hpp"
+#include "../brg_solvers.hpp"
 #include "../brg_units.h"
+#include "tNFW_profile_functors.hpp"
+
 #include "tNFW_profile.h"
 
 const double min_x = 0.0001;
 
 // brgastro::tNFW_profile class methods
 #if (1)
+
+void brgastro::tNFW_profile::_uncache_mass()
+{
+	_rvir_cached_ = false;
+	hmvir_cached = false;
+	hmtot_cached = false;
+}
 
 const double brgastro::tNFW_profile::_taufm( const double m_ratio,
 		double precision, const bool silent ) const
@@ -58,6 +69,8 @@ const double brgastro::tNFW_profile::_taufm( const double m_ratio,
 brgastro::tNFW_profile::tNFW_profile()
 {
 	_mvir0_ = 0;
+	_rvir_cache_ = 0;
+	_rvir_cached_ = false;
 	_c_ = 0;
 	_tau_ = 0;
 }
@@ -66,6 +79,8 @@ brgastro::tNFW_profile::tNFW_profile( const BRG_MASS &init_mvir0,
 		const double init_z, const double init_c, const double init_tau )
 {
 	_mvir0_ = init_mvir0;
+	_rvir_cache_ = 0;
+	_rvir_cached_ = false;
 	if ( init_c <= 0 )
 	{
 		_c_ = _cfm();
@@ -98,31 +113,27 @@ const int brgastro::tNFW_profile::set_mvir( const BRG_MASS &new_halo_mass,
 		const bool silent )
 {
 	_mvir0_ = new_halo_mass;
-	hmvir_cached = false;
-	hmtot_cached = false;
+	_uncache_mass();
 	return 0;
 }
 const int brgastro::tNFW_profile::set_tau( const double new_halo_tau,
 		const bool silent )
 {
 	_tau_ = new_halo_tau;
-	hmvir_cached = false;
-	hmtot_cached = false;
+	_uncache_mass();
 	return 0;
 }
 const int brgastro::tNFW_profile::set_c( const double new_halo_c,
 		const bool silent )
 {
 	_c_ = new_halo_c;
-	hmvir_cached = false;
-	hmtot_cached = false;
+	_uncache_mass();
 	return 0;
 }
 const int brgastro::tNFW_profile::set_z( const double new_z )
 {
 	redshift_obj::set_z( new_z );
-	hmvir_cached = false;
-	hmtot_cached = false;
+	_uncache_mass();
 	return 0;
 }
 const int brgastro::tNFW_profile::set_parameters(
@@ -169,7 +180,7 @@ const int brgastro::tNFW_profile::set_parameters(
 
 const BRG_MASS brgastro::tNFW_profile::mvir() const
 {
-	return enc_mass(rvir()); // Not technically correct, but close enough for our purposes
+	return enc_mass(rvir());
 }
 const BRG_MASS brgastro::tNFW_profile::mvir0() const
 {
@@ -192,24 +203,49 @@ const BRG_MASS brgastro::tNFW_profile::mtot() const
 
 const BRG_VELOCITY brgastro::tNFW_profile::vvir() const
 {
+	return std::pow( 10 * Gc * H() * mvir(), 1. / 3. );
+}
+const BRG_VELOCITY brgastro::tNFW_profile::vvir0() const
+{
 	return std::pow( 10 * Gc * H() * _mvir0_, 1. / 3. );
 }
 const BRG_DISTANCE brgastro::tNFW_profile::rvir() const
 {
-	return vvir() / H() / 10;
+	if(!_rvir_cached_)
+	{
+
+		tNFW_solve_rvir_iterative_functor it_solver(this);
+
+		_rvir_cache_ = 0;
+
+		// First, we try solving iteratively
+		_rvir_cache_ = solve_iterate( &it_solver, rvir0(), 1, 0.0001, 1000, true );
+		if ( ( _rvir_cache_ == 0 ) || ( isbad( _rvir_cache_ ) ) )
+		{
+			// Iteratively didn't work, so we go to the grid option
+			tNFW_solve_rvir_minimize_functor min_solver(this);
+
+			BRG_DISTANCE max_rvir = rvir0();
+			if ( solve_grid( &min_solver, 1, 0., max_rvir, 100, 0., _rvir_cache_ ) )
+			{
+				throw std::runtime_error("ERROR: Cannot solve virial radius for tNFW profile.\n");
+			}
+		}
+		_rvir_cached_ = true;
+	}
+	return _rvir_cache_;
+}
+const BRG_DISTANCE brgastro::tNFW_profile::rvir0() const
+{
+	return vvir0() / H() / 10;
 }
 const BRG_DISTANCE brgastro::tNFW_profile::rs() const
 {
-	return rvir() / _c_;
+	return rvir0() / _c_;
 }
 const BRG_DISTANCE brgastro::tNFW_profile::rt( const bool silent ) const
 {
-	return rvir() / _tau_;
-}
-
-const BRG_MASS brgastro::tNFW_profile::hmvir() const
-{
-	return enc_mass( rvir() ) / 2;
+	return rvir0() / _tau_;
 }
 
 const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
@@ -242,6 +278,7 @@ const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
 	BRG_UNITS rho_c;
 	BRG_MASS m0, mx;
 	double d_c, x, tau_use;
+	if(r<=0) return 0;
 	if ( _tau_ < 0 )
 		tau_use = default_tau_factor * _c_;
 	else if (_tau_ == 0)
@@ -315,6 +352,8 @@ const int brgastro::tNFW_profile::truncate_to_fraction( const double f,
 		_tau_ = 0;
 		override_rhmvir( 0 );
 		override_rhmtot( 0 );
+		_rvir_cache_ = 0;
+		_rvir_cached_ = true;
 	}
 	else
 	{
@@ -330,8 +369,7 @@ const int brgastro::tNFW_profile::truncate_to_fraction( const double f,
 		{
 			_tau_ = new_tau_val;
 		}
-		hmvir_cached = false;
-		hmtot_cached = false;
+		_uncache_mass();
 	}
 	return 0;
 
