@@ -42,6 +42,10 @@ namespace brgastro {
  * only works once inherited by a subclass of density_profile.
  */
 class lensing_profile_extension {
+private:
+
+	const BRG_DISTANCE _shift_sigma( CONST_BRG_DISTANCE_REF R, const bool silent = true );
+
 public:
 
 	// Constructors and destructors
@@ -131,7 +135,7 @@ public:
 	virtual const BRG_UNITS quick_group_WLsig( const BRG_DISTANCE &R,
 			const double group_c, const bool silent = true ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
 	{
-		return group_WLsig( R, group_c, silent );
+		return semiquick_group_WLsig( R, group_c, silent );
 	}
 #endif
 
@@ -141,7 +145,10 @@ public:
 	// shifting of the lens and source due to an intervening mass distribution
 	virtual const BRG_UNITS shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true );
 	virtual const BRG_UNITS semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true );
-	virtual const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true );
+	virtual const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true )
+	{
+		return semiquick_shifted_WLsig( R, silent );
+	}
 #endif
 
 #endif

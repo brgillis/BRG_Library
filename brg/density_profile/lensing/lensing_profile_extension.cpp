@@ -141,6 +141,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( const BRG_DIST
 	}
 	return out_params;
 }
+
 const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( const BRG_DISTANCE &R,
 		const double group_c, const bool silent ) const
 {
