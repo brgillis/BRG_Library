@@ -45,6 +45,11 @@ const BRG_UNITS brgastro::redshift_obj::H() const
 	return _H_cache_;
 }
 
+const BRG_UNITS brgastro::redshift_obj::rho_crit() const
+{
+	return 3*square(H())/(8*pi*Gc);
+}
+
 #endif // brgastro::redshift_obj class methods
 
 /** Global Function Definitions **/

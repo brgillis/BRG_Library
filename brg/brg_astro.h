@@ -256,8 +256,16 @@ public:
 	const int z_grid() const;
 #endif
 
-	// H(z) at the redshift of the object, given in units of m/s^2
+	// Astro calculations
+
+#if (1)
+	// H at the redshift of the object, given in units of m/s^2
 	const BRG_UNITS H() const;
+
+	// Critical density at this redshift
+	const BRG_UNITS rho_crit() const;
+
+#endif
 
 	// Clone function - Not needed in current implementation
 	// virtual redshift_obj *redshift_obj_clone()=0;
