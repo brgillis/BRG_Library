@@ -35,7 +35,7 @@ DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_offset_sig_cache,
 	std::log(1e10*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e10))/100,
 	0.1,1.5,0.2,
 	std::log(10*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/100,
-	std::log(0.1*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.1))/100);
+	std::log(0.01*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.01))/300);
 
 // Initialisation for brgastro::tNFW_group_sig_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_sig_cache,

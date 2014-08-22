@@ -334,16 +334,16 @@ brgastro::quick_offset_WLsig_functor::quick_offset_WLsig_functor(
 
 #endif
 
-// brgastro::offset_WLsig_weight_functor class methods
+// brgastro::group_WLsig_weight_functor class methods
 #if (1)
 
-const int brgastro::offset_WLsig_weight_functor::set_c( const double new_c )
+const int brgastro::group_WLsig_weight_functor::set_c( const double new_c )
 {
 	_c_ = new_c;
 	return 0;
 }
 
-const int brgastro::offset_WLsig_weight_functor::operator()(
+const int brgastro::group_WLsig_weight_functor::operator()(
 		const BRG_UNITS &in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
@@ -372,24 +372,61 @@ const int brgastro::offset_WLsig_weight_functor::operator()(
 	return 0;
 }
 
-const int brgastro::offset_WLsig_weight_functor::set_host_ptr(
+const int brgastro::group_WLsig_weight_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
 	return 0;
 }
 
-brgastro::offset_WLsig_weight_functor::offset_WLsig_weight_functor()
+brgastro::group_WLsig_weight_functor::group_WLsig_weight_functor()
 {
 	_host_ptr_ = NULL;
 	_c_ = 0;
 }
 
-brgastro::offset_WLsig_weight_functor::offset_WLsig_weight_functor(
+brgastro::group_WLsig_weight_functor::group_WLsig_weight_functor(
 		const lensing_profile_extension *new_host, const double init_c )
 {
 	_host_ptr_ = new_host;
 	_c_ = init_c;
+}
+
+#endif
+
+// brgastro::shifted_WLsig_weight_functor class methods
+#if (1)
+
+const int brgastro::shifted_WLsig_weight_functor::operator()(
+		const BRG_UNITS &in_param,
+		BRG_UNITS & out_param, const bool silent ) const
+{
+
+	// The output here is the height of a Rayleigh distribution at in_param
+
+	using std::exp;
+
+	out_param = in_param/square(_sigma_) * exp(-square(in_param)/(2*square(_sigma_)));
+
+	return 0;
+}
+
+const int brgastro::shifted_WLsig_weight_functor::set_sigma(
+		CONST_BRG_DISTANCE_REF new_sigma )
+{
+	_sigma_ = new_sigma;
+	return 0;
+}
+
+brgastro::shifted_WLsig_weight_functor::shifted_WLsig_weight_functor()
+{
+	_sigma_ = 0;
+}
+
+brgastro::shifted_WLsig_weight_functor::shifted_WLsig_weight_functor(
+		CONST_BRG_DISTANCE_REF new_sigma )
+{
+	_sigma_ = new_sigma;
 }
 
 #endif

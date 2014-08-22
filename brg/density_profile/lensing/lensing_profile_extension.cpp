@@ -16,6 +16,22 @@
 #include "lensing_profile_extension.h"
 #include "lensing_profile_extension_functors.h"
 
+// Lensing profile extension private methods
+
+#if(1)
+
+// Gives the expected shift in physical coordinates for a given angular separation
+const BRG_DISTANCE brgastro::lensing_profile_extension::_shift_sigma( CONST_BRG_DISTANCE_REF R,
+		const bool silent) const
+{
+	const BRG_ANGLE theta_separation = afd(R,z());
+	const BRG_ANGLE theta_sigma = 0.01*theta_separation; // TODO: Replace placeholder here with actual function
+	const BRG_DISTANCE result = dfa(theta_sigma,z());
+	return result;
+}
+
+#endif // Lensing profile extension private methods
+
 const BRG_UNITS brgastro::lensing_profile_extension::proj_dens( const BRG_DISTANCE &R,
 		const bool silent ) const
 {
@@ -122,12 +138,13 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( const BRG_DIS
 
 	return result;
 }
-const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( const BRG_DISTANCE &r,
+
+const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( const BRG_DISTANCE &R,
 		const double group_c, const bool silent ) const
 {
-	BRG_DISTANCE r_to_use = std::fabs( r );
-	brgastro::offset_WLsig_functor func( this, r_to_use );
-	brgastro::offset_WLsig_weight_functor weight_func( this, group_c );
+	BRG_DISTANCE R_to_use = std::fabs( R );
+	brgastro::offset_WLsig_functor func( this, R_to_use );
+	brgastro::group_WLsig_weight_functor weight_func( this, group_c );
 	unsigned int num_in_params = 1, num_out_params = 0;
 	BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( rvir() ),
 			out_params( 0 );
@@ -147,7 +164,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( cons
 {
 	BRG_DISTANCE R_to_use = std::fabs( R );
 	brgastro::quick_offset_WLsig_functor func( this, R_to_use );
-	brgastro::offset_WLsig_weight_functor weight_func( this, group_c );
+	brgastro::group_WLsig_weight_functor weight_func( this, group_c );
 	unsigned int num_in_params = 1, num_out_params = 0;
 	BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( rvir() ),
 			out_params( 0 );
@@ -158,6 +175,55 @@ const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( cons
 		if ( !silent )
 			std::cerr
 					<< "WARNING: Could not integrate group deltasigma of density profile.\n";
+	}
+	return out_params;
+}
+
+const BRG_UNITS brgastro::lensing_profile_extension::shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+		const bool silent ) const
+{
+	BRG_DISTANCE R_to_use = std::fabs( R );
+	BRG_DISTANCE sigma = _shift_sigma(R_to_use);
+
+	brgastro::offset_WLsig_functor func( this, R_to_use );
+	brgastro::shifted_WLsig_weight_functor weight_func( sigma );
+
+	unsigned int num_in_params = 1, num_out_params = 0;
+
+	BRG_UNITS min_in_params( 0 ), max_in_params( 4*sigma ),
+			out_params( 0 );
+
+	if ( brgastro::integrate_weighted_Rhomberg( &func, &weight_func,
+			num_in_params, min_in_params, max_in_params, num_out_params,
+			out_params ) )
+	{
+		if ( !silent )
+			std::cerr
+					<< "WARNING: Could not integrate shifted deltasigma of density profile.\n";
+	}
+	return out_params;
+}
+const BRG_UNITS brgastro::lensing_profile_extension::semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+		const bool silent ) const
+{
+	BRG_DISTANCE R_to_use = std::fabs( R );
+	BRG_DISTANCE sigma = _shift_sigma(R_to_use);
+
+	brgastro::quick_offset_WLsig_functor func( this, R_to_use );
+	brgastro::shifted_WLsig_weight_functor weight_func( sigma );
+
+	unsigned int num_in_params = 1, num_out_params = 0;
+
+	BRG_UNITS min_in_params( 0 ), max_in_params( 4*sigma ),
+			out_params( 0 );
+
+	if ( brgastro::integrate_weighted_Rhomberg( &func, &weight_func,
+			num_in_params, min_in_params, max_in_params, num_out_params,
+			out_params ) )
+	{
+		if ( !silent )
+			std::cerr
+					<< "WARNING: Could not integrate shifted deltasigma of density profile.\n";
 	}
 	return out_params;
 }

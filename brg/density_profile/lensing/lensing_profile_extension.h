@@ -16,6 +16,7 @@
 #include "../density_profile.h"
 
 #define IMPLEMENT_VIRTUAL_BRG_LENSING_EXTENSION_METHODS(class_name)         \
+	virtual const double z() const {return class_name::z();}                \
 	virtual const BRG_DISTANCE rvir() const {return class_name::rvir();}    \
 	virtual const BRG_UNITS dens( const BRG_DISTANCE &r ) const             \
 		{return class_name::dens(r);}                                       \
@@ -26,6 +27,7 @@
 		{return class_name::set_c(new_c,silent);}
 
 #define IMPLEMENT_BRG_LENSING_EXTENSION_METHODS(class_name)         \
+	const double z() const {return class_name::z();}                \
 	const BRG_DISTANCE rvir() const {return class_name::rvir();}    \
 	const BRG_UNITS dens( const BRG_DISTANCE &r ) const             \
 		{return class_name::dens(r);}                               \
@@ -44,7 +46,7 @@ namespace brgastro {
 class lensing_profile_extension {
 private:
 
-	const BRG_DISTANCE _shift_sigma( CONST_BRG_DISTANCE_REF R, const bool silent = true );
+	const BRG_DISTANCE _shift_sigma( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const;
 
 public:
 
@@ -65,6 +67,7 @@ public:
 	virtual lensing_profile_extension * lensing_profile_extension_clone() const = 0;
 
 	// Get functions for values that will be needed for calculations
+	virtual const double z() const = 0;
 	virtual const BRG_DISTANCE rvir() const = 0;
 	virtual const BRG_UNITS dens( const BRG_DISTANCE &r ) const = 0;
 	virtual const BRG_MASS enc_mass( const BRG_DISTANCE &r, const bool silent =
@@ -143,9 +146,12 @@ public:
 #if (1)
 	// This represents the weak-lensing signal after being corrected for errors due to relative
 	// shifting of the lens and source due to an intervening mass distribution
-	virtual const BRG_UNITS shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true );
-	virtual const BRG_UNITS semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true );
-	virtual const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true )
+	virtual const BRG_UNITS shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const;
+	virtual const BRG_UNITS semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const;
+	virtual const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const
 	{
 		return semiquick_shifted_WLsig( R, silent );
 	}
