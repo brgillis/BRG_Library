@@ -42,7 +42,7 @@ DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_sig_cache,
 	std::log(1e10*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e10))/100,
 	0.1,1.5,0.2,
 	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/100,
-	2.5,10.,2.5);
+	2.5,10.,0.5);
 
 // brgastro::tNFW_sig_cache class methods
 #if (1)
@@ -55,7 +55,7 @@ const int brgastro::tNFW_sig_cache::_calculate( const double in_param_1, const d
 		const double z = in_param_2;
 		const double r = std::exp(in_param_3);
 		brgastro::lensing_tNFW_profile profile(mass,z);
-		out_params = profile.deltasigma( r );
+		out_params = profile.WLsig( r );
 	}
 	catch(const std::out_of_range &e)
 	{

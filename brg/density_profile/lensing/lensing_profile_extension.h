@@ -96,25 +96,36 @@ public:
 
 	// Weak lensing functions
 #if (1)
-	const BRG_UNITS deltasigma( const BRG_DISTANCE &R, const bool silent =
+
+	// WLsig (delta sigma)
+#if (1)
+	const BRG_UNITS WLsig( const BRG_DISTANCE &R, const bool silent =
 			false ) const // Weak lensing signal in tangential shear Delta-Sigma at radius R
 	{
 		return proj_enc_dens( R, silent ) - proj_dens( R, silent );
 	}
-	virtual const BRG_UNITS offset_WLsig( const BRG_DISTANCE &R,
-			const BRG_DISTANCE &offset_R, const bool silent = true ) const; // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
-	virtual const BRG_UNITS group_WLsig( const BRG_DISTANCE &R,
-			const double group_c, const bool silent = true ) const; // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	virtual const BRG_UNITS quick_WLsig( const BRG_DISTANCE &R,
 			const bool silent = true ) const // As deltasigma, but uses cache to speed it up if overwritten
 	{
-		return deltasigma( R, silent );
+		return WLsig( R, silent );
 	}
+#endif
+
+	// Offset WLsig
+#if (1)
+	virtual const BRG_UNITS offset_WLsig( const BRG_DISTANCE &R,
+			const BRG_DISTANCE &offset_R, const bool silent = true ) const; // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
 	virtual const BRG_UNITS quick_offset_WLsig( const BRG_DISTANCE &R,
 			const BRG_DISTANCE &offset_R, const bool silent = true ) const // As offset_WLsig, but uses cache to speed it up if overwritten
 	{
 		return offset_WLsig( R, offset_R, silent );
 	}
+#endif
+
+	// Group WLsig
+#if (1)
+	virtual const BRG_UNITS group_WLsig( const BRG_DISTANCE &R,
+			const double group_c, const bool silent = true ) const; // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	virtual const BRG_UNITS semiquick_group_WLsig( const BRG_DISTANCE &R,
 			const double group_c, const bool silent = true ) const; // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
 	virtual const BRG_UNITS quick_group_WLsig( const BRG_DISTANCE &R,
@@ -122,6 +133,17 @@ public:
 	{
 		return group_WLsig( R, group_c, silent );
 	}
+#endif
+
+	// Shifted WLsig
+#if (1)
+	// This represents the weak-lensing signal after being corrected for errors due to relative
+	// shifting of the lens and source due to an intervening mass distribution
+	virtual const BRG_UNITS shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true );
+	virtual const BRG_UNITS semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true );
+	virtual const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = true );
+#endif
+
 #endif
 
 };
