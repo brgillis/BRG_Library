@@ -624,7 +624,8 @@ const int make_array( array_type * & array_pointer, const int num_elem,
 
 #ifdef _BRG_USE_CPP_11_STD_
 template <class array_type>
-const int make_array1d( std::unique_ptr<array_type []> & array_pointer, const int num_elem )
+const int make_array1d( std::unique_ptr<array_type []> & array_pointer, const int num_elem,
+		const bool silent = false )
 {
 	array_pointer = std::unique_ptr<array_type []>(new (std::nothrow) array_type [num_elem]);
 	if( array_pointer == 0 ) return memory_error(silent);

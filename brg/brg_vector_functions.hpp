@@ -39,7 +39,7 @@ const std::vector<T> apply( const f func, const std::vector<T> & v1 )
 }
 
 template< typename f, typename T1, typename T2 >
-const std::vector<T1> apply( const f func, const std::vector<T1> & v1, const std::vector<T2> &v2 )
+const std::vector<T1> apply( const f func, const std::vector<T1> & v1, const std::vector<T2> & v2 )
 {
 	std::vector<T1> result(v1.size());
 
@@ -158,7 +158,7 @@ const std::vector<T1> add( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = add(v1[i], v2.at(i));
+		v1[i] += v2.at(i);
 	}
 
 	return v1;
@@ -169,7 +169,7 @@ const std::vector<T1> add( std::vector<T1> v1, const T2 &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = add(v1[i], v2);
+		v1[i] += v2;
 	}
 
 	return v1;
@@ -180,16 +180,16 @@ const std::vector<T2> add( const T1 & v1, std::vector<T2> v2 )
 {
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		v2[i] = add(v1,v2[i]);
+		v2[i] += v1;
 	}
 
 	return v2;
 }
 
 template< typename T1, typename T2 >
-const T1 add( const T1 & v1, const T2 & v2 )
+const T1 add( T1 v1, const T2 & v2 )
 {
-	return v1 + v2;
+	return v1 += v2;
 }
 
 #endif // Element-wise addition
@@ -202,7 +202,7 @@ const std::vector<T1> subtract( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = subtract(v1[i], v2.at(i));
+		v1[i] -= v2.at(i);
 	}
 
 	return v1;
@@ -213,7 +213,7 @@ const std::vector<T1> subtract( std::vector<T1> v1, const T2 &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = subtract(v1[i], v2);
+		v1[i] -= v2;
 	}
 
 	return v1;
@@ -224,16 +224,16 @@ const std::vector<T2> subtract( const T1 & v1, std::vector<T2> v2 )
 {
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		v2[i] = subtract(v1, v2[i]);
+		v2[i] = v1-v2[i];
 	}
 
 	return v2;
 }
 
 template< typename T1, typename T2 >
-const T1 subtract( const T1 & v1, const T2 & v2 )
+const T1 subtract( T1 v1, const T2 & v2 )
 {
-	return v1 - v2;
+	return v1 -= v2;
 }
 
 #endif // Element-wise subtraction
@@ -246,7 +246,7 @@ const std::vector<T1> multiply( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = multiply(v1[i], v2.at(i));
+		v1[i] *= v2.at(i);
 	}
 
 	return v1;
@@ -257,7 +257,7 @@ const std::vector<T1> multiply( std::vector<T1> v1, const T2 &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = multiply(v1[i], v2);
+		v1[i] *= v2;
 	}
 
 	return v1;
@@ -268,16 +268,16 @@ const std::vector<T2> multiply( const T1 & v1, std::vector<T2> v2 )
 {
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		v2[i] = multiply(v1,v2[i]);
+		v2[i] *= v1;
 	}
 
 	return v2;
 }
 
 template< typename T1, typename T2 >
-const T1 multiply( const T1 & v1, const T2 & v2 )
+const T1 multiply( T1 v1, const T2 & v2 )
 {
-	return v1 * v2;
+	return v1 *= v2;
 }
 
 #endif // Element-wise multiplication
@@ -290,7 +290,7 @@ const std::vector<T1> divide( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = divide(v1[i],v2.at(i));
+		v1[i] /= v2.at(i);
 	}
 
 	return v1;
@@ -302,7 +302,7 @@ const std::vector<T1> divide( std::vector<T1> v1, const T2 &v2 )
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = divide(v1[i],v2);
+		v1[i] /= v2;
 	}
 
 	return v1;
@@ -313,16 +313,16 @@ const std::vector<T2> divide( const T1 & v1, std::vector<T2> v2 )
 {
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		v2[i] = divide(v1,v2[i]);
+		v2[i] = v1/v2[i];
 	}
 
 	return v2;
 }
 
 template< typename T1, typename T2 >
-const T1 divide( const T1 & v1, const T2 & v2 )
+const T1 divide( T1 v1, const T2 & v2 )
 {
-	return v1 / v2;
+	return v1 /= v2;
 }
 
 #endif // Element-wise divide

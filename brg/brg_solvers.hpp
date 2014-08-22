@@ -1242,8 +1242,7 @@ const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 		// Check if it's in bounds
 		if(bounds_check)
 		{
-			test_in_params = brgastro::apply(brgastro::min<T>,test_in_params,max_in_params);
-			test_in_params = brgastro::apply(brgastro::max<T>,test_in_params,min_in_params);
+			test_in_params = bound(min_in_params,test_in_params,max_in_params);
 		}
 
 		// Find the result for this value

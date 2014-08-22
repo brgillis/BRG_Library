@@ -1351,7 +1351,7 @@ inline const int leapfrog_step( phase & p, const BRG_TIME & t_step,
 		const f *accel_func, const bool silent = false )
 {
 	int result;
-	phase new_p;
+	phase new_p(p);
 	result = leapfrog_step( p, new_p, t_step, accel_func, silent );
 	p = new_p;
 	return result;

@@ -3134,7 +3134,7 @@ const int brgastro::stripping_orbit::get_quality_of_fit( double & Q, const bool 
 const double brgastro::stripping_orbit::quality_of_fit(const bool use_virial, const unsigned int samples)
 {
 	double Q=-1;
-	if(get_quality_of_fit(Q,samples))
+	if(get_quality_of_fit(Q,use_virial,samples))
 	{
 		throw std::runtime_error("Cannot determine quality of fit for stripping_orbit.");
 	}
