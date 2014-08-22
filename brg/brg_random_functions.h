@@ -32,16 +32,32 @@ namespace brgastro
 /** Global function declarations **/
 #if (1)
 
+// Generates a random double between min and max
+inline const double drand()
+{
+	return drand48();
+}
+inline const double drand( double min, double max )
+{
+	return min + (max-min)*drand48();
+} // double drand(double min, double max)
+
 // Returns a random variable from a Gaussian distribution
-const double Gaus_rand( const double mean = 0, const double stddev = 1 );
+const double Gaus_rand();
+const double Gaus_rand( const double mean, const double stddev = 1 );
 
 // Returns a random variable from a Gaussian distribution in log space
 // Note that "mean" here is the desired mean, NOT the peak of the function (which differ in log space). If you want to use
 // the peak, simply use the standard Gaus_rand version instead.
-const double log10Gaus_rand( const double mean = 0, const double stddev = 1 );
+const double log10Gaus_rand(); // Implicit mean=1, stddev=1
+const double log10Gaus_rand( const double mean, const double stddev = 1 );
+
+// Returns a random variable from a Rayleigh distribution
+const double Rayleigh_rand();
+const double Rayleigh_rand( const double sigma );
 
 // Returns a Poisson random variable.
-const int Pois_rand( const double lambda = 1 );
+const int Pois_rand( const double lambda=1 );
 
 #endif // End global function declarations
 

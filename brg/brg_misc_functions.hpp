@@ -478,14 +478,6 @@ inline const double dot_product( const std::vector< T1 > & a,
 	return result;
 }
 
-// Generates a random double between min and max
-inline const double drand( double min, double max )
-{
-
-	return min + (max-min)*drand48();
-
-} // double drand(double min, double max)
-
 // Returns 1 if a is positive, -1 if it is negative, and 0 if it is 0, NaN if it is NaN
 template< class T >
 inline const int sign( const T a )
