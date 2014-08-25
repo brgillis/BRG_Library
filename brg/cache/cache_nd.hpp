@@ -362,10 +362,18 @@ protected:
 
 #endif // _BRG_USE_UNITS_
 
-	const std::string _name_base() const throw()
+	// This function should be overloaded to provide a unique name for this cache
+	virtual const std::string _name_base() const throw()
 	{
 		char name_base[BRG_CACHE_ND_NAME_SIZE] = "";
 		return name_base;
+	}
+
+	// This function should be overloaded to call each cache of the same dimensionality
+	// this cache depends upon in calculation. This is necessary in order to avoid critical
+	// sections of the same name being called recursively.
+	virtual void _load_cache_dependencies() const
+	{
 	}
 
 #endif // Protected methods
@@ -440,8 +448,11 @@ public:
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
+			// Load any caches we depend upon before the critical section
+			_load_cache_dependencies();
+
 			// Critical section here, since we can't load multiple times simultaneously
-			#pragma omp critical(load_brg_cache)
+			#pragma omp critical(load_brg_cache_nd)
 			{
 				if ( SPCP(name)->_load( silent ) )
 				{

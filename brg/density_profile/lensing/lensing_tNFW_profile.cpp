@@ -13,7 +13,7 @@
 #include "lensing_tNFW_profile.h"
 #include "lensing_tNFW_caches.h"
 
-const double min_x = 0.01;
+const double min_x = 0.000001;
 
 const BRG_UNITS brgastro::lensing_tNFW_profile::quick_WLsig( const BRG_DISTANCE &r,
 		const bool silent ) const
@@ -25,6 +25,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::quick_offset_WLsig(
 		const BRG_DISTANCE &r, const BRG_DISTANCE &offset_r,
 		const bool silent ) const
 {
+	if(offset_r<=0) return WLsig(r,silent);
 	BRG_UNITS result = brgastro::tNFW_offset_sig_cache().get( std::log(mvir0()), z(), std::log(r),
 			std::log(offset_r), silent );
 	return result;
@@ -34,6 +35,13 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::quick_group_WLsig(
 {
 	BRG_UNITS result = brgastro::tNFW_group_sig_cache().get( std::log(mvir0()), z(), std::log(r),
 			group_c, silent );
+	return result;
+}
+const BRG_UNITS brgastro::lensing_tNFW_profile::quick_shifted_WLsig(
+		const BRG_DISTANCE &R, const bool silent ) const
+{
+	BRG_UNITS result = brgastro::tNFW_shifted_sig_cache().get( std::log(mvir0()), z(), std::log(R),
+			silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::proj_dens( const BRG_DISTANCE &r,

@@ -141,8 +141,14 @@ protected:
 
 	const std::string _name_base() const throw()
 	{
-		char name_base[BRG_CACHE_ND_NAME_SIZE] = "tNFW_s_s";
+		char name_base[BRG_CACHE_ND_NAME_SIZE] = "tN_s_sig";
 		return name_base;
+	}
+
+	void _load_cache_dependencies() const
+	{
+		// This depends on offset_sig, so we'll have to load it through a dummy get
+		brgastro::tNFW_offset_sig_cache().get(0,0,0,0,true);
 	}
 
 #ifdef _BRG_USE_UNITS_

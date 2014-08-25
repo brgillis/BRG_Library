@@ -25,7 +25,7 @@ const BRG_DISTANCE brgastro::lensing_profile_extension::_shift_sigma( CONST_BRG_
 		const bool silent) const
 {
 	const BRG_ANGLE theta_separation = afd(R,z());
-	const BRG_ANGLE theta_sigma = 0.01*theta_separation; // TODO: Replace placeholder here with actual function
+	const BRG_ANGLE theta_sigma = 0.01*z()*theta_separation; // TODO: Replace placeholder here with actual function
 	const BRG_DISTANCE result = dfa(theta_sigma,z());
 	return result;
 }

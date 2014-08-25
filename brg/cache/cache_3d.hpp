@@ -359,10 +359,18 @@ protected:
 
 #endif // _BRG_USE_UNITS_
 
-	const std::string _name_base() const throw()
+	// This function should be overloaded to provide a unique name for this cache
+	virtual const std::string _name_base() const throw()
 	{
 		char name_base[BRG_CACHE_ND_NAME_SIZE] = "";
 		return name_base;
+	}
+
+	// This function should be overloaded to call each cache of the same dimensionality
+	// this cache depends upon in calculation. This is necessary in order to avoid critical
+	// sections of the same name being called recursively.
+	virtual void _load_cache_dependencies() const
+	{
 	}
 
 #endif // Protected methods
@@ -429,22 +437,9 @@ public:
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
-			bool good_load=true;;
-			// Critical section here, since we can't load multiple times simultaneously
-			#pragma omp critical(load_brg_cache)
-			{
-				if ( SPCP(name)->_load( silent ) )
-				{
-					good_load = false;
-				}
-			}
-			if ( !good_load )
-			{
-				std::string err = "ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache_3d::print()\n";
-				if ( !silent )
-					std::cerr << err;
-				throw std::runtime_error(err);
-			}
+			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
+			// so we don't get collisions from loading within two different critical sections at once)
+			SPCP(name)->get(SPCP(name)->_min_1_,SPCP(name)->_min_2_,SPCP(name)->_min_3_,true);
 		}
 
 		// Fill up header
@@ -507,8 +502,11 @@ public:
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
+			// Load any caches we depend upon before the critical section
+			_load_cache_dependencies();
+
 			// Critical section here, since we can't load multiple times simultaneously
-			#pragma omp critical(load_brg_cache)
+			#pragma omp critical(load_brg_cache_3d)
 			{
 				if ( SPCP(name)->_load( silent ) )
 				{

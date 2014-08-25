@@ -51,6 +51,7 @@ public:
 			const BRG_DISTANCE &offset_R, const bool silent = false ) const;
 	const BRG_UNITS quick_group_WLsig( const BRG_DISTANCE &R,
 			const double group_c, const bool silent = false ) const;
+	const BRG_UNITS quick_shifted_WLsig( const BRG_DISTANCE &R, const bool silent = false ) const;
 
 #endif // Lensing related methods
 

@@ -879,10 +879,8 @@ inline const int integrate_Rhomberg( const f * func,
 			Rn.resize( 0 );
 
 			// Check for convergence
-			d = 0;
-			d = quad_add( d,
-					( 2 * fabs( R[n][n] - R[n - 1][n - 1] )
-							/ safe_d( fabs( R[n][n] + R[n - 1][n - 1] ) ) ) );
+			d = ( 2 * fabs( R[n][n] - R[n - 1][n - 1] )
+							/ safe_d( fabs( R[n][n] + R[n - 1][n - 1] ) ) );
 			if ( d < precision )
 			{
 				out_params = R[n][n];
