@@ -53,8 +53,8 @@ const BRG_UNITS brgastro::lensing_profile_extension::proj_dens( CONST_BRG_DISTAN
 		// In this case, we might be integrating over a singularity, so the trapezoid method is safer
 		const int num_steps = 10000;
 
-		if ( brgastro::integrate( &func, num_in_params, min_in_params,
-				max_in_params, num_steps, num_out_params, out_params ) )
+		if ( brgastro::integrate_trapezoid( &func, min_in_params,
+				max_in_params, num_steps, out_params ) )
 		{
 			if ( !silent )
 				std::cerr

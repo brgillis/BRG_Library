@@ -303,81 +303,52 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 // num_samples: (second version only) The number of steps used when integrating. Larger is more accurate, but slower (order num_samples time).
 // num_passed_in_params & passed_in_params: Ignore these unless you know what you're doing.
 
-// Scalar-in, scaler-out version. !!! Needs clean-up after testing
+// Scalar-in, scaler-out version.
 template< typename f, typename T >
-inline const int integrate( const f * func, const unsigned int num_in_params,
-		T & min_in_params, T & max_in_params, T & in_params_step,
-		unsigned int & num_out_params, T & out_params,
-		const unsigned int num_passed_in_params = 0,
-		const T & passed_in_params = 0, const bool silent = false )
+inline T integrate_trapezoid( const f * func, const T & min_in_param, const T & max_in_param,
+		const T & in_param_step,
+		T & out_param, const bool silent = false )
 {
-	T in_params( 0 );
-	T temp_out_params( 0 );
-	T last_out_params( 0 );
+	T in_param( 0 );
+	T temp_out_param( 0 );
+	T last_out_param( 0 );
 
-	bool array_created = false; // So we can only create the out_params array once, after the first step
+	bool first_step = true;
 	int num_steps;
 
 	// Calculate number of steps for integration
-	for ( unsigned int i = 0; i < num_in_params; i++ )
-	{
-		num_steps = (int)( ( max_in_params - min_in_params )
-				/ safe_d( in_params_step ) ) + 1;
-	}
-
-	// Were any params passed in from a previous iteration?
-	if ( num_passed_in_params > 0 )
-	{
-		// Fill up in_params with the passed parameters
-		for ( unsigned int j = 0; j < num_passed_in_params; j++ )
-		{
-			in_params = passed_in_params;
-		} // for( int j = 0; j < num_passed_params; j++ )
-	} // if ( num_passed_params > 0 )
+	num_steps = (int)( ( max_in_param - min_in_param )
+			/ safe_d( in_param_step ) ) + 1;
 
 	// Standard trapezoid rule integration routine now
 
-	array_created = false;
 	for ( int i = 0; i < num_steps; i++ )
 	{
-		in_params = min_in_params + in_params_step * i;
+		in_param = min_in_param + in_param_step * i;
 
-		// If we have output params from last time, shift them to the last_out_params array
-		last_out_params = temp_out_params;
+		// If we have output params from last time, shift them to the last_out_param array
+		last_out_param = temp_out_param;
 
 		// Call function at this value
-		temp_out_params = ( *func )( in_params, silent );
+		temp_out_param = ( *func )( in_param, silent );
 
-		// Create output param arrays if necessary
-		if ( !array_created )
-		{
-			array_created = true;
-		} // If this is the first time, we don't do anything. Wait till next round to start adding in
+		if(first_step)
+			first_step = false;
 		else
-		{
-
-			// Update the output parameters with those from the function call using trapezoidal rule
-			for ( unsigned int j = 0; j < num_out_params; j++ )
-			{
-				out_params += ( last_out_params + temp_out_params )
-						* in_params_step / 2.;
-			}
-
-		}
+			out_param += ( last_out_param + temp_out_param )
+				* in_param_step / 2.;
 
 	} // for( int i = 0; i < num_steps[0]; i++ )
 
-	return 0;
+	return out_param;
 }
 
 // Vector-in, vector-out version
 template< typename f, typename T >
-inline const int integrate( const f * func, const unsigned int num_in_params,
+inline std::vector<T> integrate_trapezoid( const f * func,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params,
-		const std::vector< T > & in_params_step, unsigned int & num_out_params,
-		std::vector< T > & out_params,
-		const unsigned int num_passed_in_params = 0,
+		const std::vector< T > & in_params_step,
 		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
 		const bool silent = false )
 {
@@ -388,6 +359,11 @@ inline const int integrate( const f * func, const unsigned int num_in_params,
 	std::vector< T > new_passed_in_params( 0 );
 	std::vector< T > temp_out_params( 0 );
 	std::vector< T > last_out_params( 0 );
+	std::vector< T > out_params( 0 );
+
+	typename std::vector<T>::size_type num_in_params=min_in_params.size();
+	typename std::vector<T>::size_type num_passed_in_params=passed_in_params.size();
+	typename std::vector<T>::size_type num_out_params=(*func)(in_params,true).size();
 
 	bool array_created = false; // So we can only create the out_params array once, after the first step
 	std::vector< int > num_steps;
@@ -435,11 +411,7 @@ inline const int integrate( const f * func, const unsigned int num_in_params,
 
 	param_starting_index = num_passed_in_params; // Set index for parameter we'll be integrating over
 
-	if ( num_in_params < 1 ) // To catch errors that might have slipped through
-	{
-		return errorNOS( silent );
-	}
-	else if ( num_in_params == 1 )     // if (num_in_params < 1)
+	if ( num_in_params == 1 )     // if (num_in_params < 1)
 	{
 		// Standard trapezoid rule integration routine now
 
@@ -458,28 +430,21 @@ inline const int integrate( const f * func, const unsigned int num_in_params,
 			}
 
 			// Call function at this value
-			if ( int errcode = ( *func )( in_params, temp_out_params,
-					silent ) )
-				return errcode + LOWER_LEVEL_ERROR;
+			temp_out_params = ( *func )( in_params, silent );
 
 			// Create output param arrays if necessary
 			if ( !array_created )
 			{
-				if ( int errcode = make_array( out_params, num_out_params ) )
-					return errcode + LOWER_LEVEL_ERROR;
-				if ( int errcode = make_array( last_out_params,
-						num_out_params ) )
-					return errcode + LOWER_LEVEL_ERROR;
+				make_array( out_params, num_out_params );
+				make_array( last_out_params, num_out_params );
 				array_created = true;
 			} // If this is the first time, we don't do anything. Wait till next round to start adding in
 			else
 			{
-
 				// Update the output parameters with those from the function call usind trapezoidal rule
 				for ( unsigned int j = 0; j < num_out_params; j++ )
 				{
-					out_params[j] +=
-							( last_out_params[j] + temp_out_params[j] )
+					out_params[j] += ( last_out_params[j] + temp_out_params[j] )
 									* in_params_step[0] / 2.;
 				}
 
@@ -495,20 +460,14 @@ inline const int integrate( const f * func, const unsigned int num_in_params,
 		// Set up new passed parameter array
 		new_num_passed_params = num_passed_in_params + 1;
 		new_num_in_params = num_in_params - 1;
-		if ( int errcode = make_array( new_passed_in_params,
-				new_num_passed_params ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		make_array( new_passed_in_params, new_num_passed_params );
 		for ( unsigned int i = 0; i < num_passed_in_params; i++ )
 			new_passed_in_params[i] = passed_in_params[i];
 
 		// Set up new in-parameter arrays, excluding this first parameter
-		if ( int errcode = make_array( new_min_in_params, num_in_params - 1 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-		if ( int errcode = make_array( new_max_in_params, num_in_params - 1 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-		if ( int errcode = make_array( new_in_params_step,
-				num_in_params - 1 ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		make_array( new_min_in_params, num_in_params - 1 );
+		make_array( new_max_in_params, num_in_params - 1 );
+		make_array( new_in_params_step, num_in_params - 1 );
 		for ( unsigned int i = 0; i < num_in_params - 1; i++ )
 		{
 			new_min_in_params[i] = min_in_params[i + 1];
@@ -525,17 +484,13 @@ inline const int integrate( const f * func, const unsigned int num_in_params,
 							+ in_params_step[param_starting_index] * i;
 
 			// Call integrate on remaining in_params
-			if ( int errcode = integrate( func, new_num_in_params,
-					new_min_in_params, new_max_in_params, new_in_params_step,
-					num_out_params, temp_out_params, new_num_passed_params,
-					new_passed_in_params ) )
-				return errcode + LOWER_LEVEL_ERROR;
+			integrate_trapezoid( func, new_min_in_params, new_max_in_params, new_in_params_step,
+					temp_out_params, new_passed_in_params );
 
 			// Create output param array if necessary
 			if ( !array_created )
 			{
-				if ( int errcode = make_array( out_params, num_out_params ) )
-					return errcode + LOWER_LEVEL_ERROR;
+				make_array( out_params, num_out_params );
 				array_created = true;
 			}
 
@@ -550,100 +505,66 @@ inline const int integrate( const f * func, const unsigned int num_in_params,
 	}
 	else     // else if (num_in_params > 1)
 	{
-		return errorNOS( silent );
+		throw std::runtime_error("Invalid path!");
 	} // else
 
-	return 0;
+	return out_params;
 }
 
 // Scalar-in, scalar-out version
 template< typename f, typename T >
-inline const int integrate( const f * func, const unsigned int num_in_params,
-		T & min_in_params, T & max_in_params, const int num_samples,
-		unsigned int & num_out_params, T & out_params,
-		const unsigned int num_passed_in_params = 0,
-		const T & passed_in_params = 0, const bool silent = false )
+inline T integrate_trapezoid( const f * func, const T & min_in_params, const T & max_in_params, const int num_samples,
+		const bool silent = false )
 {
-
-	T in_params_step( 0 );
-
-	int result;
-	for ( unsigned int i = 0; i < num_in_params; i++ )
-	{
-		in_params_step = ( max_in_params - min_in_params )
-				/ safe_d( num_samples - 1 );
-	}
-	result = integrate( func, num_in_params, min_in_params, max_in_params,
-			in_params_step, num_out_params, out_params, num_passed_in_params,
-			passed_in_params );
-	return result;
+	T in_params_step( ( max_in_params - min_in_params )
+				/ safe_d( num_samples - 1 ));
+	return integrate_trapezoid( func, min_in_params, max_in_params,
+			in_params_step, silent );
 }
 
 // Vector-in, vector-out version
 template< typename f, typename T >
-inline const int integrate( const f * func, const unsigned int num_in_params,
+inline std::vector<T> integrate_trapezoid( const f * func,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, const int num_samples,
-		unsigned int & num_out_params, std::vector< T > & out_params,
-		const unsigned int num_passed_in_params = 0,
 		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
 		const bool silent = false )
 {
-
-	std::vector< T > in_params_step( 0 );
-
-	int result;
-	if ( int errcode = make_array( in_params_step, num_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	const typename std::vector<T>::size_type num_in_params(min_in_params.size());
+	std::vector< T > in_params_step( num_in_params );
 	for ( unsigned int i = 0; i < num_in_params; i++ )
 	{
 		in_params_step[i] = ( max_in_params[i] - min_in_params[i] )
 				/ safe_d( num_samples - 1 );
 	}
-	result = integrate( func, num_in_params, min_in_params, max_in_params,
-			in_params_step, num_out_params, out_params, num_passed_in_params,
-			passed_in_params );
-	del_array( in_params_step );
-	return result;
+	return integrate_trapezoid( func, min_in_params, max_in_params,
+			in_params_step, passed_in_params, silent );
 }
 
 // Scalar-in, scalar-out version
 template< typename f1, typename f2, typename T >
-inline const int integrate_weighted( const f1 * func, const f2 * func_weight,
-		const unsigned int num_in_params, const T & min_in_params,
-		const T & max_in_params, const T & in_params_step,
-		unsigned int & num_out_params, T & out_params,
-		const unsigned int num_passed_in_params = 0,
-		const T & passed_in_params = T( 0 ), const bool silent = false )
+inline T integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
+		const T & min_in_params, const T & max_in_params, const T & in_params_step,
+		const bool silent = false )
 {
 	functor_product< f1, f2, T > fprod( func, func_weight );
 	unsigned int num_prod_out_params = 0, num_weight_out_params = 0;
 	T prod_out_params( 0 ), weight_out_params( 0 );
 
-	if ( int errcode = integrate( &fprod, num_in_params, min_in_params,
-			max_in_params, in_params_step, num_prod_out_params,
-			prod_out_params, num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = integrate( func_weight, num_in_params, min_in_params,
-			max_in_params, in_params_step, num_weight_out_params,
-			weight_out_params, num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	prod_out_params = integrate_trapezoid( &fprod, min_in_params,
+			max_in_params, in_params_step, silent);
+	weight_out_params = integrate_trapezoid( func_weight, min_in_params,
+			max_in_params, in_params_step, silent);
 
-	num_out_params = num_prod_out_params; // By construction of the function_product_function class, this must be the same as num_weight_out_params
-	out_params = prod_out_params / safe_d( weight_out_params );
-
-	return 0;
+	return prod_out_params / safe_d( weight_out_params );
 }
 
 // Vector-in, vector-out version
 template< typename f1, typename f2, typename T >
-inline const int integrate_weighted( const f1 * func, const f2 * func_weight,
-		const unsigned int num_in_params,
+inline std::vector<T> integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params,
-		const std::vector< T > & in_params_step, unsigned int & num_out_params,
-		std::vector< T > & out_params,
-		const unsigned int num_passed_in_params = 0,
+		const std::vector< T > & in_params_step,
 		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
 		const bool silent = false )
 {
@@ -651,18 +572,13 @@ inline const int integrate_weighted( const f1 * func, const f2 * func_weight,
 	unsigned int num_prod_out_params = 0, num_weight_out_params = 0;
 	std::vector< T > prod_out_params( 0 ), weight_out_params( 0 );
 
-	if ( int errcode = integrate( &fprod, num_in_params, min_in_params,
-			max_in_params, in_params_step, num_prod_out_params,
-			prod_out_params, num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = integrate( func_weight, num_in_params, min_in_params,
-			max_in_params, in_params_step, num_weight_out_params,
-			weight_out_params, num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	prod_out_params = integrate_trapezoid( &fprod, min_in_params,
+			max_in_params, in_params_step, passed_in_params, silent );
+	weight_out_params = integrate_trapezoid( func_weight, min_in_params,
+			max_in_params, in_params_step, passed_in_params, silent );
 
-	num_out_params = num_prod_out_params; // By construction of the function_product_function class, this must be the same as num_weight_out_params
-	out_params.resize( num_out_params );
-	for ( unsigned int i = 0; i < num_out_params; i++ )
+	std::vector<T> out_params( prod_out_params.size() );
+	for ( unsigned int i = 0; i < prod_out_params.size(); i++ )
 	{
 		out_params[i] = prod_out_params[i] / safe_d( weight_out_params[i] );
 	}
@@ -672,60 +588,41 @@ inline const int integrate_weighted( const f1 * func, const f2 * func_weight,
 
 // Scalar-in, scalar-out version
 template< typename f1, typename f2, typename T >
-inline const int integrate_weighted( const f1 * func, const f2 * func_weight,
-		const unsigned int num_in_params, const T & min_in_params,
+inline T integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
+		const T & min_in_params,
 		const T & max_in_params, const int num_samples,
-		unsigned int & num_out_params, T & out_params,
-		const unsigned int num_passed_in_params = 0,
-		const T & passed_in_params = T( 0 ), const bool silent = false )
+		const bool silent = false )
 {
 	functor_product< f1, f2, T > fprod( func, func_weight );
 	unsigned int num_prod_out_params = 0, num_weight_out_params = 0;
 	T prod_out_params( 0 ), weight_out_params( 0 );
 
-	if ( int errcode = integrate( &fprod, num_in_params, min_in_params,
-			max_in_params, num_samples, num_prod_out_params, prod_out_params,
-			num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = integrate( func_weight, num_in_params, min_in_params,
-			max_in_params, num_samples, num_weight_out_params,
-			weight_out_params, num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	prod_out_params = integrate_trapezoid( &fprod, min_in_params,
+			max_in_params, num_samples, silent );
+	weight_out_params = integrate_trapezoid( func_weight, min_in_params,
+			max_in_params, num_samples, silent );
 
-	num_out_params = num_prod_out_params; // By construction of the function_product_function class, this must be the same as num_weight_out_params
-	out_params.resize( num_out_params );
-	out_params = prod_out_params / safe_d( weight_out_params );
-
-	return 0;
+	return prod_out_params / safe_d( weight_out_params );
 }
 
 // Vector-in, vector-out version
 template< typename f1, typename f2, typename T >
-inline const int integrate_weighted( const f1 * func, const f2 * func_weight,
-		const unsigned int num_in_params,
+inline std::vector<T> integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, const int num_samples,
-		unsigned int & num_out_params, std::vector< T > & out_params,
-		const unsigned int num_passed_in_params = 0,
 		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
 		const bool silent = false )
 {
 	functor_product< f1, f2, T > fprod( func, func_weight );
-	unsigned int num_prod_out_params = 0, num_weight_out_params = 0;
 	std::vector< T > prod_out_params( 0 ), weight_out_params( 0 );
 
-	if ( int errcode = integrate( &fprod, num_in_params, min_in_params,
-			max_in_params, num_samples, num_prod_out_params, prod_out_params,
-			num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = integrate( func_weight, num_in_params, min_in_params,
-			max_in_params, num_samples, num_weight_out_params,
-			weight_out_params, num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	prod_out_params = integrate( &fprod, min_in_params,
+			max_in_params, num_samples, passed_in_params, silent );
+	weight_out_params = integrate( func_weight, min_in_params,
+			max_in_params, num_samples, passed_in_params, silent );
 
-	num_out_params = num_prod_out_params; // By construction of the function_product_function class, this must be the same as num_weight_out_params
-	out_params.resize( num_out_params );
-	for ( unsigned int i = 0; i < num_out_params; i++ )
+	std::vector<T> out_params( prod_out_params.size() );
+	for ( unsigned int i = 0; i < prod_out_params.size(); i++ )
 	{
 		out_params[i] = prod_out_params[i] / safe_d( weight_out_params[i] );
 	}
