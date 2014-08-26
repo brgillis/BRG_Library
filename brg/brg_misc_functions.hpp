@@ -342,10 +342,10 @@ inline const double Gaus_pdf( const Tx x, const Tmean mean )
 	return Gaus_pdf(x,mean,1.);
 }
 template< typename Tx, typename Tmean, typename Tstddev >
-inline const double Gaus_pdf( const Tx x, const Tmean mean = 0,
-		const Tstddev std_dev = 1 )
+inline const double Gaus_pdf( const Tx x, const Tmean mean,
+		const Tstddev std_dev )
 {
-	return exp( -square( x - mean ) / ( 2 * std_dev * std_dev ) )
+	return std::exp( -square( x - mean ) / ( 2 * std_dev * std_dev ) )
 			/ ( std_dev * std::sqrt( 2 * pi ) );
 }
 
@@ -368,20 +368,20 @@ inline const double Gaus_int( const Tlo min, const Thi max,
 	double klo = ( min - mean ) / std_dev;
 	double khi = ( max - mean ) / std_dev;
 
-	return fabs( boost::math::erf( khi ) - boost::math::erf( klo ) ) / 2;
+	return std::fabs( boost::math::erf( khi ) - boost::math::erf( klo ) ) / 2;
 }
 
 // Add two or three values in quadrature.
 template < typename T1, typename T2 >
 inline const T1 quad_add( const T1 v1, const T2 v2)
 {
-	return sqrt( v1 * v1 + v2 * v2);
+	return std::sqrt( v1 * v1 + v2 * v2);
 }
 template < typename T1, typename T2, typename T3 >
 inline const T1 quad_add( const T1 v1, const T2 v2,
 		const T3 v3 )
 {
-	return sqrt( v1 * v1 + v2 * v2 + v3 * v3 );
+	return std::sqrt( v1 * v1 + v2 * v2 + v3 * v3 );
 }
 
 // Subtract one value from another in quadrature

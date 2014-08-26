@@ -178,11 +178,11 @@ inline const int differentiate( const f * func,
 		const double power = 1, const bool silent = false )
 {
 
-	std::vector< BRG_UNITS > d_in_params( 0 );
-	std::vector< BRG_UNITS > base_out_params( 0 );
-	std::vector< BRG_UNITS > test_in_params( 0 );
-	std::vector< BRG_UNITS > test_out_params( 0 );
-	BRG_UNITS small_factor_with_units = SMALL_FACTOR;
+	std::vector< T > d_in_params( 0 );
+	std::vector< T > base_out_params( 0 );
+	std::vector< T > test_in_params( 0 );
+	std::vector< T > test_out_params( 0 );
+	T small_factor_with_units = SMALL_FACTOR;
 
 	bool power_flag = false;
 	bool zero_in_flag = false;
@@ -1029,14 +1029,8 @@ inline const int integrate_Rhomberg( const f * func,
 			d = 0;
 			for ( unsigned int i = 0; i < num_out_params; i++ )
 			{
-				d =
-						quad_add( d,
-								( 2 * fabs( R[n][n][i] - R[n - 1][n - 1][i] )
-										/ safe_d(
-												fabs(
-														R[n][n][i]
-																+ R[n - 1][n
-																		- 1][i] ) ) ) );
+				d = quad_add( d,( 2 * fabs( R[n][n][i] - R[n - 1][n - 1][i] )
+							/ safe_d( fabs( R[n][n][i] + R[n - 1][n - 1][i] ) ) ) );
 			}
 			if ( d < precision )
 			{
@@ -1282,9 +1276,9 @@ inline const int integrate_weighted_Rhomberg( const f_in_1 * func,
 // using the passed acceleration function. The passed function for this implementation must take in one parameter (the magnitude of distance from
 // a centre point) and return one parameter (the magnitude of the acceleration toward this centre point).
 template< typename f >
-inline const int leapfrog_step( const BRG_DISTANCE &x, const BRG_DISTANCE &y,
-		const BRG_DISTANCE &z, const BRG_VELOCITY &vx, const BRG_VELOCITY &vy,
-		const BRG_VELOCITY &vz,
+inline const int leapfrog_step( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
+		CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx, CONST_BRG_VELOCITY_REF vy,
+		CONST_BRG_VELOCITY_REF vz,
 		BRG_DISTANCE & new_x, BRG_DISTANCE & new_y, BRG_DISTANCE & new_z,
 		BRG_VELOCITY & new_vx, BRG_VELOCITY & new_vy, BRG_VELOCITY & new_vz,
 		const BRG_TIME &t_step, const f *accel_func,
@@ -1337,7 +1331,7 @@ inline const int leapfrog_step( BRG_DISTANCE & x, BRG_DISTANCE & y,
 
 template< typename f >
 inline const int leapfrog_step( const phase &p, phase & new_p,
-		const BRG_TIME &t_step, const f *accel_func,
+		CONST_BRG_TIME_REF t_step, const f *accel_func,
 		const bool silent = false )
 {
 	return leapfrog_step( p.x, p.y, p.z, p.vx, p.vy, p.vz, new_p.x, new_p.y,
@@ -1345,7 +1339,7 @@ inline const int leapfrog_step( const phase &p, phase & new_p,
 }
 
 template< typename f >
-inline const int leapfrog_step( phase & p, const BRG_TIME & t_step,
+inline const int leapfrog_step( phase & p, CONST_BRG_TIME_REF t_step,
 		const f *accel_func, const bool silent = false )
 {
 	int result;
