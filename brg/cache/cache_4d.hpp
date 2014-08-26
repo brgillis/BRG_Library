@@ -92,9 +92,12 @@ private:
 
 	// Private methods
 #if (1)
-	const int _init() const throw()
+	void _init() const throw()
 	{
-		if(SPCP(name)->_initialised_) return 0;
+		// We check for initialisation twice due to the critical section here.
+		// It's expensive to enter, and we don't want to do anything inside it more than once,
+		// so we check whether we need to both once outside it and once inside it.
+		if(SPCP(name)->_initialised_) return;
 
 		#pragma omp critical(init_brg_cache_4d)
 		if(!SPCP(name)->_initialised_)
@@ -108,10 +111,8 @@ private:
 
 			SPCP(name)->_initialised_ = true;
 		}
-
-		return 0;
 	}
-	const int _load( const bool silent = false ) const
+	void _load( const bool silent = false ) const
 	{
 		std::ifstream in_file;
 		std::string file_data;
@@ -119,15 +120,13 @@ private:
 		int loop_counter = 0;
 
 		if ( SPCP(name)->_loaded_ )
-			return 0;
+			return;
 
 		do
 		{
 			if ( loop_counter >= 2 )
 			{
-				if ( !silent )
-					std::cerr << "ERROR: infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in brgastro::brg_cache_2.\n";
-				return INFINITE_LOOP_ERROR;
+				throw std::runtime_error("ERROR: infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in brgastro::brg_cache_2.\n");
 			}
 			else
 			{
@@ -138,8 +137,7 @@ private:
 			if ( open_bin_file( in_file, SPCP(name)->_file_name_, true ) )
 			{
 				need_to_calc = true;
-				if ( SPCP(name)->_calc( silent ) )
-					return UNSPECIFIED_ERROR;
+				SPCP(name)->_calc( silent );
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -157,8 +155,7 @@ private:
 					(file_version != SPCP(name)->_version_number_) )
 			{
 				need_to_calc = true;
-				if ( SPCP(name)->_calc( silent ) )
-					return UNSPECIFIED_ERROR;
+				SPCP(name)->_calc( silent );
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -219,8 +216,7 @@ private:
 					|| (!in_file) )
 			{
 				need_to_calc = true;
-				if ( SPCP(name)->_calc( silent ) )
-					return UNSPECIFIED_ERROR;
+				SPCP(name)->_calc( silent );
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -232,15 +228,13 @@ private:
 		in_file.close();
 		in_file.clear();
 		SPCP(name)->_loaded_ = true;
-		return 0;
 	}
-	const int _unload() const throw()
+	void _unload() const throw()
 	{
 		SPCP(name)->_loaded_ = false;
 		SPCP(name)->_results_.clear();
-		return 0;
 	}
-	const int _calc( const bool silent = false ) const
+	void _calc( const bool silent = false ) const
 	{
 
 		// Test that range is sane
@@ -249,10 +243,7 @@ private:
 				 ( SPCP(name)->_max_3_ <= SPCP(name)->_min_3_ ) || ( SPCP(name)->_step_3_ <= 0 ) ||
 				 ( SPCP(name)->_max_4_ <= SPCP(name)->_min_4_ ) || ( SPCP(name)->_step_4_ <= 0 ) )
 		{
-			if ( !silent )
-				std::cerr
-						<< "ERROR: Bad range passed to brg_cache_4d::_calc() for " + SPCP(name)->_name_base() + "\n";
-			return INVALID_ARGUMENTS_ERROR;
+			throw std::runtime_error("Bad range passed to brg_cache_4d::_calc() for " + SPCP(name)->_name_base() + "\n");
 		}
 
 		// Print a message that we're generating the cache if not silent
@@ -266,9 +257,8 @@ private:
 		SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
 		SPCP(name)->_resolution_3_ = (unsigned int) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
 		SPCP(name)->_resolution_4_ = (unsigned int) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
-		if ( make_array4d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
-				SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ ) )
-			return 1;
+		make_array4d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
+				SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ );
 
 		// Calculate data
 		bool bad_result = false;
@@ -296,7 +286,7 @@ private:
 			}
 		}
 
-		if(bad_result) return UNSPECIFIED_ERROR;
+		if(bad_result) throw std::runtime_error("One or more calculations in generating cache " + SPCP(name)->_file_name_ + " failed.");
 		SPCP(name)->_loaded_ = true;
 
 		// Print a message that we've finished generating the cache if not silent.
@@ -304,10 +294,8 @@ private:
 		{
 			std::cout << "Finished generating " << SPCP(name)->_file_name_ << "!\n";
 		}
-
-		return 0;
 	}
-	const int _output( const bool silent = false ) const
+	void _output( const bool silent = false ) const
 	{
 
 		std::ofstream out_file;
@@ -315,12 +303,10 @@ private:
 
 		if ( !SPCP(name)->_loaded_ )
 		{
-			if ( SPCP(name)->_calc( silent ) )
-				return LOWER_LEVEL_ERROR;
+			SPCP(name)->_calc( silent );
 		}
 
-		if ( open_bin_file( out_file, SPCP(name)->_file_name_, true ) )
-			return LOWER_LEVEL_ERROR;
+		open_bin_file( out_file, SPCP(name)->_file_name_, true );
 
 		// Output name and version
 
@@ -374,8 +360,6 @@ private:
 
 		out_file.close();
 		out_file.clear();
-
-		return 0;
 	}
 #endif // Private methods
 
@@ -416,18 +400,17 @@ public:
 	// Public methods
 #if (1)
 
-	const int set_file_name( const std::string new_name )
+	void set_file_name( const std::string new_name )
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 		SPP(name)->_file_name_ = new_name;
 		if ( SPCP(name)->_loaded_ )
 		{
-			return SPCP(name)->_unload();
+			SPCP(name)->_unload();
 		}
-		return 0;
-	} // const int set_file_name()
+	} // void set_file_name()
 
-	const int set_range( const double new_min_1, const double new_max_1, const double new_step_1,
+	void set_range( const double new_min_1, const double new_max_1, const double new_step_1,
 	         const double new_min_2, const double new_max_2, const double new_step_2,
  	         const double new_min_3, const double new_max_3, const double new_step_3,
  	         const double new_min_4, const double new_max_4, const double new_step_4,
@@ -463,15 +446,12 @@ public:
 			SPP(name)->_max_4_ = new_max_4;
 			SPP(name)->_step_4_ = new_step_4;
 
-			if ( SPCP(name)->_unload() )
-				return errorNOS( silent );
-			if ( SPCP(name)->_calc( silent ) )
-				return UNSPECIFIED_ERROR;
+			SPCP(name)->_unload();
+			SPCP(name)->_calc( silent );
 		}
-		return 0;
-	} // const int set_range()
+	} // void set_range()
 
-	const int print( std::ostream & out, const bool silent = false ) const
+	void print( std::ostream & out, const bool silent = false ) const
 	{
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
@@ -526,7 +506,7 @@ public:
 			}
 		}
 
-		return print_table(out,data.size(),data[0].size(),header,data,false,silent);
+		print_table(out,data.size(),data[0].size(),header,data,false,silent);
 	}
 
 	const BRG_UNITS get( const double x_1, const double x_2, const double x_3, const double x_4,
@@ -647,14 +627,13 @@ public:
 
 	// Recalculate function. Call if you want to overwrite a cache when something's changed in the code
 	// (for instance, the _calculate() function has been altered)
-	const int recalc( const bool silent = false ) const
+	void recalc( const bool silent = false ) const
 	{
 		SPCP(name)->_unload();
-		if(SPCP(name)->_calc(silent)) return LOWER_LEVEL_ERROR;
-		if(SPCP(name)->_output(silent)) return LOWER_LEVEL_ERROR;
+		SPCP(name)->_calc(silent);
+		SPCP(name)->_output(silent);
 		SPCP(name)->_unload();
-		if(SPCP(name)->_load(silent)) return LOWER_LEVEL_ERROR;
-		return 0;
+		SPCP(name)->_load(silent);
 	}
 
 	// Constructor
