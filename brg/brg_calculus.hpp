@@ -37,20 +37,16 @@ namespace brgastro
 
 // Scalar-in, scalar-out version !!! Needs clean-up after testing
 template< typename f, typename T >
-inline const int differentiate( const f * func,
-		const unsigned int num_in_params, const T & in_params,
-		unsigned int & num_out_params, T & out_params, T & Jacobian,
+inline T differentiate( const f * func, const T & in_param,
 		const int order = 1, const double power = 1,
 		const bool silent = false )
 {
 
-	BRG_UNITS d_in_params( 0 );
-	BRG_UNITS base_out_params( 0 );
-	BRG_UNITS test_in_params( 0 );
-	BRG_UNITS test_out_params( 0 );
+	BRG_UNITS d_in_param( 0 );
+	BRG_UNITS base_out_param( 0 );
+	BRG_UNITS test_in_param( 0 );
+	BRG_UNITS test_out_param( 0 );
 	BRG_UNITS small_factor_with_units = SMALL_FACTOR;
-
-	num_out_params = 1;
 
 	bool power_flag = false;
 	bool zero_in_flag = false;
@@ -71,105 +67,81 @@ inline const int differentiate( const f * func,
 		power_flag = false;
 
 	// Check if any in_params are zero. If so, estimate small factor from other in_params
-	for ( unsigned int i = 0; i < num_in_params; i++ )
+	if ( in_param == 0 )
 	{
-		if ( in_params == 0 )
-		{
-			zero_in_flag = true;
-		}
-		else     // if(in_params==0)
-		{
-			small_factor_with_units = in_params * SMALL_FACTOR;
-			d_in_params = small_factor_with_units;
-		} // else
-	} // for( unsigned int i = 0; i < num_in_params; i++ )
+		zero_in_flag = true;
+	}
+	else     // if(in_params==0)
+	{
+		small_factor_with_units = in_param * SMALL_FACTOR;
+		d_in_param = small_factor_with_units;
+	} // else
 
 	if ( zero_in_flag )
 	{
 		if ( small_factor_with_units == 0 )
 		{
-			// At least try to get the units right
-			for ( unsigned int i = 0; i < num_in_params; i++ )
-			{
 #ifdef _BRG_USE_UNITS_
-				d_in_params.set(SMALL_FACTOR,in_params.get_unit_powers());
+			d_in_param.set(SMALL_FACTOR,in_params.get_unit_powers());
 #else
-				d_in_params = SMALL_FACTOR;
+			d_in_param = SMALL_FACTOR;
 #endif
-			} // for( unsigned int i = 0; i < num_in_params; i++ )
 		}
 		else
 		{
-			for ( unsigned int i = 0; i < num_in_params; i++ )
+			if ( in_param == 0 )
 			{
-				if ( in_params == 0 )
-				{
 #ifdef _BRG_USE_UNITS_
-					d_in_params.set(SMALL_FACTOR_units.get_value(),in_params.get_unit_powers());
+				d_in_param.set(SMALL_FACTOR_units.get_value(),in_params.get_unit_powers());
 #else
-					d_in_params = small_factor_with_units;
+				d_in_param = small_factor_with_units;
 #endif
-				} // if(in_params[i]==0)
-			} // for( unsigned int i = 0; i < num_in_params; i++ )
+			} // if(in_params[i]==0)
 		}
 	}
 
 	// Get value of function at input parameters
-	base_out_params = ( *func )( in_params, silent );
+	base_out_param = ( *func )( in_param, silent );
 
 	bool bad_function_result = false;
 	unsigned int counter = 0;
 
+	T Jacobian=0;
+
 	do {
 		counter++;
 		bad_function_result = false;
-		// Loop over input and output dimensions to get Jacobian
-		for ( unsigned int j = 0; j < num_in_params; j++ )
+
+		test_in_param = in_param + d_in_param;
+
+		// Run the function to get value at test point
+		try
 		{
-			// Set up test input parameters
-			for ( unsigned int j2 = 0; j2 < num_in_params; j2++ )
-			{
-				if ( j2 == j )
-				{
-					test_in_params = in_params + d_in_params;
-				} // if( j2==j )
-				else
-				{
-					test_in_params = in_params;
-				} // else
-			}
+			test_out_param = ( *func )( test_in_param, silent );
+		}
+		catch(const std::runtime_error &e)
+		{
+			bad_function_result = true;
+			d_in_param /= 10; // Try again with smaller step
+			continue;
+		}
 
-			// Run the function to get value at test point
-			try
-			{
-				test_out_params = ( *func )( test_in_params, silent );
-			}
-			catch(const std::runtime_error &e)
-			{
-				bad_function_result = true;
-				d_in_params /= 10; // Try again with smaller step
-				continue;
-			}
-
-			// Record this derivative
-			for ( unsigned int i = 0; i < num_out_params; i++ )
-			{
-				Jacobian = ( test_out_params - base_out_params ) / d_in_params;
-				if ( power_flag )
-					Jacobian *= power * safe_pow( base_out_params, power - 1 );
-				if(isbad(Jacobian))
-				{
-					bad_function_result = true;
-					d_in_params /= 10; // Try again with smaller step
-					continue;
-				}
-			} // for( int i = 0; i < num_out_params; i++)
-		} // for( unsigned int j = 0; j < num_in_params; j++)
+		// Record this derivative
+		Jacobian = ( test_out_param - base_out_param ) / d_in_param;
+		if ( power_flag )
+			Jacobian *= power * safe_pow( base_out_param, power - 1 );
+		if(isbad(Jacobian))
+		{
+			bad_function_result = true;
+			d_in_param /= 10; // Try again with smaller step
+			continue;
+		}
 	} while ((bad_function_result) && (counter<3));
 
-	if(counter>=3) return UNSPECIFIED_ERROR; // We can't get good results at any nearby points
+	if(counter>=3)
+		throw std::runtime_error("Cannot differentiate function due to lack of valid nearby points found.");
 
-	return 0;
+	return Jacobian;
 }
 
 // Vector-in, vector-out version

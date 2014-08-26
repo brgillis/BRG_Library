@@ -173,9 +173,8 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 	const int max_steps_to_use = (int)max( 1, max_steps );
 
 	// Get normalized step size
-	if ( int errcode = differentiate( func, num_in_params, in_params_to_use,
-			num_out_params, out_params, Jacobian, 1, cusp_override_power ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	Jacobian = differentiate( func, in_params_to_use, 1, cusp_override_power );
+
 	mag = 0;
 	for ( unsigned int i = 0; i < num_in_params; i++ )
 	{
@@ -203,10 +202,7 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 		last_in_params = current_in_params;
 
 		// Get derivative at current location
-		if ( int errcode = differentiate( func, num_in_params,
-				current_in_params, num_out_params, out_params, Jacobian, 1,
-				cusp_override_power ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		Jacobian = differentiate( func,	current_in_params, 1, cusp_override_power );
 
 		// Make a step
 		for ( unsigned int i = 0; i < num_in_params; i++ )
@@ -311,9 +307,7 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 	} // if( in_params_to_use.size() < num_in_params )
 
 	// Get normalized step size
-	if ( int errcode = differentiate( func, num_in_params, in_params_to_use,
-			num_out_params, out_params, Jacobian, 1, cusp_override_power ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	Jacobian = differentiate( func, in_params_to_use, 1, cusp_override_power );
 	mag = 0;
 	for ( unsigned int i = 0; i < num_in_params; i++ )
 	{
@@ -341,10 +335,7 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 		last_in_params = current_in_params;
 
 		// Get derivative at current location
-		if ( int errcode = differentiate( func, num_in_params,
-				current_in_params, num_out_params, out_params, Jacobian, 1,
-				cusp_override_power ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		Jacobian = differentiate( func, current_in_params, 1, cusp_override_power );
 
 		// Make a step
 		for ( unsigned int i = 0; i < num_in_params; i++ )

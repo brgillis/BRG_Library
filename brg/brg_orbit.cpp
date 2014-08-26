@@ -204,13 +204,9 @@ BRG_UNITS brgastro::interpolator_derivative_functor::operator()(
 					<< "ERROR: Spline function must be set up in spline_derivative_functor.\n";
 		return NOT_SET_UP_ERROR;
 	}
-	BRG_UNITS temp_out_params;
 	BRG_UNITS Jacobian=0;
-	unsigned int temp_num_out_params;
 
-	if ( differentiate( &_interpolator_functor_, 1, in_param, temp_num_out_params,
-			temp_out_params, Jacobian ) )
-		return 1;
+	Jacobian = differentiate( &_interpolator_functor_, in_param );
 
 	return Jacobian;
 }
@@ -609,10 +605,7 @@ const double brgastro::interpolator_derivative::operator()( double xval ) const
 
 			if ( delta_t <= 0 )
 			{
-				if ( differentiate( &spline_derivative_functor_val,
-						num_in_params, min_in_params, num_out_params,
-						out_params, Jacobian ) )
-					return 1;
+				Jacobian = differentiate( &spline_derivative_functor_val, min_in_params);
 
 				_estimated_interpolator_.add_point( t, Jacobian );
 			}
