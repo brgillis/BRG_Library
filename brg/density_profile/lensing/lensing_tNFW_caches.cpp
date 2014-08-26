@@ -52,15 +52,14 @@ DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_shifted_sig_cache,
 
 // brgastro::tNFW_sig_cache class methods
 #if (1)
-const int brgastro::tNFW_sig_cache::_calculate( const double in_param_1, const double in_param_2,
-		const double in_param_3, double & out_params ) const
+const double brgastro::tNFW_sig_cache::_calculate( const double in_param_1, const double in_param_2,
+		const double in_param_3 ) const
 {
 	const double mass = std::exp(in_param_1);
 	const double z = in_param_2;
 	const double r = std::exp(in_param_3);
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	out_params = profile.WLsig( r );
-	return 0;
+	return profile.WLsig( r );
 }
 
 #endif // end brgastro::tNFW_sig_cache methods
@@ -68,16 +67,15 @@ const int brgastro::tNFW_sig_cache::_calculate( const double in_param_1, const d
 // brgastro::NFW_offset_sig_cache class methods
 #if (1)
 
-const int brgastro::tNFW_offset_sig_cache::_calculate( const double in_param_1, const double in_param_2,
-		const double in_param_3, const double in_param_4, double & out_params ) const
+const double brgastro::tNFW_offset_sig_cache::_calculate( const double in_param_1, const double in_param_2,
+		const double in_param_3, const double in_param_4 ) const
 {
 	const double mass = std::exp(in_param_1);
 	const double z = in_param_2;
 	const double r = std::exp(in_param_3);
 	const double offset_r = std::exp(in_param_4);
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	out_params = profile.offset_WLsig( r, offset_r );
-	return 0;
+	return profile.offset_WLsig( r, offset_r );
 }
 
 #endif // end brgastro::NFW_offset_sig_cache functions
@@ -85,31 +83,29 @@ const int brgastro::tNFW_offset_sig_cache::_calculate( const double in_param_1, 
 // brgastro::tNFW_group_sig_cache class methods
 #if (1)
 
-const int brgastro::tNFW_group_sig_cache::_calculate( const double in_param_1, const double in_param_2,
-		const double in_param_3, const double in_param_4, double & out_params ) const
+const double brgastro::tNFW_group_sig_cache::_calculate( const double in_param_1, const double in_param_2,
+		const double in_param_3, const double in_param_4 ) const
 {
 	const double mass = std::exp(in_param_1);
 	const double z = in_param_2;
 	const double r = std::exp(in_param_3);
 	const double group_c = in_param_4;
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	out_params = profile.semiquick_group_WLsig( r, group_c );
-	return 0;
+	return profile.semiquick_group_WLsig( r, group_c );
 }
 
 #endif // end brgastro::tNFW_group_sig_cache functions
 
 // brgastro::tNFW_shifted_sig_cache class methods
 #if (1)
-const int brgastro::tNFW_shifted_sig_cache::_calculate( const double in_param_1, const double in_param_2,
-		const double in_param_3, double & out_params ) const
+const double brgastro::tNFW_shifted_sig_cache::_calculate( const double in_param_1, const double in_param_2,
+		const double in_param_3 ) const
 {
 	const double mass = std::exp(in_param_1);
 	const double z = in_param_2;
 	const double R = std::exp(in_param_3);
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	out_params = profile.semiquick_shifted_WLsig( R );
-	return 0;
+	return profile.semiquick_shifted_WLsig( R );
 }
 
 #endif // end brgastro::tNFW_sig_cache methods

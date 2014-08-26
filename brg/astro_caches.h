@@ -52,7 +52,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const int _calculate( const double in_params, double & out_params ) const;
+	const double _calculate( const double in_param ) const;
 
 public:
 
@@ -91,7 +91,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const int _calculate( const double in_param_1, const double in_param_2, double & out_param ) const;
+	const double _calculate( const double in_param_1, const double in_param_2 ) const;
 
 public:
 
@@ -129,7 +129,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const int _calculate( const double in_params, double & out_params ) const;
+	const double _calculate( const double in_params ) const;
 
 public:
 

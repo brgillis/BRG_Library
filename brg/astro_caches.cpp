@@ -31,44 +31,22 @@ DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
 
 // brgastro::dfa_cache class methods
 #if (1)
-const int brgastro::dfa_cache::_calculate( const double in_params, double & out_params ) const
+const double brgastro::dfa_cache::_calculate( const double in_params ) const
 {
-	try
-	{
-		out_params = brgastro::integrate_add( 0, in_params );
-	}
-	catch( const std::exception &e)
-	{
-		return LOWER_LEVEL_ERROR;
-	}
-
-	return 0;
+	return brgastro::integrate_add( 0, in_params );
 }
 
 #endif // end brgastro::dfa_cache functions
 
 // brgastro::add_cache class methods
-const int brgastro::add_cache::_calculate( const double in_param_1, const double in_param_2,
-		double  & out_param ) const
+const double brgastro::add_cache::_calculate( const double in_param_1, const double in_param_2) const
 {
-	out_param = brgastro::integrate_add(in_param_1,in_param_2);
-	return 0;
+	return brgastro::integrate_add(in_param_1,in_param_2);
 }
 
-const int brgastro::tfa_cache::_calculate( const double in_params, double & out_params ) const
+const double brgastro::tfa_cache::_calculate( const double in_params ) const
 {
-	try
-	{
-		out_params = -brgastro::integrate_ltd( 0, brgastro::zfa( in_params ) ) / c;
-	}
-	catch(const std::exception &e)
-	{
-		std::cerr << "ERROR: Could not calculate cache for " << _name_base() << "\n"
-				<< "Exception: " << e.what() << "\n";
-		std::cerr.flush();
-		return UNSPECIFIED_ERROR;
-	}
-	return 0;
+	return -brgastro::integrate_ltd( 0, brgastro::zfa( in_params ) ) / c;
 }
 
 #endif // end class methods

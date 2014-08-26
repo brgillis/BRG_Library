@@ -245,8 +245,7 @@ private:
 		{
 			x = SPCP(name)->_mins_ + SPCP(name)->_steps_*position;
 			double result = 0;
-			SPCP(name)->_calculate(x, result);
-			SPCP(name)->_results_(position) = result;
+			SPCP(name)->_results_(position) = SPCP(name)->_calculate(x);
 
 			for(unsigned int d=0; d<SPCP(name)->_num_dim_; d++)
 			{
@@ -342,6 +341,12 @@ protected:
 
 #endif // _BRG_USE_UNITS_
 
+	// Long calculation function, which is used to generate the cache
+	virtual const double _calculate(const brgastro::vector<double> & x) const
+	{
+		return 0;
+	}
+
 	// This function should be overloaded to provide a unique name for this cache
 	virtual const std::string _name_base() const throw()
 	{
@@ -430,17 +435,18 @@ public:
 			// Critical section here, since we can't load multiple times simultaneously
 			#pragma omp critical(load_brg_cache_nd)
 			{
-				if ( SPCP(name)->_load( silent ) )
+				try
+				{
+					SPCP(name)->_load( silent );
+				}
+				catch(const std::exception &e)
 				{
 					result = -1;
 				}
 			}
 			if ( result == -1 )
 			{
-				std::string err = "ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache::get()\n";
-				if ( !silent )
-					std::cerr << err;
-				throw std::runtime_error(err);
+				throw std::runtime_error("ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache_nd::get()\n");
 			}
 		}
 
