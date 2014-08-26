@@ -62,8 +62,7 @@ const int brgastro::point_mass_profile::set_parameters(
 	}
 	if ( set_mvir( parameters.at( 0 ) ) )
 		return errorNOS();
-	if ( set_z( parameters.at( 1 ) ) )
-		return errorNOS();
+	set_z( parameters.at( 1 ) );
 	return 0;
 }
 

@@ -130,11 +130,10 @@ const int brgastro::tNFW_profile::set_c( const double new_halo_c,
 	_uncache_mass();
 	return 0;
 }
-const int brgastro::tNFW_profile::set_z( const double new_z )
+void brgastro::tNFW_profile::set_z( const double new_z )
 {
 	redshift_obj::set_z( new_z );
 	_uncache_mass();
-	return 0;
 }
 const int brgastro::tNFW_profile::set_parameters(
 		const unsigned int num_parameters,
@@ -151,8 +150,7 @@ const int brgastro::tNFW_profile::set_parameters(
 	}
 	if ( set_mvir( parameters.at( 0 ) ) )
 		return errorNOS( silent );
-	if ( set_z( parameters.at( 1 ) ) )
-		return errorNOS( silent );
+	set_z( parameters.at( 1 ) );
 	if ( parameters.at( 2 ) <= 0 )
 	{
 		if ( set_c( _cfm( parameters.at( 0 ), parameters.at( 1 ) ) ) )

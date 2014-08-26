@@ -103,8 +103,8 @@ const float n_s = 0.971;     // WMAP9 + priors
 #ifndef __BRG_DEFAULT_ASTRO_VARS_DEFINED__
 #define __BRG_DEFAULT_ASTRO_VARS_DEFINED__
 
-const double default_c = 6; // To help prevent crashes. Warning will be output
-const double default_tau_factor = 2;
+const float default_c = 6; // To help prevent crashes. Warning will be output
+const float default_tau_factor = 2;
 
 #endif
 #endif
@@ -119,62 +119,62 @@ const double default_tau_factor = 2;
 
  \**********************************************************************/
 
-const BRG_UNITS H( const double z );
+BRG_UNITS H( const double z );
 
 // Functions to get grid integers or grid boundaries from integers
-const int get_ra_grid( CONST_BRG_ANGLE_REF ra );
-const int get_dec_grid( CONST_BRG_ANGLE_REF dec );
-const int get_z_grid( const double z );
+int get_ra_grid( CONST_BRG_ANGLE_REF ra );
+int get_dec_grid( CONST_BRG_ANGLE_REF dec );
+int get_z_grid( const double z );
 
-const BRG_ANGLE get_ra_grid_lower( const int ra_grid );
-const BRG_ANGLE get_dec_grid_lower( const int dec_grid );
-const double get_z_grid_lower( const int z_grid );
+BRG_ANGLE get_ra_grid_lower( const int ra_grid );
+BRG_ANGLE get_dec_grid_lower( const int dec_grid );
+double get_z_grid_lower( const int z_grid );
 
-const BRG_ANGLE get_ra_grid_upper( const int ra_grid );
-const BRG_ANGLE get_dec_grid_upper( const int dec_grid );
-const double get_z_grid_upper( const int z_grid );
+BRG_ANGLE get_ra_grid_upper( const int ra_grid );
+BRG_ANGLE get_dec_grid_upper( const int dec_grid );
+double get_z_grid_upper( const int z_grid );
 
-const BRG_ANGLE get_ra_grid_mid( const int ra_grid );
-const BRG_ANGLE get_dec_grid_mid( const int dec_grid );
-const double get_z_grid_mid( const int z_grid );
+BRG_ANGLE get_ra_grid_mid( const int ra_grid );
+BRG_ANGLE get_dec_grid_mid( const int dec_grid );
+double get_z_grid_mid( const int z_grid );
 
 // Functions to get transverse distance (in m) from angle (in rad) or vice-versa
-const BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF da, const double z );
-const BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
+BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF da, const double z );
+BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
 		const double z );
-const BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1x, CONST_BRG_ANGLE_REF a1y,
+BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1x, CONST_BRG_ANGLE_REF a1y,
 		CONST_BRG_ANGLE_REF a2x, CONST_BRG_ANGLE_REF a2y, const double z );
 
-const BRG_ANGLE afd( CONST_BRG_DISTANCE_REF dd, const double z );
-const BRG_ANGLE afd( CONST_BRG_DISTANCE_REF d1, CONST_BRG_DISTANCE_REF d2,
+BRG_ANGLE afd( CONST_BRG_DISTANCE_REF dd, const double z );
+BRG_ANGLE afd( CONST_BRG_DISTANCE_REF d1, CONST_BRG_DISTANCE_REF d2,
 		const double z );
-const BRG_ANGLE afd( CONST_BRG_DISTANCE_REF d1x, CONST_BRG_DISTANCE_REF d1y,
+BRG_ANGLE afd( CONST_BRG_DISTANCE_REF d1x, CONST_BRG_DISTANCE_REF d1y,
 		CONST_BRG_DISTANCE_REF d2x, CONST_BRG_DISTANCE_REF d2y, const double z );
 
 // Functions to work between redshift, scale factor, and time (in s, with zero = present day)
-const double zfa( const double a );
-const double afz( const double z );
+double zfa( const double a );
+double afz( const double z );
 
-const BRG_TIME tfz( const double z );
-const BRG_TIME tfa( const double z );
-const double zft( CONST_BRG_TIME_REF t );
-const double aft( CONST_BRG_TIME_REF t );
+BRG_TIME tfz( const double z );
+BRG_TIME tfa( const double z );
+double zft( CONST_BRG_TIME_REF t );
+double aft( CONST_BRG_TIME_REF t );
 
 // Functions to integrate out distances
-const double integrate_add( const double z1, const double z2 );
-const double integrate_cmd( const double z1, const double z2 );
-const double integrate_Ld( const double z1, const double z2 );
-const double integrate_ltd( const double z1, const double z2 );
-const double integrate_add( const double z );
-const double integrate_cmd( const double z );
-const double integrate_Ld( const double z );
-const double integrate_ltd( const double z );
-const double integrate_distance( const double z1, const double z2,
+double integrate_add( const double z1, const double z2 );
+double integrate_cmd( const double z1, const double z2 );
+double integrate_Ld( const double z1, const double z2 );
+double integrate_ltd( const double z1, const double z2 );
+double integrate_add( const double z );
+double integrate_cmd( const double z );
+double integrate_Ld( const double z );
+double integrate_ltd( const double z );
+double integrate_distance( const double z1, const double z2,
 		const int mode, const int resolution = 10000 );
 
 // Lensing functions
-const BRG_DISTANCE ad_distance( double z1, double z2 = 0 );
-const BRG_UNITS sigma_crit( const double z_lens, const double z_source );
+BRG_DISTANCE ad_distance( double z1, double z2 = 0 );
+BRG_UNITS sigma_crit( const double z_lens, const double z_source );
 
 #endif // end function declarations
 
@@ -229,41 +229,39 @@ public:
 
 	// Set functions
 #if (1)
-	virtual const int set_z( const double new_z ) // Sets z
+	virtual void set_z( const double new_z ) // Sets z
 	{
 		_z_ = new_z;
 		_H_cached_ = false;
 		_z_grid_cached_ = false;
-		return 0;
 	}
-	virtual const int set_z_err( const double new_z_err ) // Sets z error
+	virtual void set_z_err( const double new_z_err ) // Sets z error
 	{
 		_z_err_ = new_z_err;
-		return 0;
 	}
 #endif
 
 	// Get functions
 #if (1)
-	const double z() const
+	double z() const
 	{
 		return _z_;
 	}
-	const double z_err() const
+	double z_err() const
 	{
 		return _z_err_;
 	}
-	const int z_grid() const;
+	int z_grid() const;
 #endif
 
 	// Astro calculations
 
 #if (1)
 	// H at the redshift of the object, given in units of m/s^2
-	const BRG_UNITS H() const;
+	BRG_UNITS H() const;
 
 	// Critical density at this redshift
-	const BRG_UNITS rho_crit() const;
+	BRG_UNITS rho_crit() const;
 
 #endif
 

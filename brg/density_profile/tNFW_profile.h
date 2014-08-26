@@ -112,7 +112,7 @@ public:
 			const std::vector< BRG_UNITS > & new_parameters,
 			const bool silent = false );
 
-	const int set_z( const double new_z );
+	void set_z( const double new_z );
 	const int set_tau( const double new_halo_tau, const bool silent = false );
 	const int set_c( const double new_halo_c, const bool silent = false );
 

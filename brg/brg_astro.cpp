@@ -13,7 +13,7 @@
 
 // brgastro::redshift_obj class methods
 #if (1)
-const int brgastro::redshift_obj::z_grid() const
+int brgastro::redshift_obj::z_grid() const
 {
 	if ( _z_grid_cached_ )
 	{
@@ -26,7 +26,7 @@ const int brgastro::redshift_obj::z_grid() const
 	return _z_grid_;
 }
 
-const BRG_UNITS brgastro::redshift_obj::H() const
+BRG_UNITS brgastro::redshift_obj::H() const
 {
 	// If not cached, calculate and cache it
 	if(!_H_cached_)
@@ -45,7 +45,7 @@ const BRG_UNITS brgastro::redshift_obj::H() const
 	return _H_cache_;
 }
 
-const BRG_UNITS brgastro::redshift_obj::rho_crit() const
+BRG_UNITS brgastro::redshift_obj::rho_crit() const
 {
 	return 3*square(H())/(8*pi*Gc);
 }
@@ -55,7 +55,7 @@ const BRG_UNITS brgastro::redshift_obj::rho_crit() const
 /** Global Function Definitions **/
 #if (1)
 
-const BRG_UNITS brgastro::H( const double test_z )
+BRG_UNITS brgastro::H( const double test_z )
 {
 	// Friedmann equation, assuming omega = -1
 	if(test_z==0) return H_0;
@@ -68,66 +68,66 @@ const BRG_UNITS brgastro::H( const double test_z )
 
 // grid functions
 #if (1)
-const int brgastro::get_ra_grid( CONST_BRG_ANGLE_REF ra )
+int brgastro::get_ra_grid( CONST_BRG_ANGLE_REF ra )
 {
 	grid_cache cache;
 	return (int)floor(
 			( ra - cache.ra_grid_min() ) / safe_d( cache.ra_grid_step() ) );
 }
-const int brgastro::get_dec_grid( CONST_BRG_ANGLE_REF dec )
+int brgastro::get_dec_grid( CONST_BRG_ANGLE_REF dec )
 {
 	grid_cache cache;
 	return (int)floor( ( dec - cache.dec_grid_min() ) / cache.dec_grid_step() );
 }
-const int brgastro::get_z_grid( const double z )
+int brgastro::get_z_grid( const double z )
 {
 	grid_cache cache;
 	return (int)floor( ( z - cache.z_grid_min() ) / cache.z_grid_step() );
 }
 
-const BRG_ANGLE brgastro::get_ra_grid_lower( const int ra_grid )
+BRG_ANGLE brgastro::get_ra_grid_lower( const int ra_grid )
 {
 	grid_cache cache;
 	return cache.ra_grid_min() + cache.ra_grid_step() * ra_grid;
 }
-const BRG_ANGLE brgastro::get_dec_grid_lower( const int dec_grid )
+BRG_ANGLE brgastro::get_dec_grid_lower( const int dec_grid )
 {
 	grid_cache cache;
 	return cache.dec_grid_min() + cache.dec_grid_step() * dec_grid;
 }
-const double brgastro::get_z_grid_lower( const int z_grid )
+double brgastro::get_z_grid_lower( const int z_grid )
 {
 	grid_cache cache;
 	return cache.z_grid_min() + cache.z_grid_step() * z_grid;
 }
 
-const BRG_ANGLE brgastro::get_ra_grid_upper( const int ra_grid )
+BRG_ANGLE brgastro::get_ra_grid_upper( const int ra_grid )
 {
 	grid_cache cache;
 	return cache.ra_grid_min() + cache.ra_grid_step() * ( ra_grid + 1 );
 }
-const BRG_ANGLE brgastro::get_dec_grid_upper( const int dec_grid )
+BRG_ANGLE brgastro::get_dec_grid_upper( const int dec_grid )
 {
 	grid_cache cache;
 	return cache.dec_grid_min() + cache.dec_grid_step() * ( dec_grid + 1 );
 }
-const double brgastro::get_z_grid_upper( const int z_grid )
+double brgastro::get_z_grid_upper( const int z_grid )
 {
 	grid_cache cache;
 	return cache.z_grid_min() + cache.z_grid_step() * ( z_grid + 1 );
 }
 
-const BRG_ANGLE brgastro::get_ra_grid_mid( const int ra_grid )
+BRG_ANGLE brgastro::get_ra_grid_mid( const int ra_grid )
 {
 	grid_cache cache;
 	return cache.ra_grid_min() + cache.ra_grid_step() * ( ra_grid + 0.5 );
 }
-const BRG_ANGLE brgastro::get_dec_grid_mid( const int dec_grid )
+BRG_ANGLE brgastro::get_dec_grid_mid( const int dec_grid )
 {
 	grid_cache cache;
 	return cache.dec_grid_min() + cache.dec_grid_step() * ( dec_grid + 0.5 );
 }
-const double brgastro::get_z_grid_mid( const int z_grid )
+double brgastro::get_z_grid_mid( const int z_grid )
 {
 	grid_cache cache;
 	return cache.z_grid_min() + cache.z_grid_step() * ( z_grid + 0.5 );
@@ -137,58 +137,58 @@ const double brgastro::get_z_grid_mid( const int z_grid )
 // dfa and afd functions
 #if (1)
 
-const BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF da, const double z )
+BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF da, const double z )
 {
 	return da * dfa_cache().get( z );
 }
-const BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
+BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
 		const double z )
 {
 	return brgastro::dfa( a2 - a1, z );
 }
-const BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF a1x, CONST_BRG_ANGLE_REF a1y,
+BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF a1x, CONST_BRG_ANGLE_REF a1y,
 		CONST_BRG_ANGLE_REF a2x, CONST_BRG_ANGLE_REF a2y, const double z )
 {
 	return brgastro::dfa( skydist2d( a1x, a1y, a2x, a2y ), z );
 }
-const BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF dd, const double z )
+BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF dd, const double z )
 {
 	return dd / safe_d( dfa_cache().get( z ) );
 }
-const BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF d1, CONST_BRG_DISTANCE_REF d2,
+BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF d1, CONST_BRG_DISTANCE_REF d2,
 		const double z )
 {
 	return brgastro::afd( fabs( d2 - d1 ), z );
 }
-const BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF d1x,
+BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF d1x,
 		CONST_BRG_DISTANCE_REF d1y, CONST_BRG_DISTANCE_REF d2x,
 		CONST_BRG_DISTANCE_REF d2y, const double z )
 {
 	return brgastro::afd( dist2d( d1x, d1y, d2x, d2y ), z );
 }
 
-const double brgastro::zfa( const double a )
+double brgastro::zfa( const double a )
 {
 	return 1. / safe_d( a ) - 1.;
 }
-const double brgastro::afz( const double z )
+double brgastro::afz( const double z )
 {
 	return 1. / safe_d( 1 + z );
 }
 
-const BRG_TIME brgastro::tfz( const double z )
+BRG_TIME brgastro::tfz( const double z )
 {
 	return brgastro::tfa( afz( z ) );
 }
-const BRG_TIME brgastro::tfa( const double a )
+BRG_TIME brgastro::tfa( const double a )
 {
 	return tfa_cache().get( a );
 }
-const double brgastro::zft( CONST_BRG_TIME_REF t )
+double brgastro::zft( CONST_BRG_TIME_REF t )
 {
 	return brgastro::zfa( brgastro::aft( t ) );
 }
-const double brgastro::aft( CONST_BRG_TIME_REF t )
+double brgastro::aft( CONST_BRG_TIME_REF t )
 {
 	brgastro::tfa_cache cache;
 	return cache.inverse_get( t );
@@ -198,39 +198,39 @@ const double brgastro::aft( CONST_BRG_TIME_REF t )
 
 // Functions to integrate out distances
 #if (1)
-const double brgastro::integrate_add( const double z1, const double z2 )
+double brgastro::integrate_add( const double z1, const double z2 )
 {
 	return brgastro::integrate_distance( z1, z2, 0, 100000 );
 }
-const double brgastro::integrate_cmd( const double z1, const double z2 )
+double brgastro::integrate_cmd( const double z1, const double z2 )
 {
 	return brgastro::integrate_distance( z1, z2, 1, 10000000 );
 }
-const double brgastro::integrate_Ld( const double z1, const double z2 )
+double brgastro::integrate_Ld( const double z1, const double z2 )
 {
 	return brgastro::integrate_distance( z1, z2, 2, 10000000 );
 }
-const double brgastro::integrate_ltd( const double z1, const double z2 )
+double brgastro::integrate_ltd( const double z1, const double z2 )
 {
 	return brgastro::integrate_distance( z1, z2, 3, 10000000 );
 }
-const double brgastro::integrate_add( const double z )
+double brgastro::integrate_add( const double z )
 {
 	return brgastro::integrate_distance( 0, z, 0, 100000 );
 }
-const double brgastro::integrate_cmd( const double z )
+double brgastro::integrate_cmd( const double z )
 {
 	return brgastro::integrate_distance( 0, z, 1, 10000000 );
 }
-const double brgastro::integrate_Ld( const double z )
+double brgastro::integrate_Ld( const double z )
 {
 	return brgastro::integrate_distance( 0, z, 2, 10000000 );
 }
-const double brgastro::integrate_ltd( const double z )
+double brgastro::integrate_ltd( const double z )
 {
 	return brgastro::integrate_distance( 0, z, 3, 10000000 );
 }
-const double brgastro::integrate_distance( const double z1_init,
+double brgastro::integrate_distance( const double z1_init,
 		const double z2_init, const int mode, const int n )
 {
 	// Function that will help calculate cosmic distances, thanks to Richard Powell - http://www.atlasoftheuniverse.com/
@@ -334,14 +334,14 @@ const double brgastro::integrate_distance( const double z1_init,
 // Other functions
 #if (1)
 
-const BRG_DISTANCE brgastro::ad_distance( double z1, double z2 )
+BRG_DISTANCE brgastro::ad_distance( double z1, double z2 )
 {
 	if ( z2 < z1 )
 		std::swap( z1, z2 );
 	return brgastro::add_cache().get( z1, z2 );
 }
 
-const BRG_UNITS brgastro::sigma_crit( const double z_lens,
+BRG_UNITS brgastro::sigma_crit( const double z_lens,
 		const double z_source )
 {
 	return square( c ) / ( 4. * pi * Gc )
