@@ -419,8 +419,7 @@ public:
 	const density_profile *host_ptr;
 
 	// Function method
-	const int operator()( const std::vector< BRG_UNITS > & in_params,
-			std::vector< BRG_UNITS > & out_params,
+	std::vector< BRG_UNITS > operator()( const std::vector< BRG_UNITS > & in_params,
 			const bool silent = false ) const;
 
 };

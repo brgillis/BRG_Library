@@ -5869,12 +5869,16 @@ const int brgastro::gabdt::calc_dv( const bool silent ) const
 	in_params[1] = _y_;
 	in_params[2] = _z_;
 
-	if ( differentiate( &gabdtf, num_in_params, in_params, num_out_params,
-			out_params, Jacobian ) )
+	try
+	{
+		Jacobian = differentiate( &gabdtf, in_params);
+	}
+	catch(const std::exception &e)
 	{
 		if ( !silent )
 		{
-			std::cerr << "ERROR: Cannot differentiate in gabdt::calc_dv().\n";
+			std::cerr << "ERROR: Cannot differentiate in gabdt::calc_dv():\n";
+			std::cerr << e.what() << std::endl;
 			std::cerr.flush();
 		}
 		for ( unsigned int i = 0; i < num_out_params; i++ )
@@ -6091,22 +6095,19 @@ brgastro::gabdt_functor & brgastro::gabdt_functor::operator=(gabdt_functor other
 }
 
 // Operator()
-const int brgastro::gabdt_functor::operator()(
-		const std::vector< BRG_UNITS > & in_params,
-		std::vector< BRG_UNITS > & out_params, const bool silent ) const
+std::vector< BRG_UNITS > brgastro::gabdt_functor::operator()(
+		const std::vector< BRG_UNITS > & in_params, const bool silent ) const
 {
+	std::vector< BRG_UNITS > out_params(3,0);
+
 	if ( in_params.size() != 3 )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: in_params.size() and num_in_params must == 3 in gabdt_functor.\n";
-		return INVALID_ARGUMENTS_ERROR;
+		throw std::runtime_error("ERROR: in_params.size() and num_in_params must == 3 in gabdt_functor.\n");
 	}
 	double R = dist3d( in_params[0], in_params[1], in_params[2] );
 
 	unsigned int num_out_params = 3;
-	if ( make_array( out_params, num_out_params ) )
-		return 1;
+	make_array( out_params, num_out_params );
 	if ( R == 0 )
 	{
 		// Special handling for this case, returning a zero result
@@ -6125,7 +6126,7 @@ const int brgastro::gabdt_functor::operator()(
 			out_params[i] = in_params[i] / R * accel_mag;
 		}
 	}
-	return 0;
+	return out_params;
 }
 
 #endif // end brgastro::gabdt_functor class function definitions

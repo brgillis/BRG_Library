@@ -35,7 +35,7 @@ namespace brgastro
 // power: Used if, instead of the derivative of f(x), you want the derivative of (f(x))^2, for instance (set power = 2 for that), without setting up a
 //        different function class.
 
-// Scalar-in, scalar-out version !!! Needs clean-up after testing
+// Scalar-in, scalar-out version
 template< typename f, typename T >
 inline T differentiate( const f * func, const T & in_param,
 		const int order = 1, const double power = 1,
@@ -57,7 +57,7 @@ inline T differentiate( const f * func, const T & in_param,
 	{
 		if ( !silent )
 			std::cerr
-					<< "WARNING: brgastro::unit_quick_differentiate with order > 1 is not currently supported.\n";
+					<< "WARNING: brgastro::differentiate with order > 1 is not currently supported.\n";
 		return UNSPECIFIED_ERROR;
 	}
 
@@ -146,12 +146,11 @@ inline T differentiate( const f * func, const T & in_param,
 
 // Vector-in, vector-out version
 template< typename f, typename T >
-inline const int differentiate( const f * func,
-		const unsigned int num_in_params, const std::vector< T > & in_params,
-		unsigned int & num_out_params, std::vector< T > & out_params,
-		std::vector< std::vector< T > > & Jacobian, const int order = 1,
-		const double power = 1, const bool silent = false )
+inline std::vector< std::vector< T > > differentiate( const f * func, const std::vector< T > & in_params,
+		const int order = 1, const double power = 1, const bool silent = false )
 {
+	const typename std::vector<T>::size_type num_in_params = in_params.size();
+	std::vector< std::vector< T > > Jacobian;
 
 	std::vector< T > d_in_params( 0 );
 	std::vector< T > base_out_params( 0 );
@@ -166,10 +165,7 @@ inline const int differentiate( const f * func,
 
 	if ( ( order_to_use > 1 ) )
 	{
-		if ( !silent )
-			std::cerr
-					<< "WARNING: brgastro::unit_quick_differentiate with order > 1 is not currently supported.\n";
-		return UNSPECIFIED_ERROR;
+		throw std::runtime_error("brgastro::differentiate with order > 1 is not currently supported.\n");
 	}
 
 	if ( power != 1 )
@@ -178,14 +174,11 @@ inline const int differentiate( const f * func,
 		power_flag = false;
 
 	// Delete std::vectors we'll be overwriting in case they previously existed
-	out_params.clear();
 	Jacobian.clear();
 
 	// Set up differentials
-	if ( int errcode = make_array( d_in_params, num_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = make_array( test_in_params, num_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	make_array( d_in_params, num_in_params );
+	make_array( test_in_params, num_in_params );
 
 	// Check if any in_params are zero. If so, estimate small factor from other in_params
 	for ( unsigned int i = 0; i < num_in_params; i++ )
@@ -232,13 +225,11 @@ inline const int differentiate( const f * func,
 	}
 
 	// Get value of function at input parameters
-	if ( int errcode = ( *func )( in_params, base_out_params, silent ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	base_out_params = ( *func )( in_params, silent );
+	typename std::vector<T>::size_type num_out_params=base_out_params.size();
 
 	// Set up Jacobian
-	if ( int errcode = make_array2d( Jacobian, num_out_params,
-			num_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	make_array2d( Jacobian, num_out_params, num_in_params );
 
 	// Loop over input and output dimensions to get Jacobian
 
@@ -263,7 +254,11 @@ inline const int differentiate( const f * func,
 			}
 
 			// Run the function to get value at test point
-			if (( *func )( test_in_params, test_out_params, silent ) )
+			try
+			{
+				test_out_params = ( *func )( test_in_params, silent );
+			}
+			catch(const std::exception &e)
 			{
 				bad_function_result = true;
 				for(unsigned int j=0; j< in_params.size(); j++)
@@ -290,9 +285,10 @@ inline const int differentiate( const f * func,
 		} // for( unsigned int j = 0; j < num_in_params; j++)
 	} while (bad_function_result && (counter<3));
 
-	if(counter>=3) return UNSPECIFIED_ERROR; // We can't get good results at any nearby points
+	if(counter>=3)
+		throw std::runtime_error("Cannot differentiate function due to lack of valid nearby points found.");
 
-	return 0;
+	return Jacobian;
 }
 
 // Uses trapezoid-rule integration to estimate the integral of a function. Each output parameter is integrated independantly. For multiple input parameters,
