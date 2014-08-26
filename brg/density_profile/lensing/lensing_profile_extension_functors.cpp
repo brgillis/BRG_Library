@@ -12,6 +12,7 @@
 
 #include "../../brg_global.h"
 
+#include "../../brg_calculus.hpp"
 #include "../../brg_misc_functions.hpp"
 #include "../../brg_units.h"
 #include "lensing_profile_extension_functors.h"
@@ -427,6 +428,119 @@ brgastro::shifted_WLsig_weight_functor::shifted_WLsig_weight_functor(
 		CONST_BRG_DISTANCE_REF new_sigma )
 {
 	_sigma_ = new_sigma;
+}
+
+#endif
+
+// brgastro::shifted_WLsig_circ_functor class methods
+#if (1)
+
+const int brgastro::shifted_WLsig_circ_functor::operator()(
+		const BRG_UNITS &in_param,
+		BRG_UNITS & out_param, const bool silent ) const
+{
+	// in_param here will be angle theta in radians
+
+	const BRG_DISTANCE R_actual(lc_add(_R_, _R_shift_, in_param));
+
+	const BRG_ANGLE theta(asin(_R_shift_/R_actual * sin(in_param)));
+	const double angle_factor = cos(theta);
+
+	double extra_shear_factor;
+	if(_R_shift_==0)
+		extra_shear_factor = 0;
+	else
+		extra_shear_factor = (R_actual-_R_)/_R_shift_*
+			_host_ptr_->shift_factor(0);
+
+	if(isbad(theta))
+	{
+		out_param = _host_ptr_->WLsig(R_actual,silent) +
+			extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z());
+	}
+	else
+	{
+		out_param = _host_ptr_->WLsig(R_actual,silent)*angle_factor +
+				extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z()); //TODO Should there be a factor of 1/2 here?
+	}
+
+	return 0;
+}
+
+const int brgastro::shifted_WLsig_circ_functor::set_R_shift(
+		CONST_BRG_DISTANCE_REF new_R_shift )
+{
+	_R_shift_ = new_R_shift;
+	return 0;
+}
+
+const int brgastro::shifted_WLsig_circ_functor::set_host_ptr(
+		const lensing_profile_extension *new_host )
+{
+	_host_ptr_ = new_host;
+	return 0;
+}
+
+const int brgastro::shifted_WLsig_circ_functor::set_R(
+		CONST_BRG_DISTANCE_REF new_R )
+{
+	_R_ = new_R;
+	return 0;
+}
+
+brgastro::shifted_WLsig_circ_functor::shifted_WLsig_circ_functor( const lensing_profile_extension *new_host,
+		CONST_BRG_DISTANCE_REF new_R_shift, CONST_BRG_DISTANCE_REF new_R )
+{
+	_host_ptr_ = new_host;
+	_R_shift_ = new_R_shift;
+	_R_ = new_R;
+}
+
+#endif
+
+// brgastro::shifted_WLsig_functor class methods
+#if (1)
+
+const int brgastro::shifted_WLsig_functor::operator()(
+		const BRG_UNITS &in_param,
+		BRG_UNITS & out_param, const bool silent ) const
+{
+	// in_param here will be R_shift
+	shifted_WLsig_circ_functor func(_host_ptr_,in_param,_R_);
+
+	const double min_in_param = 0;
+	const double max_in_param = pi;
+	unsigned int num_out_params = 1;
+	const double precision = 0.000001;
+
+	if ( brgastro::integrate_Rhomberg( &func, 1, min_in_param, max_in_param, num_out_params,
+			out_param, precision ) )
+		return LOWER_LEVEL_ERROR;
+
+	out_param /= pi;
+
+	return 0;
+}
+
+const int brgastro::shifted_WLsig_functor::set_host_ptr(
+		const lensing_profile_extension *new_host )
+{
+	_host_ptr_ = new_host;
+	return 0;
+}
+
+const int brgastro::shifted_WLsig_functor::set_R(
+		CONST_BRG_DISTANCE_REF new_R )
+{
+	_R_ = new_R;
+	return 0;
+}
+
+brgastro::shifted_WLsig_functor::shifted_WLsig_functor( const lensing_profile_extension *new_host,
+		CONST_BRG_DISTANCE_REF new_R)
+{
+	_host_ptr_ = new_host;
+	_R_ = new_R;
 }
 
 #endif

@@ -20,14 +20,21 @@
 
 #if(1)
 
-// Gives the expected shift in physical coordinates for a given angular separation
-const BRG_DISTANCE brgastro::lensing_profile_extension::_shift_sigma( CONST_BRG_DISTANCE_REF R,
+const double brgastro::lensing_profile_extension::shift_factor( CONST_BRG_DISTANCE_REF R,
 		const bool silent) const
 {
 	const BRG_ANGLE theta_separation = afd(R,z());
-	const BRG_ANGLE theta_sigma = 0.01*z()*theta_separation; // TODO: Replace placeholder here with actual function
-	const BRG_DISTANCE result = dfa(theta_sigma,z());
-	return result;
+	if(theta_separation>1*unitconv::amintorad)
+		return 0.01*z();
+	else
+		return 0.001*z()+0.009*z()*(theta_separation/(1*unitconv::amintorad)); // TODO: Replace placeholder here with actual function
+}
+
+// Gives the expected shift in physical coordinates for a given physical separation
+const BRG_DISTANCE brgastro::lensing_profile_extension::_shift_sigma( CONST_BRG_DISTANCE_REF R,
+		const bool silent) const
+{
+	return R*shift_factor(R,silent);
 }
 
 #endif // Lensing profile extension private methods
@@ -185,8 +192,10 @@ const BRG_UNITS brgastro::lensing_profile_extension::shifted_WLsig( CONST_BRG_DI
 	BRG_DISTANCE R_to_use = std::fabs( R );
 	BRG_DISTANCE sigma = _shift_sigma(R_to_use);
 
-	brgastro::offset_WLsig_functor func( this, R_to_use );
+	brgastro::shifted_WLsig_functor func( this, R_to_use );
 	brgastro::shifted_WLsig_weight_functor weight_func( sigma );
+
+	double precision = 0.000001;
 
 	unsigned int num_in_params = 1, num_out_params = 0;
 
@@ -195,7 +204,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::shifted_WLsig( CONST_BRG_DI
 
 	if ( brgastro::integrate_weighted_Rhomberg( &func, &weight_func,
 			num_in_params, min_in_params, max_in_params, num_out_params,
-			out_params ) )
+			out_params, precision ) )
 	{
 		if ( !silent )
 			std::cerr
@@ -209,7 +218,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::semiquick_shifted_WLsig( CO
 	BRG_DISTANCE R_to_use = std::fabs( R );
 	BRG_DISTANCE sigma = _shift_sigma(R_to_use);
 
-	brgastro::quick_offset_WLsig_functor func( this, R_to_use );
+	brgastro::shifted_WLsig_functor func( this, R_to_use );
 	brgastro::shifted_WLsig_weight_functor weight_func( sigma );
 
 	unsigned int num_in_params = 1, num_out_params = 0;

@@ -77,11 +77,15 @@ private:
 	{
 		if(SPCP(name)->_initialised_) return 0;
 
-		SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-		SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.dat";
-		SPCP(name)->_header_string_ = "# " + SPCP(name)->_name_base() + "_cache v1.0";
+		#pragma omp critical(init_brg_cache_nd)
+		if(!SPCP(name)->_initialised_)
+		{
+			SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.dat";
+			SPCP(name)->_header_string_ = "# " + SPCP(name)->_name_base() + "_cache v1.0";
 
-		SPCP(name)->_initialised_ = true;
+			SPCP(name)->_initialised_ = true;
+		}
 
 		return 0;
 	}

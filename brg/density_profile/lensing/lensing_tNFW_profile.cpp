@@ -96,7 +96,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::proj_enc_dens( const BRG_DISTANC
 {
 	BRG_UNITS result, rho_c_t_4pi;
 	//Takes M in kg, r in kpc
-	double d_c, x, tau_use, fx, lx;
+	long double d_c, x, tau_use, fx, lx;
 	if ( tau() <= 0 )
 		tau_use = default_tau_factor * c();
 	else
@@ -105,10 +105,10 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::proj_enc_dens( const BRG_DISTANC
 	d_c = _delta_c();
 	rho_c_t_4pi = 3. * square(H()) / ( 2. * Gc );
 	x = max(r / rs(),min_x);
-	double xx = x*x;
-	double tautau = tau_use*tau_use;
-	double tautaup1 = tautau + 1.;
-	double sqrt_tautaupxx = std::sqrt(tautau + xx);
+	long double xx = x*x;
+	long double tautau = tau_use*tau_use;
+	long double tautaup1 = tautau + 1.;
+	long double sqrt_tautaupxx = std::sqrt(tautau + xx);
 
 	if ( x == 1. )
 		fx = 1.;
@@ -117,15 +117,15 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::proj_enc_dens( const BRG_DISTANC
 	else
 		fx = -log( 1 / x - std::sqrt( 1 / ( xx ) - 1 ) ) / std::sqrt( 1 - xx );
 	lx = log( x / ( sqrt_tautaupxx + tau_use ) );
+	double log_tau = log(tau_use);
 
-	result =
-			( rs() * d_c * rho_c_t_4pi ) * tautau
-					/ ( pi * xx * square( tautaup1 ) )
+	result = ( rs() * d_c * rho_c_t_4pi ) * tautau
+					/ ( pi * xx * tautaup1 * tautaup1 )
 					* ( ( tautaup1 + 2 * ( xx - 1 ) ) * fx
 							+ pi * tau_use
-							+ ( tautau - 1 ) * log( tau_use )
+							+ ( tautau - 1 ) * log_tau
 							+ sqrt_tautaupxx
-									* ( lx * ( tautau - 1. )
+									* ( lx * ( tautau - 1 )
 											/ tau_use - pi ) );
 	return result;
 }

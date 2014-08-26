@@ -82,12 +82,16 @@ private:
 	{
 		if(SPCP(name)->_initialised_) return 0;
 
-		SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-		SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-		SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
-		SPCP(name)->_version_number_ = 2; // This should be changed when there are changes to this code
+		#pragma omp critical(init_brg_cache_2d)
+		if(!SPCP(name)->_initialised_)
+		{
+			SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
+			SPCP(name)->_version_number_ = 2; // This should be changed when there are changes to this code
 
-		SPCP(name)->_initialised_ = true;
+			SPCP(name)->_initialised_ = true;
+		}
 
 		return 0;
 	}

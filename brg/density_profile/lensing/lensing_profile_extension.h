@@ -146,6 +146,9 @@ public:
 #if (1)
 	// This represents the weak-lensing signal after being corrected for errors due to relative
 	// shifting of the lens and source due to an intervening mass distribution
+
+	const double shift_factor( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const;
+
 	virtual const BRG_UNITS shifted_WLsig( CONST_BRG_DISTANCE_REF R,
 			const bool silent = true ) const;
 	virtual const BRG_UNITS semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,

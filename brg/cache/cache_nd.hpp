@@ -84,11 +84,15 @@ private:
 	{
 		if(SPCP(name)->_initialised_) return 0;
 
-		SPCP(name)->_resolutions_ = max( (((SPCP(name)->_maxes_-SPCP(name)->_mins_) / safe_d(SPCP(name)->_steps_))+1), 1);
-		SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
-		SPCP(name)->_version_number_ = 1; // This should be changed when there are changes to this code
+		#pragma omp critical(init_brg_cache_nd)
+		if(!SPCP(name)->_initialised_)
+		{
+			SPCP(name)->_resolutions_ = max( (((SPCP(name)->_maxes_-SPCP(name)->_mins_) / safe_d(SPCP(name)->_steps_))+1), 1);
+			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
+			SPCP(name)->_version_number_ = 1; // This should be changed when there are changes to this code
 
-		SPCP(name)->_initialised_ = true;
+			SPCP(name)->_initialised_ = true;
+		}
 
 		return 0;
 	}
