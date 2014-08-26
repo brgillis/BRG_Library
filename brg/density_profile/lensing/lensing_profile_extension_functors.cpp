@@ -28,14 +28,14 @@ const int brgastro::projected_density_functor::set_host_ptr(
 }
 
 const int brgastro::projected_density_functor::set_offset_R(
-		const BRG_DISTANCE &new_offset_R )
+		CONST_BRG_DISTANCE_REF new_offset_R )
 {
 	_offset_R_ = new_offset_R;
 	return 0;
 }
 
 const int brgastro::projected_density_functor::operator()(
-		const BRG_UNITS & in_param,
+		CONST_BRG_UNITS_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -57,7 +57,7 @@ brgastro::projected_density_functor::projected_density_functor()
 }
 
 brgastro::projected_density_functor::projected_density_functor(
-		const lensing_profile_extension *init_host, const BRG_DISTANCE &init_offset_R )
+		const lensing_profile_extension *init_host, CONST_BRG_DISTANCE_REF init_offset_R )
 {
 	set_host_ptr( init_host );
 	set_offset_R( init_offset_R );
@@ -76,7 +76,7 @@ const int brgastro::cylindrical_density_functor::set_host_ptr(
 }
 
 const int brgastro::cylindrical_density_functor::operator()(
-		const BRG_UNITS & in_param,
+		CONST_BRG_UNITS_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -106,21 +106,21 @@ brgastro::cylindrical_density_functor::cylindrical_density_functor(
 #if (1)
 
 const int brgastro::offset_ring_dens_functor::set_R0(
-		const BRG_DISTANCE &new_R0 )
+		CONST_BRG_DISTANCE_REF new_R0 )
 {
 	_R0_ = new_R0;
 	return 0;
 }
 
 const int brgastro::offset_ring_dens_functor::set_R(
-		const BRG_DISTANCE &new_R )
+		CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
 	return 0;
 }
 
 const int brgastro::offset_ring_dens_functor::operator()(
-		const BRG_UNITS &in_param,
+		CONST_BRG_UNITS_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -153,8 +153,8 @@ brgastro::offset_ring_dens_functor::offset_ring_dens_functor()
 }
 
 brgastro::offset_ring_dens_functor::offset_ring_dens_functor(
-		const lensing_profile_extension *new_host, const BRG_DISTANCE &new_R_0,
-		const BRG_DISTANCE &new_R )
+		const lensing_profile_extension *new_host, CONST_BRG_DISTANCE_REF new_R_0,
+		CONST_BRG_DISTANCE_REF new_R )
 {
 	_host_ptr_ = new_host;
 	_R_ = new_R;
@@ -183,21 +183,21 @@ CONST_BRG_DISTANCE_REF brgastro::offset_circ_dens_functor::_arc_length_in_circle
 }
 
 const int brgastro::offset_circ_dens_functor::set_R0(
-		const BRG_DISTANCE &new_R_0 )
+		CONST_BRG_DISTANCE_REF new_R_0 )
 {
 	_R0_ = new_R_0;
 	return 0;
 }
 
 const int brgastro::offset_circ_dens_functor::set_R(
-		const BRG_DISTANCE &new_R )
+		CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
 	return 0;
 }
 
 const int brgastro::offset_circ_dens_functor::operator()(
-		const BRG_UNITS & in_param,
+		CONST_BRG_UNITS_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -230,8 +230,8 @@ brgastro::offset_circ_dens_functor::offset_circ_dens_functor()
 }
 
 brgastro::offset_circ_dens_functor::offset_circ_dens_functor(
-		const lensing_profile_extension *new_host, const BRG_DISTANCE &new_R_0,
-		const BRG_DISTANCE &new_R )
+		const lensing_profile_extension *new_host, CONST_BRG_DISTANCE_REF new_R_0,
+		CONST_BRG_DISTANCE_REF new_R )
 {
 	_host_ptr_ = new_host;
 	_R0_ = new_R_0;
@@ -242,14 +242,14 @@ brgastro::offset_circ_dens_functor::offset_circ_dens_functor(
 // brgastro::offset_WLsig_functor class methods
 #if (1)
 
-const int brgastro::offset_WLsig_functor::set_R( const BRG_DISTANCE &new_R )
+const int brgastro::offset_WLsig_functor::set_R( CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
 	return 0;
 }
 
 const int brgastro::offset_WLsig_functor::operator()(
-		const BRG_UNITS &in_param,
+		CONST_BRG_UNITS_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -279,7 +279,7 @@ brgastro::offset_WLsig_functor::offset_WLsig_functor()
 }
 
 brgastro::offset_WLsig_functor::offset_WLsig_functor(
-		const lensing_profile_extension *new_host, const BRG_DISTANCE &new_R )
+		const lensing_profile_extension *new_host, CONST_BRG_DISTANCE_REF new_R )
 {
 	_host_ptr_ = new_host;
 	_R_ = new_R;
@@ -290,14 +290,14 @@ brgastro::offset_WLsig_functor::offset_WLsig_functor(
 // brgastro::quick_offset_WLsig_functor class methods
 #if (1)
 
-const int brgastro::quick_offset_WLsig_functor::set_R( const BRG_DISTANCE &new_R )
+const int brgastro::quick_offset_WLsig_functor::set_R( CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
 	return 0;
 }
 
 const int brgastro::quick_offset_WLsig_functor::operator()(
-		const BRG_UNITS &in_param,
+		CONST_BRG_DISTANCE_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -327,7 +327,7 @@ brgastro::quick_offset_WLsig_functor::quick_offset_WLsig_functor()
 }
 
 brgastro::quick_offset_WLsig_functor::quick_offset_WLsig_functor(
-		const lensing_profile_extension *new_host, const BRG_DISTANCE &new_R )
+		const lensing_profile_extension *new_host, CONST_BRG_DISTANCE_REF new_R )
 {
 	_host_ptr_ = new_host;
 	_R_ = new_R;
@@ -345,7 +345,7 @@ const int brgastro::group_WLsig_weight_functor::set_c( const double new_c )
 }
 
 const int brgastro::group_WLsig_weight_functor::operator()(
-		const BRG_UNITS &in_param,
+		CONST_BRG_DISTANCE_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	BRG_UNITS result;
@@ -399,7 +399,7 @@ brgastro::group_WLsig_weight_functor::group_WLsig_weight_functor(
 #if (1)
 
 const int brgastro::shifted_WLsig_weight_functor::operator()(
-		const BRG_UNITS &in_param,
+		CONST_BRG_UNITS_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 
@@ -436,7 +436,7 @@ brgastro::shifted_WLsig_weight_functor::shifted_WLsig_weight_functor(
 #if (1)
 
 const int brgastro::shifted_WLsig_circ_functor::operator()(
-		const BRG_UNITS &in_param,
+		CONST_BRG_UNITS_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	// in_param here will be angle theta in radians
@@ -502,7 +502,7 @@ brgastro::shifted_WLsig_circ_functor::shifted_WLsig_circ_functor( const lensing_
 #if (1)
 
 const int brgastro::shifted_WLsig_functor::operator()(
-		const BRG_UNITS &in_param,
+		CONST_BRG_UNITS_REF in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	// in_param here will be R_shift

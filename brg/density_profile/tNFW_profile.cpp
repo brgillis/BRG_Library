@@ -75,7 +75,7 @@ brgastro::tNFW_profile::tNFW_profile()
 	_tau_ = 0;
 }
 
-brgastro::tNFW_profile::tNFW_profile( const BRG_MASS &init_mvir0,
+brgastro::tNFW_profile::tNFW_profile( CONST_BRG_MASS_REF init_mvir0,
 		const double init_z, const double init_c, const double init_tau )
 {
 	_mvir0_ = init_mvir0;
@@ -109,7 +109,7 @@ brgastro::tNFW_profile::~tNFW_profile()
 
 #if (1) // Set functions
 
-const int brgastro::tNFW_profile::set_mvir( const BRG_MASS &new_halo_mass,
+const int brgastro::tNFW_profile::set_mvir( CONST_BRG_MASS_REF new_halo_mass,
 		const bool silent )
 {
 	_mvir0_ = new_halo_mass;
@@ -248,7 +248,7 @@ const BRG_DISTANCE brgastro::tNFW_profile::rt( const bool silent ) const
 	return rvir0() / _tau_;
 }
 
-const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
+const BRG_UNITS brgastro::tNFW_profile::dens( CONST_BRG_DISTANCE_REF r ) const
 {
 	BRG_UNITS result, rho_c;
 
@@ -267,7 +267,7 @@ const BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE &r ) const
 
 	return result;
 }
-const BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE &r,
+const BRG_MASS brgastro::tNFW_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	using brgastro::square;

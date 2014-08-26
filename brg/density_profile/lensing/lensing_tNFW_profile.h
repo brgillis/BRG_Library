@@ -27,7 +27,7 @@ public:
 	lensing_tNFW_profile()
 	{
 	}
-	lensing_tNFW_profile( const BRG_MASS &init_mvir0, const double init_z,
+	lensing_tNFW_profile( CONST_BRG_MASS_REF init_mvir0, const double init_z,
 			const double init_c = -1, const double init_tau = -1 )
 	: tNFW_profile(init_mvir0, init_z, init_c, init_tau)
 	{
@@ -39,19 +39,19 @@ public:
 
 	// Lensing related methods
 #if (1)
-	const BRG_UNITS proj_dens( const BRG_DISTANCE &R,
+	const BRG_UNITS proj_dens( CONST_BRG_DISTANCE_REF R,
 			const bool silent = false ) const;
-	const BRG_UNITS proj_enc_dens( const BRG_DISTANCE &R, const bool silent =
+	const BRG_UNITS proj_enc_dens( CONST_BRG_DISTANCE_REF R, const bool silent =
 			false ) const;
-	const BRG_MASS proj_enc_mass( const BRG_DISTANCE &R, const bool silent =
+	const BRG_MASS proj_enc_mass( CONST_BRG_DISTANCE_REF R, const bool silent =
 			false ) const;
-	const BRG_UNITS quick_WLsig( const BRG_DISTANCE &R, const bool silent =
+	const BRG_UNITS quick_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent =
 			false ) const;
-	const BRG_UNITS quick_offset_WLsig( const BRG_DISTANCE &R,
-			const BRG_DISTANCE &offset_R, const bool silent = false ) const;
-	const BRG_UNITS quick_group_WLsig( const BRG_DISTANCE &R,
+	const BRG_UNITS quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const;
+	const BRG_UNITS quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
 			const double group_c, const bool silent = false ) const;
-	const BRG_UNITS quick_shifted_WLsig( const BRG_DISTANCE &R, const bool silent = false ) const;
+	const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = false ) const;
 
 #endif // Lensing related methods
 

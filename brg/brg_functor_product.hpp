@@ -21,53 +21,24 @@ namespace brgastro
 
 /** Class definitions **/
 #if (1)
-template< typename T >
-class functor
-/**********************************************
- functor
- -------
 
- An abstract class representing an arbitrary function,
- which takes num_in_params input parameters
- and returns num_out_params output parameters, with
- an optional bool to silence error messages.
-
- This class allows polymorphism to be used by
- other functions to, for instance, integrate a
- defined function.
-
- Must be overridden by child functions for
- specific implementations.
-
- **********************************************/
-{
-public:
-
-	// Virtual destructor
-	virtual ~functor()
-	{
-	}
-
-	virtual const int operator()( const T & in_params, T & out_params,
-			const bool silent = false ) const =0;
-};
-
-template< typename f1, typename f2, typename T >
-class functor_product: public functor< T >
+template< typename f1, typename f2, typename T=BRG_UNITS >
+class functor_product
 {
 	/*****************************************************
-	 function_product_function (non-vector implementation)
+	 functor_product
 	 -----------------------------------------------------
 
-	 An example of a function class which returns the
-	 product of two other functions (see the
-	 integrate_weighted* functions in this file for
+	 An example of a functor which returns the
+	 product of two other functors (see the
+	 integrate_weighted* functions for
 	 how this is used).
 
 	 ****************************************************/
 private:
 
-	const functor< T > *_f1_ptr_, *_f2_ptr_;
+	const f1 *_f1_ptr_;
+	const f2 *_f2_ptr_;
 	bool _f1_set_up_, _f2_set_up_;
 
 public:
@@ -86,6 +57,13 @@ public:
 		_f1_set_up_ = _f2_set_up_ = true;
 	}
 
+	functor_product( const f1 &new_f1, const f2 &new_f2 )
+	{
+		_f1_ptr_ = &new_f1;
+		_f2_ptr_ = &new_f2;
+		_f1_set_up_ = _f2_set_up_ = true;
+	}
+
 	// Virtual destructor
 	virtual ~functor_product()
 	{
@@ -93,9 +71,15 @@ public:
 
 	// Set methods
 
-	const int set_f1_ptr( const f1*new_f1_ptr )
+	const int set_f1_ptr( const f1* new_f1_ptr )
 	{
 		_f1_ptr_ = new_f1_ptr;
+		_f1_set_up_ = true;
+		return 0;
+	}
+	const int set_f1_ptr( const f1 &new_f1_ptr )
+	{
+		_f1_ptr_ = &new_f1_ptr;
 		_f1_set_up_ = true;
 		return 0;
 	}
@@ -106,8 +90,20 @@ public:
 		_f2_set_up_ = true;
 		return 0;
 	}
+	const int set_f2_ptr( const f2 &new_f2_ptr )
+	{
+		_f2_ptr_ = &new_f2_ptr;
+		_f2_set_up_ = true;
+		return 0;
+	}
 
 	const int set_f1_f2_ptrs( const f1 *new_f1_ptr, const f2 *new_f2_ptr )
+	{
+		if ( set_f1_ptr( new_f1_ptr ) )
+			return 1;
+		return set_f2_ptr( new_f2_ptr );
+	}
+	const int set_f1_f2_ptrs( const f1 &new_f1_ptr, const f2 &new_f2_ptr )
 	{
 		if ( set_f1_ptr( new_f1_ptr ) )
 			return 1;
@@ -138,22 +134,20 @@ public:
 };
 
 template< typename f1, typename f2, typename T >
-class functor_product< f1, f2, std::vector< T > > : public functor<
-		std::vector< T > >
+class functor_product< f1, f2, std::vector< T > >
 {
 	/**********************************************
 	 functor_product
 	 -------------------------
 
-	 An example of a function class which returns the
-	 product of two other functions (see the
-	 integrate_weighted* functions in this file for
-	 how this is used).
+	 A specialization of functor_profuct for vector
+	 input/output.
 
 	 **********************************************/
 private:
 
-	const functor< std::vector< T > > *_f1_ptr_, *_f2_ptr_;
+	const f1 *_f1_ptr_;
+	const f2 *_f2_ptr_;
 	bool _f1_set_up_, _f2_set_up_;
 
 public:
@@ -171,6 +165,12 @@ public:
 		_f2_ptr_ = new_f2;
 		_f1_set_up_ = _f2_set_up_ = true;
 	}
+	functor_product( const f1 &new_f1, const f2 &new_f2 )
+	{
+		_f1_ptr_ = &new_f1;
+		_f2_ptr_ = &new_f2;
+		_f1_set_up_ = _f2_set_up_ = true;
+	}
 
 	// Virtual destructor
 	virtual ~functor_product()
@@ -185,6 +185,12 @@ public:
 		_f1_set_up_ = true;
 		return 0;
 	}
+	const int set_f1_ptr( const f1 &new_f1_ptr )
+	{
+		_f1_ptr_ = &new_f1_ptr;
+		_f1_set_up_ = true;
+		return 0;
+	}
 
 	const int set_f2_ptr( const f2 *new_f2_ptr )
 	{
@@ -192,8 +198,20 @@ public:
 		_f2_set_up_ = true;
 		return 0;
 	}
+	const int set_f2_ptr( const f2 &new_f2_ptr )
+	{
+		_f2_ptr_ = &new_f2_ptr;
+		_f2_set_up_ = true;
+		return 0;
+	}
 
 	const int set_f1_f2_ptrs( const f1 *new_f1_ptr, const f2 *new_f2_ptr )
+	{
+		if ( set_f1_ptr( new_f1_ptr ) )
+			return 1;
+		return set_f2_ptr( new_f2_ptr );
+	}
+	const int set_f1_f2_ptrs( const f1 &new_f1_ptr, const f2 &new_f2_ptr )
 	{
 		if ( set_f1_ptr( new_f1_ptr ) )
 			return 1;

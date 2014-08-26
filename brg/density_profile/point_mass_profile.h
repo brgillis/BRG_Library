@@ -58,7 +58,7 @@ public:
 	~point_mass_profile();
 
 #if (1) // Set functions
-	virtual const int set_mvir( const BRG_MASS &new_halo_mass, bool silent =
+	virtual const int set_mvir( CONST_BRG_MASS_REF new_halo_mass, bool silent =
 			false );
 	virtual const int set_parameters( const unsigned int num_parameters,
 			const std::vector< BRG_UNITS > &new_parameters,
@@ -81,10 +81,10 @@ public:
 #endif // end basic get functions
 
 #if (1) // advanced get functions
-	const BRG_UNITS dens( const BRG_DISTANCE &r ) const;
-	const BRG_UNITS enc_dens( const BRG_DISTANCE &r,
+	const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const;
+	const BRG_UNITS enc_dens( CONST_BRG_DISTANCE_REF r,
 			const bool silent = false ) const;
-	const BRG_MASS enc_mass( const BRG_DISTANCE &r, const bool silent =
+	const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r, const bool silent =
 				true ) const; // Mass enclosed with sphere of radius r
 	const unsigned int num_parameters() const
 	{

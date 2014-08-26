@@ -96,7 +96,7 @@ public:
 #if (1) // Constructors
 	tNFW_profile();
 
-	tNFW_profile( const BRG_MASS &init_mvir0, const double init_z,
+	tNFW_profile( CONST_BRG_MASS_REF init_mvir0, const double init_z,
 			const double init_c = -1, const double init_tau = -1 );
 
 #endif // End constructors
@@ -106,7 +106,7 @@ public:
 
 #if (1) // Set functions
 
-	const int set_mvir( const BRG_MASS &new_halo_mass, const bool silent =
+	const int set_mvir( CONST_BRG_MASS_REF new_halo_mass, const bool silent =
 			false );
 	const int set_parameters( const unsigned int num_parameters,
 			const std::vector< BRG_UNITS > & new_parameters,
@@ -139,8 +139,8 @@ public:
 
 #if (1) // advanced get functions
 
-	const BRG_UNITS dens( const BRG_DISTANCE &r ) const;
-	const BRG_MASS enc_mass( const BRG_DISTANCE &r,
+	const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const;
+	const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r,
 			const bool silent = false ) const;
 	const unsigned int num_parameters() const
 	{

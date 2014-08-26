@@ -122,8 +122,8 @@ const double default_tau_factor = 2;
 const BRG_UNITS H( const double z );
 
 // Functions to get grid integers or grid boundaries from integers
-const int get_ra_grid( const BRG_ANGLE &ra );
-const int get_dec_grid( const BRG_ANGLE &dec );
+const int get_ra_grid( CONST_BRG_ANGLE_REF ra );
+const int get_dec_grid( CONST_BRG_ANGLE_REF dec );
 const int get_z_grid( const double z );
 
 const BRG_ANGLE get_ra_grid_lower( const int ra_grid );
@@ -139,17 +139,17 @@ const BRG_ANGLE get_dec_grid_mid( const int dec_grid );
 const double get_z_grid_mid( const int z_grid );
 
 // Functions to get transverse distance (in m) from angle (in rad) or vice-versa
-const BRG_DISTANCE dfa( const BRG_ANGLE &da, const double z );
-const BRG_DISTANCE dfa( const BRG_ANGLE &a1, const BRG_ANGLE &a2,
+const BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF da, const double z );
+const BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
 		const double z );
-const BRG_DISTANCE dfa( const BRG_ANGLE &a1x, const BRG_ANGLE &a1y,
-		const BRG_ANGLE &a2x, const BRG_ANGLE &a2y, const double z );
+const BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1x, CONST_BRG_ANGLE_REF a1y,
+		CONST_BRG_ANGLE_REF a2x, CONST_BRG_ANGLE_REF a2y, const double z );
 
-const BRG_ANGLE afd( const BRG_DISTANCE &dd, const double z );
-const BRG_ANGLE afd( const BRG_DISTANCE &d1, const BRG_DISTANCE &d2,
+const BRG_ANGLE afd( CONST_BRG_DISTANCE_REF dd, const double z );
+const BRG_ANGLE afd( CONST_BRG_DISTANCE_REF d1, CONST_BRG_DISTANCE_REF d2,
 		const double z );
-const BRG_ANGLE afd( const BRG_DISTANCE &d1x, const BRG_DISTANCE &d1y,
-		const BRG_DISTANCE &d2x, const BRG_DISTANCE &d2y, const double z );
+const BRG_ANGLE afd( CONST_BRG_DISTANCE_REF d1x, CONST_BRG_DISTANCE_REF d1y,
+		CONST_BRG_DISTANCE_REF d2x, CONST_BRG_DISTANCE_REF d2y, const double z );
 
 // Functions to work between redshift, scale factor, and time (in s, with zero = present day)
 const double zfa( const double a );
@@ -157,8 +157,8 @@ const double afz( const double z );
 
 const BRG_TIME tfz( const double z );
 const BRG_TIME tfa( const double z );
-const double zft( const BRG_TIME &t );
-const double aft( const BRG_TIME &t );
+const double zft( CONST_BRG_TIME_REF t );
+const double aft( CONST_BRG_TIME_REF t );
 
 // Functions to integrate out distances
 const double integrate_add( const double z1, const double z2 );

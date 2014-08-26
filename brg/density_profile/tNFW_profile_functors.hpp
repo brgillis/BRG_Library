@@ -14,14 +14,13 @@
 
 #include "../brg_global.h"
 
-#include "../brg_functor.hpp"
 #include "density_profile.h"
 #include "tNFW_profile.h"
 
 namespace brgastro
 {
 
-class tNFW_solve_rvir_iterative_functor: public functor<BRG_DISTANCE>
+class tNFW_solve_rvir_iterative_functor
 {
 private:
 	const tNFW_profile *_halo_;
@@ -33,7 +32,7 @@ public:
 	{
 	}
 
-	const int operator()( const BRG_DISTANCE & in_param, BRG_DISTANCE & out_param,
+	const int operator()( CONST_BRG_DISTANCE_REF  in_param, BRG_DISTANCE & out_param,
 			const bool silent = false ) const
 	{
 		if(in_param<=0)
@@ -49,7 +48,7 @@ public:
 
 };
 
-class tNFW_solve_rvir_minimize_functor: public functor<BRG_UNITS>
+class tNFW_solve_rvir_minimize_functor
 {
 private:
 	const tNFW_profile *_halo_;
@@ -61,7 +60,7 @@ public:
 	{
 	}
 
-	const int operator()( const BRG_DISTANCE & in_param, BRG_DISTANCE & out_param,
+	const int operator()( CONST_BRG_UNITS_REF  in_param, BRG_UNITS & out_param,
 			const bool silent = false ) const
 	{
 		out_param = std::fabs(virial_density_factor*_halo_->rho_crit()-_halo_->enc_dens(in_param));

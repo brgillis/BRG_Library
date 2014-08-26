@@ -28,8 +28,8 @@ private:
 public:
 	// Set functions
 #if (1)
-	const int set_ra_grid( const BRG_ANGLE new_ra_grid_min,
-			const BRG_ANGLE new_ra_grid_max, const BRG_ANGLE new_ra_grid_step )
+	const int set_ra_grid( CONST_BRG_ANGLE_REF new_ra_grid_min,
+			CONST_BRG_ANGLE_REF new_ra_grid_max, CONST_BRG_ANGLE_REF new_ra_grid_step )
 	{
 		_ra_grid_min_ = new_ra_grid_min;
 		_ra_grid_max_ = new_ra_grid_max;
@@ -38,9 +38,9 @@ public:
 		return 0;
 	}
 
-	const int set_dec_grid( const BRG_ANGLE new_dec_grid_min,
-			const BRG_ANGLE new_dec_grid_max,
-			const BRG_ANGLE new_dec_grid_step )
+	const int set_dec_grid( CONST_BRG_ANGLE_REF new_dec_grid_min,
+			CONST_BRG_ANGLE_REF new_dec_grid_max,
+			CONST_BRG_ANGLE_REF new_dec_grid_step )
 	{
 		_dec_grid_min_ = new_dec_grid_min;
 		dec_grid_max_val = new_dec_grid_max;
@@ -75,11 +75,11 @@ public:
 	{
 		return _z_grid_change_num_;
 	}
-	const BRG_ANGLE ra_grid_min()
+	CONST_BRG_ANGLE_REF ra_grid_min()
 	{
 		return _ra_grid_min_;
 	}
-	const BRG_ANGLE dec_grid_min()
+	CONST_BRG_ANGLE_REF dec_grid_min()
 	{
 		return _dec_grid_min_;
 	}
@@ -87,11 +87,11 @@ public:
 	{
 		return _z_grid_min_;
 	}
-	const BRG_ANGLE ra_grid_max()
+	CONST_BRG_ANGLE_REF ra_grid_max()
 	{
 		return _ra_grid_max_;
 	}
-	const BRG_ANGLE dec_grid_max()
+	CONST_BRG_ANGLE_REF dec_grid_max()
 	{
 		return dec_grid_max_val;
 	}
@@ -99,11 +99,11 @@ public:
 	{
 		return _z_grid_max_;
 	}
-	const BRG_ANGLE ra_grid_step()
+	CONST_BRG_ANGLE_REF ra_grid_step()
 	{
 		return _ra_grid_step_;
 	}
-	const BRG_ANGLE dec_grid_step()
+	CONST_BRG_ANGLE_REF dec_grid_step()
 	{
 		return _dec_grid_step_;
 	}

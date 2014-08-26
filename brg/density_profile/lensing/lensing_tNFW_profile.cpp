@@ -15,14 +15,14 @@
 
 const double min_x = 0.000001;
 
-const BRG_UNITS brgastro::lensing_tNFW_profile::quick_WLsig( const BRG_DISTANCE &r,
+const BRG_UNITS brgastro::lensing_tNFW_profile::quick_WLsig( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_sig_cache().get( std::log(mvir0()), z(), std::log(r), silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::quick_offset_WLsig(
-		const BRG_DISTANCE &r, const BRG_DISTANCE &offset_r,
+		CONST_BRG_DISTANCE_REF r, CONST_BRG_DISTANCE_REF offset_r,
 		const bool silent ) const
 {
 	if(offset_r<=0) return WLsig(r,silent);
@@ -31,20 +31,20 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::quick_offset_WLsig(
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::quick_group_WLsig(
-		const BRG_DISTANCE &r, const double group_c, const bool silent ) const
+		CONST_BRG_DISTANCE_REF r, const double group_c, const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_group_sig_cache().get( std::log(mvir0()), z(), std::log(r),
 			group_c, silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::quick_shifted_WLsig(
-		const BRG_DISTANCE &R, const bool silent ) const
+		CONST_BRG_DISTANCE_REF R, const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_shifted_sig_cache().get( std::log(mvir0()), z(), std::log(R),
 			silent );
 	return result;
 }
-const BRG_UNITS brgastro::lensing_tNFW_profile::proj_dens( const BRG_DISTANCE &r,
+const BRG_UNITS brgastro::lensing_tNFW_profile::proj_dens( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	BRG_UNITS result, rho_c_t_4pi;
@@ -91,7 +91,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::proj_dens( const BRG_DISTANCE &r
 												* sqrt_tautaupxx ) );
 	return result;
 }
-const BRG_UNITS brgastro::lensing_tNFW_profile::proj_enc_dens( const BRG_DISTANCE &r,
+const BRG_UNITS brgastro::lensing_tNFW_profile::proj_enc_dens( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	BRG_UNITS result, rho_c_t_4pi;
@@ -129,7 +129,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::proj_enc_dens( const BRG_DISTANC
 											/ tau_use - pi ) );
 	return result;
 }
-const BRG_MASS brgastro::lensing_tNFW_profile::proj_enc_mass( const BRG_DISTANCE &r,
+const BRG_MASS brgastro::lensing_tNFW_profile::proj_enc_mass( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	return proj_enc_dens( r, silent ) * pi * r * r;

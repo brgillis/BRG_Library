@@ -13,7 +13,7 @@
 
 #include "brg_global.h"
 
-#include "brg_functor.hpp"
+#include "brg_functor_product.hpp"
 #include "brg_misc_functions.hpp"
 #include "brg_phase.hpp"
 #ifdef _BRG_USE_UNITS

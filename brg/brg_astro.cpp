@@ -68,13 +68,13 @@ const BRG_UNITS brgastro::H( const double test_z )
 
 // grid functions
 #if (1)
-const int brgastro::get_ra_grid( const BRG_ANGLE &ra )
+const int brgastro::get_ra_grid( CONST_BRG_ANGLE_REF ra )
 {
 	grid_cache cache;
 	return (int)floor(
 			( ra - cache.ra_grid_min() ) / safe_d( cache.ra_grid_step() ) );
 }
-const int brgastro::get_dec_grid( const BRG_ANGLE &dec )
+const int brgastro::get_dec_grid( CONST_BRG_ANGLE_REF dec )
 {
 	grid_cache cache;
 	return (int)floor( ( dec - cache.dec_grid_min() ) / cache.dec_grid_step() );
@@ -137,32 +137,32 @@ const double brgastro::get_z_grid_mid( const int z_grid )
 // dfa and afd functions
 #if (1)
 
-const BRG_DISTANCE brgastro::dfa( const BRG_ANGLE &da, const double z )
+const BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF da, const double z )
 {
 	return da * dfa_cache().get( z );
 }
-const BRG_DISTANCE brgastro::dfa( const BRG_ANGLE &a1, const BRG_ANGLE &a2,
+const BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
 		const double z )
 {
 	return brgastro::dfa( a2 - a1, z );
 }
-const BRG_DISTANCE brgastro::dfa( const BRG_ANGLE &a1x, const BRG_ANGLE &a1y,
-		const BRG_ANGLE &a2x, const BRG_ANGLE &a2y, const double z )
+const BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF a1x, CONST_BRG_ANGLE_REF a1y,
+		CONST_BRG_ANGLE_REF a2x, CONST_BRG_ANGLE_REF a2y, const double z )
 {
 	return brgastro::dfa( skydist2d( a1x, a1y, a2x, a2y ), z );
 }
-const BRG_ANGLE brgastro::afd( const BRG_DISTANCE &dd, const double z )
+const BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF dd, const double z )
 {
 	return dd / safe_d( dfa_cache().get( z ) );
 }
-const BRG_ANGLE brgastro::afd( const BRG_DISTANCE &d1, const BRG_DISTANCE &d2,
+const BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF d1, CONST_BRG_DISTANCE_REF d2,
 		const double z )
 {
 	return brgastro::afd( fabs( d2 - d1 ), z );
 }
-const BRG_ANGLE brgastro::afd( const BRG_DISTANCE &d1x,
-		const BRG_DISTANCE &d1y, const BRG_DISTANCE &d2x,
-		const BRG_DISTANCE &d2y, const double z )
+const BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF d1x,
+		CONST_BRG_DISTANCE_REF d1y, CONST_BRG_DISTANCE_REF d2x,
+		CONST_BRG_DISTANCE_REF d2y, const double z )
 {
 	return brgastro::afd( dist2d( d1x, d1y, d2x, d2y ), z );
 }
@@ -184,11 +184,11 @@ const BRG_TIME brgastro::tfa( const double a )
 {
 	return tfa_cache().get( a );
 }
-const double brgastro::zft( const BRG_TIME &t )
+const double brgastro::zft( CONST_BRG_TIME_REF t )
 {
 	return brgastro::zfa( brgastro::aft( t ) );
 }
-const double brgastro::aft( const BRG_TIME &t )
+const double brgastro::aft( CONST_BRG_TIME_REF t )
 {
 	brgastro::tfa_cache cache;
 	return cache.inverse_get( t );

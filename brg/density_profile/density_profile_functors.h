@@ -12,13 +12,12 @@
 
 #include "../brg_global.h"
 
-#include "../brg_functor.hpp"
 #include "../brg_units.h"
 #include "density_profile.h"
 
 namespace brgastro {
 
-class accel_functor: public functor< BRG_UNITS >
+class accel_functor
 {
 	/**********************************
 	 accel_functor class
@@ -39,7 +38,7 @@ public:
 		return _host_ptr_;
 	}
 
-	const int operator()( const BRG_UNITS & in_param,
+	const int operator()( CONST_BRG_UNITS_REF  in_param,
 	BRG_UNITS & out_param, const bool silent = false ) const;
 
 	accel_functor();
@@ -50,7 +49,7 @@ public:
 };
 // class accel_functor
 
-class solve_rhm_functor: public functor< BRG_UNITS >
+class solve_rhm_functor
 {
 	/**********************************
 	 solve_rhm_functor class
@@ -78,7 +77,7 @@ public:
 		return _target_mass_;
 	}
 
-	const int operator ()( const BRG_UNITS & in_param,
+	const int operator ()( CONST_BRG_UNITS_REF  in_param,
 	BRG_UNITS & out_param, const bool silent = false ) const;
 
 	solve_rhm_functor();
@@ -88,7 +87,7 @@ public:
 };
 // end class unitless_solve_rhm_functor
 
-class spherical_density_functor: public functor< BRG_UNITS >
+class spherical_density_functor
 {
 	/**********************************
 	 spherical_density_functor class
@@ -110,7 +109,7 @@ public:
 		return _host_ptr_;
 	}
 
-	const int operator()( const BRG_UNITS & in_param,
+	const int operator()( CONST_BRG_UNITS_REF  in_param,
 	BRG_UNITS & out_param, const bool silent = false ) const;
 
 	spherical_density_functor();

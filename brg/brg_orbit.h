@@ -20,7 +20,6 @@
 #include "brg_global.h"
 
 #include "brg_astro.h"
-#include "brg_functor.hpp"
 #include "brg_interpolator.h"
 #include "brg_phase.hpp"
 #include "brg_units.h"
@@ -55,7 +54,7 @@ class gabdt_functor;
 /** Class Definitions **/
 #if (1)
 
-class interpolator_functor: public functor< BRG_UNITS >
+class interpolator_functor
 {
 	/************************************************************
 	 interpolator_functor
@@ -101,13 +100,13 @@ public:
 	const int set_interpolator_ptr( const brgastro::interpolator *new_interpolator_ptr );
 
 	// Function method
-	const int operator()( const BRG_UNITS & in_param,
+	const int operator()( CONST_BRG_UNITS_REF  in_param,
 			BRG_UNITS & out_param, const bool silent = false ) const;
 
 };
 // class interpolator_functor
 
-class interpolator_derivative_functor: public functor< BRG_UNITS >
+class interpolator_derivative_functor
 {
 	/************************************************************
 	 interpolator_derivative_functor
@@ -153,13 +152,13 @@ public:
 	const int set_interpolator_ptr( const brgastro::interpolator *new_interpolator_ptr );
 
 	// Function method
-	const int operator()( const BRG_UNITS & in_param,
+	const int operator()( CONST_BRG_UNITS_REF  in_param,
 			BRG_UNITS & out_param, const bool silent = false ) const;
 
 };
 // class interpolator_derivative_functor
 
-class interpolator_derivative_weight_functor: public functor< BRG_UNITS >
+class interpolator_derivative_weight_functor
 {
 	/************************************************************
 	 interpolator_derivative_weight_functor
@@ -214,7 +213,7 @@ public:
 	const int set_t_max( double new_t_max );
 
 	// Function method
-	const int operator()( const BRG_UNITS & in_param,
+	const int operator()( CONST_BRG_UNITS_REF  in_param,
 			BRG_UNITS & out_param, const bool silent = false ) const;
 };
 // class interpolator_derivative_sample_functor
@@ -344,9 +343,9 @@ public:
 	// Constructors
 	gabdt();
 	gabdt( const gabdt & other_gabdt );
-	gabdt( const density_profile *init_host, const BRG_DISTANCE &init_x,
-			const BRG_DISTANCE &init_y, const BRG_DISTANCE &init_z,
-			const BRG_TIME &init_dt );
+	gabdt( const density_profile *init_host, CONST_BRG_DISTANCE_REF init_x,
+			CONST_BRG_DISTANCE_REF init_y, CONST_BRG_DISTANCE_REF init_z,
+			CONST_BRG_TIME_REF init_dt );
 
 	// Destructor
 	virtual ~gabdt();
@@ -356,11 +355,11 @@ public:
 
 	// Set functions
 	const int set( const brgastro::density_profile *new_host_ptr,
-			const BRG_DISTANCE &new_x, const BRG_DISTANCE &new_y,
-			const BRG_DISTANCE &new_z, const BRG_TIME &new_dt );
-	const int set_pos( const BRG_DISTANCE &new_x, const BRG_DISTANCE &new_y,
-			const BRG_DISTANCE &new_z );
-	const int set_dt( const BRG_TIME &dt );
+			CONST_BRG_DISTANCE_REF new_x, CONST_BRG_DISTANCE_REF new_y,
+			CONST_BRG_DISTANCE_REF new_z, CONST_BRG_TIME_REF new_dt );
+	const int set_pos( CONST_BRG_DISTANCE_REF new_x, CONST_BRG_DISTANCE_REF new_y,
+			CONST_BRG_DISTANCE_REF new_z );
+	const int set_dt( CONST_BRG_TIME_REF dt );
 	const int set_host_ptr( const density_profile *new_host_ptr );
 	const int override_zero();
 
@@ -389,7 +388,7 @@ public:
 
 };
 
-class gabdt_functor: public functor< std::vector< BRG_UNITS > >
+class gabdt_functor
 {
 	/************************************************************
 	 gabdt_functor
@@ -1038,9 +1037,9 @@ public:
 	 * @param test_mass_error Optional: Error on the comparison retained mass fraction.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int add_point( const BRG_DISTANCE &x, const BRG_DISTANCE &y,
-			const BRG_DISTANCE &z, const BRG_VELOCITY &vx,
-			const BRG_VELOCITY &vy, const BRG_VELOCITY &vz, const BRG_TIME &t,
+	const int add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
+			CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
+			CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
 			const double test_mass = 1, const double test_mass_error = 1 );
 	/**
 	 * Tell the orbit about a point along the satellite's path relative to the host, where
@@ -1065,9 +1064,9 @@ public:
 	 * @param test_mass_error Optional: Error on the comparison retained mass fraction.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int force_add_point( const BRG_DISTANCE &x, const BRG_DISTANCE &y,
-			const BRG_DISTANCE &z, const BRG_VELOCITY &vx,
-			const BRG_VELOCITY &vy, const BRG_VELOCITY &vz, const BRG_TIME &t,
+	const int force_add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
+			CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
+			CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
 			const double test_mass = 1, const double test_mass_error = 1 );
 	/**
 	 * Tell the orbit about a point along the satellite's path relative to the host, where
@@ -1092,8 +1091,8 @@ public:
 	 * @param test_mass_error Optional: Error on the comparison retained mass fraction.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int add_point( const BRG_DISTANCE &x, const BRG_DISTANCE &y,
-			const BRG_DISTANCE &z, const BRG_TIME &t,
+	const int add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
+			CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
 			const double new_test_mass = 1, const double test_mass_error = 1 ); // Only use if v is unknown
 	/**
 	 * Tell the orbit about a point along the satellite's path relative to the host, where
@@ -1117,8 +1116,8 @@ public:
 	 * @param test_mass_error Optional: Error on the comparison retained mass fraction.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int force_add_point( const BRG_DISTANCE &x, const BRG_DISTANCE &y,
-			const BRG_DISTANCE &z, const BRG_TIME &t,
+	const int force_add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
+			CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
 			const double new_test_mass = 1, const double test_mass_error = 1 ); // Only use if v is unknown
 	/**
 	 * Tell the orbit about the time of a discontinuity. For instance, this could be where the
@@ -1128,7 +1127,7 @@ public:
 	 *          Use the function SALTSA::zft(z) if only redshift is known.
 	 * @return
 	 */
-	const int add_discontinuity_time( const BRG_TIME &t ); // Splits into segments to be calculated individually
+	const int add_discontinuity_time( CONST_BRG_TIME_REF t ); // Splits into segments to be calculated individually
 	/**
 	 * Tell the orbit about the state of the host halo at a given time. This version checks
 	 * to ensure that no duplicate times are added (only among host parameter point times).
@@ -1145,7 +1144,7 @@ public:
 	 * @param silent Whether or not to suppress error messages.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int add_host_parameter_point( const std::vector< BRG_UNITS > &parameters, const BRG_TIME &t,
+	const int add_host_parameter_point( const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
 			const bool silent = false );
 	/**
 	 * Tell the orbit about the state of the host halo at a given time. This version does
@@ -1162,7 +1161,7 @@ public:
 	 * @param silent Whether or not to suppress error messages.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int force_add_host_parameter_point( const std::vector< BRG_UNITS > &parameters, const BRG_TIME &t,
+	const int force_add_host_parameter_point( const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
 			const bool silent = false );
 	/**
 	 * Clears all phase-space points that the orbit has been told about.
@@ -1211,7 +1210,7 @@ public:
 	 * @param new_init_tau Truncation parameter tau of the profile. Will be 2*c if left to default
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int set_tNFW_init_satellite( const BRG_MASS &new_init_mvir0,
+	const int set_tNFW_init_satellite( CONST_BRG_MASS_REF new_init_mvir0,
 			const double z = 0, const double new_init_c = -1,
 			const double new_init_tau = -1 );
 	/**
@@ -1224,7 +1223,7 @@ public:
 	 * @param new_init_tau Truncation parameter tau of the profile. Will be 2*c if left to default
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int set_tNFW_init_host( const BRG_MASS &new_mvir0, const double z = 0,
+	const int set_tNFW_init_host( CONST_BRG_MASS_REF new_mvir0, const double z = 0,
 			const double new_c = -1, const double new_tau = -1 );
 	/**
 	 * Clears initial satellite profile. Not actually necessary to do at any point, as setting to
@@ -1253,7 +1252,7 @@ public:
 	 * @param new_t_min The new minimum time.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int set_t_min( const BRG_TIME & new_t_min );
+	const int set_t_min( CONST_BRG_TIME_REF  new_t_min );
 	/**
 	 * Override the default maximum time for stripping calculation. For instance, use this if
 	 * you only want to calculate stripping for a subsection of the orbit.
@@ -1261,7 +1260,7 @@ public:
 	 * @param new_t_min The new maximum time.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int set_t_max( const BRG_TIME & new_t_max );
+	const int set_t_max( CONST_BRG_TIME_REF  new_t_max );
 	/**
 	 * Reset the minimum time to the default value (which will be the lowest time point passed
 	 * to the orbit).
@@ -1424,8 +1423,8 @@ public:
 	static const int & default_spline_resolution() {return _default_spline_resolution_;}
 	static const allowed_interpolation_type & default_interpolation_type()
 		{return _default_interpolation_type_;}
-	static const BRG_VELOCITY & default_v_0() {return _default_v_0_;}
-	static const BRG_DISTANCE & default_r_0() {return _default_r_0_;}
+	static CONST_BRG_VELOCITY_REF  default_v_0() {return _default_v_0_;}
+	static CONST_BRG_DISTANCE_REF  default_r_0() {return _default_r_0_;}
 	static const double  default_step_length_power() {return _default_step_length_power_;}
 	static const double  default_step_factor_max() {return _default_step_factor_max_;}
 	static const double  default_step_factor_min() {return _default_step_factor_min_;}
@@ -1453,8 +1452,8 @@ public:
 	const int & spline_resolution() const {return _base_resolution_;}
 	const allowed_interpolation_type & interpolation_type()
 		{return _interpolation_type_;}
-	const BRG_VELOCITY & v_0() const {return _v_0_;}
-	const BRG_DISTANCE & r_0() const {return _r_0_;}
+	CONST_BRG_VELOCITY_REF  v_0() const {return _v_0_;}
+	CONST_BRG_DISTANCE_REF  r_0() const {return _r_0_;}
 	const double  step_length_power() const {return _step_length_power_;}
 	const double  step_factor_max() const {return _step_factor_max_;}
 	const double  step_factor_min() const {return _step_factor_min_;}
@@ -1478,15 +1477,15 @@ public:
 	const int & num_segments() const {return _num_segments_;}
 
 	/// Accessor to what t_min would be if not overridden.
-	const BRG_TIME &  t_min_natural_value() const {return _t_min_natural_value_;}
+	CONST_BRG_TIME_REF   t_min_natural_value() const {return _t_min_natural_value_;}
 	/// Accessor to what t_max would be if not overridden.
-	const BRG_TIME &  t_max_natural_value() const {return _t_max_natural_value_;}
+	CONST_BRG_TIME_REF   t_max_natural_value() const {return _t_max_natural_value_;}
 	/// Accessor to the override value of t_min
-	const BRG_TIME &  t_min_override_value() const {return _t_min_override_value_;}
+	CONST_BRG_TIME_REF   t_min_override_value() const {return _t_min_override_value_;}
 	/// Accessor to the override value of t_max
-	const BRG_TIME &  t_max_override_value() const {return _t_max_override_value_;}
+	CONST_BRG_TIME_REF   t_max_override_value() const {return _t_max_override_value_;}
 	/// Accessor to the current value of t_min
-	const BRG_TIME &  t_min() const
+	CONST_BRG_TIME_REF   t_min() const
 	{
 		if(_override_t_min_)
 			return _t_min_override_value_;
@@ -1494,7 +1493,7 @@ public:
 			return _t_min_natural_value_;
 	}
 	/// Accessor to the current value of t_max
-	const BRG_TIME &  t_max() const
+	CONST_BRG_TIME_REF   t_max() const
 	{
 		if(_override_t_max_)
 			return _t_max_override_value_;
@@ -1708,7 +1707,7 @@ public:
 	 * @param mret Variable to be loaded with the retained mass estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_m_ret_at_t( const BRG_TIME & t, BRG_MASS & m_ret) const;
+	const int get_m_ret_at_t( CONST_BRG_TIME_REF  t, BRG_MASS & m_ret) const;
 	/**
 	 * Get an estimate of the retained mass fraction at an arbitrary time. _record_full_data_ must be set to
 	 * True to get this; the orbit will be calculated again with it set if necessary.
@@ -1717,7 +1716,7 @@ public:
 	 * @param fmret Variable to be loaded with the retained mass fraction estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_frac_m_ret_at_t( const BRG_TIME & t, double & frac_m_ret ) const;
+	const int get_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret ) const;
 	/**
 	 * Get an estimate of the retained virial mass at an arbitrary time. _record_full_data_ must be set to
 	 * True to get this; the orbit will be calculated again with it set if necessary.
@@ -1726,7 +1725,7 @@ public:
 	 * @param mret Variable to be loaded with the retained mass estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_m_vir_ret_at_t( const BRG_TIME & t, BRG_MASS & m_ret) const;
+	const int get_m_vir_ret_at_t( CONST_BRG_TIME_REF  t, BRG_MASS & m_ret) const;
 	/**
 	 * Get an estimate of the retained virial mass fraction at an arbitrary time. _record_full_data_ must be set to
 	 * True to get this; the orbit will be calculated again with it set if necessary.
@@ -1735,7 +1734,7 @@ public:
 	 * @param mret Variable to be loaded with the retained mass estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_frac_m_vir_ret_at_t( const BRG_TIME & t, double & frac_m_ret ) const;
+	const int get_frac_m_vir_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret ) const;
 	/**
 	 * Get an estimate of the retained mass fraction of the comparison orbit at an arbitrary time.
 	 *
@@ -1743,7 +1742,7 @@ public:
 	 * @param fmret Variable to be loaded with the retained mass estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_comp_frac_m_ret_at_t( const BRG_TIME & t, double & m_ret) const;
+	const int get_comp_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & m_ret) const;
 	/**
 	 * Get an estimate of the retained mass fraction error of the comparison orbit at an arbitrary time.
 	 *
@@ -1751,7 +1750,7 @@ public:
 	 * @param fmret_err Variable to be loaded with the retained mass estimate fraction error.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_comp_frac_m_ret_error_at_t( const BRG_TIME & t, double & frac_m_ret_error) const;
+	const int get_comp_frac_m_ret_error_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret_error) const;
 
 	// Get data at arbitrary time (throws exception on failure)
 	/**
@@ -1762,7 +1761,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass.
 	 * @return Retained mass estimate.
 	 */
-	const BRG_MASS m_ret_at_t(const BRG_TIME & t) const;
+	const BRG_MASS m_ret_at_t(CONST_BRG_TIME_REF  t) const;
 	/**
 	 * Get the retained mass fraction at an arbitrary time, throwing an exception on failure.
 	 * _record_full_data_ must be set to True to get this; the orbit will be calculated again
@@ -1771,7 +1770,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass.
 	 * @return Retained mass fraction estimate.
 	 */
-	const double frac_m_ret_at_t(const BRG_TIME & t) const;
+	const double frac_m_ret_at_t(CONST_BRG_TIME_REF  t) const;
 	/**
 	 * Get the retained virial mass at an arbitrary time, throwing an exception on failure.
 	 * _record_full_data_ must be set to True to get this; the orbit will be calculated again
@@ -1780,7 +1779,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass.
 	 * @return Retained mass estimate.
 	 */
-	const BRG_MASS m_vir_ret_at_t(const BRG_TIME & t) const;
+	const BRG_MASS m_vir_ret_at_t(CONST_BRG_TIME_REF  t) const;
 	/**
 	 * Get the retained virial mass fraction at an arbitrary time, throwing an exception on failure.
 	 * _record_full_data_ must be set to True to get this; the orbit will be calculated again
@@ -1789,7 +1788,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass.
 	 * @return Retained mass fraction estimate.
 	 */
-	const double frac_m_vir_ret_at_t(const BRG_TIME & t) const;
+	const double frac_m_vir_ret_at_t(CONST_BRG_TIME_REF  t) const;
 	/**
 	 * Get the retained mass fraction of the comparison orbit at an arbitrary time, throwing an exception
 	 * on failure.
@@ -1797,7 +1796,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass fraction.
 	 * @return Retained mass fraction estimate.
 	 */
-	const double comp_frac_m_ret_at_t(const BRG_TIME & t) const;
+	const double comp_frac_m_ret_at_t(CONST_BRG_TIME_REF  t) const;
 	/**
 	 * Get the retained mass fraction error of the comparison orbit at an arbitrary time, throwing an
 	 * exception on failure.
@@ -1805,7 +1804,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass fraction error.
 	 * @return Retained mass fraction error estimate.
 	 */
-	const double comp_frac_m_ret_error_at_t(const BRG_TIME & t) const;
+	const double comp_frac_m_ret_error_at_t(CONST_BRG_TIME_REF  t) const;
 
 	// Quality of fit.
 	/**
@@ -1935,20 +1934,20 @@ private:
 	const int _init();
 	const int _reserve( int n, const bool silent = false ) const;
 	const BRG_UNITS _delta_rho( const int index, const double x,
-			const BRG_TIME &t_step, const bool silent = false ) const;
-	const double _step_length_factor( const BRG_VELOCITY & v, const BRG_DISTANCE & r ) const;
+			CONST_BRG_TIME_REF t_step, const bool silent = false ) const;
+	const double _step_length_factor( CONST_BRG_VELOCITY_REF  v, CONST_BRG_DISTANCE_REF  r ) const;
 	const BRG_DISTANCE _rvir( const int index = 0 ) const;
 	const int _pass_interpolation_type() const;
 
 	// Calculation assistance functions
 	const double _tidal_strip_retained( const density_profile *host,
-			const density_profile *satellite, const BRG_DISTANCE &r,
-			const BRG_VELOCITY &vr, const BRG_VELOCITY &vt,
-			const BRG_TIME &time_step, const long double &sum_delta_rho = 0 ) const;
+			const density_profile *satellite, CONST_BRG_DISTANCE_REF r,
+			CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt,
+			CONST_BRG_TIME_REF time_step, const long double &sum_delta_rho = 0 ) const;
 	const BRG_DISTANCE _get_rt( const density_profile *host,
-			const density_profile *satellite, const BRG_DISTANCE &r,
-			const BRG_VELOCITY &vr, const BRG_VELOCITY &vt,
-			const BRG_TIME &time_step, const long double &sum_delta_rho,
+			const density_profile *satellite, CONST_BRG_DISTANCE_REF r,
+			CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt,
+			CONST_BRG_TIME_REF time_step, const long double &sum_delta_rho,
 			const bool silent = false ) const;
 #endif
 
@@ -1971,25 +1970,25 @@ public:
 	stripping_orbit_segment *stripping_orbit_spline_clone() const;
 
 	// Functions to add points to the splines
-	const int add_point( const BRG_DISTANCE &x, const BRG_DISTANCE &y,
-			const BRG_DISTANCE &z, const BRG_TIME &t,
+	const int add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
+			CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
 			double new_test_mass = 1 );
-	const int add_point( const BRG_DISTANCE &x, const BRG_DISTANCE &y,
-			const BRG_DISTANCE &z, const BRG_VELOCITY &vx,
-			const BRG_VELOCITY &vy, const BRG_VELOCITY &vz, const BRG_TIME &t,
+	const int add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
+			CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
+			CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
 			double new_test_mass = 1 );
-	const int add_x_point( const BRG_DISTANCE &x, const BRG_TIME &t );
-	const int add_y_point( const BRG_DISTANCE &y, const BRG_TIME &t );
-	const int add_z_point( const BRG_DISTANCE &z, const BRG_TIME &t );
-	const int add_vx_point( const BRG_VELOCITY &vx, const BRG_TIME &t );
-	const int add_vy_point( const BRG_VELOCITY &vy, const BRG_TIME &t );
-	const int add_vz_point( const BRG_VELOCITY &vz, const BRG_TIME &t );
-	const int add_unknown_vx_point( const BRG_TIME &t );
-	const int add_unknown_vy_point( const BRG_TIME &t );
-	const int add_unknown_vz_point( const BRG_TIME &t );
-	const int add_test_mass_point( const double test_mass, const BRG_TIME &t );
+	const int add_x_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_TIME_REF t );
+	const int add_y_point( CONST_BRG_DISTANCE_REF y, CONST_BRG_TIME_REF t );
+	const int add_z_point( CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t );
+	const int add_vx_point( CONST_BRG_VELOCITY_REF vx, CONST_BRG_TIME_REF t );
+	const int add_vy_point( CONST_BRG_VELOCITY_REF vy, CONST_BRG_TIME_REF t );
+	const int add_vz_point( CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t );
+	const int add_unknown_vx_point( CONST_BRG_TIME_REF t );
+	const int add_unknown_vy_point( CONST_BRG_TIME_REF t );
+	const int add_unknown_vz_point( CONST_BRG_TIME_REF t );
+	const int add_test_mass_point( const double test_mass, CONST_BRG_TIME_REF t );
 	const int add_host_parameter_point( const unsigned int num_parameters,
-			const std::vector< BRG_UNITS > &parameters, const BRG_TIME &t,
+			const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
 			const bool silent = false );
 
 
@@ -2030,13 +2029,13 @@ public:
 
 
 	// Set initial/global parameters
-	const int set_tNFW_init_satellite( const BRG_MASS &new_init_mvir0,
+	const int set_tNFW_init_satellite( CONST_BRG_MASS_REF new_init_mvir0,
 			const double z = 0, const double new_init_c = -1,
 			const double new_init_tau = -1 );
-	const int set_tNFW_host( const BRG_MASS &new_mvir0, const double z = 0,
+	const int set_tNFW_host( CONST_BRG_MASS_REF new_mvir0, const double z = 0,
 			const double new_c = -1, const double new_tau = -1 );
-	const int set_t_min( const BRG_TIME &new_t_min );
-	const int set_t_max( const BRG_TIME &new_t_max );
+	const int set_t_min( CONST_BRG_TIME_REF new_t_min );
+	const int set_t_max( CONST_BRG_TIME_REF new_t_max );
 	const int reset_t_min();
 	const int reset_t_max();
 	const int set_init_sum_deltarho( const long double &new_init_sum_deltarho );
@@ -2094,8 +2093,8 @@ public:
 	const int & spline_resolution() const {return _spline_resolution_;}
 	const stripping_orbit::allowed_interpolation_type & interpolation_type()
 		{return _interpolation_type_;}
-	const BRG_VELOCITY & v_0() const {return _v_0_;}
-	const BRG_DISTANCE & r_0() const {return _r_0_;}
+	CONST_BRG_VELOCITY_REF  v_0() const {return _v_0_;}
+	CONST_BRG_DISTANCE_REF  r_0() const {return _r_0_;}
 	const double & step_length_power() const {return _step_length_power_;}
 	const double & step_factor_max() const {return _step_factor_max_;}
 	const double & step_factor_min() const {return _step_factor_min_;}
@@ -2116,7 +2115,7 @@ public:
 	const bool & bad_result() const {return _bad_result_;};
 	const density_profile * init_satellite_ptr() const {return _init_satellite_ptr_;};
 	const density_profile * init_host_ptr() const {return _init_host_ptr_;};
-	const BRG_TIME & t_min_natural_value() const {return _t_min_natural_value_;};
+	CONST_BRG_TIME_REF  t_min_natural_value() const {return _t_min_natural_value_;};
 #endif
 
 	// Get final data (returns 1 on error)
@@ -2159,7 +2158,7 @@ public:
 };
 // class stripping_orbit_segment
 
-class solve_rt_it_functor: public functor< BRG_UNITS > // Always uses one param, returns new value for that parameter for iteration.
+class solve_rt_it_functor // Always uses one param, returns new value for that parameter for iteration.
 {
 	/************************************************************
 	 solve_rt_it_functor
@@ -2175,7 +2174,7 @@ public:
 	const density_profile *satellite_ptr;
 
 	long double sum_delta_rho, Daccel, omega;
-	const int operator()( const BRG_UNITS & in_param,
+	const int operator()( CONST_BRG_UNITS_REF  in_param,
 	BRG_UNITS & out_param, const bool silent = false ) const;
 	solve_rt_it_functor( const BRG_UNITS init_omega,
 			const density_profile *init_satellite, const BRG_UNITS init_Daccel,
@@ -2184,7 +2183,7 @@ public:
 	solve_rt_it_functor();
 };
 
-class solve_rt_grid_functor: public functor< BRG_UNITS >
+class solve_rt_grid_functor
 {
 	/************************************************************
 	 solve_rt_grid_functor
@@ -2199,7 +2198,7 @@ public:
 	const density_profile *satellite_ptr;
 
 	long double sum_delta_rho, Daccel, omega;
-	const int operator()( const BRG_UNITS & in_param,
+	const int operator()( CONST_BRG_UNITS_REF  in_param,
 	BRG_UNITS & out_param, const bool silent = false ) const;
 	solve_rt_grid_functor( const BRG_UNITS init_omega,
 			const density_profile *init_satellite, const BRG_UNITS init_Daccel,

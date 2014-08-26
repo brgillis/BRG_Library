@@ -39,10 +39,14 @@ struct phase
 
  **********************************************/
 {
-	BRG_DISTANCE x, y, z;BRG_VELOCITY vx, vy, vz;BRG_TIME t;
-	phase( BRG_DISTANCE init_x = 0, BRG_DISTANCE init_y = 0,
-	BRG_DISTANCE init_z = 0, BRG_VELOCITY init_vx = 0,
-	BRG_VELOCITY init_vy = 0, BRG_VELOCITY init_vz = 0,
+	BRG_DISTANCE x, y, z;
+
+	BRG_VELOCITY vx, vy, vz;
+
+	BRG_TIME t;
+	phase( CONST_BRG_DISTANCE_REF init_x = 0, CONST_BRG_DISTANCE_REF init_y = 0,
+			CONST_BRG_DISTANCE_REF init_z = 0, CONST_BRG_VELOCITY_REF init_vx = 0,
+			CONST_BRG_VELOCITY_REF init_vy = 0, CONST_BRG_VELOCITY_REF init_vz = 0,
 	BRG_TIME init_t = 0 )
 	{
 		x = init_x;
@@ -53,9 +57,9 @@ struct phase
 		vz = init_vz;
 		t = init_t;
 	}
-	const int set_phase( BRG_DISTANCE init_x = 0, BRG_DISTANCE init_y = 0,
-	BRG_DISTANCE init_z = 0, BRG_VELOCITY init_vx = 0,
-	BRG_VELOCITY init_vy = 0, BRG_VELOCITY init_vz = 0,
+	const int set_phase( CONST_BRG_DISTANCE_REF init_x = 0, CONST_BRG_DISTANCE_REF init_y = 0,
+			CONST_BRG_DISTANCE_REF init_z = 0, CONST_BRG_VELOCITY_REF init_vx = 0,
+			CONST_BRG_VELOCITY_REF init_vy = 0, CONST_BRG_VELOCITY_REF init_vz = 0,
 	BRG_TIME init_t = 0 )
 	{
 		x = init_x;

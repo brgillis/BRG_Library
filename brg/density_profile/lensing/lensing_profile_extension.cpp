@@ -39,7 +39,7 @@ const BRG_DISTANCE brgastro::lensing_profile_extension::_shift_sigma( CONST_BRG_
 
 #endif // Lensing profile extension private methods
 
-const BRG_UNITS brgastro::lensing_profile_extension::proj_dens( const BRG_DISTANCE &R,
+const BRG_UNITS brgastro::lensing_profile_extension::proj_dens( CONST_BRG_DISTANCE_REF R,
 		const bool silent ) const
 {
 	BRG_DISTANCE R_to_use = std::fabs( R );
@@ -74,7 +74,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::proj_dens( const BRG_DISTAN
 	return 2 * out_params;
 }
 
-const BRG_MASS brgastro::lensing_profile_extension::proj_enc_mass( const BRG_DISTANCE &R,
+const BRG_MASS brgastro::lensing_profile_extension::proj_enc_mass( CONST_BRG_DISTANCE_REF R,
 		const bool silent ) const
 {
 	if ( R == 0 )
@@ -93,8 +93,8 @@ const BRG_MASS brgastro::lensing_profile_extension::proj_enc_mass( const BRG_DIS
 	return out_params;
 }
 
-const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( const BRG_DISTANCE &R,
-		const BRG_DISTANCE &offset_R, const bool silent ) const
+const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( CONST_BRG_DISTANCE_REF R,
+		CONST_BRG_DISTANCE_REF offset_R, const bool silent ) const
 {
 	unsigned int num_out_params = 1;
 	if ( offset_R == 0 )
@@ -146,7 +146,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( const BRG_DIS
 	return result;
 }
 
-const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( const BRG_DISTANCE &R,
+const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( CONST_BRG_DISTANCE_REF R,
 		const double group_c, const bool silent ) const
 {
 	BRG_DISTANCE R_to_use = std::fabs( R );
@@ -166,7 +166,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( const BRG_DIST
 	return out_params;
 }
 
-const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( const BRG_DISTANCE &R,
+const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( CONST_BRG_DISTANCE_REF R,
 		const double group_c, const bool silent ) const
 {
 	BRG_DISTANCE R_to_use = std::fabs( R );

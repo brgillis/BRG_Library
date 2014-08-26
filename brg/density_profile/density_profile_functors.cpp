@@ -25,7 +25,7 @@ const int brgastro::accel_functor::set_host_ptr(
 	return 0;
 }
 
-const int brgastro::accel_functor::operator()( const BRG_UNITS & in_param,
+const int brgastro::accel_functor::operator()( CONST_BRG_UNITS_REF  in_param,
 BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -61,7 +61,7 @@ const int brgastro::spherical_density_functor::set_host_ptr(
 }
 
 const int brgastro::spherical_density_functor::operator()(
-		const BRG_UNITS & in_param,
+		CONST_BRG_UNITS_REF  in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -104,7 +104,7 @@ const int brgastro::solve_rhm_functor::set_target_mass(
 	return 0;
 }
 
-const int brgastro::solve_rhm_functor::operator()( const BRG_UNITS & in_param,
+const int brgastro::solve_rhm_functor::operator()( CONST_BRG_UNITS_REF  in_param,
 BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )

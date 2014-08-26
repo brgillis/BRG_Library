@@ -19,7 +19,7 @@
 
 // brgastro::density_profile class methods
 #if (1)
-const BRG_UNITS brgastro::density_profile::Daccel( const BRG_DISTANCE &r,
+const BRG_UNITS brgastro::density_profile::Daccel( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	BRG_DISTANCE dr;
@@ -104,7 +104,7 @@ const BRG_DISTANCE brgastro::density_profile::rhmvir( const bool silent ) const
 	return _rhmvir_cache_;
 }
 
-const BRG_MASS brgastro::density_profile::enc_mass( const BRG_DISTANCE &r,
+const BRG_MASS brgastro::density_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	if ( r == 0 )
@@ -126,7 +126,7 @@ const BRG_MASS brgastro::density_profile::enc_mass( const BRG_DISTANCE &r,
 #endif
 
 const BRG_TIME brgastro::period( const brgastro::density_profile *host,
-		const BRG_DISTANCE &r, const BRG_VELOCITY &vr, const BRG_VELOCITY &vt )
+		CONST_BRG_DISTANCE_REF r, CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt )
 {
 	BRG_UNITS mu = host->enc_mass( r ) * Gc;
 	BRG_VELOCITY v = quad_add( vr, vt );

@@ -125,7 +125,7 @@ const int brgastro::interpolator_functor::set_interpolator_ptr(
 }
 
 // Function method
-const int brgastro::interpolator_functor::operator()( const BRG_UNITS & in_param,
+const int brgastro::interpolator_functor::operator()( CONST_BRG_UNITS_REF  in_param,
 BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( !_interpolator_ptr_set_up_ )
@@ -198,7 +198,7 @@ const int brgastro::interpolator_derivative_functor::set_interpolator_ptr(
 
 // Function method
 const int brgastro::interpolator_derivative_functor::operator()(
-		const BRG_UNITS & in_param,
+		CONST_BRG_UNITS_REF  in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	if ( !_interpolator_functor_set_up_ )
@@ -313,7 +313,7 @@ const int brgastro::interpolator_derivative_weight_functor::set_t_max(
 
 // Function method
 const int brgastro::interpolator_derivative_weight_functor::operator()(
-		const BRG_UNITS & in_param,
+		CONST_BRG_UNITS_REF  in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 
@@ -1080,8 +1080,8 @@ const int brgastro::stripping_orbit::clear_calcs() const
 	return 0;
 }
 
-const int brgastro::stripping_orbit::add_point( const BRG_DISTANCE &x,
-		const BRG_DISTANCE &y, const BRG_DISTANCE &z, const BRG_TIME &t,
+const int brgastro::stripping_orbit::add_point( CONST_BRG_DISTANCE_REF x,
+		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
 		const double test_mass, const double test_mass_error )
 {
 	// Check if there's already a point with this t value
@@ -1093,8 +1093,8 @@ const int brgastro::stripping_orbit::add_point( const BRG_DISTANCE &x,
 	return force_add_point(x, y, z, t, test_mass, test_mass_error );
 }
 
-const int brgastro::stripping_orbit::force_add_point( const BRG_DISTANCE &x,
-		const BRG_DISTANCE &y, const BRG_DISTANCE &z, const BRG_TIME &t,
+const int brgastro::stripping_orbit::force_add_point( CONST_BRG_DISTANCE_REF x,
+		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
 		const double test_mass, const double test_mass_error )
 {
 	_calculated_ = false;
@@ -1126,9 +1126,9 @@ const int brgastro::stripping_orbit::force_add_point( const BRG_DISTANCE &x,
 	return 0;
 }
 
-const int brgastro::stripping_orbit::add_point( const BRG_DISTANCE &x,
-		const BRG_DISTANCE &y, const BRG_DISTANCE &z, const BRG_VELOCITY &vx,
-		const BRG_VELOCITY &vy, const BRG_VELOCITY &vz, const BRG_TIME &t,
+const int brgastro::stripping_orbit::add_point( CONST_BRG_DISTANCE_REF x,
+		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
+		CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
 		const double test_mass, const double test_mass_error )
 {
 	// Check if there's already a point with this t value
@@ -1140,9 +1140,9 @@ const int brgastro::stripping_orbit::add_point( const BRG_DISTANCE &x,
 	return force_add_point(x, y, z, vx, vy, vz, t, test_mass, test_mass_error );
 }
 
-const int brgastro::stripping_orbit::force_add_point( const BRG_DISTANCE &x,
-		const BRG_DISTANCE &y, const BRG_DISTANCE &z, const BRG_VELOCITY &vx,
-		const BRG_VELOCITY &vy, const BRG_VELOCITY &vz, const BRG_TIME &t,
+const int brgastro::stripping_orbit::force_add_point( CONST_BRG_DISTANCE_REF x,
+		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
+		CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
 		const double test_mass, const double test_mass_error )
 {
 	_calculated_ = false;
@@ -1175,7 +1175,7 @@ const int brgastro::stripping_orbit::force_add_point( const BRG_DISTANCE &x,
 }
 
 const int brgastro::stripping_orbit::add_host_parameter_point(
-		const std::vector< BRG_UNITS > &parameters, const BRG_TIME &t,
+		const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
 		const bool silent )
 {
 	// Check if there's already a point with this t value
@@ -1188,7 +1188,7 @@ const int brgastro::stripping_orbit::add_host_parameter_point(
 }
 
 const int brgastro::stripping_orbit::force_add_host_parameter_point(
-		const std::vector< BRG_UNITS > &parameters, const BRG_TIME &t,
+		const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
 		const bool silent )
 {
 	// Check num_parameters matches vector size
@@ -1213,7 +1213,7 @@ const int brgastro::stripping_orbit::force_add_host_parameter_point(
 }
 
 const int brgastro::stripping_orbit::add_discontinuity_time(
-		const BRG_TIME &t )
+		CONST_BRG_TIME_REF t )
 {
 	try
 	{
@@ -1291,7 +1291,7 @@ const int brgastro::stripping_orbit::set_init_satellite(
 }
 
 const int brgastro::stripping_orbit::set_tNFW_init_satellite(
-		const BRG_MASS &new_init_mvir0, const double z,
+		CONST_BRG_MASS_REF new_init_mvir0, const double z,
 		const double new_init_c, const double new_init_tau )
 {
 	_using_private_init_satellite_ = true;
@@ -1311,7 +1311,7 @@ const int brgastro::stripping_orbit::set_tNFW_init_satellite(
 }
 
 const int brgastro::stripping_orbit::set_tNFW_init_host(
-		const BRG_MASS &new_init_mvir0, const double z,
+		CONST_BRG_MASS_REF new_init_mvir0, const double z,
 		const double new_init_c, const double new_init_tau )
 {
 	_using_private_init_host_ = true;
@@ -2052,14 +2052,14 @@ const int brgastro::stripping_orbit::reset_tidal_shocking_power()
 }
 #endif
 
-const int brgastro::stripping_orbit::set_t_min( const BRG_TIME &new_t_min )
+const int brgastro::stripping_orbit::set_t_min( CONST_BRG_TIME_REF new_t_min )
 {
 	_t_min_override_value_ = new_t_min;
 	_override_t_min_ = true;
 	return 0;
 }
 
-const int brgastro::stripping_orbit::set_t_max( const BRG_TIME &new_t_max )
+const int brgastro::stripping_orbit::set_t_max( CONST_BRG_TIME_REF new_t_max )
 {
 	_t_max_override_value_ = new_t_max;
 	_override_t_max_ = true;
@@ -2633,7 +2633,7 @@ const int brgastro::stripping_orbit::get_final_m_ret( BRG_MASS & m_ret ) const
 	}
 	return 0;
 }
-const int brgastro::stripping_orbit::get_m_ret_at_t( const BRG_TIME & t, BRG_MASS & m_ret) const
+const int brgastro::stripping_orbit::get_m_ret_at_t( CONST_BRG_TIME_REF  t, BRG_MASS & m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2670,7 +2670,7 @@ const int brgastro::stripping_orbit::get_final_frac_m_ret( double & frac_m_ret )
 	}
 	return 0;
 }
-const int brgastro::stripping_orbit::get_frac_m_ret_at_t( const BRG_TIME & t, double & frac_m_ret) const
+const int brgastro::stripping_orbit::get_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2708,7 +2708,7 @@ const int brgastro::stripping_orbit::get_final_m_vir_ret( BRG_MASS & m_ret ) con
 	}
 	return 0;
 }
-const int brgastro::stripping_orbit::get_m_vir_ret_at_t( const BRG_TIME & t, BRG_MASS & m_ret) const
+const int brgastro::stripping_orbit::get_m_vir_ret_at_t( CONST_BRG_TIME_REF  t, BRG_MASS & m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2746,7 +2746,7 @@ const int brgastro::stripping_orbit::get_final_frac_m_vir_ret( double & frac_m_r
 	}
 	return 0;
 }
-const int brgastro::stripping_orbit::get_frac_m_vir_ret_at_t( const BRG_TIME & t, double & frac_m_ret) const
+const int brgastro::stripping_orbit::get_frac_m_vir_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2762,7 +2762,7 @@ const int brgastro::stripping_orbit::get_frac_m_vir_ret_at_t( const BRG_TIME & t
 	frac_m_ret = max( _m_vir_ret_interpolator_(t), 0. );
 	return 0;
 }
-const int brgastro::stripping_orbit::get_comp_frac_m_ret_at_t( const BRG_TIME & t, double & frac_m_ret) const
+const int brgastro::stripping_orbit::get_comp_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
 {
 	try
 	{
@@ -2774,7 +2774,7 @@ const int brgastro::stripping_orbit::get_comp_frac_m_ret_at_t( const BRG_TIME & 
 	}
 	return 0;
 }
-const int brgastro::stripping_orbit::get_comp_frac_m_ret_error_at_t( const BRG_TIME & t, double & frac_m_ret) const
+const int brgastro::stripping_orbit::get_comp_frac_m_ret_error_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
 {
 	try
 	{
@@ -2938,7 +2938,7 @@ const BRG_MASS brgastro::stripping_orbit::final_m_ret() const
 	}
 	return result;
 }
-const BRG_MASS brgastro::stripping_orbit::m_ret_at_t(const BRG_TIME & t) const
+const BRG_MASS brgastro::stripping_orbit::m_ret_at_t(CONST_BRG_TIME_REF  t) const
 {
 	BRG_MASS result = -1;
 
@@ -2960,7 +2960,7 @@ const BRG_MASS brgastro::stripping_orbit::final_m_vir_ret() const
 	}
 	return result;
 }
-const BRG_MASS brgastro::stripping_orbit::m_vir_ret_at_t(const BRG_TIME & t) const
+const BRG_MASS brgastro::stripping_orbit::m_vir_ret_at_t(CONST_BRG_TIME_REF  t) const
 {
 	BRG_MASS result = -1;
 
@@ -2981,7 +2981,7 @@ const double brgastro::stripping_orbit::final_frac_m_vir_ret() const
 	}
 	return result;
 }
-const double brgastro::stripping_orbit::frac_m_vir_ret_at_t(const BRG_TIME &t) const
+const double brgastro::stripping_orbit::frac_m_vir_ret_at_t(CONST_BRG_TIME_REF t) const
 {
 	double result = -1;
 
@@ -2991,11 +2991,11 @@ const double brgastro::stripping_orbit::frac_m_vir_ret_at_t(const BRG_TIME &t) c
 	}
 	return result;
 }
-const double brgastro::stripping_orbit::comp_frac_m_ret_at_t(const BRG_TIME & t) const
+const double brgastro::stripping_orbit::comp_frac_m_ret_at_t(CONST_BRG_TIME_REF  t) const
 {
 	return _test_mass_interpolator_(t);
 }
-const double brgastro::stripping_orbit::comp_frac_m_ret_error_at_t(const BRG_TIME & t) const
+const double brgastro::stripping_orbit::comp_frac_m_ret_error_at_t(CONST_BRG_TIME_REF  t) const
 {
 	return _test_mass_error_interpolator_(t);
 }
@@ -3745,8 +3745,8 @@ const int brgastro::stripping_orbit_segment::set_tidal_shocking_power(
 #endif
 
 
-const int brgastro::stripping_orbit_segment::add_point( const BRG_DISTANCE &x,
-		const BRG_DISTANCE &y, const BRG_DISTANCE &z, const BRG_TIME &t,
+const int brgastro::stripping_orbit_segment::add_point( CONST_BRG_DISTANCE_REF x,
+		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
 		const double new_mass )
 {
 	_calculated_ = false;
@@ -3780,9 +3780,9 @@ const int brgastro::stripping_orbit_segment::add_point( const BRG_DISTANCE &x,
 	return 0;
 }
 
-const int brgastro::stripping_orbit_segment::add_point( const BRG_DISTANCE &x,
-		const BRG_DISTANCE &y, const BRG_DISTANCE &z, const BRG_VELOCITY &vx,
-		const BRG_VELOCITY &vy, const BRG_VELOCITY &vz, const BRG_TIME &t,
+const int brgastro::stripping_orbit_segment::add_point( CONST_BRG_DISTANCE_REF x,
+		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
+		CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
 		const double new_test_mass )
 {
 	_calculated_ = false;
@@ -3817,7 +3817,7 @@ const int brgastro::stripping_orbit_segment::add_point( const BRG_DISTANCE &x,
 }
 
 const int brgastro::stripping_orbit_segment::add_x_point(
-		const BRG_DISTANCE &x, const BRG_TIME &t )
+		CONST_BRG_DISTANCE_REF x, CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -3845,7 +3845,7 @@ const int brgastro::stripping_orbit_segment::add_x_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_y_point(
-		const BRG_DISTANCE &y, const BRG_TIME &t )
+		CONST_BRG_DISTANCE_REF y, CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -3873,7 +3873,7 @@ const int brgastro::stripping_orbit_segment::add_y_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_z_point(
-		const BRG_DISTANCE &z, const BRG_TIME &t )
+		CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -3901,7 +3901,7 @@ const int brgastro::stripping_orbit_segment::add_z_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_vx_point(
-		const BRG_VELOCITY &vx, const BRG_TIME &t )
+		CONST_BRG_VELOCITY_REF vx, CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -3929,7 +3929,7 @@ const int brgastro::stripping_orbit_segment::add_vx_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_vy_point(
-		const BRG_VELOCITY &vy, const BRG_TIME &t )
+		CONST_BRG_VELOCITY_REF vy, CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -3957,7 +3957,7 @@ const int brgastro::stripping_orbit_segment::add_vy_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_vz_point(
-		const BRG_VELOCITY &vz, const BRG_TIME &t )
+		CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -3985,7 +3985,7 @@ const int brgastro::stripping_orbit_segment::add_vz_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_unknown_vx_point(
-		const BRG_TIME &t )
+		CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -4013,7 +4013,7 @@ const int brgastro::stripping_orbit_segment::add_unknown_vx_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_unknown_vy_point(
-		const BRG_TIME &t )
+		CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -4041,7 +4041,7 @@ const int brgastro::stripping_orbit_segment::add_unknown_vy_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_unknown_vz_point(
-		const BRG_TIME &t )
+		CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -4069,7 +4069,7 @@ const int brgastro::stripping_orbit_segment::add_unknown_vz_point(
 }
 
 const int brgastro::stripping_orbit_segment::add_test_mass_point(
-		const double test_mass, const BRG_TIME &t )
+		const double test_mass, CONST_BRG_TIME_REF t )
 {
 	_calculated_ = false;
 	try
@@ -4098,7 +4098,7 @@ const int brgastro::stripping_orbit_segment::add_test_mass_point(
 
 const int brgastro::stripping_orbit_segment::add_host_parameter_point(
 		const unsigned int num_parameters,
-		const std::vector< BRG_UNITS > & parameters, const BRG_TIME &t,
+		const std::vector< BRG_UNITS > & parameters, CONST_BRG_TIME_REF t,
 		const bool silent )
 {
 	// Check num_parameters matches vector size
@@ -4213,7 +4213,7 @@ const int brgastro::stripping_orbit_segment::set_init_sum_gabdt(
 }
 
 const int brgastro::stripping_orbit_segment::set_tNFW_init_satellite(
-		const BRG_MASS &new_init_mvir0, const double z,
+		CONST_BRG_MASS_REF new_init_mvir0, const double z,
 		const double new_init_c, const double new_init_tau )
 {
 	_using_private_init_satellite_ = true;
@@ -4240,7 +4240,7 @@ const int brgastro::stripping_orbit_segment::set_tNFW_init_satellite(
 }
 
 const int brgastro::stripping_orbit_segment::set_tNFW_host(
-		const BRG_MASS &new_init_mvir0, const double z,
+		CONST_BRG_MASS_REF new_init_mvir0, const double z,
 		const double new_init_c, const double new_init_tau )
 {
 	_using_private_init_host_ = true;
@@ -4270,7 +4270,7 @@ const int brgastro::stripping_orbit_segment::set_tNFW_host(
 }
 
 const int brgastro::stripping_orbit_segment::set_t_min(
-		const BRG_TIME &new_t_min )
+		CONST_BRG_TIME_REF new_t_min )
 {
 	_t_min_override_val_ = new_t_min;
 	_override_t_min_ = true;
@@ -4278,7 +4278,7 @@ const int brgastro::stripping_orbit_segment::set_t_min(
 }
 
 const int brgastro::stripping_orbit_segment::set_t_max(
-		const BRG_TIME &new_t_max )
+		CONST_BRG_TIME_REF new_t_max )
 {
 	_t_max_override_val_ = new_t_max;
 	_override_t_max_ = true;
@@ -5143,7 +5143,7 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 }
 
 const BRG_UNITS brgastro::stripping_orbit_segment::_delta_rho(
-		const int index, const double x, const BRG_TIME &t_step,
+		const int index, const double x, CONST_BRG_TIME_REF t_step,
 		const bool silent ) const
 {
 	if ( index < 1 )
@@ -5171,7 +5171,7 @@ const BRG_UNITS brgastro::stripping_orbit_segment::_delta_rho(
 	return max( result, 0. );
 }
 
-const double brgastro::stripping_orbit_segment::_step_length_factor( const BRG_VELOCITY & v, const BRG_DISTANCE & r ) const
+const double brgastro::stripping_orbit_segment::_step_length_factor( CONST_BRG_VELOCITY_REF  v, CONST_BRG_DISTANCE_REF  r ) const
 {
 	/* Method to determine the appropriate factor for the step length.
 	 * It uses the host's virial velocity and radius so that parts of
@@ -5678,7 +5678,7 @@ const brgastro::density_profile * brgastro::stripping_orbit_segment::final_host(
 #if (1)
 
 const int brgastro::solve_rt_grid_functor::operator()(
-		const BRG_UNITS & in_param,
+		CONST_BRG_UNITS_REF  in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	BRG_DISTANCE r;
@@ -5722,7 +5722,7 @@ brgastro::solve_rt_grid_functor::solve_rt_grid_functor(
 }
 
 const int brgastro::solve_rt_it_functor::operator()(
-		const BRG_UNITS & in_param,
+		CONST_BRG_UNITS_REF  in_param,
 		BRG_UNITS & out_param, const bool silent ) const
 {
 	BRG_DISTANCE r = 0;
@@ -5815,8 +5815,8 @@ brgastro::gabdt::gabdt( const gabdt & other )
 }
 
 brgastro::gabdt::gabdt( const density_profile *new_host,
-		const BRG_DISTANCE &new_x, const BRG_DISTANCE &new_y,
-		const BRG_DISTANCE &new_z, const BRG_TIME &new_dt )
+		CONST_BRG_DISTANCE_REF new_x, CONST_BRG_DISTANCE_REF new_y,
+		CONST_BRG_DISTANCE_REF new_z, CONST_BRG_TIME_REF new_dt )
 {
 	set( new_host, new_x, new_y, new_z, new_dt );
 }
@@ -5838,8 +5838,8 @@ const int brgastro::gabdt::clear()
 }
 
 const int brgastro::gabdt::set( const density_profile *new_host,
-		const BRG_DISTANCE &new_x, const BRG_DISTANCE &new_y,
-		const BRG_DISTANCE &new_z, const BRG_TIME &new_dt )
+		CONST_BRG_DISTANCE_REF new_x, CONST_BRG_DISTANCE_REF new_y,
+		CONST_BRG_DISTANCE_REF new_z, CONST_BRG_TIME_REF new_dt )
 {
 	_is_cached_ = false;
 	_host_ptr_ = new_host;
@@ -5853,8 +5853,8 @@ const int brgastro::gabdt::set_host_ptr( const density_profile *new_host )
 	_host_ptr_ = new_host;
 	return 0;
 }
-const int brgastro::gabdt::set_pos( const BRG_DISTANCE &new_x,
-		const BRG_DISTANCE &new_y, const BRG_DISTANCE &new_z )
+const int brgastro::gabdt::set_pos( CONST_BRG_DISTANCE_REF new_x,
+		CONST_BRG_DISTANCE_REF new_y, CONST_BRG_DISTANCE_REF new_z )
 {
 	_is_cached_ = false;
 	_x_ = new_x;
@@ -5864,7 +5864,7 @@ const int brgastro::gabdt::set_pos( const BRG_DISTANCE &new_x,
 	_dv_.clear();
 	return 0;
 }
-const int brgastro::gabdt::set_dt( const BRG_TIME &new_dt )
+const int brgastro::gabdt::set_dt( CONST_BRG_TIME_REF new_dt )
 {
 	if ( _is_cached_ )
 	{
@@ -6158,9 +6158,9 @@ const int brgastro::gabdt_functor::operator()(
 // brgastro function definitions
 #if (1)
 const double brgastro::stripping_orbit_segment::_tidal_strip_retained( const density_profile *host_group,
-		const density_profile *satellite, const BRG_DISTANCE &r,
-		const BRG_VELOCITY &vr, const BRG_VELOCITY &vt,
-		const BRG_TIME &time_step, const long double &sum_delta_rho ) const
+		const density_profile *satellite, CONST_BRG_DISTANCE_REF r,
+		CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt,
+		CONST_BRG_TIME_REF time_step, const long double &sum_delta_rho ) const
 {
 	BRG_DISTANCE new_rt;
 	BRG_TIME inst_tangential_orbital_period, inst_full_orbital_period,
@@ -6200,9 +6200,9 @@ const double brgastro::stripping_orbit_segment::_tidal_strip_retained( const den
 }
 
 const BRG_DISTANCE brgastro::stripping_orbit_segment::_get_rt( const density_profile *host_group,
-		const density_profile *satellite, const BRG_DISTANCE &r,
-		const BRG_VELOCITY &vr, const BRG_VELOCITY &vt,
-		const BRG_TIME &time_step, const long double &sum_delta_rho,
+		const density_profile *satellite, CONST_BRG_DISTANCE_REF r,
+		CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt,
+		CONST_BRG_TIME_REF time_step, const long double &sum_delta_rho,
 		const bool silent ) const
 {
 	BRG_UNITS omega;

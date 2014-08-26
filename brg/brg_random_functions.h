@@ -24,6 +24,8 @@ brg_random_functions.h
 #ifndef __BRG_RANDOM_FUNCTIONS_H_INCLUDED__
 #define __BRG_RANDOM_FUNCTIONS_H_INCLUDED__
 
+#include <stdlib.h>
+
 #include "brg_global.h"
 
 namespace brgastro
@@ -44,7 +46,7 @@ inline const double drand( double min, double max )
 
 // Returns a random variable from a Gaussian distribution
 const double Gaus_rand();
-const double Gaus_rand( const double mean, const double stddev = 1 );
+const double Gaus_rand( const double mean, const double stddev = 0 );
 
 // Returns a random variable from a Gaussian distribution in log space
 // Note that "mean" here is the desired mean, NOT the peak of the function (which differ in log space). If you want to use

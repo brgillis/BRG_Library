@@ -42,7 +42,7 @@ brgastro::point_mass_profile::~point_mass_profile()
 #if (1) // Set functions
 
 const int brgastro::point_mass_profile::set_mvir(
-		const BRG_MASS &new_halo_mass, bool silent )
+		CONST_BRG_MASS_REF new_halo_mass, bool silent )
 {
 	_mass_ = new_halo_mass;
 	return 0;
@@ -107,7 +107,7 @@ const BRG_MASS brgastro::point_mass_profile::hmvir() const
 }
 
 const BRG_UNITS brgastro::point_mass_profile::dens(
-		const BRG_DISTANCE &r ) const
+		CONST_BRG_DISTANCE_REF r ) const
 {
 #ifdef _BRG_USE_UNITS_
 	BRG_UNITS result(0,-3,0,1,0,0,0);
@@ -120,13 +120,13 @@ const BRG_UNITS brgastro::point_mass_profile::dens(
 	return result;
 }
 const BRG_UNITS brgastro::point_mass_profile::enc_dens(
-		const BRG_DISTANCE &r,
+		CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	return enc_mass( r ) / ( 4. / 3. * pi * cube( r ) );
 }
 const BRG_MASS brgastro::point_mass_profile::enc_mass(
-		const BRG_DISTANCE &r,
+		CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	return _mass_;
