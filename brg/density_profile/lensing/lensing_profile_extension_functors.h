@@ -34,20 +34,20 @@ private:
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host );
+	void set_host_ptr( const lensing_profile_extension *new_host );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int set_offset_R( CONST_BRG_DISTANCE_REF new_offset_R );
+	void set_offset_R( CONST_BRG_DISTANCE_REF new_offset_R );
 	const BRG_DISTANCE offset_R()
 	{
 		return _offset_R_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param,
+			const bool silent = false ) const;
 
 	projected_density_functor();
 	projected_density_functor( const lensing_profile_extension *init_host,
@@ -73,14 +73,13 @@ private:
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	void set_host_ptr( const lensing_profile_extension *new_host_ptr );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
 
 	cylindrical_density_functor();
 	cylindrical_density_functor( const lensing_profile_extension *init_host );
@@ -97,26 +96,26 @@ class offset_ring_dens_functor
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	void set_host_ptr( const lensing_profile_extension *new_host_ptr );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int set_R0( CONST_BRG_DISTANCE_REF new_R_0 );
+	void set_R0( CONST_BRG_DISTANCE_REF new_R_0 );
 	CONST_BRG_DISTANCE_REF  R0()
 	{
 		return _R0_;
 	}
 
-	const int set_R( CONST_BRG_DISTANCE_REF new_R );
+	void set_R( CONST_BRG_DISTANCE_REF new_R );
 	CONST_BRG_DISTANCE_REF  R()
 	{
 		return _R_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+			const bool silent = false ) const;
 
 	offset_ring_dens_functor();
 	offset_ring_dens_functor( const lensing_profile_extension *new_host,
@@ -134,26 +133,25 @@ private:
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	void set_host_ptr( const lensing_profile_extension *new_host_ptr );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int set_R0( CONST_BRG_DISTANCE_REF new_R0 );
+	void set_R0( CONST_BRG_DISTANCE_REF new_R0 );
 	CONST_BRG_DISTANCE_REF R0()
 	{
 		return _R0_;
 	}
 
-	const int set_R( CONST_BRG_DISTANCE_REF new_R );
+	void set_R( CONST_BRG_DISTANCE_REF new_R );
 	CONST_BRG_DISTANCE_REF R()
 	{
 		return _R_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF in_param,
-			BRG_UNITS & out_param,
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param,
 			const bool silent = false ) const;
 
 	offset_circ_dens_functor();
@@ -171,20 +169,20 @@ private:
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	void set_host_ptr( const lensing_profile_extension *new_host_ptr );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int set_R( CONST_BRG_DISTANCE_REF new_R );
+	void set_R( CONST_BRG_DISTANCE_REF new_R );
 	CONST_BRG_DISTANCE_REF  R()
 	{
 		return _R_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+			const bool silent = false ) const;
 
 	offset_WLsig_functor();
 	offset_WLsig_functor( const lensing_profile_extension *init_host,
@@ -202,20 +200,20 @@ private:
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	void set_host_ptr( const lensing_profile_extension *new_host_ptr );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int set_R( CONST_BRG_DISTANCE_REF new_R );
+	void set_R( CONST_BRG_DISTANCE_REF new_R );
 	CONST_BRG_DISTANCE_REF  R()
 	{
 		return _R_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+			const bool silent = false ) const;
 
 	quick_offset_WLsig_functor();
 	quick_offset_WLsig_functor( const lensing_profile_extension *init_host,
@@ -233,20 +231,20 @@ private:
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	void set_host_ptr( const lensing_profile_extension *new_host_ptr );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int set_c( const double new_c );
+	void set_c( const double new_c );
 	const double c()
 	{
 		return _c_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-			BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+			const bool silent = false ) const;
 
 	group_WLsig_weight_functor();
 	group_WLsig_weight_functor( const lensing_profile_extension *new_host,
@@ -263,14 +261,14 @@ private:
 
 public:
 
-	const int set_sigma( CONST_BRG_DISTANCE_REF new_sigma );
+	void set_sigma( CONST_BRG_DISTANCE_REF new_sigma );
 	CONST_BRG_DISTANCE_REF sigma()
 	{
 		return _sigma_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-			BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+			const bool silent = false ) const;
 
 	shifted_WLsig_weight_functor();
 	shifted_WLsig_weight_functor( CONST_BRG_DISTANCE_REF new_sigma );
@@ -287,26 +285,25 @@ private:
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	void set_host_ptr( const lensing_profile_extension *new_host_ptr );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int set_R_shift( CONST_BRG_DISTANCE_REF new_R_shift );
+	void set_R_shift( CONST_BRG_DISTANCE_REF new_R_shift );
 	CONST_BRG_DISTANCE_REF R_shift()
 	{
 		return _R_shift_;
 	}
 
-	const int set_R( CONST_BRG_DISTANCE_REF new_R );
+	void set_R( CONST_BRG_DISTANCE_REF new_R );
 	CONST_BRG_DISTANCE_REF R()
 	{
 		return _R_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-			BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
 
 	shifted_WLsig_circ_functor( const lensing_profile_extension *new_host,
 			CONST_BRG_DISTANCE_REF new_R_shift, CONST_BRG_DISTANCE_REF new_R );
@@ -323,20 +320,19 @@ private:
 
 public:
 
-	const int set_host_ptr( const lensing_profile_extension *new_host_ptr );
+	void set_host_ptr( const lensing_profile_extension *new_host_ptr );
 	const lensing_profile_extension * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int set_R( CONST_BRG_DISTANCE_REF new_R );
+	void set_R( CONST_BRG_DISTANCE_REF new_R );
 	CONST_BRG_DISTANCE_REF R()
 	{
 		return _R_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF in_param,
-			BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
 
 	shifted_WLsig_functor( const lensing_profile_extension *new_host,
 			CONST_BRG_DISTANCE_REF new_R );

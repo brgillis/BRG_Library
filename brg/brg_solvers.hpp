@@ -68,10 +68,7 @@ inline const T solve_iterate( const f * func, const T &init_param = 0,
 		past_values[0] = new_value;
 
 		// Find new_value, based on standard iteration
-		if ( int errcode = ( *func )( new_value, new_value, silent ) )
-		{
-			throw errcode + LOWER_LEVEL_ERROR;
-		}
+		new_value = ( *func )( new_value, silent );
 
 		// First check if we have an equality. Likely will only happen if zero is a solution
 		if ( new_value == past_values[0] )
@@ -514,9 +511,7 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 			i_resid -= i_temp * divisor;
 			test_in_params = min_in_params + in_params_step * i_temp;
 		}
-		if ( int errcode = ( *func )( test_in_params, test_out_params,
-				silent ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		test_out_params = ( *func )( test_in_params, silent );
 		d = std::fabs( test_out_params - target_out_params );
 		if ( d < d_best )
 		{
@@ -553,9 +548,7 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 				i_resid -= i_temp * divisor;
 				test_in_params = min_in_params + in_params_step * i_temp;
 			}
-			if ( int errcode = ( *func )( test_in_params, test_out_params,
-					silent ) )
-				return errcode + LOWER_LEVEL_ERROR;
+			test_out_params = ( *func )( test_in_params, silent );
 			d = std::fabs( test_out_params - target_out_params );
 			if ( d < d_best )
 			{
@@ -617,9 +610,7 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 				i_temp -= 1;
 				test_in_params = best_in_params + in_params_step * i_temp;
 			}
-			if ( int errcode = ( *func )( test_in_params, test_out_params,
-					silent ) )
-				return errcode + LOWER_LEVEL_ERROR;
+			test_out_params = ( *func )( test_in_params, silent );
 			d = std::fabs( test_out_params - target_out_params );
 			if ( d < d_best )
 			{

@@ -125,18 +125,15 @@ const int brgastro::interpolator_functor::set_interpolator_ptr(
 }
 
 // Function method
-const int brgastro::interpolator_functor::operator()( CONST_BRG_UNITS_REF  in_param,
-BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::interpolator_functor::operator()( CONST_BRG_UNITS_REF  in_param,
+ const bool silent ) const
 {
 	if ( !_interpolator_ptr_set_up_ )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Spline pointer must be defined in spline_functor.\n";
-		return NOT_SET_UP_ERROR;
+		throw std::runtime_error("ERROR: Spline pointer must be defined in spline_functor.\n");
 	}
 
-	out_param = ( *_interpolator_ptr_ )( in_param );
+	return ( *_interpolator_ptr_ )( in_param );
 	return 0;
 }
 #endif
@@ -197,9 +194,8 @@ const int brgastro::interpolator_derivative_functor::set_interpolator_ptr(
 }
 
 // Function method
-const int brgastro::interpolator_derivative_functor::operator()(
-		CONST_BRG_UNITS_REF  in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::interpolator_derivative_functor::operator()(
+		CONST_BRG_UNITS_REF  in_param, const bool silent ) const
 {
 	if ( !_interpolator_functor_set_up_ )
 	{
@@ -216,8 +212,7 @@ const int brgastro::interpolator_derivative_functor::operator()(
 			temp_out_params, Jacobian ) )
 		return 1;
 
-	out_param = Jacobian;
-	return 0;
+	return Jacobian;
 }
 
 #endif
@@ -312,27 +307,21 @@ const int brgastro::interpolator_derivative_weight_functor::set_t_max(
 }
 
 // Function method
-const int brgastro::interpolator_derivative_weight_functor::operator()(
-		CONST_BRG_UNITS_REF  in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::interpolator_derivative_weight_functor::operator()(
+		CONST_BRG_UNITS_REF in_param, const bool silent ) const
 {
-
-	double result;
 
 	// Check bounds
 	if ( std::fabs( in_param - _centre_point_ )
 			> _sample_max_width_ * std::fabs( _t_max_ - _t_min_ ) )
 	{
-		result = 0;
+		return 0;
 	}
 	else
 	{
-		result = Gaus_pdf( in_param, _centre_point_,
+		return Gaus_pdf( in_param, _centre_point_,
 				_sample_scale_ * std::fabs( _t_max_ - _t_min_ ) );
 	}
-
-	out_param = result;
-	return 0;
 }
 #endif
 
@@ -5677,9 +5666,8 @@ const brgastro::density_profile * brgastro::stripping_orbit_segment::final_host(
 // brgastro::solve_rt_sd_functor class method implementations
 #if (1)
 
-const int brgastro::solve_rt_grid_functor::operator()(
-		CONST_BRG_UNITS_REF  in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::solve_rt_grid_functor::operator()(
+		CONST_BRG_UNITS_REF  in_param, const bool silent ) const
 {
 	BRG_DISTANCE r;
 	BRG_MASS delta_M;
@@ -5689,15 +5677,12 @@ const int brgastro::solve_rt_grid_functor::operator()(
 
 	if ( r == 0 )
 	{
-		out_param = DBL_MAX;
+		return DBL_MAX;
 	}
 	else
 	{
-		out_param = std::fabs(
-				Gc * ( satellite_ptr->enc_mass( r ) - delta_M )
-						/ safe_d(
-								( omega * omega + Daccel ) * cube( r ) )
-						- 1 );
+		return std::fabs( Gc * ( satellite_ptr->enc_mass( r ) - delta_M )
+						/ safe_d(( omega * omega + Daccel ) * cube( r ) ) - 1 );
 	}
 	return 0;
 }
@@ -5721,9 +5706,8 @@ brgastro::solve_rt_grid_functor::solve_rt_grid_functor(
 	return;
 }
 
-const int brgastro::solve_rt_it_functor::operator()(
-		CONST_BRG_UNITS_REF  in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::solve_rt_it_functor::operator()(
+		CONST_BRG_UNITS_REF in_param, const bool silent ) const
 {
 	BRG_DISTANCE r = 0;
 	BRG_MASS delta_M = 0;
@@ -5737,11 +5721,11 @@ const int brgastro::solve_rt_it_functor::operator()(
 			/ safe_d( omega * omega + Daccel );
 	if ( r3 <= 0 )
 	{
-		out_param = r * 0.9;
+		return r * 0.9;
 	}
 	else
 	{
-		out_param = std::pow( r3, 1. / 3. );
+		return std::pow( r3, 1. / 3. );
 	}
 	return 0;
 }

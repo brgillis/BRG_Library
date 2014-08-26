@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 
 #include "../../brg_global.h"
 
@@ -20,34 +21,28 @@
 // brgastro::projected_density_functor class methods
 #if (1)
 
-const int brgastro::projected_density_functor::set_host_ptr(
+void brgastro::projected_density_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
-const int brgastro::projected_density_functor::set_offset_R(
+void brgastro::projected_density_functor::set_offset_R(
 		CONST_BRG_DISTANCE_REF new_offset_R )
 {
 	_offset_R_ = new_offset_R;
-	return 0;
 }
 
-const int brgastro::projected_density_functor::operator()(
+BRG_UNITS brgastro::projected_density_functor::operator()(
 		CONST_BRG_UNITS_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+		const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Host must be assigned to projected_density_functor before function can be called.\n";
-		return NOT_SET_UP_ERROR;
+		throw std::runtime_error("ERROR: Host must be assigned to projected_density_functor before function can be called.\n");
 	}
 	BRG_DISTANCE r = quad_add( in_param, _offset_R_ );
-	out_param = _host_ptr_->dens( r );
-	return 0;
+	return _host_ptr_->dens( r );
 }
 
 brgastro::projected_density_functor::projected_density_functor()
@@ -68,26 +63,20 @@ brgastro::projected_density_functor::projected_density_functor(
 // brgastro::cylindrical_density_functor class methods
 #if (1)
 
-const int brgastro::cylindrical_density_functor::set_host_ptr(
+void brgastro::cylindrical_density_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
-const int brgastro::cylindrical_density_functor::operator()(
-		CONST_BRG_UNITS_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::cylindrical_density_functor::operator()(
+		CONST_BRG_UNITS_REF in_param,const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Host must be assigned to cylindrical_density_functor before function can be called.\n";
-		return NOT_SET_UP_ERROR;
+		throw std::runtime_error("ERROR: Host must be assigned to cylindrical_density_functor before function can be called.\n");
 	}
-	out_param = 2 * pi * in_param * _host_ptr_->proj_dens( in_param );
-	return 0;
+	return 2 * pi * in_param * _host_ptr_->proj_dens( in_param );
 }
 
 brgastro::cylindrical_density_functor::cylindrical_density_functor()
@@ -105,44 +94,36 @@ brgastro::cylindrical_density_functor::cylindrical_density_functor(
 // brgastro::offset_ring_dens_functor class methods
 #if (1)
 
-const int brgastro::offset_ring_dens_functor::set_R0(
+void brgastro::offset_ring_dens_functor::set_R0(
 		CONST_BRG_DISTANCE_REF new_R0 )
 {
 	_R0_ = new_R0;
-	return 0;
 }
 
-const int brgastro::offset_ring_dens_functor::set_R(
+void brgastro::offset_ring_dens_functor::set_R(
 		CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
-	return 0;
 }
 
-const int brgastro::offset_ring_dens_functor::operator()(
+BRG_UNITS brgastro::offset_ring_dens_functor::operator()(
 		CONST_BRG_UNITS_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+		const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Host must be assigned to offset_ring_dens_functor before function can be called.\n";
-		return NOT_SET_UP_ERROR;
+		throw std::runtime_error("ERROR: Host must be assigned to offset_ring_dens_functor before function can be called.\n");
 	}
 
 	BRG_DISTANCE d = lc_add( _R0_, _R_, in_param );
 
-	out_param = _host_ptr_->proj_dens( d, silent );
-
-	return 0;
+	return _host_ptr_->proj_dens( d, silent );
 }
 
-const int brgastro::offset_ring_dens_functor::set_host_ptr(
+void brgastro::offset_ring_dens_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
 brgastro::offset_ring_dens_functor::offset_ring_dens_functor()
@@ -182,44 +163,35 @@ CONST_BRG_DISTANCE_REF brgastro::offset_circ_dens_functor::_arc_length_in_circle
 	}
 }
 
-const int brgastro::offset_circ_dens_functor::set_R0(
+void brgastro::offset_circ_dens_functor::set_R0(
 		CONST_BRG_DISTANCE_REF new_R_0 )
 {
 	_R0_ = new_R_0;
-	return 0;
 }
 
-const int brgastro::offset_circ_dens_functor::set_R(
+void brgastro::offset_circ_dens_functor::set_R(
 		CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
-	return 0;
 }
 
-const int brgastro::offset_circ_dens_functor::operator()(
-		CONST_BRG_UNITS_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::offset_circ_dens_functor::operator()(
+		CONST_BRG_UNITS_REF in_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Host must be assigned to offset_circ_dens_functor before function can be called.\n";
-		return NOT_SET_UP_ERROR;
+		throw std::runtime_error("ERROR: Host must be assigned to offset_circ_dens_functor before function can be called.\n");
 	}
 
 	BRG_DISTANCE L = _arc_length_in_circle(in_param);
 
-	out_param = L * _host_ptr_->proj_dens( in_param, silent );
-
-	return 0;
+	return L * _host_ptr_->proj_dens( in_param, silent );
 }
 
-const int brgastro::offset_circ_dens_functor::set_host_ptr(
+void brgastro::offset_circ_dens_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
 brgastro::offset_circ_dens_functor::offset_circ_dens_functor()
@@ -242,34 +214,26 @@ brgastro::offset_circ_dens_functor::offset_circ_dens_functor(
 // brgastro::offset_WLsig_functor class methods
 #if (1)
 
-const int brgastro::offset_WLsig_functor::set_R( CONST_BRG_DISTANCE_REF new_R )
+void brgastro::offset_WLsig_functor::set_R( CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
-	return 0;
 }
 
-const int brgastro::offset_WLsig_functor::operator()(
-		CONST_BRG_UNITS_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::offset_WLsig_functor::operator()(
+		CONST_BRG_UNITS_REF in_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n";
-		return NOT_SET_UP_ERROR;
+		throw std::runtime_error("ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n");
 	}
 
-	out_param = _host_ptr_->offset_WLsig( _R_, in_param, silent );
-
-	return 0;
+	return _host_ptr_->offset_WLsig( _R_, in_param, silent );
 }
 
-const int brgastro::offset_WLsig_functor::set_host_ptr(
+void brgastro::offset_WLsig_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
 brgastro::offset_WLsig_functor::offset_WLsig_functor()
@@ -290,34 +254,26 @@ brgastro::offset_WLsig_functor::offset_WLsig_functor(
 // brgastro::quick_offset_WLsig_functor class methods
 #if (1)
 
-const int brgastro::quick_offset_WLsig_functor::set_R( CONST_BRG_DISTANCE_REF new_R )
+void brgastro::quick_offset_WLsig_functor::set_R( CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
-	return 0;
 }
 
-const int brgastro::quick_offset_WLsig_functor::operator()(
-		CONST_BRG_DISTANCE_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::quick_offset_WLsig_functor::operator()(
+		CONST_BRG_DISTANCE_REF in_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n";
-		return NOT_SET_UP_ERROR;
+		throw std::runtime_error("ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n");
 	}
 
-	out_param = _host_ptr_->quick_offset_WLsig( _R_, in_param, silent );
-
-	return 0;
+	return _host_ptr_->quick_offset_WLsig( _R_, in_param, silent );
 }
 
-const int brgastro::quick_offset_WLsig_functor::set_host_ptr(
+void brgastro::quick_offset_WLsig_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
 brgastro::quick_offset_WLsig_functor::quick_offset_WLsig_functor()
@@ -338,46 +294,35 @@ brgastro::quick_offset_WLsig_functor::quick_offset_WLsig_functor(
 // brgastro::group_WLsig_weight_functor class methods
 #if (1)
 
-const int brgastro::group_WLsig_weight_functor::set_c( const double new_c )
+void brgastro::group_WLsig_weight_functor::set_c( const double new_c )
 {
 	_c_ = new_c;
-	return 0;
 }
 
-const int brgastro::group_WLsig_weight_functor::operator()(
-		CONST_BRG_DISTANCE_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::group_WLsig_weight_functor::operator()(
+		CONST_BRG_DISTANCE_REF in_param, const bool silent ) const
 {
-	BRG_UNITS result;
 	if ( _host_ptr_ == NULL )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n";
-		return NOT_SET_UP_ERROR;
+		throw std::runtime_error("ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n");
 	}
 
 	if ( _c_ == 0 )
 	{
-		result = 2 * pi * in_param * _host_ptr_->proj_dens( in_param );
+		return 2 * pi * in_param * _host_ptr_->proj_dens( in_param );
 	}
 	else
 	{
 		BRG_UNIQUE_PTR<brgastro::lensing_profile_extension> group_profile(_host_ptr_->lensing_profile_extension_clone());
 		group_profile->set_c(_c_);
-		result = 2 * pi * in_param * group_profile->proj_dens(in_param);
+		return 2 * pi * in_param * group_profile->proj_dens(in_param);
 	}
-
-	out_param = result;
-
-	return 0;
 }
 
-const int brgastro::group_WLsig_weight_functor::set_host_ptr(
+void brgastro::group_WLsig_weight_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
 brgastro::group_WLsig_weight_functor::group_WLsig_weight_functor()
@@ -398,25 +343,17 @@ brgastro::group_WLsig_weight_functor::group_WLsig_weight_functor(
 // brgastro::shifted_WLsig_weight_functor class methods
 #if (1)
 
-const int brgastro::shifted_WLsig_weight_functor::operator()(
-		CONST_BRG_UNITS_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::shifted_WLsig_weight_functor::operator()(
+		CONST_BRG_UNITS_REF in_param, const bool silent ) const
 {
-
 	// The output here is the height of a Rayleigh distribution at in_param
-
-	using std::exp;
-
-	out_param = in_param/square(_sigma_) * exp(-square(in_param)/(2*square(_sigma_)));
-
-	return 0;
+	return in_param/square(_sigma_) * std::exp(-square(in_param)/(2*square(_sigma_)));
 }
 
-const int brgastro::shifted_WLsig_weight_functor::set_sigma(
+void brgastro::shifted_WLsig_weight_functor::set_sigma(
 		CONST_BRG_DISTANCE_REF new_sigma )
 {
 	_sigma_ = new_sigma;
-	return 0;
 }
 
 brgastro::shifted_WLsig_weight_functor::shifted_WLsig_weight_functor()
@@ -435,9 +372,8 @@ brgastro::shifted_WLsig_weight_functor::shifted_WLsig_weight_functor(
 // brgastro::shifted_WLsig_circ_functor class methods
 #if (1)
 
-const int brgastro::shifted_WLsig_circ_functor::operator()(
-		CONST_BRG_UNITS_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::shifted_WLsig_circ_functor::operator()(
+		CONST_BRG_UNITS_REF in_param, const bool silent ) const
 {
 	// in_param here will be angle theta in radians
 
@@ -455,37 +391,32 @@ const int brgastro::shifted_WLsig_circ_functor::operator()(
 
 	if(isbad(theta))
 	{
-		out_param = _host_ptr_->WLsig(R_actual,silent) +
+		return _host_ptr_->WLsig(R_actual,silent) +
 			extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z());
 	}
 	else
 	{
-		out_param = _host_ptr_->WLsig(R_actual,silent)*angle_factor +
+		return _host_ptr_->WLsig(R_actual,silent)*angle_factor +
 				extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z()); //TODO Should there be a factor of 1/2 here?
 	}
-
-	return 0;
 }
 
-const int brgastro::shifted_WLsig_circ_functor::set_R_shift(
+void brgastro::shifted_WLsig_circ_functor::set_R_shift(
 		CONST_BRG_DISTANCE_REF new_R_shift )
 {
 	_R_shift_ = new_R_shift;
-	return 0;
 }
 
-const int brgastro::shifted_WLsig_circ_functor::set_host_ptr(
+void brgastro::shifted_WLsig_circ_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
-const int brgastro::shifted_WLsig_circ_functor::set_R(
+void brgastro::shifted_WLsig_circ_functor::set_R(
 		CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
-	return 0;
 }
 
 brgastro::shifted_WLsig_circ_functor::shifted_WLsig_circ_functor( const lensing_profile_extension *new_host,
@@ -501,9 +432,8 @@ brgastro::shifted_WLsig_circ_functor::shifted_WLsig_circ_functor( const lensing_
 // brgastro::shifted_WLsig_functor class methods
 #if (1)
 
-const int brgastro::shifted_WLsig_functor::operator()(
-		CONST_BRG_UNITS_REF in_param,
-		BRG_UNITS & out_param, const bool silent ) const
+BRG_UNITS brgastro::shifted_WLsig_functor::operator()(
+		CONST_BRG_UNITS_REF in_param,const bool silent ) const
 {
 	// in_param here will be R_shift
 	shifted_WLsig_circ_functor func(_host_ptr_,in_param,_R_);
@@ -512,28 +442,25 @@ const int brgastro::shifted_WLsig_functor::operator()(
 	const double max_in_param = pi;
 	unsigned int num_out_params = 1;
 	const double precision = 0.000001;
+	BRG_UNITS out_param(0);
 
 	if ( brgastro::integrate_Rhomberg( &func, 1, min_in_param, max_in_param, num_out_params,
 			out_param, precision ) )
 		return LOWER_LEVEL_ERROR;
 
-	out_param /= pi;
-
-	return 0;
+	return out_param /= pi;
 }
 
-const int brgastro::shifted_WLsig_functor::set_host_ptr(
+void brgastro::shifted_WLsig_functor::set_host_ptr(
 		const lensing_profile_extension *new_host )
 {
 	_host_ptr_ = new_host;
-	return 0;
 }
 
-const int brgastro::shifted_WLsig_functor::set_R(
+void brgastro::shifted_WLsig_functor::set_R(
 		CONST_BRG_DISTANCE_REF new_R )
 {
 	_R_ = new_R;
-	return 0;
 }
 
 brgastro::shifted_WLsig_functor::shifted_WLsig_functor( const lensing_profile_extension *new_host,

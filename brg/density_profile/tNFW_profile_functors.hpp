@@ -32,18 +32,16 @@ public:
 	{
 	}
 
-	const int operator()( CONST_BRG_DISTANCE_REF  in_param, BRG_DISTANCE & out_param,
-			const bool silent = false ) const
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param,	const bool silent = false ) const
 	{
 		if(in_param<=0)
 		{
-			out_param = _halo_->rvir0();
+			return _halo_->rvir0();
 		}
 		else
 		{
-			out_param = in_param * _halo_->enc_dens(in_param)/(virial_density_factor*_halo_->rho_crit());
+			return in_param * _halo_->enc_dens(in_param)/(virial_density_factor*_halo_->rho_crit());
 		}
-		return 0;
 	}
 
 };
@@ -60,11 +58,9 @@ public:
 	{
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param, BRG_UNITS & out_param,
-			const bool silent = false ) const
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const
 	{
-		out_param = std::fabs(virial_density_factor*_halo_->rho_crit()-_halo_->enc_dens(in_param));
-		return 0;
+		return std::fabs(virial_density_factor*_halo_->rho_crit()-_halo_->enc_dens(in_param));
 	}
 
 };

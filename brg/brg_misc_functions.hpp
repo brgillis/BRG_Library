@@ -253,7 +253,7 @@ const T safe_sqrt( const T a )
 		std::cerr << "WARNING: safe_sqrt() prevented crash from negative input.\n";
 	}
 #endif
-	return sqrt( std::fabs( a ) );
+	return std::sqrt( std::fabs( a ) );
 }
 inline const double safe_sqrt( const int a ) // Special case for integers due to -INT_MIN > INT_MAX
 {

@@ -100,8 +100,7 @@ public:
 	const int set_interpolator_ptr( const brgastro::interpolator *new_interpolator_ptr );
 
 	// Function method
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-			BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
 
 };
 // class interpolator_functor
@@ -152,8 +151,7 @@ public:
 	const int set_interpolator_ptr( const brgastro::interpolator *new_interpolator_ptr );
 
 	// Function method
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-			BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
 
 };
 // class interpolator_derivative_functor
@@ -213,8 +211,7 @@ public:
 	const int set_t_max( double new_t_max );
 
 	// Function method
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-			BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
 };
 // class interpolator_derivative_sample_functor
 
@@ -2174,8 +2171,7 @@ public:
 	const density_profile *satellite_ptr;
 
 	long double sum_delta_rho, Daccel, omega;
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
 	solve_rt_it_functor( const BRG_UNITS init_omega,
 			const density_profile *init_satellite, const BRG_UNITS init_Daccel,
 			const long double init_sum_delta_rho = 0 );
@@ -2198,8 +2194,7 @@ public:
 	const density_profile *satellite_ptr;
 
 	long double sum_delta_rho, Daccel, omega;
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
 	solve_rt_grid_functor( const BRG_UNITS init_omega,
 			const density_profile *init_satellite, const BRG_UNITS init_Daccel,
 			const long double init_sum_delta_rho = 0 );

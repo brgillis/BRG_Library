@@ -32,14 +32,13 @@ private:
 	const density_profile *_host_ptr_;
 public:
 
-	const int set_host_ptr( const density_profile *new_host_ptr );
+	void set_host_ptr( const density_profile *new_host_ptr );
 	const density_profile * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
 
 	accel_functor();
 	accel_functor( const density_profile *init_host_ptr );
@@ -66,19 +65,18 @@ private:
 
 public:
 
-	const int set_host_ptr( const density_profile *new_host_ptr );
+	void set_host_ptr( const density_profile *new_host_ptr );
 	const density_profile * host_ptr()
 	{
 		return _host_ptr_;
 	}
-	const int set_target_mass( const BRG_MASS &new_target_mass );
+	void set_target_mass( const BRG_MASS &new_target_mass );
 	const BRG_MASS & target_mass()
 	{
 		return _target_mass_;
 	}
 
-	const int operator ()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator ()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
 
 	solve_rhm_functor();
 	solve_rhm_functor( const density_profile *init_host,
@@ -103,14 +101,13 @@ private:
 
 public:
 
-	const int set_host_ptr( const density_profile *new_host_ptr );
+	void set_host_ptr( const density_profile *new_host_ptr );
 	const density_profile * host_ptr()
 	{
 		return _host_ptr_;
 	}
 
-	const int operator()( CONST_BRG_UNITS_REF  in_param,
-	BRG_UNITS & out_param, const bool silent = false ) const;
+	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
 
 	spherical_density_functor();
 	spherical_density_functor( const density_profile *init_host );

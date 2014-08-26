@@ -115,8 +115,7 @@ inline const int differentiate( const f * func,
 	}
 
 	// Get value of function at input parameters
-	if ( int errcode = ( *func )( in_params, base_out_params, silent ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	base_out_params = ( *func )( in_params, silent );
 
 	bool bad_function_result = false;
 	unsigned int counter = 0;
@@ -141,7 +140,11 @@ inline const int differentiate( const f * func,
 			}
 
 			// Run the function to get value at test point
-			if (( *func )( test_in_params, test_out_params,silent ) )
+			try
+			{
+				test_out_params = ( *func )( test_in_params, silent );
+			}
+			catch(const std::runtime_error &e)
 			{
 				bad_function_result = true;
 				d_in_params /= 10; // Try again with smaller step
@@ -375,8 +378,7 @@ inline const int integrate( const f * func, const unsigned int num_in_params,
 		last_out_params = temp_out_params;
 
 		// Call function at this value
-		if ( int errcode = ( *func )( in_params, temp_out_params, silent ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		temp_out_params = ( *func )( in_params, silent );
 
 		// Create output param arrays if necessary
 		if ( !array_created )
@@ -802,7 +804,6 @@ inline const int integrate_Rhomberg( const f * func,
 		const T & passed_in_params = T( 0 ), const bool silent = false )
 {
 	T in_params( 0 );
-	T temp_out_params( 0 );
 	std::vector< std::vector< T > > R( 0 );
 	std::vector< T > Rn( 0 );
 	T Rnm;
@@ -831,16 +832,8 @@ inline const int integrate_Rhomberg( const f * func,
 		b0 = max_in_params;
 
 		// Get R[0][0] first
-
-		in_params = a0;
-		if ( int errcode = ( *func )( in_params, temp_out_params, silent ) )
-			return errcode + LOWER_LEVEL_ERROR;
-		fa = temp_out_params;
-
-		in_params = b0;
-		if ( int errcode = ( *func )( in_params, temp_out_params, silent ) )
-			return errcode + LOWER_LEVEL_ERROR;
-		fb = temp_out_params;
+		fa = ( *func )( a0, silent );
+		fb = ( *func )( b0, silent );
 
 		Rnm = 0.5 * ( b0 - a0 ) * ( fa + fb );
 
@@ -858,10 +851,7 @@ inline const int integrate_Rhomberg( const f * func,
 			{
 				in_params = a0
 						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2, n );
-				if ( int errcode = ( *func )( in_params, temp_out_params,
-						silent ) )
-					return errcode + LOWER_LEVEL_ERROR;
-				ftot += temp_out_params;
+				ftot += ( *func )( in_params, silent );
 			}
 
 			Rnm = 0.5 * R[n - 1][0] + ( b0 - a0 ) / ipow( 2, n ) * ftot;
