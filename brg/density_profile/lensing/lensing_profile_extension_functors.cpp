@@ -444,7 +444,7 @@ BRG_UNITS brgastro::shifted_WLsig_functor::operator()(
 	const double precision = 0.000001;
 	BRG_UNITS out_param(0);
 
-	if ( brgastro::integrate_Rhomberg( &func, 1, min_in_param, max_in_param, num_out_params,
+	if ( brgastro::integrate_Romberg( &func, 1, min_in_param, max_in_param, num_out_params,
 			out_param, precision ) )
 		return LOWER_LEVEL_ERROR;
 

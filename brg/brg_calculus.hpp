@@ -657,7 +657,7 @@ inline std::vector< T > integrate_mc( const f * func,
 	return out_params;
 }
 
-// Uses Rhomberg's rule to integrate a function. Each output parameter is integrated independently. For multiple input parameters,
+// Uses Romberg's rule to integrate a function. Each output parameter is integrated independently. For multiple input parameters,
 // the function works iteratively, using the "passed" parameters seen at the end of the function. These parameters should not be entered by the user unless
 // you're sure you know what you're doing. Due to the iterative nature of this function and the overhead involved, it may be unfeasibly slow for large-
 // dimensional integration. In the case of num_in_params > ~4, Monte Carlo integration is typically superior.
@@ -673,7 +673,7 @@ inline std::vector< T > integrate_mc( const f * func,
 
 // Scalar-in, scalar-out version. !!! Still needs cleanup after testing
 template< typename f, typename T >
-inline const int integrate_Rhomberg( const f * func,
+inline const int integrate_Romberg( const f * func,
 		const unsigned int num_in_params, const T & min_in_params,
 		const T & max_in_params, unsigned int & num_out_params, T & out_params,
 		const double precision = 0.00001, const bool tighten_precision = false,
@@ -767,7 +767,7 @@ inline const int integrate_Rhomberg( const f * func,
 
 // Vector-in, vector-out version
 template< typename f, typename T >
-inline const int integrate_Rhomberg( const f * func,
+inline const int integrate_Romberg( const f * func,
 		const unsigned int num_in_params,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, unsigned int & num_out_params,
@@ -944,7 +944,7 @@ inline const int integrate_Rhomberg( const f * func,
 		// Determine input param and add it to passed parameters array
 		new_passed_in_params[new_num_passed_params - 1] = a0;
 		// Call integrate on remaining in_params
-		if ( int errcode = brgastro::integrate_Rhomberg( func,
+		if ( int errcode = brgastro::integrate_Romberg( func,
 				new_num_in_params, new_min_in_params, new_max_in_params,
 				num_out_params, fa, new_precision, tighten_precision,
 				new_num_passed_params, new_passed_in_params ) )
@@ -952,7 +952,7 @@ inline const int integrate_Rhomberg( const f * func,
 		// Determine input param and add it to passed parameters array
 		new_passed_in_params[new_num_passed_params - 1] = b0;
 		// Call integrate on remaining in_params
-		if ( int errcode = brgastro::integrate_Rhomberg( func,
+		if ( int errcode = brgastro::integrate_Romberg( func,
 				new_num_in_params, new_min_in_params, new_max_in_params,
 				num_out_params, fb, new_precision, tighten_precision,
 				new_num_passed_params, new_passed_in_params ) )
@@ -976,7 +976,7 @@ inline const int integrate_Rhomberg( const f * func,
 			{
 				new_passed_in_params[new_num_passed_params - 1] = a0
 						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2., n );
-				if ( int errcode = brgastro::integrate_Rhomberg( func,
+				if ( int errcode = brgastro::integrate_Romberg( func,
 						new_num_in_params, new_min_in_params,
 						new_max_in_params, num_out_params, temp_out_params,
 						new_precision, tighten_precision,
@@ -1029,7 +1029,7 @@ inline const int integrate_Rhomberg( const f * func,
 
 // Scalar-in, scalar-out version
 template< typename f_in_1, typename f_in_2, typename T >
-inline const int integrate_product_Rhomberg( const f_in_1 * func1,
+inline const int integrate_product_Romberg( const f_in_1 * func1,
 		const f_in_2 * func2, const unsigned int num_in_params,
 		const T & min_in_params, const T & max_in_params,
 		unsigned int & num_out_params, T & out_params, const double precision =
@@ -1039,7 +1039,7 @@ inline const int integrate_product_Rhomberg( const f_in_1 * func1,
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
 
-	if ( int errcode = integrate_Rhomberg( &fprod, num_in_params,
+	if ( int errcode = integrate_Romberg( &fprod, num_in_params,
 			min_in_params, max_in_params, num_out_params, out_params,
 			precision, tighten_precision, num_passed_in_params,
 			passed_in_params ) )
@@ -1050,7 +1050,7 @@ inline const int integrate_product_Rhomberg( const f_in_1 * func1,
 
 // Vector-in, vector-out version
 template< typename f_in_1, typename f_in_2, typename T >
-inline const int integrate_product_Rhomberg( const f_in_1 * func1,
+inline const int integrate_product_Romberg( const f_in_1 * func1,
 		const f_in_2 * func2, const unsigned int num_in_params,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, unsigned int & num_out_params,
@@ -1062,7 +1062,7 @@ inline const int integrate_product_Rhomberg( const f_in_1 * func1,
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
 
-	if ( int errcode = integrate_Rhomberg( &fprod, num_in_params,
+	if ( int errcode = integrate_Romberg( &fprod, num_in_params,
 			min_in_params, max_in_params, num_out_params, out_params,
 			precision, tighten_precision, num_passed_in_params,
 			passed_in_params ) )
@@ -1072,7 +1072,7 @@ inline const int integrate_product_Rhomberg( const f_in_1 * func1,
 
 // Scalar-in, scalar-out version
 template< typename f_in_1, typename f_in_2, typename T >
-inline const int integrate_weighted_Rhomberg( const f_in_1 * func,
+inline const int integrate_weighted_Romberg( const f_in_1 * func,
 		const f_in_2 * func_weight, const unsigned int num_in_params,
 		const T & min_in_params, const T & max_in_params,
 		unsigned int & num_out_params, T & out_params, const double precision =
@@ -1084,12 +1084,12 @@ inline const int integrate_weighted_Rhomberg( const f_in_1 * func,
 	unsigned int num_prod_out_params = 0, num_weight_out_params = 0;
 	T prod_out_params( 0 ), weight_out_params( 0 );
 
-	if ( int errcode = integrate_Rhomberg( &fprod, num_in_params,
+	if ( int errcode = integrate_Romberg( &fprod, num_in_params,
 			min_in_params, max_in_params, num_prod_out_params, prod_out_params,
 			precision, tighten_precision, num_passed_in_params,
 			passed_in_params ) )
 		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = integrate_Rhomberg( func_weight, num_in_params,
+	if ( int errcode = integrate_Romberg( func_weight, num_in_params,
 			min_in_params, max_in_params, num_weight_out_params,
 			weight_out_params, precision, tighten_precision,
 			num_passed_in_params, passed_in_params ) )
@@ -1103,7 +1103,7 @@ inline const int integrate_weighted_Rhomberg( const f_in_1 * func,
 
 // Vector-in, vector-out version
 template< typename f_in_1, typename f_in_2, typename T >
-inline const int integrate_weighted_Rhomberg( const f_in_1 * func,
+inline const int integrate_weighted_Romberg( const f_in_1 * func,
 		const f_in_2 * func_weight, const unsigned int num_in_params,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, unsigned int & num_out_params,
@@ -1117,12 +1117,12 @@ inline const int integrate_weighted_Rhomberg( const f_in_1 * func,
 	unsigned int num_prod_out_params = 0, num_weight_out_params = 0;
 	std::vector< T > prod_out_params( 0 ), weight_out_params( 0 );
 
-	if ( int errcode = integrate_Rhomberg( &fprod, num_in_params,
+	if ( int errcode = integrate_Romberg( &fprod, num_in_params,
 			min_in_params, max_in_params, num_prod_out_params, prod_out_params,
 			precision, tighten_precision, num_passed_in_params,
 			passed_in_params ) )
 		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = integrate_Rhomberg( func_weight, num_in_params,
+	if ( int errcode = integrate_Romberg( func_weight, num_in_params,
 			min_in_params, max_in_params, num_weight_out_params,
 			weight_out_params, precision, tighten_precision,
 			num_passed_in_params, passed_in_params ) )
@@ -1164,7 +1164,7 @@ inline const int leapfrog_step( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF
 
 	// Calculate acceleration at this new position
 	d = dist3d( new_x, new_y, new_z );
-	(*accel_func)( d, a, silent );
+	a = (*accel_func)( d, silent );
 
 	// Adjust velocities
 	new_vx = vx + a * new_x / d * t_step;

@@ -279,7 +279,7 @@ private:
 		out_file << SPCP(name)->_header_string_ << "\n#\n";
 
 		// Set number of significant digits
-		out_file.precision(_sig_digits_);
+		out_file.precision(SPCP(name)->_sig_digits_);
 
 		// Output range
 		out_file << SPCP(name)->_min_1_ << "\t" << SPCP(name)->_max_1_ << "\t" << SPCP(name)->_step_1_ << "\n";

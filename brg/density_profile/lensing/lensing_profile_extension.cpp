@@ -63,7 +63,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::proj_dens( CONST_BRG_DISTAN
 	}
 	else
 	{
-		if ( brgastro::integrate_Rhomberg( &func, num_in_params, min_in_params,
+		if ( brgastro::integrate_Romberg( &func, num_in_params, min_in_params,
 				max_in_params, num_out_params, out_params ) )
 		{
 			if ( !silent )
@@ -83,7 +83,7 @@ const BRG_MASS brgastro::lensing_profile_extension::proj_enc_mass( CONST_BRG_DIS
 	brgastro::cylindrical_density_functor func( this );
 	unsigned int num_in_params = 1, num_out_params = 0;
 	BRG_UNITS min_in_params( 0 ), max_in_params( R_to_use ), out_params( 0 );
-	if ( brgastro::integrate_Rhomberg( &func, num_in_params, min_in_params,
+	if ( brgastro::integrate_Romberg( &func, num_in_params, min_in_params,
 			max_in_params, num_out_params, out_params ) )
 	{
 		if ( !silent )
@@ -115,7 +115,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( CONST_BRG_DIS
 	BRG_UNITS min_in_params_ring = 0;
 	BRG_UNITS max_in_params_ring = pi;
 
-	if ( brgastro::integrate_Rhomberg( &ringfunc, 1, min_in_params_ring,
+	if ( brgastro::integrate_Romberg( &ringfunc, 1, min_in_params_ring,
 			max_in_params_ring, num_out_params, out_param_ring, precision ) )
 	{
 		if ( !silent )
@@ -128,7 +128,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::offset_WLsig( CONST_BRG_DIS
 	BRG_UNITS min_in_params_circ = max(offset_R_to_use-R_to_use,0.);
 	BRG_UNITS max_in_params_circ = offset_R_to_use+R_to_use;
 
-	if ( brgastro::integrate_Rhomberg( &circfunc, 1, min_in_params_circ,
+	if ( brgastro::integrate_Romberg( &circfunc, 1, min_in_params_circ,
 			max_in_params_circ, num_out_params, out_param_circ, precision ) )
 
 	{
@@ -155,7 +155,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::group_WLsig( CONST_BRG_DIST
 	unsigned int num_in_params = 1, num_out_params = 0;
 	BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( rvir() ),
 			out_params( 0 );
-	if ( brgastro::integrate_weighted_Rhomberg( &func, &weight_func,
+	if ( brgastro::integrate_weighted_Romberg( &func, &weight_func,
 			num_in_params, min_in_params, max_in_params, num_out_params,
 			out_params ) )
 	{
@@ -175,7 +175,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( CONS
 	unsigned int num_in_params = 1, num_out_params = 0;
 	BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( rvir() ),
 			out_params( 0 );
-	if ( brgastro::integrate_weighted_Rhomberg( &func, &weight_func,
+	if ( brgastro::integrate_weighted_Romberg( &func, &weight_func,
 			num_in_params, min_in_params, max_in_params, num_out_params,
 			out_params ) )
 	{
@@ -202,7 +202,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::shifted_WLsig( CONST_BRG_DI
 	BRG_UNITS min_in_params( 0 ), max_in_params( 4*sigma ),
 			out_params( 0 );
 
-	if ( brgastro::integrate_weighted_Rhomberg( &func, &weight_func,
+	if ( brgastro::integrate_weighted_Romberg( &func, &weight_func,
 			num_in_params, min_in_params, max_in_params, num_out_params,
 			out_params, precision ) )
 	{
@@ -226,7 +226,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::semiquick_shifted_WLsig( CO
 	BRG_UNITS min_in_params( 0 ), max_in_params( 4*sigma ),
 			out_params( 0 );
 
-	if ( brgastro::integrate_weighted_Rhomberg( &func, &weight_func,
+	if ( brgastro::integrate_weighted_Romberg( &func, &weight_func,
 			num_in_params, min_in_params, max_in_params, num_out_params,
 			out_params ) )
 	{

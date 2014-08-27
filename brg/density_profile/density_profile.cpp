@@ -113,7 +113,7 @@ const BRG_MASS brgastro::density_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 	brgastro::spherical_density_functor func( this );
 	unsigned int num_in_params = 1, num_out_params = 0;
 	BRG_UNITS min_in_params( 0 ), max_in_params( r_to_use ), out_params( 0 );
-	if ( brgastro::integrate_Rhomberg( &func, num_in_params, min_in_params,
+	if ( brgastro::integrate_Romberg( &func, num_in_params, min_in_params,
 			max_in_params, num_out_params, out_params ) )
 	{
 		if ( !silent )

@@ -612,7 +612,7 @@ const double brgastro::interpolator_derivative::operator()( double xval ) const
 			else
 			{
 
-				if ( integrate_weighted_Rhomberg(
+				if ( integrate_weighted_Romberg(
 						&spline_derivative_functor_val,
 						&spline_derivative_weight_functor_val, num_in_params,
 						min_in_params, max_in_params, num_out_params,
