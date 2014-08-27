@@ -5117,9 +5117,10 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 	}
 
 	if ( include_header )
-		return print_table( *out, num_columns, num_rows, header, data, false );
+		print_table( *out, data, header, silent );
 	else
-		return print_table( *out, num_columns, num_rows, header, data, true ); // Format for header, but don't print it again
+		print_table( *out, data, std::vector<std::string>(), silent );
+	return 0;
 }
 
 const BRG_UNITS brgastro::stripping_orbit_segment::_delta_rho(

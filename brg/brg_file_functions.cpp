@@ -9,36 +9,38 @@ using namespace std;
 
 /** Global function implementations **/
 #if (1)
-
-const int brgastro::print_table( std::ostream & out_stream,
-		const int num_columns, const int num_rows,
-		const std::vector< std::string > & header,
+void brgastro::_print_table( std::ostream & out_stream,
 		const std::vector< std::vector< std::string > > &data,
-		const bool skip_header, const bool silent )
+		const std::vector< std::string > & header,
+		const bool silent )
 {
-	vector< int > width;
-	if ( int errcode = brgastro::make_array( width, num_columns ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	unsigned int num_columns = data.size();
+	unsigned int num_rows = data.at(0).size();
+	vector< int > width(num_columns,0);
+
+	const bool skip_header = (header.size()==0);
 
 	try
 	{
-
 		// First, we loop through to get the maximum width of each column
 		// Check the header first
-		for ( int c = 0; c < num_columns; c++ )
+		if(!skip_header)
 		{
-			if ( (int)header[c].length() > width[c] )
+			for ( unsigned int c = 0; c < num_columns; c++ )
 			{
-				width[c] = header[c].length();
-			}
-		} // for( int c = 0; c < num_columns; c++ )
+				if ( (int)header[c].length() > width[c] )
+				{
+					width[c] = header[c].length();
+				}
+			} // for( int c = 0; c < num_columns; c++ )
+		}
 
 		// Now loop through the data
-		for ( int i = 0; i < num_rows; i++ )
+		for ( unsigned int i = 0; i < num_rows; i++ )
 		{
-			for ( int c = 0; c < num_columns; c++ )
+			for ( unsigned int c = 0; c < num_columns; c++ )
 			{
-				if ( (int)data[c][i].length() > width[c] )
+				if ( (int)data[c].at(i).length() > width[c] )
 				{
 					width[c] = data[c][i].length();
 				}
@@ -46,20 +48,20 @@ const int brgastro::print_table( std::ostream & out_stream,
 		} // for( int i = 0; i < num_rows; i++ ) (testing width)
 
 		// Increase all widths by 1 to ensure spacing
-		for ( int c = 0; c < num_columns; c++ )
+		for ( unsigned int c = 0; c < num_columns; c++ )
 			width[c] += 1;
 
 		// Output the header
 		if ( !skip_header )
-			for ( int c = 0; c < num_columns; c++ )
+			for ( unsigned int c = 0; c < num_columns; c++ )
 				out_stream << setfill( ' ' ) << setw( width[c] ) << header[c];
 
 		out_stream << std::endl;
 
 		// Output the data
-		for ( int i = 0; i < num_rows; i++ )
+		for ( unsigned int i = 0; i < num_rows; i++ )
 		{
-			for ( int c = 0; c < num_columns; c++ )
+			for ( unsigned int c = 0; c < num_columns; c++ )
 			{
 				out_stream << setfill( ' ' ) << setw( width[c] ) << data[c][i];
 			}
@@ -67,88 +69,26 @@ const int brgastro::print_table( std::ostream & out_stream,
 		}
 
 	}
-	catch ( ... )
+	catch ( const std::out_of_range &e )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Could not print table. Check that the data is properly formatted\n"
-					<< "at least num_columns length for header and first index of data, and at\n"
-					<< "least num_rows length for all vectors contained within data.\n";
-		return INVALID_ARGUMENTS_ERROR;
+		throw std::runtime_error((std::string)"ERROR: Could not print table. Check that the data is properly formatted\n"
+					+ "at least num_columns length for header and first index of data, and at\n"
+					+ "least num_rows length for all vectors contained within data.\n");
 	}
-
-	return 0;
-}
-
-const int brgastro::print_table( std::ostream & out_stream,
-		const int num_columns, const int num_rows,
-		const std::vector< std::vector< std::string > > & data,
-		const bool silent )
-{
-	vector< int > width;
-	if ( int errcode = brgastro::make_array( width, num_columns ) )
-		return errcode + LOWER_LEVEL_ERROR;
-
-	try
-	{
-
-		// First, we loop through to get the maximum width of each column
-		// Loop through the data
-		for ( int i = 0; i < num_rows; i++ )
-		{
-			for ( int c = 0; c < num_columns; c++ )
-			{
-				if ( (int)data[c][i].length() > width[c] )
-				{
-					width[c] = data[c][i].length();
-				}
-			} // for( int c = 0; c < num_columns; c++ )
-		} // for( int i = 0; i < num_rows; i++ ) (testing width)
-
-		// Increase all widths by 1 to ensure spacing
-		for ( int c = 0; c < num_columns; c++ )
-			width[c] += 1;
-
-		out_stream << std::endl;
-
-		// Output the data
-		for ( int i = 0; i < num_rows; i++ )
-		{
-			for ( int c = 0; c < num_columns; c++ )
-			{
-				out_stream << setfill( ' ' ) << setw( width[c] ) << data[c][i];
-			}
-			out_stream << std::endl;
-		}
-
-	}
-	catch ( ... )
-	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Could not print table. Check that the data is properly formatted\n"
-					<< "at least num_columns length for first index of data, and at\n"
-					<< "least num_rows length for all vectors contained within data.\n";
-		return INVALID_ARGUMENTS_ERROR;
-	}
-
-	return 0;
 }
 
 // Load table, either loading in the entire table, or only loading in certain columns into pointed-to
 // variables, found by matching header entries to the strings passed
-const int brgastro::load_table( const std::string & table_file_name, std::vector<std::vector<double> > & table_data,
-		const bool silent)
+std::vector<std::vector<std::string> > brgastro::_load_table( const std::string & table_file_name, const bool silent)
 {
+	std::vector<std::vector<std::string> > table_data;
 	std::ifstream fi;
 
 	// Open the file
-	if(brgastro::open_file(fi, table_file_name))
-		throw std::runtime_error("Cannot open file in load_table.");
+	open_file(fi, table_file_name);
 
 	// Trim the header
-	if(trim_comments_all_at_top(fi))
-		throw std::runtime_error("Invalid table format in load_table");
+	trim_comments_all_at_top(fi);
 
 	// Clear the output vector
 	table_data.resize(0);
@@ -157,7 +97,7 @@ const int brgastro::load_table( const std::string & table_file_name, std::vector
 	std::istringstream line_data_stream;
 	while ( !fi.eof() )
 	{
-		std::vector<double> temp_vector(0);
+		std::vector<std::string> temp_vector(0);
 
 		getline(fi, line_data);
 		line_data_stream.clear();
@@ -166,7 +106,7 @@ const int brgastro::load_table( const std::string & table_file_name, std::vector
 	    // Split the line on whitespace
 		do
 	    {
-	        double value;
+	        std::string value;
 	        line_data_stream >> value;
 	        temp_vector.push_back(value);
 	    } while (line_data_stream);
@@ -174,13 +114,10 @@ const int brgastro::load_table( const std::string & table_file_name, std::vector
 	    table_data.push_back(temp_vector);
 	}
 
-	fi.close();
-	fi.clear();
-
-	return 0;
+	return table_data;
 }
-const int brgastro::load_table( const std::string & table_file_name,
-		std::vector<std::vector<double> > & table_data,
+void brgastro::_load_table_and_header( const std::string & table_file_name,
+		std::vector<std::vector<std::string> > & table_data,
 		std::vector<std::string> & header, const bool silent)
 {
 	std::ifstream fi;
@@ -188,8 +125,7 @@ const int brgastro::load_table( const std::string & table_file_name,
 	std::istringstream line_data_stream;
 
 	// Open the file
-	if(brgastro::open_file(fi, table_file_name))
-		throw std::runtime_error("Cannot open file in load_table.");
+	brgastro::open_file(fi, table_file_name);
 
 	// Clear the output vectors
 	header.resize(0);
@@ -224,13 +160,12 @@ const int brgastro::load_table( const std::string & table_file_name,
 	}
 
 	// Trim any remaining comments
-	if(trim_comments_all_at_top(fi))
-		throw std::runtime_error("Invalid table format in load_table");
+	trim_comments_all_at_top(fi);
 
 	// Load in the data now
 	while ( !fi.eof() )
 	{
-		std::vector<double> temp_vector(0);
+		std::vector<std::string> temp_vector(0);
 
 		getline(fi, line_data);
 		if(line_data.size()==0) break;
@@ -240,28 +175,23 @@ const int brgastro::load_table( const std::string & table_file_name,
 	    // Split the line on whitespace
 		do
 	    {
-	        double value;
+	        std::string value;
 	        line_data_stream >> value;
 	        temp_vector.push_back(value);
 	    } while (line_data_stream);
 
 	    table_data.push_back(temp_vector);
 	}
-
-	fi.close();
-	fi.clear();
-
-	return 0;
 }
-const int brgastro::load_table_columns( const std::string & table_file_name,
-		std::vector< std::pair< std::string, std::vector<double>* > > & header_links,
+void brgastro::_load_table_columns( const std::string & table_file_name,
+		std::vector< std::pair< std::string, std::vector<std::string>* > > & header_links,
 		const bool case_sensitive, const bool silent)
 {
 	// First, load in the table
-	std::vector<std::vector<double> > table_data;
+	std::vector<std::vector<std::string> > table_data;
 	std::vector<std::string> header;
 
-	brgastro::load_table( table_file_name, table_data, header, silent);
+	brgastro::_load_table_and_header( table_file_name, table_data, header, silent);
 
 	// Now, loop through each key and search for it in the header.
 	for(unsigned int i = 0; i < header_links.size(); i++)
@@ -291,7 +221,7 @@ const int brgastro::load_table_columns( const std::string & table_file_name,
 				// Found it, now load in the data
 				key_found = true;
 
-				std::vector<double> column_data(table_data.size());
+				std::vector<std::string> column_data(table_data.size());
 				try
 				{
 					for(unsigned int k = 0; k < table_data.size(); k++)
@@ -315,10 +245,10 @@ const int brgastro::load_table_columns( const std::string & table_file_name,
 		}
 	}
 
-	return 0;
+	return;
 }
 
-const int brgastro::open_file( std::ofstream & stream, const std::string name,
+void brgastro::open_file( std::ofstream & stream, const std::string & name,
 		const bool silent )
 {
 	stream.close();
@@ -326,13 +256,10 @@ const int brgastro::open_file( std::ofstream & stream, const std::string name,
 	stream.open( name.c_str() );
 	if ( !stream )
 	{
-		if ( !silent )
-			cerr << "ERROR: Could not open file " << name << "!\n";
-		return FILE_ACCESS_ERROR;
+		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
 	}
-	return 0;
 }
-const int brgastro::open_file( std::ifstream & stream, const std::string name,
+void brgastro::open_file( std::ifstream & stream, const std::string & name,
 		const bool silent )
 {
 	stream.close();
@@ -340,13 +267,10 @@ const int brgastro::open_file( std::ifstream & stream, const std::string name,
 	stream.open( name.c_str() );
 	if ( !stream )
 	{
-		if ( !silent )
-			cerr << "ERROR: Could not open file " << name << "!\n";
-		return FILE_ACCESS_ERROR;
+		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
 	}
-	return 0;
 }
-const int brgastro::open_file( std::fstream & stream, const std::string name,
+void brgastro::open_file( std::fstream & stream, const std::string & name,
 		const bool silent )
 {
 	stream.close();
@@ -354,13 +278,10 @@ const int brgastro::open_file( std::fstream & stream, const std::string name,
 	stream.open( name.c_str() );
 	if ( !stream )
 	{
-		if ( !silent )
-			cerr << "ERROR: Could not open file " << name << "!\n";
-		return FILE_ACCESS_ERROR;
+		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
 	}
-	return 0;
 }
-const int brgastro::open_bin_file( std::ofstream & stream, const std::string name,
+void brgastro::open_bin_file( std::ofstream & stream, const std::string & name,
 		const bool silent )
 {
 	stream.close();
@@ -368,13 +289,10 @@ const int brgastro::open_bin_file( std::ofstream & stream, const std::string nam
 	stream.open( name.c_str(), ios::out | ios::binary );
 	if ( !stream )
 	{
-		if ( !silent )
-			cerr << "ERROR: Could not open file " << name << "!\n";
-		return FILE_ACCESS_ERROR;
+		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
 	}
-	return 0;
 }
-const int brgastro::open_bin_file( std::ifstream & stream, const std::string name,
+void brgastro::open_bin_file( std::ifstream & stream, const std::string & name,
 		const bool silent )
 {
 	stream.close();
@@ -382,13 +300,10 @@ const int brgastro::open_bin_file( std::ifstream & stream, const std::string nam
 	stream.open( name.c_str(), ios::in | ios::binary );
 	if ( !stream )
 	{
-		if ( !silent )
-			cerr << "ERROR: Could not open file " << name << "!\n";
-		return FILE_ACCESS_ERROR;
+		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
 	}
-	return 0;
 }
-const int brgastro::open_bin_file( std::fstream & stream, const std::string name,
+void brgastro::open_bin_file( std::fstream & stream, const std::string & name,
 		const bool silent )
 {
 	stream.close();
@@ -396,14 +311,11 @@ const int brgastro::open_bin_file( std::fstream & stream, const std::string name
 	stream.open( name.c_str(), ios::out | ios::in | ios::binary  );
 	if ( !stream )
 	{
-		if ( !silent )
-			cerr << "ERROR: Could not open file " << name << "!\n";
-		return FILE_ACCESS_ERROR;
+		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
 	}
-	return 0;
 }
 
-const int brgastro::trim_comments_one_line( std::ifstream & stream,
+void brgastro::trim_comments_one_line( std::ifstream & stream,
 		const bool silent )
 {
 	std::string file_data;
@@ -412,14 +324,9 @@ const int brgastro::trim_comments_one_line( std::ifstream & stream,
 		if ( stream.peek() == (int)( *"#" ) )
 			getline( stream, file_data );
 	}
-	else
-	{
-		return UNSPECIFIED_ERROR;
-	}
-	return 0;
 }
 
-const int brgastro::trim_comments_one_line( std::fstream & stream,
+void brgastro::trim_comments_one_line( std::fstream & stream,
 		const bool silent )
 {
 	std::string file_data;
@@ -428,14 +335,9 @@ const int brgastro::trim_comments_one_line( std::fstream & stream,
 		if ( stream.peek() == (int)( *"#" ) )
 			getline( stream, file_data );
 	}
-	else
-	{
-		return UNSPECIFIED_ERROR;
-	}
-	return 0;
 }
 
-const int brgastro::trim_comments_all_at_top( std::ifstream & stream,
+void brgastro::trim_comments_all_at_top( std::ifstream & stream,
 		const bool silent )
 {
 	std::string file_data;
@@ -445,15 +347,10 @@ const int brgastro::trim_comments_all_at_top( std::ifstream & stream,
 		{
 			getline( stream, file_data );
 		}
-		else
-		{
-			return 0;
-		}
 	}
-	return UNSPECIFIED_ERROR; // We reached the end before we ran out of comments
 }
 
-const int brgastro::trim_comments_all_at_top( std::fstream & stream,
+void brgastro::trim_comments_all_at_top( std::fstream & stream,
 		const bool silent )
 {
 	std::string file_data;
@@ -463,12 +360,7 @@ const int brgastro::trim_comments_all_at_top( std::fstream & stream,
 		{
 			getline( stream, file_data );
 		}
-		else
-		{
-			return 0;
-		}
 	}
-	return UNSPECIFIED_ERROR; // We reached the end before we ran out of comments
 }
 
 #endif // end global function implementations

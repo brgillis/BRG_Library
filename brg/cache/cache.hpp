@@ -112,7 +112,11 @@ private:
 			}
 			need_to_calc = false;
 
-			if ( open_file( in_file, SPCP(name)->_file_name_, true ) )
+			try
+			{
+				open_file( in_file, SPCP(name)->_file_name_, true );
+			}
+			catch(const std::exception &e)
 			{
 				need_to_calc = true;
 				SPCP(name)->_calc( silent );
@@ -133,14 +137,7 @@ private:
 			}
 
 			// Trim out any other commented lines
-			if ( trim_comments_all_at_top( in_file ) )
-			{
-				need_to_calc = true;
-				SPCP(name)->_calc( silent );
-				SPCP(name)->_output();
-				SPCP(name)->_unload();
-				continue;
-			}
+			trim_comments_all_at_top( in_file );
 
 			// Load range parameters;
 			if ( !( in_file >> SPCP(name)->_min_1_ >> SPCP(name)->_max_1_ >> SPCP(name)->_step_1_ ) )
@@ -409,7 +406,7 @@ public:
 			data[2].push_back(ss.str());
 		}
 
-		print_table(out,data.size(),data[0].size(),header,data,false,silent);
+		print_table(out,data,header,silent);
 	}
 
 	const BRG_UNITS get( const double x, const bool silent = false ) const

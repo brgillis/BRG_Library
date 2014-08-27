@@ -133,8 +133,11 @@ private:
 				loop_counter++;
 			}
 			need_to_calc = false;
-
-			if ( open_bin_file( in_file, SPCP(name)->_file_name_, true ) )
+			try
+			{
+				open_bin_file( in_file, SPCP(name)->_file_name_, true );
+			}
+			catch(const std::exception &e)
 			{
 				need_to_calc = true;
 				SPCP(name)->_calc( silent );
@@ -517,7 +520,7 @@ public:
 			}
 		}
 
-		print_table(out,data.size(),data[0].size(),header,data,false,silent);
+		print_table(out,data,header,silent);
 	}
 
 	const BRG_UNITS get( const double x_1, const double x_2, const double x_3, const double x_4,
