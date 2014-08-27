@@ -19,6 +19,7 @@
 #ifdef _BRG_USE_UNITS
 #include "brg_units.h"
 #endif
+#include "brg_vector.hpp"
 
 namespace brgastro
 {
@@ -632,17 +633,26 @@ inline std::vector<T> integrate_weighted_trapezoid( const f1 * func, const f2 * 
 
 // Monte-carlo integration method. NYI
 template< typename f, typename T >
-inline const int integrate_mc( const f * func,
-		const unsigned int num_in_params,
+inline std::vector< T > integrate_mc( const f * func,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, const int num_samples,
-		unsigned int & num_out_params, std::vector< T > & out_params,
 		const bool silent = false )
 {
-	if ( !silent )
-		std::cerr
-				<< "ERROR: Placeholder function for integrate_mc being used.\n";
-	return UNSPECIFIED_ERROR;
+	bool first_sample = true;
+	std::vector<T> test_in_params, test_out_params;
+	brgastro::vector<T> out_params;
+
+	test_in_params = drand(min_in_params,max_in_params);
+	out_params = (*func)(test_in_params,silent);
+
+	for(unsigned int i=0; i<num_samples-1; ++i )
+	{
+		test_in_params = drand(min_in_params,max_in_params);
+		test_out_params = (*func)(test_in_params,silent);
+		out_params += test_out_params;
+	}
+
+	return (out_params/num_samples).v();
 }
 
 // Uses Rhomberg's rule to integrate a function. Each output parameter is integrated independently. For multiple input parameters,
