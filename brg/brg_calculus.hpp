@@ -19,7 +19,6 @@
 #ifdef _BRG_USE_UNITS
 #include "brg_units.h"
 #endif
-#include "brg_vector.hpp"
 
 namespace brgastro
 {
@@ -639,8 +638,7 @@ inline std::vector< T > integrate_mc( const f * func,
 		const bool silent = false )
 {
 	bool first_sample = true;
-	std::vector<T> test_in_params, test_out_params;
-	brgastro::vector<T> out_params;
+	std::vector<T> test_in_params, test_out_params, out_params;
 
 	test_in_params = drand(min_in_params,max_in_params);
 	out_params = (*func)(test_in_params,silent);
@@ -649,10 +647,14 @@ inline std::vector< T > integrate_mc( const f * func,
 	{
 		test_in_params = drand(min_in_params,max_in_params);
 		test_out_params = (*func)(test_in_params,silent);
-		out_params += test_out_params;
+		for(unsigned int j=0; j<test_out_params.size(); ++j)
+			out_params[j] += test_out_params[j];
 	}
 
-	return (out_params/num_samples).v();
+	for(unsigned int j=0; j<out_params.size(); ++j)
+		out_params[j] /= num_samples;
+
+	return out_params;
 }
 
 // Uses Rhomberg's rule to integrate a function. Each output parameter is integrated independently. For multiple input parameters,
