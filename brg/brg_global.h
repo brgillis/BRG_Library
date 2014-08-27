@@ -76,8 +76,8 @@ const double pi = 3.14159265358979323846;
 #define DBL_MAX_PRECISION 14
 #endif
 
-#ifndef RHOMBERG_N_MAX
-#define RHOMBERG_N_MAX 20
+#ifndef ROMBERG_N_MAX
+#define ROMBERG_N_MAX 20
 #endif
 
 #ifdef _BRG_USE_UNITS_

@@ -535,7 +535,7 @@ const int brgastro::interpolator_derivative::add_unknown_point( const double t )
 }
 
 // Get functions
-const double brgastro::interpolator_derivative::operator()( double xval ) const
+const double brgastro::interpolator_derivative::operator()( double xval, bool silent ) const
 {
 	if ( !_interpolator_ptr_set_up_ )
 	{
@@ -597,7 +597,6 @@ const double brgastro::interpolator_derivative::operator()( double xval ) const
 		{
 			double t = _unknown_t_list_[i];
 			spline_derivative_weight_functor_val.set_center_point( t );
-			unsigned int num_in_params = 1, num_out_params = 1;
 			BRG_UNITS min_in_params( t - delta_t );
 			BRG_UNITS max_in_params( t + delta_t );
 			BRG_UNITS out_params( 0 );
@@ -612,12 +611,11 @@ const double brgastro::interpolator_derivative::operator()( double xval ) const
 			else
 			{
 
-				if ( integrate_weighted_Romberg(
+				out_params = integrate_weighted_Romberg(
 						&spline_derivative_functor_val,
-						&spline_derivative_weight_functor_val, num_in_params,
-						min_in_params, max_in_params, num_out_params,
-						out_params, _sample_precision_ ) )
-					return 1;
+						&spline_derivative_weight_functor_val,
+						min_in_params, max_in_params, _sample_precision_,
+						false, silent );
 
 				_estimated_interpolator_.add_point( t, out_params );
 

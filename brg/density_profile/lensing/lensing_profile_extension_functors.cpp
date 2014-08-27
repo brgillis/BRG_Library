@@ -440,13 +440,11 @@ BRG_UNITS brgastro::shifted_WLsig_functor::operator()(
 
 	const double min_in_param = 0;
 	const double max_in_param = pi;
-	unsigned int num_out_params = 1;
 	const double precision = 0.000001;
 	BRG_UNITS out_param(0);
 
-	if ( brgastro::integrate_Romberg( &func, 1, min_in_param, max_in_param, num_out_params,
-			out_param, precision ) )
-		return LOWER_LEVEL_ERROR;
+	out_param = brgastro::integrate_Romberg( &func, min_in_param, max_in_param,
+			precision, false, silent );
 
 	return out_param /= pi;
 }

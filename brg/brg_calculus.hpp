@@ -673,14 +673,11 @@ inline std::vector< T > integrate_mc( const f * func,
 
 // Scalar-in, scalar-out version. !!! Still needs cleanup after testing
 template< typename f, typename T >
-inline const int integrate_Romberg( const f * func,
-		const unsigned int num_in_params, const T & min_in_params,
-		const T & max_in_params, unsigned int & num_out_params, T & out_params,
-		const double precision = 0.00001, const bool tighten_precision = false,
-		const unsigned int num_passed_in_params = 0,
-		const T & passed_in_params = T( 0 ), const bool silent = false )
+inline T integrate_Romberg( const f * func,
+		T min_in_param, T max_in_param, double precision = 0.00001,
+		bool tighten_precision = false, bool silent = false )
 {
-	T in_params( 0 );
+	T in_param(0);
 	std::vector< std::vector< T > > R( 0 );
 	std::vector< T > Rn( 0 );
 	T Rnm;
@@ -688,92 +685,69 @@ inline const int integrate_Romberg( const f * func,
 	T fa( 0 ), fb( 0 ), ftot( 0 );
 	T d;
 
-	// Check that we have a sane number of input parameters
-	if ( ( num_in_params != 1 ) || ( num_in_params > MAX_STACK_DEPTH ) )
+	// Rhomberg's rule integration routine
+
+	a0 = min_in_param;
+	b0 = max_in_param;
+
+	// Get R[0][0] first
+	fa = ( *func )( a0, silent );
+	fb = ( *func )( b0, silent );
+
+	Rnm = 0.5 * ( b0 - a0 ) * ( fa + fb );
+
+	Rn.push_back( Rnm );
+	R.push_back( Rn );
+	Rn.resize( 0 );
+
+	for ( int n = 1; n < ROMBERG_N_MAX; n++ )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Bad number of input params passed to integrate_Rhomberg().\n";
-		return INVALID_ARGUMENTS_ERROR;
-	}
+		// Get R[n][0]
 
-	if ( num_in_params < 1 ) // To catch errors that might have slipped through
-	{
-		return errorNOS( silent );
-	}
-	else if ( num_in_params == 1 )     // if (num_in_params < 1)
-	{
-		// Rhomberg's rule integration routine now
+		ftot = 0;
 
-		a0 = min_in_params;
-		b0 = max_in_params;
+		for ( int k = 1; k <= ipow( 2, n - 1 ); k++ )
+		{
+			in_param = a0
+					+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2, n );
+			ftot += ( *func )( in_param, silent );
+		}
 
-		// Get R[0][0] first
-		fa = ( *func )( a0, silent );
-		fb = ( *func )( b0, silent );
-
-		Rnm = 0.5 * ( b0 - a0 ) * ( fa + fb );
+		Rnm = 0.5 * R[n - 1][0] + ( b0 - a0 ) / ipow( 2, n ) * ftot;
 
 		Rn.push_back( Rnm );
+
+		for ( int m = 1; m <= n; m++ )
+		{
+			Rnm = ( ipow( 4, m ) * Rn[m - 1] - R[n - 1][m - 1] )
+					/ ( ipow( 4, m ) - 1 );
+			Rn.push_back( Rnm );
+		}
+
 		R.push_back( Rn );
 		Rn.resize( 0 );
 
-		for ( int n = 1; n < RHOMBERG_N_MAX; n++ )
+		// Check for convergence
+		d = ( 2 * fabs( R[n][n] - R[n - 1][n - 1] )
+						/ safe_d( fabs( R[n][n] + R[n - 1][n - 1] ) ) );
+		if ( d < precision )
 		{
-			// Get R[n][0]
+			return R[n][n];
+		}
 
-			ftot = 0;
+	} // for(int n = 0; n < RHOMBERG_N_MAX; n++)
 
-			for ( int k = 1; k <= ipow( 2, n - 1 ); k++ )
-			{
-				in_params = a0
-						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2, n );
-				ftot += ( *func )( in_params, silent );
-			}
-
-			Rnm = 0.5 * R[n - 1][0] + ( b0 - a0 ) / ipow( 2, n ) * ftot;
-
-			Rn.push_back( Rnm );
-
-			for ( int m = 1; m <= n; m++ )
-			{
-				Rnm = ( ipow( 4, m ) * Rn[m - 1] - R[n - 1][m - 1] )
-						/ ( ipow( 4, m ) - 1 );
-				Rn.push_back( Rnm );
-			}
-
-			R.push_back( Rn );
-			Rn.resize( 0 );
-
-			// Check for convergence
-			d = ( 2 * fabs( R[n][n] - R[n - 1][n - 1] )
-							/ safe_d( fabs( R[n][n] + R[n - 1][n - 1] ) ) );
-			if ( d < precision )
-			{
-				out_params = R[n][n];
-				break;
-			}
-
-		} // for(int n = 0; n < RHOMBERG_N_MAX; n++)
-
-	}
-	else
-	{
-		return errorNOS();
-	}
-
-	return 0;
+	if(!silent) std::cerr << "WARNING: Integrate_Romberg did not converge.\n";
+	return R.back().back();
 }
 
 // Vector-in, vector-out version
 template< typename f, typename T >
-inline const int integrate_Romberg( const f * func,
-		const unsigned int num_in_params,
+inline std::vector< T > integrate_Romberg( const f * func,
 		const std::vector< T > & min_in_params,
-		const std::vector< T > & max_in_params, unsigned int & num_out_params,
-		std::vector< T > & out_params, const double precision = 0.00001,
+		const std::vector< T > & max_in_params,
+		const double precision = 0.00001,
 		const bool tighten_precision = false,
-		const unsigned int num_passed_in_params = 0,
 		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
 		const bool silent = false )
 {
@@ -793,8 +767,9 @@ inline const int integrate_Romberg( const f * func,
 	std::vector< T > fa( 0 ), fb( 0 ), ftot( 0 );
 	T d;
 
-	int param_starting_index;
-	int new_num_in_params = 0, new_num_passed_params = 0, num_tot_params =
+	unsigned int param_starting_index;
+	unsigned int num_in_params = min_in_params.size(), num_passed_in_params = passed_in_params.size(),
+			new_num_in_params = 0, new_num_passed_params = 0, num_tot_params =
 			num_in_params + num_passed_in_params;
 
 	// Check that we have a sane number of input parameters
@@ -812,9 +787,6 @@ inline const int integrate_Romberg( const f * func,
 	if ( int errcode = make_array( in_params, num_tot_params ) )
 		return errcode + LOWER_LEVEL_ERROR;
 
-	// Delete out_params array if it exists
-	out_params.clear();
-
 	// Were any params passed in from a previous iteration?
 	if ( num_passed_in_params > 0 )
 	{
@@ -829,7 +801,7 @@ inline const int integrate_Romberg( const f * func,
 
 	if ( num_in_params < 1 ) // To catch errors that might have slipped through
 	{
-		return errorNOS( silent );
+		throw std::runtime_error("Invalid path!");
 	}
 	else if ( num_in_params == 1 )     // if (num_in_params < 1)
 	{
@@ -841,14 +813,12 @@ inline const int integrate_Romberg( const f * func,
 		// Get R[0][0] first
 
 		in_params[param_starting_index] = a0;
-		if ( int errcode = ( *func )( in_params, temp_out_params, silent ) )
-			return errcode + LOWER_LEVEL_ERROR;
-		fa = temp_out_params;
+		fa = ( *func )( in_params, silent );
 
 		in_params[param_starting_index] = b0;
-		if ( int errcode = ( *func )( in_params, temp_out_params, silent ) )
-			return errcode + LOWER_LEVEL_ERROR;
-		fb = temp_out_params;
+		fb = ( *func )( in_params, silent );
+
+		unsigned int num_out_params = fa.size();
 
 		Rnm.resize( num_out_params );
 
@@ -859,7 +829,7 @@ inline const int integrate_Romberg( const f * func,
 		R.push_back( Rn );
 		Rn.resize( 0 );
 
-		for ( int n = 1; n < RHOMBERG_N_MAX; n++ )
+		for ( int n = 1; n < ROMBERG_N_MAX; n++ )
 		{
 			// Get R[n][0]
 
@@ -901,7 +871,7 @@ inline const int integrate_Romberg( const f * func,
 			}
 			if ( d < precision )
 			{
-				out_params = R[n][n];
+				return R[n][n];
 				break;
 			}
 
@@ -944,19 +914,19 @@ inline const int integrate_Romberg( const f * func,
 		// Determine input param and add it to passed parameters array
 		new_passed_in_params[new_num_passed_params - 1] = a0;
 		// Call integrate on remaining in_params
-		if ( int errcode = brgastro::integrate_Romberg( func,
-				new_num_in_params, new_min_in_params, new_max_in_params,
-				num_out_params, fa, new_precision, tighten_precision,
-				new_num_passed_params, new_passed_in_params ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		fa = brgastro::integrate_Romberg( func,
+				new_min_in_params, new_max_in_params,
+				new_precision, tighten_precision,
+				new_passed_in_params, silent );
 		// Determine input param and add it to passed parameters array
 		new_passed_in_params[new_num_passed_params - 1] = b0;
 		// Call integrate on remaining in_params
-		if ( int errcode = brgastro::integrate_Romberg( func,
-				new_num_in_params, new_min_in_params, new_max_in_params,
-				num_out_params, fb, new_precision, tighten_precision,
-				new_num_passed_params, new_passed_in_params ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		fb = brgastro::integrate_Romberg( func,
+				new_min_in_params, new_max_in_params,
+				new_precision, tighten_precision,
+				new_passed_in_params, silent );
+
+		unsigned int num_out_params = fa.size();
 
 		Rnm.resize( num_out_params );
 
@@ -967,7 +937,7 @@ inline const int integrate_Romberg( const f * func,
 		R.push_back( Rn );
 		Rn.resize( 0 );
 
-		for ( int n = 1; n < RHOMBERG_N_MAX; n++ )
+		for ( int n = 1; n < ROMBERG_N_MAX; n++ )
 		{
 			// Get R[n][0]
 
@@ -976,12 +946,11 @@ inline const int integrate_Romberg( const f * func,
 			{
 				new_passed_in_params[new_num_passed_params - 1] = a0
 						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2., n );
-				if ( int errcode = brgastro::integrate_Romberg( func,
-						new_num_in_params, new_min_in_params,
-						new_max_in_params, num_out_params, temp_out_params,
+				temp_out_params = brgastro::integrate_Romberg( func,
+						new_min_in_params,
+						new_max_in_params,
 						new_precision, tighten_precision,
-						new_num_passed_params, new_passed_in_params ) )
-					return errcode + LOWER_LEVEL_ERROR;
+						new_passed_in_params, silent );
 				for ( unsigned int i = 0; i < num_out_params; i++ )
 					ftot[i] += temp_out_params[i];
 			}
@@ -1013,129 +982,90 @@ inline const int integrate_Romberg( const f * func,
 			}
 			if ( d < precision )
 			{
-				out_params = R[n][n];
-				break;
+				return R[n][n];
 			}
 		}
 
 	}
 	else     // else if (num_in_params > 1)
 	{
-		return errorNOS( silent );
+		throw std::runtime_error("Invalid path!");
 	} // else
 
-	return 0;
+	if(!silent) std::cerr << "WARNING: Integrate_Romberg did not converge.\n";
+	return R.back().back();
 }
 
 // Scalar-in, scalar-out version
 template< typename f_in_1, typename f_in_2, typename T >
-inline const int integrate_product_Romberg( const f_in_1 * func1,
-		const f_in_2 * func2, const unsigned int num_in_params,
-		const T & min_in_params, const T & max_in_params,
-		unsigned int & num_out_params, T & out_params, const double precision =
-				0.00001, const bool tighten_precision = false,
-		const unsigned int num_passed_in_params = 0,
+inline T integrate_product_Romberg( const f_in_1 * func1,
+		const f_in_2 * func2, const T & min_in_params, const T & max_in_params,
+		const double precision = 0.00001, const bool tighten_precision = false,
 		const T & passed_in_params = T( 0 ), const bool silent = false )
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
 
-	if ( int errcode = integrate_Romberg( &fprod, num_in_params,
-			min_in_params, max_in_params, num_out_params, out_params,
-			precision, tighten_precision, num_passed_in_params,
-			passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-
-	return 0;
+	return integrate_Romberg( &fprod, min_in_params, max_in_params,
+			precision, tighten_precision, passed_in_params, silent );
 }
 
 // Vector-in, vector-out version
 template< typename f_in_1, typename f_in_2, typename T >
-inline const int integrate_product_Romberg( const f_in_1 * func1,
-		const f_in_2 * func2, const unsigned int num_in_params,
-		const std::vector< T > & min_in_params,
-		const std::vector< T > & max_in_params, unsigned int & num_out_params,
-		std::vector< T > & out_params, const double precision = 0.00001,
+inline std::vector< T > integrate_product_Romberg( const f_in_1 * func1,
+		const f_in_2 * func2, const std::vector< T > & min_in_params,
+		const std::vector< T > & max_in_params, const double precision = 0.00001,
 		const bool tighten_precision = false,
-		const unsigned int num_passed_in_params = 0,
 		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
 		const bool silent = false )
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
 
-	if ( int errcode = integrate_Romberg( &fprod, num_in_params,
-			min_in_params, max_in_params, num_out_params, out_params,
-			precision, tighten_precision, num_passed_in_params,
-			passed_in_params ) )
-
-	return 0;
+	return integrate_Romberg( &fprod, min_in_params, max_in_params,
+			precision, tighten_precision, passed_in_params, silent );
 }
 
 // Scalar-in, scalar-out version
 template< typename f_in_1, typename f_in_2, typename T >
-inline const int integrate_weighted_Romberg( const f_in_1 * func,
-		const f_in_2 * func_weight, const unsigned int num_in_params,
-		const T & min_in_params, const T & max_in_params,
-		unsigned int & num_out_params, T & out_params, const double precision =
-				0.00001, const bool tighten_precision = false,
-		const unsigned int num_passed_in_params = 0,
-		const T & passed_in_params = T( 0 ), const bool silent = false )
+inline T integrate_weighted_Romberg( const f_in_1 * func,
+		const f_in_2 * func_weight, const T & min_in_params, const T & max_in_params,
+		const double precision = 0.00001, const bool tighten_precision = false,
+		const bool silent = false )
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func, func_weight );
-	unsigned int num_prod_out_params = 0, num_weight_out_params = 0;
 	T prod_out_params( 0 ), weight_out_params( 0 );
 
-	if ( int errcode = integrate_Romberg( &fprod, num_in_params,
-			min_in_params, max_in_params, num_prod_out_params, prod_out_params,
-			precision, tighten_precision, num_passed_in_params,
-			passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = integrate_Romberg( func_weight, num_in_params,
-			min_in_params, max_in_params, num_weight_out_params,
-			weight_out_params, precision, tighten_precision,
-			num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	prod_out_params = integrate_Romberg( &fprod, min_in_params, max_in_params,
+			precision, tighten_precision, silent);
+	weight_out_params = integrate_Romberg( func_weight, min_in_params, max_in_params,
+			precision, tighten_precision, silent);
 
-	num_out_params = num_prod_out_params; // By construction of the function_product_function class, this must be the same as num_weight_out_params
-	out_params = prod_out_params / safe_d( weight_out_params );
-
-	return 0;
+	return prod_out_params / safe_d( weight_out_params );
 }
 
 // Vector-in, vector-out version
 template< typename f_in_1, typename f_in_2, typename T >
-inline const int integrate_weighted_Romberg( const f_in_1 * func,
-		const f_in_2 * func_weight, const unsigned int num_in_params,
-		const std::vector< T > & min_in_params,
-		const std::vector< T > & max_in_params, unsigned int & num_out_params,
-		std::vector< T > & out_params, const double precision = 0.00001,
+inline std::vector< T > integrate_weighted_Romberg( const f_in_1 * func,
+		const f_in_2 * func_weight,	const std::vector< T > & min_in_params,
+		const std::vector< T > & max_in_params, const double precision = 0.00001,
 		const bool tighten_precision = false,
-		const unsigned int num_passed_in_params = 0,
 		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
 		const bool silent = false )
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func, func_weight );
-	unsigned int num_prod_out_params = 0, num_weight_out_params = 0;
 	std::vector< T > prod_out_params( 0 ), weight_out_params( 0 );
 
-	if ( int errcode = integrate_Romberg( &fprod, num_in_params,
-			min_in_params, max_in_params, num_prod_out_params, prod_out_params,
-			precision, tighten_precision, num_passed_in_params,
-			passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = integrate_Romberg( func_weight, num_in_params,
-			min_in_params, max_in_params, num_weight_out_params,
-			weight_out_params, precision, tighten_precision,
-			num_passed_in_params, passed_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	prod_out_params = integrate_Romberg( &fprod, min_in_params, max_in_params,
+			precision, tighten_precision, passed_in_params, silent );
+	weight_out_params = integrate_Romberg( func_weight, min_in_params, max_in_params,
+			precision, tighten_precision, passed_in_params, silent );
 
-	num_out_params = num_prod_out_params; // By construction of the function_product_function class, this must be the same as num_weight_out_params
-	out_params.resize( num_out_params );
-	for ( unsigned int i = 0; i < num_out_params; i++ )
+	std::vector< T > out_params( prod_out_params.size() );
+	for ( unsigned int i = 0; i < prod_out_params.size(); i++ )
 	{
 		out_params[i] = prod_out_params[i] / safe_d( weight_out_params[i] );
 	}
 
-	return 0;
+	return out_params;
 }
 
 // Leapfrog method for solving a DE. Note that this implementation assumes that the positions and velocities passed to it are already spaced

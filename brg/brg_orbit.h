@@ -305,7 +305,7 @@ public:
 	const int clear();
 
 	// Get functions
-	const double operator()( double xval ) const;
+	const double operator()( double xval, bool silent = false ) const;
 };
 // class interpolator_derivative
 

@@ -13,10 +13,10 @@
 
 #include <cstdlib>
 #include <cmath>
-#include "brg_vector_functions.hpp"
 #include "brg_misc_functions.hpp"
 #include "brg_random_functions.h"
 #include "brg_units.h"
+#include "brg_vector_functions.hpp"
 
 namespace brgastro
 {
@@ -1217,7 +1217,8 @@ const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 	for(int step = 0; step < max_steps; step++)
 	{
 		// Get a new value
-		test_in_params = brgastro::rand_vector(brgastro::Gaus_rand,
+		const double (*Gaus_rand)(double,double) = brgastro::Gaus_rand;
+		test_in_params = brgastro::rand_vector(Gaus_rand,
 				                               current_in_params,
 				                               brgastro::divide(in_param_step_sigmas,annealing));
 
