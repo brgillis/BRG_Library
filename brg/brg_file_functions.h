@@ -62,7 +62,7 @@ void print_table( std::ostream & out_stream,
 	}
 	_print_table(out_stream, string_data, header, silent);
 }
-void print_table( std::ostream & out_stream,
+inline void print_table( std::ostream & out_stream,
 		const std::vector< std::vector< std::string > > & data,
 		const std::vector< std::string > & header = std::vector< std::string >(0),
 		const bool silent = false )
@@ -96,8 +96,7 @@ std::vector<std::vector<T> > load_table( const std::string & table_file_name,
 	}
 	return data;
 }
-template<> //TODO: Can't specialize functions, overload instead
-std::vector<std::vector<std::string> > load_table( const std::string & table_file_name,
+inline std::vector<std::vector<std::string> > load_table( const std::string & table_file_name,
 		const bool silent)
 {
 	return _load_table( table_file_name, silent );
@@ -128,8 +127,7 @@ void load_table_and_header( const std::string & table_file_name,
 		}
 	}
 }
-template<>
-void load_table_and_header( const std::string & table_file_name,
+inline void load_table_and_header( const std::string & table_file_name,
 		std::vector<std::vector<std::string> > & table_data,
 		std::vector<std::string> & header, const bool silent)
 {
@@ -152,23 +150,22 @@ void load_table_columns( const std::string & table_file_name,
 	for(unsigned int i=0; i<header_links.size(); ++i)
 	{
 		string_header_links.push_back(std::make_pair(
-				header_links.first(),&(string_data[i])));
+				header_links[i].first,&(string_data[i])));
 	}
 
 	_load_table_columns( table_file_name, string_header_links, case_sensitive, silent);
 
 	for(unsigned int i=0; i<header_links.size(); ++i)
 	{
-		header_links[i].second()->resize(string_data[i].size());
+		header_links[i].second->resize(string_data[i].size());
 		for(unsigned int j=0; j<string_data[i].size(); ++j)
 		{
 			ss.str() = string_data[i][j];
-			ss >> header_links[i].second()->at(j);
+			ss >> header_links[i].second->at(j);
 		}
 	}
 }
-template<>
-void load_table_columns( const std::string & table_file_name,
+inline void load_table_columns( const std::string & table_file_name,
 		std::vector< std::pair< std::string, std::vector<std::string>* > > & header_links,
 		const bool case_sensitive, const bool silent)
 {
