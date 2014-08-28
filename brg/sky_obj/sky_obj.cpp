@@ -75,6 +75,7 @@ const int brgastro::sky_obj::set_ra_dec( CONST_BRG_ANGLE_REF new_ra,
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
+	return 0;
 }
 const int brgastro::sky_obj::set_ra_dec_z( CONST_BRG_ANGLE_REF new_ra,
 		CONST_BRG_ANGLE_REF new_dec, const double new_z )
@@ -105,6 +106,7 @@ const int brgastro::sky_obj::set_ra_dec_err( CONST_BRG_ANGLE_REF new_ra,
 	set_dec( new_dec );
 	set_ra_err( new_ra_err );
 	set_dec_err( new_dec_err );
+	return 0;
 }
 const int brgastro::sky_obj::set_weight( const double new_weight )
 {

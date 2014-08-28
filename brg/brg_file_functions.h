@@ -90,7 +90,7 @@ std::vector<std::vector<T> > load_table( const std::string & table_file_name,
 	{
 		for(unsigned int j=0; j<string_data[i].size(); ++j)
 		{
-			ss.str() = string_data[i][j];
+			ss.str(string_data[i][j]);
 			ss >> data[i].at(j);
 		}
 	}
@@ -122,7 +122,7 @@ void load_table_and_header( const std::string & table_file_name,
 	{
 		for(unsigned int j=0; j<string_data[i].size(); ++j)
 		{
-			ss.str() = string_data[i][j];
+			ss.str(string_data[i][j]);
 			ss >> table_data[i].at(j);
 		}
 	}
@@ -160,7 +160,9 @@ void load_table_columns( const std::string & table_file_name,
 		header_links[i].second->resize(string_data[i].size());
 		for(unsigned int j=0; j<string_data[i].size(); ++j)
 		{
-			ss.str() = string_data[i][j];
+			ss.str("");
+			ss.clear();
+			ss.str(string_data[i][j]);
 			ss >> header_links[i].second->at(j);
 		}
 	}
