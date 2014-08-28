@@ -16,7 +16,7 @@
 // Global function implementations
 bool brgastro::p1first_lt_p2first(std::pair<double,double> pair1, std::pair<double,double> pair2)
 {
-	std::assert(pair1.first != pair2.first);
+	assert(pair1.first != pair2.first);
 	return (pair1.first < pair2.first);
 }
 
@@ -185,7 +185,7 @@ const double brgastro::interpolator::operator()(const double x) const
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
 
-			std::assert(it!=_sorted_data_.end());
+			assert(it!=_sorted_data_.end());
 
 			xlo = (it-1)->first;
 			ylo = (it-1)->second;
@@ -215,7 +215,7 @@ const double brgastro::interpolator::operator()(const double x) const
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
 
-			std::assert(it!=_sorted_data_.end());
+			assert(it!=_sorted_data_.end());
 
 			return (it-1)->second;
 		}
@@ -240,13 +240,13 @@ const double brgastro::interpolator::operator()(const double x) const
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
 
-			std::assert(it!=_sorted_data_.end());
+			assert(it!=_sorted_data_.end());
 
 			return it->second;
 		}
 	}
 	// Should never get here
-	std::assert(false);
+	assert(false);
 	return -1; // Just to keep editor from giving a warning
 
 }

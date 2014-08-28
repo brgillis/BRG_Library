@@ -2343,8 +2343,10 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 					}
 					else
 					{
-						del_obj(temp_satellite);
-						del_obj(temp_host);
+						delete temp_satellite;
+						temp_satellite = NULL;
+						delete temp_host;
+						temp_host = NULL;
 						_orbit_segments_.at( last_good_segment ).clone_final_satellite(
 								temp_satellite );
 						_orbit_segments_.at( last_good_segment ).clone_final_host(
@@ -2466,16 +2468,20 @@ const int brgastro::stripping_orbit::calc( const bool silent ) const
 			}
 		}
 
-		del_obj(temp_satellite);
-		del_obj(temp_host);
+		delete temp_satellite;
+		temp_satellite = NULL;
+		delete temp_host;
+		temp_host = NULL;
 
 		_calculated_ = true;
 	}
 	catch (const std::exception &e)
 	{
 		clear_calcs();
-		del_obj(temp_satellite);
-		del_obj(temp_host);
+		delete temp_satellite;
+		temp_satellite = NULL;
+		delete temp_host;
+		temp_host = NULL;
 
 		_calculated_ = true;
 		_bad_result_ = true;
@@ -3393,11 +3399,13 @@ brgastro::stripping_orbit_segment::~stripping_orbit_segment()
 {
 	if ( _current_satellite_in_use_ )
 	{
-		del_obj(_current_satellite_ptr_);
+		delete _current_satellite_ptr_;
+		_current_satellite_ptr_ = NULL;
 	}
 	if ( _current_host_in_use_ )
 	{
-		del_obj(_current_host_ptr_);
+		delete _current_host_ptr_;
+		_current_host_ptr_ = NULL;
 	}
 }
 
@@ -3470,11 +3478,13 @@ const int brgastro::stripping_orbit_segment::clear()
 
 	if ( _current_satellite_in_use_ )
 	{
-		del_obj(_current_satellite_ptr_);
+		delete _current_satellite_ptr_;
+		_current_satellite_ptr_ = NULL;
 	}
 	if ( _current_host_in_use_ )
 	{
-		del_obj(_current_host_ptr_);
+		delete _current_host_ptr_;
+		_current_host_ptr_ = NULL;
 	}
 
 	_current_satellite_ptr_ = NULL;
@@ -4152,7 +4162,8 @@ const int brgastro::stripping_orbit_segment::set_init_host(
 	_init_host_ptr_ = new_init_host;
 	if ( _current_host_in_use_ )
 	{
-		del_obj(_current_host_ptr_);
+		delete _current_host_ptr_;
+		_current_host_ptr_ = NULL;
 	}
 	_current_host_ptr_ = _init_host_ptr_->density_profile_clone();
 	_current_host_in_use_ = true;
@@ -4168,7 +4179,8 @@ const int brgastro::stripping_orbit_segment::set_init_satellite(
 	_init_satellite_ptr_ = new_init_satellite;
 	if ( _current_satellite_in_use_ )
 	{
-		del_obj(_current_satellite_ptr_);
+		delete _current_satellite_ptr_;
+		_current_satellite_ptr_ = NULL;
 	}
 	_current_satellite_ptr_ = _init_satellite_ptr_->density_profile_clone();
 	_current_satellite_in_use_ = true;
@@ -4203,7 +4215,8 @@ const int brgastro::stripping_orbit_segment::set_tNFW_init_satellite(
 
 	if ( _current_satellite_in_use_ )
 	{
-		del_obj(_current_satellite_ptr_);
+		delete _current_satellite_ptr_;
+		_current_satellite_ptr_ = NULL;
 	}
 	_current_satellite_ptr_ = _init_satellite_ptr_->density_profile_clone();
 	_current_satellite_in_use_ = true;
@@ -4236,7 +4249,8 @@ const int brgastro::stripping_orbit_segment::set_tNFW_host(
 
 			if ( _current_satellite_in_use_ )
 			{
-				del_obj(_current_satellite_ptr_);
+				delete _current_satellite_ptr_;
+				_current_satellite_ptr_ = NULL;
 			}
 			_current_satellite_ptr_ =
 					_init_satellite_ptr_->density_profile_clone();
@@ -4325,7 +4339,8 @@ const int brgastro::stripping_orbit_segment::clear_init_satellite()
 	_init_satellite_ptr_ = NULL;
 	if ( _current_satellite_in_use_ )
 	{
-		del_obj(_current_satellite_ptr_);
+		delete _current_satellite_ptr_;
+		_current_satellite_ptr_ = NULL;
 	}
 	_current_satellite_ptr_ = 0;
 	_current_satellite_in_use_ = false;
@@ -4339,7 +4354,8 @@ const int brgastro::stripping_orbit_segment::clear_init_host()
 	_init_host_ptr_ = NULL;
 	if ( _current_host_in_use_ )
 	{
-		del_obj(_current_host_ptr_);
+		delete _current_host_ptr_;
+		_current_host_ptr_ = NULL;
 	}
 	_current_host_ptr_ = NULL;
 	_current_host_in_use_ = false;
@@ -4847,8 +4863,7 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 			+ num_extra_host_columns;
 
 	header.resize( num_columns );
-	if ( make_array2d( data, num_columns, num_rows ) )
-		return 1;
+	make_array2d( data, num_columns, num_rows );
 
 	header[0] = "#";
 	header[1] = "t";

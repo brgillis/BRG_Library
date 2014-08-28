@@ -123,9 +123,9 @@ public:
 
 	const T operator()( const T & in_param,	const bool silent = false ) const
 	{
-		std::assert((_f1_ptr_!=NULL) && (_f2_ptr_!=NULL));
+		assert((_f1_ptr_!=NULL) && (_f2_ptr_!=NULL));
 
-		return multiply(_f1_ptr_( in_param, silent ),_f2_ptr_( in_param, silent ));
+		return multiply((*_f1_ptr_)( in_param, silent ),(*_f2_ptr_)( in_param, silent ));
 	}
 }; // class functor_product< f1, f2, T>
 

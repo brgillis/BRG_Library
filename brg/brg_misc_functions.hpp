@@ -16,10 +16,11 @@
 #ifndef _BRG_MISC_FUNCTIONS_HPP_INCLUDED_
 #define _BRG_MISC_FUNCTIONS_HPP_INCLUDED_
 
-#include <iostream>
-#include <vector>
+#include <cassert>
 #include <cstdlib>
+#include <iostream>
 #include <limits>
+#include <vector>
 
 #include <boost/math/special_functions/erf.hpp>
 
@@ -116,7 +117,7 @@ inline T & max_ref( T &a, T &b )
 template< typename Ta, typename Tb >
 inline const bool divisible( const Ta a, const Tb b )
 {
-	if(b==0) return false;
+	if(b==0) throw std::runtime_error("It's undefined whether or not value is divisible by zero.");
 	return ( a % b == 0 );
 }
 
@@ -139,12 +140,12 @@ const int round_int( const T value, const double epsilon=DBL_EPSILON )
 			return (int)ipart;
 
 		// Else return the nearest even integer
-		return (int)ceil( ipart + 0.5 );
+		return (int)std::ceil( ipart + 0.5 );
 	}
 
 	// Otherwise use the usual round to closest
 	// (Either symmetric half-up or half-down will do0
-	return (int)floor( value + 0.5 );
+	return (int)std::floor( value + 0.5 );
 }
 
 // Inline square
@@ -250,7 +251,7 @@ const T safe_sqrt( const T a )
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 	if(a < 0)
 	{
-		std::cerr << "WARNING: safe_sqrt() prevented crash from negative input.\n";
+		std::cerr << "WARNING: safe_sqrt() prevented error from negative input.\n";
 	}
 #endif
 	return std::sqrt( std::fabs( a ) );
@@ -264,7 +265,7 @@ inline const double safe_sqrt( const int a ) // Special case for integers due to
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 	if(a < 0)
 	{
-		std::cerr << "WARNING: safe_sqrt() prevented crash from negative input.\n";
+		std::cerr << "WARNING: safe_sqrt() prevented error from negative input.\n";
 	}
 #endif
 
@@ -436,16 +437,12 @@ inline const Tx dist3d( const Tx x1, const Ty y1, const Tz z1 )
 }
 
 // Distance between two vectors, where the dimensions are weighted by vector c
-// An exception is thrown if the vectors aren't of equal sizes
 template< typename Ta, typename Tb >
 inline const Ta weighted_dist( std::vector< Ta > a,
 		std::vector< Tb > b )
 {
 	Ta result = 0;
-	if ( a.size() != b.size() )
-	{
-		throw std::runtime_error("ERROR: Vectors in weighted_dist have unequal sizes.\n");
-	}
+	assert(a.size()==b.size());
 	for ( unsigned int i = 0; i < a.size(); i++ )
 	{
 		result += square( b[i] - a[i] );
@@ -458,10 +455,8 @@ inline const Ta weighted_dist( std::vector< Ta > a,
 		std::vector< Tb > b, std::vector< Tc > c )
 {
 	Ta result = 0;
-	if ( ( a.size() != b.size() ) || ( a.size() != c.size() ) )
-	{
-		throw std::runtime_error("ERROR: Vectors in weighted_dist have unequal sizes.\n");
-	}
+	assert(a.size()==b.size());
+	assert(a.size()==c.size());
 	for ( size_t i = 0; i < a.size(); i++ )
 	{
 		result += square ( ( b[i] - a[i] ) * c[i] );
@@ -470,8 +465,7 @@ inline const Ta weighted_dist( std::vector< Ta > a,
 	return result;
 }
 
-// Dot-product of two vectors in 3-D space or two vectors
-// For two vectors, an exception is thrown if they aren't the same size
+// Dot-product of two vectors in 3-D space
 template< typename Tx1, typename Ty1, typename Tz1, typename Tx2, typename Ty2, typename Tz2 >
 inline const Tx1 dot_product( const Tx1 x1, const Ty1 y1,
 		const Tz1 z1, const Tx2 x2, const Ty2 y2, const Tz2 z2 )
@@ -482,10 +476,7 @@ template< typename T1, typename T2 >
 inline const double dot_product( const std::vector< T1 > & a,
 		const std::vector< T2 > & b )
 {
-	if ( ( a.size() != b.size() ) )
-	{
-		throw std::runtime_error("ERROR: Vectors in dot_product have unequal sizes.\n");
-	}
+	assert(a.size()==b.size());
 	double result = 0;
 	for ( size_t i = 0; i < a.size(); i++ )
 	{
@@ -507,464 +498,218 @@ inline const int sign( const T a )
 }
 
 // Set_zero function - a way for other template functions to "clear" or initialize a value in various ways
-// Types of variables for which the method is defined will return 0, otherwise it will do nothing and
-// return 1;
-inline const int set_zero( int & obj )
+inline void set_zero( int & obj )
 {
 	obj = 0;
-	return 0;
 }
-inline const int set_zero( long int & obj )
+inline void set_zero( long int & obj )
 {
 	obj = 0;
-	return 0;
 }
-inline const int set_zero( short int & obj )
+inline void set_zero( short int & obj )
 {
 	obj = 0;
-	return 0;
 }
-inline const int set_zero( unsigned int & obj )
+inline void set_zero( unsigned int & obj )
 {
 	obj = 0;
-	return 0;
 }
-inline const int set_zero( unsigned long int & obj )
+inline void set_zero( unsigned long int & obj )
 {
 	obj = 0;
-	return 0;
 }
-inline const int set_zero( unsigned short int & obj )
+inline void set_zero( unsigned short int & obj )
 {
 	obj = 0;
-	return 0;
 }
-inline const int set_zero( double & obj )
+inline void set_zero( double & obj )
 {
 	obj = 0;
-	return 0;
 }
-inline const int set_zero( long double & obj )
+inline void set_zero( long double & obj )
 {
 	obj = 0;
-	return 0;
 }
-inline const int set_zero( float & obj )
+inline void set_zero( float & obj )
 {
 	obj = 0;
-	return 0;
 }
 #ifdef _BRG_USE_UNITS_
-inline const int set_zero( unit_obj obj)
+inline void set_zero( unit_obj obj)
 {
-	obj = 0;
-	return 0;
+	obj = unit_obj(0);
 }
 #endif
-inline const int set_zero( std::string obj )
+inline void set_zero( std::string obj )
 {
 	obj = "";
-	return 0;
 }
 template< class T >
-inline const int set_zero( std::vector< T > vec )
+inline void set_zero( std::vector< T > vec )
 {
 	vec.clear();
-	return 0;
 }
 template< class T >
-inline const int set_zero( T *obj )
+inline void set_zero( T *obj )
 {
 	obj = NULL;
-	return 0;
 }
 template< class obj_type >
-inline const int set_zero( obj_type obj )
+inline void set_zero( obj_type obj )
 {
-	return INVALID_ARGUMENTS_ERROR;
+	obj = 0;
 }
 
 // Various "make" functions, to allocate dynamic memory.
-// These functions return 0 on success, 1 on failure (not enough memory available).
 // After allocating memory, these functions initialize the new variables using the
 // set_zero function (see above).
-// Remember that if you use normal pointers, you have to delete the assigned variables
-// before they go out of scope. See the del_obj and del_array functions below for that
 
 template< class obj_type >
-const int make_obj( obj_type * & obj_pointer, const bool silent = false )
+inline void make_obj( BRG_UNIQUE_PTR<obj_type> & obj_pointer, const bool silent=false )
 {
-	obj_pointer = NULL;
-	obj_pointer = new ( std::nothrow ) obj_type;
-	if ( obj_pointer == 0 )
-		return memory_error( silent );
-	set_zero( *obj_pointer );
-	return 0;
-}
-
-template< class obj_type >
-inline const int make_obj( BRG_UNIQUE_PTR<obj_type> & obj_pointer, const bool silent=false )
-{
-	obj_pointer = NULL;
-	obj_pointer = new (std::nothrow) obj_type;
-	if( obj_pointer == 0 ) return memory_error(silent);
+	obj_pointer = BRG_UNIQUE_PTR<obj_type>(new obj_type);
 	set_zero(*obj_pointer);
-	return 0;
-}
-
-template< class array_type >
-const int make_array1d( array_type * & array_pointer, const int num_elem,
-		const bool silent = false )
-{
-	array_pointer = new ( std::nothrow ) array_type[num_elem];
-	if ( array_pointer == 0 )
-		return memory_error( silent );
-	for ( int i = 0; i < num_elem; i++ )
-		set_zero( array_pointer[i] );
-	return 0;
-}
-template< class array_type >
-const int make_array( array_type * & array_pointer, const int num_elem,
-		const bool silent = false )
-{
-	return make_array1d( array_pointer, num_elem );
 }
 
 #ifdef _BRG_USE_CPP_11_STD_
 template <class array_type>
-const int make_array1d( std::unique_ptr<array_type []> & array_pointer, const int num_elem,
+inline void make_array1d( std::unique_ptr<array_type []> & array_pointer, const unsigned int num_elem,
 		const bool silent = false )
 {
-	array_pointer = std::unique_ptr<array_type []>(new (std::nothrow) array_type [num_elem]);
-	if( array_pointer == 0 ) return memory_error(silent);
+	array_pointer = std::unique_ptr<array_type []>(new array_type [num_elem]);
 	for(int i=0; i<num_elem; i++) set_zero(array_pointer[i]);
-	return 0;
 }
 template <class array_type>
-const int make_array( std::unique_ptr<array_type []> & array_pointer, const int num_elem )
+inline void make_array( std::unique_ptr<array_type []> & array_pointer, const unsigned int num_elem,
+		const bool silent = false )
 {
-	return make_array1d( array_pointer, num_elem );
+	make_array1d( array_pointer, num_elem );
 }
 #endif
 
 template< class array_type >
-const int make_array1d( std::vector< array_type > & array_pointer,
-		const int num_elem, const bool silent = false )
+inline void make_array1d( std::vector< array_type > & array_pointer,
+		const unsigned int num_elem, const bool silent = false )
 {
-	array_pointer.clear();
 	array_pointer.resize( num_elem );
-	if ( array_pointer.empty() )
-		return memory_error( silent );
-	for ( int i = 0; i < num_elem; i++ )
+	for ( unsigned int i = 0; i < num_elem; i++ )
 		set_zero( array_pointer[i] );
-	return 0;
 }
 template< class array_type >
-const int make_array( std::vector< array_type > & array_pointer,
+inline void make_array( std::vector< array_type > & array_pointer,
 		const int num_elem, const bool silent = false )
 {
 	return make_array1d( array_pointer, num_elem );
 }
 
-template< class array_type >
-const int make_array2d( array_type ** & array_pointer, const int num_elem1,
-		const int num_elem2, const bool silent = false )
-{
-	array_pointer = new ( std::nothrow ) array_type *[num_elem1];
-	if ( array_pointer == 0 )
-		return memory_error( silent );
-	for ( int i = 0; i < num_elem1; i++ )
-	{
-		if ( int errcode = make_array( array_pointer[i], num_elem2 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-	}
-	return 0;
-}
-
 #ifdef _BRG_USE_CPP_11_STD_
 template <class array_type>
-const int make_array2d( std::unique_ptr<std::unique_ptr<array_type []> []> & array_pointer, const int num_elem1, const int num_elem2, const bool silent=false )
+inline void make_array2d( std::unique_ptr<std::unique_ptr<array_type []> []> & array_pointer, const unsigned int num_elem1, const unsigned int num_elem2, const bool silent=false )
 {
-	array_pointer = std::unique_ptr<std::unique_ptr<array_type []> []>(new (std::nothrow) std::unique_ptr<array_type []> [num_elem1]);
-	if( array_pointer == 0 ) return memory_error(silent);
-	for( int i = 0; i < num_elem1; i++)
+	array_pointer = std::unique_ptr<std::unique_ptr<array_type []> []>(new std::unique_ptr<array_type []> [num_elem1]);
+	for( unsigned int i = 0; i < num_elem1; i++)
 	{
-		if (int errcode = make_array(array_pointer[i], num_elem2)) return errcode+LOWER_LEVEL_ERROR;
+		make_array(array_pointer[i], num_elem2);
 	}
-	return 0;
 }
 #endif
 
 template< class array_type >
-const int make_array2d(
+inline void make_array2d(
 		std::vector< std::vector< array_type > > & array_pointer,
-		const int num_elem1, const int num_elem2, const bool silent = false )
+		const unsigned int num_elem1, const unsigned int num_elem2, const bool silent = false )
 {
-	array_pointer.clear();
 	array_pointer.resize( num_elem1 );
-	if ( array_pointer.empty() )
-		return memory_error( silent );
-	for ( int i = 0; i < num_elem1; i++ )
+	for ( unsigned int i = 0; i < num_elem1; i++ )
 	{
-		if ( int errcode = make_array( array_pointer[i], num_elem2 ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		make_array( array_pointer[i], num_elem2 );
 	}
-	return 0;
-}
-
-template< class array_type >
-const int make_array3d( array_type *** & array_pointer, const int num_elem1,
-		const int num_elem2, const int num_elem3, const bool silent = false )
-{
-	array_pointer = new ( std::nothrow ) array_type **[num_elem1];
-	if ( array_pointer == 0 )
-		return memory_error( silent );
-
-	for ( int i = 0; i < num_elem1; i++ )
-	{
-		if ( int errcode = make_array2d( array_pointer[i], num_elem2,
-				num_elem3 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-	}
-	return 0;
 }
 
 #ifdef _BRG_USE_CPP_11_STD_
 template <class array_type>
-const int make_array3d( std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> & array_pointer, const int num_elem1,
-		const int num_elem2, const int num_elem3, const bool silent=false )
+inline void make_array3d( std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> & array_pointer, const unsigned int num_elem1,
+		const unsigned int num_elem2, const unsigned int num_elem3, const bool silent=false )
 {
-	array_pointer = std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []>(new (std::nothrow)
+	array_pointer = std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []>(new
 			std::unique_ptr<std::unique_ptr<array_type []> []> [num_elem1]);
-	if( array_pointer == 0 ) return memory_error(silent);
 
-	for( int i = 0; i < num_elem1; i++)
+	for( unsigned int i = 0; i < num_elem1; i++)
 	{
-		if (int errcode = make_array2d(array_pointer[i], num_elem2, num_elem3)) return errcode+LOWER_LEVEL_ERROR;
+		make_array2d(array_pointer[i], num_elem2, num_elem3);
 	}
-	return 0;
 }
 #endif
 
 template< class array_type >
-const int make_array3d(
+inline void make_array3d(
 		std::vector< std::vector< std::vector< array_type > > > & array_pointer,
-		const int num_elem1, const int num_elem2, const int num_elem3,
+		const unsigned int num_elem1, const unsigned int num_elem2, const unsigned int num_elem3,
 		const bool silent = false )
 {
-	array_pointer.clear();
 	array_pointer.resize( num_elem1 );
-	if ( array_pointer.empty() )
-		return memory_error( silent );
-	for ( int i = 0; i < num_elem1; i++ )
+	for ( unsigned int i = 0; i < num_elem1; i++ )
 	{
-		if ( int errcode = make_array2d( array_pointer[i], num_elem2,
-				num_elem3 ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		make_array2d( array_pointer[i], num_elem2, num_elem3 );
 	}
-	return 0;
 }
 
-template< class array_type >
-const int make_array4d( array_type **** & array_pointer, const int num_elem1,
-		const int num_elem2, const int num_elem3, const int num_elem4,
-		const bool silent = false )
-{
-	array_pointer = new ( std::nothrow ) array_type ***[num_elem1];
-	if ( array_pointer == 0 )
-		return memory_error( silent );
-
-	for ( int i = 0; i < num_elem1; i++ )
-	{
-		if ( int errcode = make_array3d( array_pointer[i], num_elem2,
-				num_elem3, num_elem4 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-	}
-	return 0;
-}
 #ifdef _BRG_USE_CPP_11_STD_
 template <class array_type>
-const int make_array4d( std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []> & array_pointer,
-		const int num_elem1, const int num_elem2, const int num_elem3, const int num_elem4, const bool silent=false )
+inline void make_array4d( std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []> & array_pointer,
+		const unsigned int num_elem1, const unsigned int num_elem2, const unsigned int num_elem3, const unsigned int num_elem4, const bool silent=false )
 {
-	array_pointer = std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []>(new (std::nothrow)
+	array_pointer = std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []>(new
 			std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> [num_elem1]);
-	if( array_pointer == 0 ) return memory_error(silent);
 
-	for( int i = 0; i < num_elem1; i++)
+	for( unsigned int i = 0; i < num_elem1; i++)
 	{
-		if (int errcode = make_array3d(array_pointer[i], num_elem2, num_elem3, num_elem4)) return errcode+LOWER_LEVEL_ERROR;
+		make_array3d(array_pointer[i], num_elem2, num_elem3, num_elem4);
 	}
-	return 0;
 }
 #endif
 template< class array_type >
-const int make_array4d(
+inline void make_array4d(
 		std::vector< std::vector< std::vector< std::vector< array_type > > > > & array_pointer,
-		const int num_elem1, const int num_elem2, const int num_elem3,
-		const int num_elem4, const bool silent = false )
+		const unsigned int num_elem1, const unsigned int num_elem2, const unsigned int num_elem3,
+		const unsigned int num_elem4, const bool silent = false )
 {
-	array_pointer.clear();
 	array_pointer.resize( num_elem1 );
-	if ( array_pointer.empty() )
-		return memory_error( silent );
-	for ( int i = 0; i < num_elem1; i++ )
+	for ( unsigned int i = 0; i < num_elem1; i++ )
 	{
-		if ( int errcode = make_array3d( array_pointer[i], num_elem2,
-				num_elem3, num_elem4 ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		make_array3d( array_pointer[i], num_elem2, num_elem3, num_elem4 );
 	}
-	return 0;
 }
 
-template< class array_type >
-const int make_array5d( array_type ***** & array_pointer, const int num_elem1,
-		const int num_elem2, const int num_elem3, const int num_elem4,
-		const int num_elem5, const bool silent = false )
-{
-	array_pointer = new ( std::nothrow ) array_type ****[num_elem1];
-	if ( array_pointer == 0 )
-		return memory_error( silent );
-
-	for ( int i = 0; i < num_elem1; i++ )
-	{
-		if ( int errcode = make_array4d( array_pointer[i], num_elem2,
-				num_elem3, num_elem4, num_elem5 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-	}
-	return 0;
-}
 #ifdef _BRG_USE_CPP_11_STD_
 template <class array_type>
-const int make_array5d( std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []> []>
-		& array_pointer, const int num_elem1, const int num_elem2, const int num_elem3,
-		const int num_elem4, const int num_elem5, const bool silent=false )
+inline void make_array5d( std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []> []>
+		& array_pointer, const unsigned int num_elem1, const unsigned int num_elem2, const unsigned int num_elem3,
+		const unsigned int num_elem4, const unsigned int num_elem5, const bool silent=false )
 {
-	array_pointer = std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []> []>(new (std::nothrow)
+	array_pointer = std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []> []>(new
 			std::unique_ptr<std::unique_ptr<std::unique_ptr<std::unique_ptr<array_type []> []> []> []> [num_elem1]);
-	if( array_pointer == 0 ) return memory_error(silent);
 
 	for( int i = 0; i < num_elem1; i++)
 	{
-		if (int errcode = make_array4d(array_pointer[i], num_elem2, num_elem3, num_elem4, num_elem5)) return errcode+LOWER_LEVEL_ERROR;
+		make_array4d(array_pointer[i], num_elem2, num_elem3, num_elem4, num_elem5);
 	}
-	return 0;
 }
 #endif
 template< class array_type >
-const int make_array5d(
+inline void make_array5d(
 		std::vector<
 				std::vector<
 						std::vector< std::vector< std::vector< array_type > > > > > & array_pointer,
-		const int num_elem1, const int num_elem2, const int num_elem3,
-		const int num_elem4, const int num_elem5, const bool silent = false )
+		const unsigned int num_elem1, const unsigned int num_elem2, const unsigned int num_elem3,
+		const unsigned int num_elem4, const unsigned int num_elem5, const bool silent = false )
 {
-	array_pointer.clear();
 	array_pointer.resize( num_elem1 );
-	if ( array_pointer.empty() )
-		return memory_error( silent );
-	for ( int i = 0; i < num_elem1; i++ )
+	for ( unsigned int i = 0; i < num_elem1; i++ )
 	{
-		if ( int errcode = make_array4d( array_pointer[i], num_elem2,
-				num_elem3, num_elem4, num_elem5 ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		make_array4d( array_pointer[i], num_elem2,
+				num_elem3, num_elem4, num_elem5 );
 	}
-	return 0;
-}
-
-// Delete functions to simply delete dynamically assigned objects, arrays, and multiple-dimension arrays
-
-template< class obj_type >
-inline const int del_obj( obj_type * & obj_pointer, const bool silent = false ) throw()
-{
-	if ( obj_pointer == NULL ) return UNSPECIFIED_ERROR;
-	delete obj_pointer;
-	obj_pointer = NULL;
-	return 0;
-}
-
-template< class array_type >
-inline const int del_array1d( array_type * & array_pointer,
-		const int num_elem = 0, const bool silent = false )
-{
-	if ( array_pointer == 0 )
-		return INVALID_ARGUMENTS_ERROR;
-	delete[] array_pointer;
-	array_pointer = NULL;
-	return 0;
-}
-
-template< class array_type >
-inline const int del_array2d( array_type ** & array_pointer,
-		const int num_elem1, const int num_elem2 = 0,
-		const bool silent = false )
-{
-	if ( array_pointer == 0 )
-		return INVALID_ARGUMENTS_ERROR;
-	for ( int i = 0; i < num_elem1; i++ )
-	{
-		del_array( array_pointer[i] );
-	}
-	delete[] array_pointer;
-	array_pointer = NULL;
-
-	return 0;
-}
-
-template< class array_type >
-inline const int del_array3d( array_type *** & array_pointer,
-		const int num_elem1, const int num_elem2, const int num_elem3 = 0,
-		const bool silent = false )
-{
-	if ( array_pointer == 0 )
-		return INVALID_ARGUMENTS_ERROR;
-	for ( int i = 0; i < num_elem1; i++ )
-	{
-		if ( int errcode = del_array2d( array_pointer[i], num_elem2 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-	}
-	delete[] array_pointer;
-	array_pointer = NULL;
-
-	return 0;
-}
-
-template< class array_type >
-inline const int del_array4d( array_type **** & array_pointer,
-		const int num_elem1, const int num_elem2, const int num_elem3,
-		const int num_elem4 = 0, const bool silent = false )
-{
-	if ( array_pointer == 0 )
-		return INVALID_ARGUMENTS_ERROR;
-	for ( int i = 0; i < num_elem1; i++ )
-	{
-		if ( int errcode = del_array3d( array_pointer[i], num_elem2,
-				num_elem3 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-	}
-	delete[] array_pointer;
-	array_pointer = NULL;
-
-	return 0;
-}
-
-template< class array_type >
-const int del_array5d( array_type ***** & array_pointer, const int num_elem1,
-		const int num_elem2, const int num_elem3, const int num_elem4,
-		const int num_elem5 = 0, const bool silent = false )
-{
-	if ( array_pointer == 0 )
-		return INVALID_ARGUMENTS_ERROR;
-	for ( int i = 0; i < num_elem1; i++ )
-	{
-		if ( int errcode = del_array4d( array_pointer[i], num_elem2, num_elem3,
-				num_elem4 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-	}
-	delete[] array_pointer;
-	array_pointer = NULL;
-
-	return 0;
 }
 #endif // Ending functions
 
