@@ -7,13 +7,16 @@
  *      Author: brg
  */
 
+#include <cassert>
+
+#include "brg_global.h"
+
 #include "brg_interpolator.h"
 
 // Global function implementations
 bool brgastro::p1first_lt_p2first(std::pair<double,double> pair1, std::pair<double,double> pair2)
 {
-	if(pair1.first == pair2.first)
-		throw std::runtime_error("ERROR: Two points passed to interpolator have same domain value.\n");
+	std::assert(pair1.first != pair2.first);
 	return (pair1.first < pair2.first);
 }
 
@@ -124,10 +127,7 @@ void brgastro::interpolator::try_add_point(const double x, const double y)
 {
 	for (unsigned int i=0;i<_data_.size();i++)
 	{
-		if(x==_data_[i].first)
-		{
-			throw std::runtime_error("ERROR: Attempt to add point to interpolator with duplicate domain value.");
-		}
+		assert(x!=_data_[i].first);
 	}
 	_data_.push_back(std::make_pair(x,y));
 	_spline_cached_ = false;
@@ -151,7 +151,7 @@ const double brgastro::interpolator::operator()(const double x) const
 	if(_interpolation_type_==SPLINE)
 	{
 		if(_data_.size() < 2)
-			throw std::runtime_error("ERROR: Interpolator called before at least 2 points were loaded.\n");
+			throw std::runtime_error("Interpolator called before at least 2 points were loaded.\n");
 
 		if(!_spline_cached_)
 			_set_spline_points();
@@ -161,7 +161,7 @@ const double brgastro::interpolator::operator()(const double x) const
 	else if(_interpolation_type_==LINEAR)
 	{
 		if(_data_.size() < 2)
-			throw std::runtime_error("ERROR: Interpolator called before at least 2 points were loaded.\n");
+			throw std::runtime_error("Interpolator called before at least 2 points were loaded.\n");
 
 		double xlo, xhi, ylo, yhi;
 		if(x<=sorted_data().front().first)
@@ -185,8 +185,7 @@ const double brgastro::interpolator::operator()(const double x) const
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
 
-			if(it==_sorted_data_.end())
-				throw std::runtime_error("ERROR: Could not find x value in interpolator. Check it's a valid number.");
+			std::assert(it!=_sorted_data_.end());
 
 			xlo = (it-1)->first;
 			ylo = (it-1)->second;
@@ -216,8 +215,7 @@ const double brgastro::interpolator::operator()(const double x) const
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
 
-			if(it==_sorted_data_.end())
-				throw std::runtime_error("ERROR: Could not find x value in interpolator. Check it's a valid number.");
+			std::assert(it!=_sorted_data_.end());
 
 			return (it-1)->second;
 		}
@@ -242,14 +240,13 @@ const double brgastro::interpolator::operator()(const double x) const
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
 
-			if(it==_sorted_data_.end())
-				throw std::runtime_error("ERROR: Could not find x value in interpolator. Check it's a valid number.");
+			std::assert(it!=_sorted_data_.end());
 
 			return it->second;
 		}
 	}
 	// Should never get here
-	throw std::runtime_error("ERROR: Bad path reached in interpolator, which may be the result of code changes\nto the allow interpolator types.\n");
+	std::assert(false);
 	return -1; // Just to keep editor from giving a warning
 
 }
