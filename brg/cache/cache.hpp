@@ -445,9 +445,9 @@ public:
 			}
 		}
 
-		x_i = (unsigned int)( ( x - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ );
-		x_i = max( x_i, (unsigned)0 );
-		x_i = min( x_i, SPCP(name)->_resolution_1_ - 2 );
+		x_i = (unsigned int)bound(0,
+				( ( x - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ),
+				SPCP(name)->_resolution_1_ - 2 );
 
 		xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
 		xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );

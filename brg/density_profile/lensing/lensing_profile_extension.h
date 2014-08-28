@@ -18,24 +18,32 @@
 #define IMPLEMENT_VIRTUAL_BRG_LENSING_EXTENSION_METHODS(class_name)         \
 	virtual const double z() const {return class_name::z();}                \
 	virtual const BRG_DISTANCE rvir() const {return class_name::rvir();}    \
-	virtual const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const             \
+	virtual const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const          \
 		{return class_name::dens(r);}                                       \
-	virtual const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r,                 \
+	virtual const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r,              \
 		const bool silent =	true ) const;                                   \
 			{return class_name::enc_mass(r,silent);}                        \
+	virtual const double c() const {return class_name::c();}                \
 	virtual const int set_c( const double new_c, bool silent = false )      \
-		{return class_name::set_c(new_c,silent);}
+		{return class_name::set_c(new_c,silent);}                           \
+	virtual const double tau() const {return class_name::tau();}            \
+	virtual const int set_tau( const double new_tau, bool silent = false )  \
+		{return class_name::set_tau(new_tau,silent);}
 
 #define IMPLEMENT_BRG_LENSING_EXTENSION_METHODS(class_name)         \
 	const double z() const {return class_name::z();}                \
 	const BRG_DISTANCE rvir() const {return class_name::rvir();}    \
-	const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const             \
+	const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const          \
 		{return class_name::dens(r);}                               \
-	const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r,                 \
+	const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r,              \
 		const bool silent =	true ) const                            \
 			{return class_name::enc_mass(r,silent);}                \
+	const double c() const {return class_name::c();}                \
 	const int set_c( const double new_c, bool silent = false )      \
-		{return class_name::set_c(new_c,silent);}
+		{return class_name::set_c(new_c,silent);}                   \
+	const double tau() const {return class_name::tau();}            \
+	const int set_tau( const double new_tau, bool silent = false )  \
+		{return class_name::set_tau(new_tau,silent);}               \
 
 namespace brgastro {
 
@@ -72,7 +80,10 @@ public:
 	virtual const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const = 0;
 	virtual const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r, const bool silent =
 			true ) const = 0;
+	virtual const double c() const = 0;
 	virtual const int set_c( const double new_c, bool silent = false ) = 0;
+	virtual const double tau() const = 0;
+	virtual const int set_tau( const double new_c, bool silent = false ) = 0;
 
 #endif // Virtual functions that will need to be implemented by base classes
 

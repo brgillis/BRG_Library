@@ -219,9 +219,14 @@ const BRG_DISTANCE brgastro::tNFW_profile::rvir() const
 			tNFW_solve_rvir_minimize_functor min_solver(this);
 
 			BRG_DISTANCE max_rvir = rvir0();
-			if ( solve_grid( &min_solver, 1, 0., max_rvir, 100, 0., _rvir_cache_ ) )
+			try
 			{
-				throw std::runtime_error("ERROR: Cannot solve virial radius for tNFW profile.\n");
+				_rvir_cache_ =  solve_grid( &min_solver, 0., max_rvir, 100, 0.);
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << "ERROR: Cannot solve virial radius for tNFW profile.\n";
+				throw e;
 			}
 		}
 		_rvir_cached_ = true;

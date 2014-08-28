@@ -6227,10 +6227,14 @@ const BRG_DISTANCE brgastro::stripping_orbit_segment::_get_rt( const density_pro
 
 		max_rt = 2 * default_tau_factor * satellite->rvir();
 		old_rt = new_rt;
-		if ( solve_grid( &rt_grid_solver, 1, 0., max_rt, 100, 0., new_rt ) )
+		try
+		{
+			new_rt = solve_grid( &rt_grid_solver, 0., max_rt, 100, 0.);
+		}
+		catch(const std::exception &e)
 		{
 			if ( !silent )
-				std::cerr << "WARNING: Could not solve rt.\n";
+				std::cerr << "WARNING: Could not solve rt:\n" << e.what() << std::endl;
 			new_rt = 0; // Most likely value in the case where we can't solve it
 		}
 	}

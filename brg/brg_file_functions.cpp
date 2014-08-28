@@ -347,6 +347,10 @@ void brgastro::trim_comments_all_at_top( std::ifstream & stream,
 		{
 			getline( stream, file_data );
 		}
+		else
+		{
+			return;
+		}
 	}
 }
 
@@ -359,6 +363,10 @@ void brgastro::trim_comments_all_at_top( std::fstream & stream,
 		if ( stream.peek() == (int)( *"#" ) )
 		{
 			getline( stream, file_data );
+		}
+		else
+		{
+			return;
 		}
 	}
 }

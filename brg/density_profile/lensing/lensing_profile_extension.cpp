@@ -139,7 +139,7 @@ const BRG_UNITS brgastro::lensing_profile_extension::semiquick_group_WLsig( CONS
 	BRG_DISTANCE R_to_use = std::fabs( R );
 	brgastro::quick_offset_WLsig_functor func( this, R_to_use );
 	brgastro::group_WLsig_weight_functor weight_func( this, group_c );
-	BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( rvir() ),
+	BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( 2.5*rvir() ),
 			out_params( 0 );
 	out_params = brgastro::integrate_weighted_Romberg( &func, &weight_func,
 			min_in_params, max_in_params, 0.00001, false, silent);

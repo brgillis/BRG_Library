@@ -52,7 +52,11 @@ const BRG_DISTANCE brgastro::density_profile::rhmtot( const bool silent ) const
 		return _rhmtot_cache_ = 0;
 	}
 
-	if ( solve_grid( func_ptr, 1, 0., max_r, 10, 0., rhm_test ) ) // If we can't solve it
+	try
+	{
+		rhm_test = solve_grid( func_ptr, 0., max_r, 10, 0. );
+	}
+	catch(const std::exception &e)
 	{
 		if ( !silent )
 			std::cerr << "WARNING: Could not solve half-mass radius. Assuming it's zero.\n";
@@ -61,11 +65,8 @@ const BRG_DISTANCE brgastro::density_profile::rhmtot( const bool silent ) const
 		hmtot_cached = true;
 		return _rhmtot_cache_;
 	}
-	else
-	{
-		_rhmtot_cache_ = std::fabs( rhm_test );
-		hmtot_cached = true;
-	}
+	_rhmtot_cache_ = std::fabs( rhm_test );
+	hmtot_cached = true;
 	return _rhmtot_cache_;
 }
 
@@ -90,17 +91,19 @@ const BRG_DISTANCE brgastro::density_profile::rhmvir( const bool silent ) const
 		return _rhmvir_cache_ = 0;
 	}
 
-	if ( solve_grid( func_ptr, 1, 0., max_r, 10, 0., rhm_test ) ) // If we can't solve it
+	try
+	{
+		rhm_test = solve_grid( func_ptr, 0., max_r, 10, 0.);
+	}
+	catch(const std::exception &e)
 	{
 		if ( !silent )
 			std::cerr << "WARNING: Could not solve half-mass radius.\n";
-		return -1;
+		_rhmvir_cache_ = 0;
+		return _rhmvir_cache_;
 	}
-	else
-	{
-		_rhmvir_cache_ = max(0,std::fabs( rhm_test ));
-		hmvir_cached = true;
-	}
+	_rhmvir_cache_ = max(0,std::fabs( rhm_test ));
+	hmvir_cached = true;
 	return _rhmvir_cache_;
 }
 

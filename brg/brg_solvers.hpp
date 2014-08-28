@@ -45,7 +45,6 @@ inline const T solve_iterate( const f * func, const T &init_param = 0,
 	int counter = 0;
 
 	T new_value = init_param;
-	T result = 0;
 	T mean_value = 0;
 	std::vector< T > past_values( 0 );
 	int slowdown_to_use;
@@ -112,17 +111,14 @@ inline const T solve_iterate( const f * func, const T &init_param = 0,
 	{
 		if ( !silent )
 			std::cerr
-					<< "WARNING: solve_brgastro::unit_iterate did not converge.\n";
-		return 0;
+					<< "WARNING: solve_iterate did not converge.\n";
 	}
-	result = new_value;
-	return result;
-
+	return new_value;
 }
 
 // solve_sd: Steepest-descent solver. Finds the minimum value of a function. May fail if it reaches input values which give undefined
 //           output. Only valid for functions which return only one output value. Returns the best set of input parameters in the
-//           result_in_params vector. Returns a value of 0 on success and 1 on failure.
+//           result_in_params vector.
 //
 // Parameters:
 // precision: How close successive values must be to each other (in a fraction of the mean) before they're said to have converged.
@@ -137,11 +133,8 @@ inline const T solve_iterate( const f * func, const T &init_param = 0,
 //                      a cusp at the minimum, set this value to some higher value (the specific value needed will depend on the order of
 //                      the cusp).
 // max_steps: Maximum number of steps the solver can take before it gives up.
-
-// Scalar-in, scalar-out version !!! needs cleaning
 template< typename f, typename T >
-const int solve_sd( const f * func, const unsigned int num_in_params,
-		const T & init_in_params, T & result_in_params,
+T solve_sd( const f * func, const T & init_in_params,
 		const double precision = 0.00001, const double lambda = 0.1,
 		const double cusp_override_power = 0, const int max_steps = 10000,
 		const bool silent = false )
@@ -162,33 +155,15 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 	bool converged_flag = false;
 
 	// Sanity checks on variables
-	if ( num_in_params < 1 )
-	{
-		if ( !silent )
-			std::cerr << "ERROR: Invalid num_in_params in solve_sd.\n";
-		return INVALID_ARGUMENTS_ERROR;
-	}
 	const double lambda_to_use = max( SMALL_FACTOR,
 			min( 1 / SMALL_FACTOR, lambda ) );
 	const int max_steps_to_use = (int)max( 1, max_steps );
 
 	// Get normalized step size
-	Jacobian = differentiate( func, in_params_to_use, 1, cusp_override_power );
+	lambda_norm = lambda_to_use / safe_d(differentiate( func, in_params_to_use, 1, cusp_override_power ));
 
-	mag = 0;
-	for ( unsigned int i = 0; i < num_in_params; i++ )
-	{
-		mag = quad_add( mag, Jacobian );
-	}
-	lambda_norm = lambda_to_use / mag;
-	mag = 0;
-	for ( unsigned int i = 0; i < num_in_params; i++ )
-	{
-		mag = quad_add( mag, in_params_to_use );
-	}
-	if ( mag == 0 )
-		mag = 1;
-	lambda_norm *= mag;
+	if ( in_params_to_use != 0 )
+		lambda_norm *= in_params_to_use;
 
 	// Initialize solver
 	num_steps_taken = 0;
@@ -205,36 +180,23 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 		Jacobian = differentiate( func,	current_in_params, 1, cusp_override_power );
 
 		// Make a step
-		for ( unsigned int i = 0; i < num_in_params; i++ )
-		{
-			current_in_params -= lambda_norm * Jacobian;
-		}
+		current_in_params -= lambda_norm * Jacobian;
 
 		// Check if we've converged
 		converged_flag = true;
 
-		for ( unsigned int i = 0; i < num_in_params; i++ )
+		if ( isbad( current_in_params ) )
 		{
-			if ( isnan( current_in_params ) )
-			{
-				result_in_params = current_in_params;
-				if ( !silent )
-					std::cerr
-							<< "ERROR: Somehow got NaN for in_params in solve_sd.\n";
-				return UNSPECIFIED_ERROR;
-			}
-			if ( std::fabs(
-					2 * ( current_in_params - last_in_params )
-							/ safe_d( current_in_params + last_in_params ) )
-					> precision )
-			{
-				converged_flag = false;
-				break;
-			}
+			throw std::runtime_error("Somehow got bad value for in_params in solve_sd.");
 		}
-
-		if ( converged_flag )
+		if ( std::fabs(
+				2 * ( current_in_params - last_in_params )
+						/ safe_d( current_in_params + last_in_params ) )
+				> precision )
+		{
+			converged_flag = false;
 			break;
+		}
 
 		// In case we get to high steps, start decreasing lambda_norm
 		if ( divisible( num_steps_taken,
@@ -249,22 +211,18 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 	{
 		if ( !silent )
 			std::cerr << "WARNING: Did not converge in solve_sd.\n";
-		return UNSPECIFIED_ERROR;
 	}
-	result_in_params = current_in_params;
-	return 0;
+	return current_in_params;
 
 }
 
 // Vector-in, vector-out version
 template< typename f, typename T >
-const int solve_sd( const f * func, const unsigned int num_in_params,
-		const std::vector< T > & init_in_params,
-		std::vector< T > & result_in_params, const double precision = 0.00001,
+std::vector< T >  solve_sd( const f * func,	const std::vector< T > & init_in_params,
+		const double precision = 0.00001,
 		const double lambda = 0.1, const double cusp_override_power = 0,
 		const int max_steps = 10000, const bool silent = false )
 {
-
 	std::vector< std::vector< T > > Jacobian( 0 );
 	std::vector< T > current_in_params( 0 );
 	std::vector< T > last_in_params( 0 );
@@ -272,50 +230,31 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 	std::vector< T > in_params_to_use = init_in_params;
 	T lambda_norm( 0 );
 	T mag;
+	typedef typename std::vector<T>::size_type vsize_t;
+	vsize_t num_in_params = init_in_params.size();
 
 	const int lambda_shortening_intervals = 10;
 	const double lambda_shortening_factor = 10;
-	unsigned int num_out_params = 0;
+	vsize_t num_out_params = 0;
 	int num_steps_taken = 0;
 	bool converged_flag = false;
 
 	// Sanity checks on variables
-	if ( num_in_params < 1 )
-	{
-		if ( !silent )
-			std::cerr << "ERROR: Invalid num_in_params in solve_sd.\n";
-		return INVALID_ARGUMENTS_ERROR;
-	}
+	assert(num_in_params >= 1);
 	const double lambda_to_use = max( SMALL_FACTOR,
 			min( 1 / SMALL_FACTOR, lambda ) );
 	const int max_steps_to_use = (int)max( 1, max_steps );
 
-	// Check in_params_to_use. If it's empty, use zero
-	if ( in_params_to_use.size() < (unsigned)num_in_params )
-	{
-		if ( !in_params_to_use.empty() )
-		{
-			if ( !silent )
-				std::cerr
-						<< "WARNING: Size mismatch of num_in_params and in_params_to_use.size() in brgastro::unit_solve_sd.\n";
-		}
-		in_params_to_use.resize( num_in_params, 0 );
-		for ( unsigned int i = 0; i < num_in_params; i++ )
-		{
-			in_params_to_use[i] = 0;
-		}
-	} // if( in_params_to_use.size() < num_in_params )
-
 	// Get normalized step size
 	Jacobian = differentiate( func, in_params_to_use, 1, cusp_override_power );
 	mag = 0;
-	for ( unsigned int i = 0; i < num_in_params; i++ )
+	for ( vsize_t i = 0; i < num_in_params; i++ )
 	{
 		mag = quad_add( mag, Jacobian[0][i] );
 	}
 	lambda_norm = lambda_to_use / mag;
 	mag = 0;
-	for ( unsigned int i = 0; i < num_in_params; i++ )
+	for ( vsize_t i = 0; i < num_in_params; i++ )
 	{
 		mag = quad_add( mag, in_params_to_use[i] );
 	}
@@ -338,7 +277,7 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 		Jacobian = differentiate( func, current_in_params, 1, cusp_override_power );
 
 		// Make a step
-		for ( unsigned int i = 0; i < num_in_params; i++ )
+		for ( vsize_t i = 0; i < num_in_params; i++ )
 		{
 			current_in_params[i] -= lambda_norm * Jacobian[0][i];
 		}
@@ -346,15 +285,11 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 		// Check if we've converged
 		converged_flag = true;
 
-		for ( unsigned int i = 0; i < num_in_params; i++ )
+		for ( vsize_t i = 0; i < num_in_params; i++ )
 		{
-			if ( isnan( current_in_params[i] ) )
+			if ( isbad( current_in_params[i] ) )
 			{
-				result_in_params = current_in_params;
-				if ( !silent )
-					std::cerr
-							<< "ERROR: Somehow got NaN for in_params in solve_sd.\n";
-				return UNSPECIFIED_ERROR;
+				throw std::runtime_error("ERROR: Somehow got NaN for in_params in solve_sd.");
 			}
 			if ( std::fabs(
 					2 * ( current_in_params[i] - last_in_params[i] )
@@ -384,10 +319,8 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 	{
 		if ( !silent )
 			std::cerr << "WARNING: Did not converge in solve_sd.\n";
-		return UNSPECIFIED_ERROR;
 	}
-	result_in_params = current_in_params;
-	return 0;
+	return current_in_params;
 
 }
 
@@ -397,8 +330,6 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 //             get stuck in local minima. It is, however, slower than other methods, especially for high numbers of input parameters.
 //             This function is set up to handle multiple output parameters. If it is more important that one be close to the target than another,
 //             use the out_params_weight vector to assign it a higher weight.
-//             Returns 0 on success, 1 on failure (usually only happens if the entire input space gives undefined output or invalid values are
-//             passed to the function).
 //
 // Parameters:
 // min/max_in_params: Limits to the search space for a solution
@@ -411,18 +342,16 @@ const int solve_sd( const f * func, const unsigned int num_in_params,
 // out_params_weight: If there are multiple output parameters, this represents how relatively important it is that each be close to the target
 //                    value.
 
-// Scalar-in, scalar-out version !!! needs cleaning
+// Scalar-in, scalar-out version
 template< typename f, typename T >
-const int solve_grid( const f * func, const unsigned int num_in_params,
-		const T & init_min_in_params, const T & init_max_in_params,
+T solve_grid( const f * func, const T & init_min_in_params, const T & init_max_in_params,
 		const T & init_init_in_params_step, const T & target_out_params,
-		T & result_in_params, const double init_init_precision = 0.00001,
-		const int search_precision = 0.1,
-		const double & init_out_params_weight = 0, const bool silent = false )
+		const double init_init_precision = 0.00001, const int search_precision = 0.1,
+		const bool silent = false )
 {
 
 	T d = 0, d_best = DBL_MAX;
-	int i_resid = 0, i_temp = 0, i_best = -1;
+	unsigned int i_best = -1;
 	T init_in_params_step( 0 );
 	T in_params_step( 0 );
 	T test_in_params( 0 );
@@ -430,217 +359,166 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 	T test_out_params( 0 );
 	T min_in_params = init_min_in_params, max_in_params =
 			init_max_in_params;
-	double out_params_weight = init_out_params_weight;
 
 	const int default_step_number = 10;
 	const double grid_shortening_factor = 0.5;
 
 	double init_precision = init_init_precision, precision = init_precision;
 	double step_dist = 1;
-	int num_test_points = 0;
-	int divisor = 1;
-	double total_weight = 0;
-	int num_in_params_steps( 0 );
+	unsigned int num_test_points = 0;
+	unsigned int num_in_params_steps( 0 );
 
 	// Check for sanity and set up parameters
-	num_test_points = 1;
-	total_weight = 0;
-	for ( unsigned int i = 0; i < num_in_params; i++ )
+	if ( max_in_params < min_in_params )
+		std::swap( max_in_params, min_in_params );
+	if ( init_init_in_params_step < 0 )
 	{
-		if ( max_in_params < min_in_params )
-			std::swap( max_in_params, min_in_params );
-		if ( init_init_in_params_step < 0 )
-		{
-			init_in_params_step = min( -init_init_in_params_step,
-					max_in_params - min_in_params );
-		}
-		else if ( init_init_in_params_step == 0 )
-		{
-			init_in_params_step = ( max_in_params - min_in_params )
-					/ default_step_number;
-		}
-		else
-		{
-			init_in_params_step = min( init_init_in_params_step,
-					max_in_params - min_in_params );
-		}
-		num_in_params_steps = (int)floor(
-				( max_in_params - min_in_params ) / init_in_params_step )
-				+ 1;
-		num_test_points *= num_in_params_steps;
-		out_params_weight = std::fabs( out_params_weight );
-		total_weight += out_params_weight;
+		init_in_params_step = min( -init_init_in_params_step,
+				max_in_params - min_in_params );
 	}
+	else if ( init_init_in_params_step == 0 )
+	{
+		init_in_params_step = ( max_in_params - min_in_params )
+				/ default_step_number;
+	}
+	else
+	{
+		init_in_params_step = min( init_init_in_params_step,
+				max_in_params - min_in_params );
+	}
+	num_in_params_steps = (int)floor(
+			( max_in_params - min_in_params ) / init_in_params_step )
+			+ 1;
+	num_test_points = num_in_params_steps;
+
 	if ( ( init_init_precision > 0 ) && ( init_init_precision <= 1 ) )
 		init_precision = init_init_precision;
-	if ( total_weight <= 0 )
-	{
-		out_params_weight = 1;
-		total_weight = num_in_params;
-	}
 
 	// First step is to search solution space for the best starting point
-	i_best = -1;
+	i_best = 0;
 	d_best = DBL_MAX;
 	in_params_step = init_in_params_step;
-	for ( int i = 0; i < num_test_points; i++ )
+	bool starting_point_found = false;
+	for ( unsigned int i = 0; i < num_test_points; i++ )
 	{
-		// Figure out test_in_params for this point
-		i_resid = i;
-		divisor = num_test_points;
-		for ( unsigned int j = 0; j < num_in_params; j++ )
+		test_in_params = min_in_params + in_params_step * i;
+
+		try
 		{
-			divisor /= num_in_params_steps;
-			i_temp = (int)( i_resid / divisor );
-			i_resid -= i_temp * divisor;
-			test_in_params = min_in_params + in_params_step * i_temp;
-		}
-		test_out_params = ( *func )( test_in_params, silent );
-		d = std::fabs( test_out_params - target_out_params );
-		if ( d < d_best )
-		{
-			d_best = d;
-			i_best = i;
-		}
-
-	} // for(int i = 0; i < num_test_points; i++ )
-
-	if ( i_best == -1 ) // We didn't find any suitable starting point
-	{
-		// Try a finer search to see if that can find it
-		int search_factor = (int)( 1. / search_precision );
-		in_params_step = init_in_params_step;
-		for ( unsigned int i = 0; i < num_in_params; i++ )
-			in_params_step /= search_factor;
-		i_best = -1;
-		d_best = DBL_MAX;
-
-		// Recalculate number of test points
-		num_test_points = 1;
-		for ( unsigned int i = 0; i < num_in_params; i++ )
-			num_test_points *= num_in_params_steps * search_factor;
-
-		for ( int i = 0; i < num_test_points; i++ )
-		{
-			// Figure out test_in_params for this point
-			i_resid = i;
-			divisor = num_test_points;
-			for ( unsigned int j = 0; j < num_in_params; j++ )
-			{
-				divisor /= num_in_params_steps;
-				i_temp = (int)( i_resid / divisor );
-				i_resid -= i_temp * divisor;
-				test_in_params = min_in_params + in_params_step * i_temp;
-			}
 			test_out_params = ( *func )( test_in_params, silent );
 			d = std::fabs( test_out_params - target_out_params );
 			if ( d < d_best )
 			{
 				d_best = d;
 				i_best = i;
+				starting_point_found = true;
+			}
+		}
+		catch (const std::exception &e)
+		{
+		}
+
+	} // for(int i = 0; i < num_test_points; i++ )
+
+	if ( !starting_point_found )
+	{
+		// Try a finer search to see if that can find it
+		int search_factor = (int)( 1. / search_precision );
+		in_params_step *= search_precision;
+
+		// Recalculate number of test points
+		num_test_points = num_in_params_steps * search_factor;
+
+		for ( unsigned int i = 0; i < num_test_points; i++ )
+		{
+			// Figure out test_in_params for this point and get value there
+			test_in_params = min_in_params + in_params_step * i;
+			try
+			{
+				test_out_params = ( *func )( test_in_params, silent );
+				d = std::fabs( test_out_params - target_out_params );
+				if ( d < d_best )
+				{
+					d_best = d;
+					i_best = i;
+				}
+			}
+			catch (const std::exception &e)
+			{
 			}
 
 		} // for(int i = 0; i < num_test_points; i++ )
 
-	} // if(i_best == -1)
+	} // if(!starting_point_found)
 
 	// Check again to see if we've found a good start point
-	if ( i_best == -1 )
+	if ( !starting_point_found )
 	{
-		// Nope. The function might just be undefined everywhere. Return an warning.
-		if ( !silent )
-			std::cerr
-					<< "WARNING: Could not solve function with solve_grid - no defined points found.\n";
-		return UNSPECIFIED_ERROR;
-	} // if(i_best == -1)
+		// Nope. The function might just be undefined everywhere. Throw an exception
+		throw std::runtime_error("Solve_grid could not find any defined range points.");
+	} // if(!starting_point_found)
 
 	// Get best_in_params
-	best_in_params = 0;
-	i_resid = i_best;
-	divisor = num_test_points;
-	for ( unsigned int j = 0; j < num_in_params; j++ )
-	{
-		divisor /= num_in_params_steps;
-		i_temp = (int)( i_resid / divisor );
-		i_resid -= i_temp * divisor;
-		best_in_params = min_in_params + in_params_step * i_temp;
-	}
+	best_in_params = min_in_params + in_params_step * i_best;
 
 	// Narrowing search
 	step_dist = 1;
-	num_test_points = ipow( 3, num_in_params );
+	num_test_points = 3;
 	in_params_step = init_in_params_step;
 	precision = init_precision;
 
 	while ( step_dist > precision )
 	{
-		for ( unsigned int i = 0; i < num_in_params; i++ )
-		{
-			in_params_step *= grid_shortening_factor;
-		}
+		in_params_step *= grid_shortening_factor;
 
-		i_best = -1;
+		i_best = 0;
 		d_best = DBL_MAX;
-		for ( int i = 0; i < num_test_points; i++ )
+		for ( unsigned int i = 0; i < num_test_points; i++ )
 		{
-			// Figure out test_in_params for this point
-			i_resid = i;
-			divisor = num_test_points;
-			for ( unsigned int j = 0; j < num_in_params; j++ )
+			test_in_params = best_in_params + in_params_step * i - in_params_step;
+			try
 			{
-				divisor /= 3;
-				i_temp = (int)( i_resid / divisor );
-				i_resid -= i_temp * divisor;
-				i_temp -= 1;
-				test_in_params = best_in_params + in_params_step * i_temp;
+				test_out_params = ( *func )( test_in_params, silent );
+				d = std::fabs( test_out_params - target_out_params );
+				if ( d < d_best )
+				{
+					d_best = d;
+					i_best = i;
+				}
 			}
-			test_out_params = ( *func )( test_in_params, silent );
-			d = std::fabs( test_out_params - target_out_params );
-			if ( d < d_best )
+			catch (const std::exception &e)
 			{
-				d_best = d;
-				i_best = i;
 			}
 
 		} // for(int i = 0; i < num_test_points; i++ )
 
-		// Figure out test_in_params for this point
-		i_resid = i_best;
-		divisor = num_test_points;
-		for ( unsigned int j = 0; j < num_in_params; j++ )
-		{
-			divisor /= 3;
-			i_temp = (int)( i_resid / divisor );
-			i_resid -= i_temp * divisor;
-			i_temp -= 1;
-			test_in_params = best_in_params + in_params_step * i_temp;
-		}
-		best_in_params = test_in_params;
+		// Figure out best_in_params for next step
+		best_in_params += in_params_step * (i_best-1);
 
 		step_dist *= grid_shortening_factor;
 
 	} // while( step_dist > precision )
 
-	result_in_params = best_in_params;
-	return 0;
+	return best_in_params;
 }
 
 // Vector-in, vector-out version
 template< typename f, typename T >
-const int solve_grid( const f * func, const unsigned int num_in_params,
+std::vector< T > solve_grid( const f * func,
 		const std::vector< T > & init_min_in_params,
 		const std::vector< T > & init_max_in_params,
 		const std::vector< T > & init_init_in_params_step,
 		const std::vector< T > & target_out_params,
-		std::vector< T > & result_in_params, const double init_init_precision =
-				0.00001, const int search_precision = 0.1,
+		const double init_init_precision = 0.00001, const int search_precision = 0.1,
 		const std::vector< double > & init_out_params_weight = std::vector<
 				double >( 0 ), const bool silent = false )
 {
-	unsigned int num_out_params = 0;
+	typedef typename std::vector<T>::size_type vsize_t;
+	vsize_t num_in_params = init_min_in_params.size();
+	vsize_t num_out_params = 0;
 
 	T d = 0, d_best = DBL_MAX;
-	int i_resid = 0, i_temp = 0, i_best = -1;
+	int i_resid = 0, i_temp = 0, i_best = 0;
 	std::vector< T > init_in_params_step( num_in_params, 0 );
 	std::vector< T > in_params_step( num_in_params, 0 );
 	std::vector< T > test_in_params( num_in_params, 0 );
@@ -710,9 +588,10 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 	}
 
 	// First step is to search solution space for the best starting point
-	i_best = -1;
+	i_best = 0;
 	d_best = DBL_MAX;
 	in_params_step = init_in_params_step;
+	bool starting_point_found = false;
 	for ( int i = 0; i < num_test_points; i++ )
 	{
 		// Figure out test_in_params for this point
@@ -726,36 +605,39 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 			test_in_params.at( j ) = min_in_params.at( j )
 					+ in_params_step.at( j ) * i_temp;
 		}
-		if ( int errcode = ( *func )( test_in_params, test_out_params,
-				silent ) )
-			return errcode + LOWER_LEVEL_ERROR;
-		if ( test_out_params.size() != target_out_params.size() )
-			throw std::runtime_error("ERROR: target_out_params passed to solve_grid has incorrect size.");
-		if ( test_out_params.size() != out_params_weight.size() )
-			throw std::runtime_error("ERROR: out_params_weight passed to solve_grid has incorrect size.");
-		d = weighted_dist( test_out_params, target_out_params,
-				out_params_weight );
-		if ( d < d_best )
+		try
 		{
-			d_best = d;
-			i_best = i;
+			test_out_params = ( *func )( test_in_params, silent );
+			assert(test_out_params.size() == target_out_params.size());
+			assert(test_out_params.size() == out_params_weight.size());
+			d = weighted_dist( test_out_params, target_out_params,
+					out_params_weight );
+			if ( d < d_best )
+			{
+				starting_point_found = true;
+				d_best = d;
+				i_best = i;
+			}
+		}
+		catch (const std::exception &e)
+		{
 		}
 
 	} // for(int i = 0; i < num_test_points; i++ )
 
-	if ( i_best == -1 ) // We didn't find any suitable starting point
+	if ( !starting_point_found ) // We didn't find any suitable starting point
 	{
 		// Try a finer search to see if that can find it
 		int search_factor = (int)( 1. / search_precision );
 		in_params_step = init_in_params_step;
-		for ( unsigned int i = 0; i < in_params_step.size(); i++ )
+		for ( vsize_t i = 0; i < in_params_step.size(); i++ )
 			in_params_step[i] /= search_factor;
-		i_best = -1;
+		i_best = 0;
 		d_best = DBL_MAX;
 
 		// Recalculate number of test points
 		num_test_points = 1;
-		for ( unsigned int i = 0; i < num_in_params; i++ )
+		for ( vsize_t i = 0; i < num_in_params; i++ )
 			num_test_points *= num_in_params_steps.at( i ) * search_factor;
 
 		for ( int i = 0; i < num_test_points; i++ )
@@ -763,7 +645,7 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 			// Figure out test_in_params for this point
 			i_resid = i;
 			divisor = num_test_points;
-			for ( unsigned int j = 0; j < num_in_params; j++ )
+			for ( vsize_t j = 0; j < num_in_params; j++ )
 			{
 				divisor /= num_in_params_steps.at( j );
 				i_temp = (int)( i_resid / divisor );
@@ -771,43 +653,45 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 				test_in_params.at( j ) = min_in_params.at( j )
 						+ in_params_step.at( j ) * i_temp;
 			}
-			if ( int errcode = ( *func )( test_in_params, test_out_params,
-					silent ) )
-				return errcode + LOWER_LEVEL_ERROR;
-			if ( test_out_params.size() != target_out_params.size() )
-				throw std::runtime_error("ERROR: target_out_params passed to solve_grid has incorrect size.");
-			if ( test_out_params.size() != out_params_weight.size() )
-				throw std::runtime_error("ERROR: out_params_weight passed to solve_grid has incorrect size.");
-			d = weighted_dist( test_out_params, target_out_params,
-					out_params_weight );
-			if ( d < d_best )
+			try
 			{
-				d_best = d;
-				i_best = i;
+				test_out_params = ( *func )( test_in_params, silent );
+
+				assert(test_out_params.size() == target_out_params.size());
+				assert(test_out_params.size() == out_params_weight.size());
+
+				d = weighted_dist( test_out_params, target_out_params,
+						out_params_weight );
+				if ( d < d_best )
+				{
+					starting_point_found = true;
+					d_best = d;
+					i_best = i;
+				}
+			}
+			catch (const std::exception &e)
+			{
 			}
 
 		} // for(int i = 0; i < num_test_points; i++ )
 
-	} // if(i_best == -1)
+	} // if(!starting_point_found)
 
 	// Check again to see if we've found a good start point
-	if ( i_best == -1 )
+	if ( !starting_point_found )
 	{
-		// Nope. The function might just be undefined everywhere. Return an warning.
-		if ( !silent )
-			std::cerr
-					<< "WARNING: Could not solve function with solve_grid - no defined points found.\n";
-		return UNSPECIFIED_ERROR;
-	} // if(i_best == -1)
+		// Nope. The function might just be undefined everywhere. Throw an exception
+		throw std::runtime_error("Solve_grid could not find any defined range points.");
+	} // if(!starting_point_found)
 
 	// Get best_in_params
 	best_in_params.resize( num_in_params, 0 );
 	i_resid = i_best;
 	divisor = num_test_points;
-	for ( unsigned int j = 0; j < num_in_params; j++ )
+	for ( vsize_t j = 0; j < num_in_params; j++ )
 	{
 		divisor /= num_in_params_steps.at( j );
-		i_temp = (int)( i_resid / divisor );
+		i_temp = (unsigned int)( i_resid / divisor );
 		i_resid -= i_temp * divisor;
 		best_in_params.at( j ) = min_in_params.at( j )
 				+ in_params_step.at( j ) * i_temp;
@@ -821,7 +705,7 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 
 	while ( step_dist > precision )
 	{
-		for ( unsigned int i = 0; i < num_in_params; i++ )
+		for ( vsize_t i = 0; i < num_in_params; i++ )
 		{
 			in_params_step[i] *= grid_shortening_factor;
 		}
@@ -833,7 +717,7 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 			// Figure out test_in_params for this point
 			i_resid = i;
 			divisor = num_test_points;
-			for ( unsigned int j = 0; j < num_in_params; j++ )
+			for ( vsize_t j = 0; j < num_in_params; j++ )
 			{
 				divisor /= 3;
 				i_temp = (int)( i_resid / divisor );
@@ -842,19 +726,23 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 				test_in_params.at( j ) = best_in_params.at( j )
 						+ in_params_step.at( j ) * i_temp;
 			}
-			if ( int errcode = ( *func )( test_in_params, test_out_params,
-					silent ) )
-				return errcode + LOWER_LEVEL_ERROR;
-			if ( test_out_params.size() != target_out_params.size() )
-				throw std::runtime_error("ERROR: target_out_params passed to solve_grid has incorrect size.");
-			if ( test_out_params.size() != out_params_weight.size() )
-				throw std::runtime_error("ERROR: out_params_weight passed to solve_grid has incorrect size.");
-			d = weighted_dist( test_out_params, target_out_params,
-					out_params_weight );
-			if ( d < d_best )
+			try
 			{
-				d_best = d;
-				i_best = i;
+				test_out_params = ( *func )( test_in_params, silent );
+
+				assert(test_out_params.size() == target_out_params.size());
+				assert(test_out_params.size() == out_params_weight.size());
+
+				d = weighted_dist( test_out_params, target_out_params,
+						out_params_weight );
+				if ( d < d_best )
+				{
+					d_best = d;
+					i_best = i;
+				}
+			}
+			catch (const std::exception &e)
+			{
 			}
 
 		} // for(int i = 0; i < num_test_points; i++ )
@@ -877,62 +765,49 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 
 	} // while( step_dist > precision )
 
-	result_in_params = best_in_params;
-	return 0;
+	return best_in_params;
 }
 
 // Scalar-in, scalar-out version
 template< typename f, typename T >
-const int solve_grid( const f * func, const unsigned int num_in_params,
-		const T & init_min_in_params, const T & init_max_in_params,
-		const int num_search_steps, const T & target_out_params,
-		T & result_in_params, const double init_init_precision = 0.00001,
-		const int search_precision = 0.1, const double & out_params_weight = 0,
-		const bool silent = false )
+T solve_grid( const f * func, const T & init_min_in_params, const T & init_max_in_params,
+		const unsigned int num_search_steps, const T & target_out_params,
+		const double init_init_precision = 0.00001,
+		const int search_precision = 0.1, const bool silent = false )
 {
-	T in_params_step( 0 );
+	const unsigned int steps = (unsigned int)max( num_search_steps, 1 );
 
-	const int steps = (int)max( num_search_steps, 1 );
-
-	in_params_step = ( init_max_in_params - init_min_in_params ) / steps;
-	return brgastro::solve_grid( func, num_in_params, init_min_in_params,
+	T in_params_step(( init_max_in_params - init_min_in_params ) / steps);
+	return brgastro::solve_grid( func, init_min_in_params,
 			init_max_in_params, in_params_step, target_out_params,
-			result_in_params, init_init_precision, search_precision,
-			out_params_weight );
+			init_init_precision, search_precision,
+			silent );
 } // const int solve_grid(...)
 
 // Vector-in, vector-out version
 template< typename f, typename T >
-const int solve_grid( const f * func, const unsigned int num_in_params,
+std::vector<T> solve_grid( const f * func,
 		const std::vector< T > & init_min_in_params,
 		const std::vector< T > & init_max_in_params,
-		const int num_search_steps, const std::vector< T > & target_out_params,
-		std::vector< T > & result_in_params, const double init_init_precision =
-				0.00001, const int search_precision = 0.1,
+		const unsigned int num_search_steps, const std::vector< T > & target_out_params,
+		const double init_init_precision = 0.00001, const int search_precision = 0.1,
 		const std::vector< double > & out_params_weight =
 				std::vector< double >( 0 ), const bool silent = false )
 {
-	std::vector< T > in_params_step( num_in_params, 0 );
+	std::vector< T > in_params_step( init_min_in_params.size(), 0 );
 
-	const int steps = (int)max( num_search_steps, 1 );
+	const unsigned int steps = (unsigned int)max( num_search_steps, 1 );
 
-	try
-	{
-		for ( unsigned int i = 0; i < num_in_params; i++ )
-			in_params_step.at( i ) = ( init_max_in_params.at( i )
-					- init_min_in_params.at( i ) ) / steps;
-	}
-	catch ( const std::out_of_range & )
-	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Incorrect size for an array passed to brgastro::unit_solve_grid.\n";
-		return INVALID_ARGUMENTS_ERROR;
-	}
-	return brgastro::solve_grid( func, num_in_params, init_min_in_params,
+	assert(init_min_in_params.size()==init_max_in_params.size());
+
+	for ( size_t i = 0; i < init_min_in_params.size(); i++ )
+		in_params_step[i] = ( init_max_in_params.at[i]
+				- init_min_in_params.at[i] ) / steps;
+
+	return brgastro::solve_grid( func, init_min_in_params,
 			init_max_in_params, in_params_step, target_out_params,
-			result_in_params, init_init_precision, search_precision,
-			out_params_weight );
+			init_init_precision, search_precision,
+			out_params_weight, silent );
 } // const int solve_grid(...)
 
 /** Attempts to find the minimum output value for the passed function using a Metropolis-Hastings
@@ -952,11 +827,10 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
  * @return
  */
 template< typename f, typename T >
-const int solve_MCMC( const f * func, const T init_in_param, const T init_min_in_param,
+T solve_MCMC( const f * func, const T init_in_param, const T init_min_in_param,
 		const T init_max_in_param, const T init_in_param_step_sigma,
-		T & result_in_param, T & result_out_param, const int max_steps=1000000,
-		const int annealing_period=100000, const double annealing_factor=4,
-		const bool silent = false)
+		const int max_steps=1000000, const int annealing_period=100000,
+		const double annealing_factor=4, const bool silent = false)
 {
 	int step_num = 0;
 	bool bounds_check = true;
@@ -1004,8 +878,14 @@ const int solve_MCMC( const f * func, const T init_in_param, const T init_min_in
 	int last_cycle_count = 0;
 
 	// Get value at initial point
-	if(func(test_in_param, out_param, silent))
+	try
+	{
+		out_param = func(test_in_param, silent);
+	}
+	catch(const std::exception &e)
+	{
 		throw std::runtime_error("Cannot execute solve_MCMC at initial point.");
+	}
 	best_out_param = out_param;
 	double last_likelihood = std::exp(-annealing*out_param/2);
 
@@ -1022,8 +902,7 @@ const int solve_MCMC( const f * func, const T init_in_param, const T init_min_in
 		bool good_result = true;
 		try
 		{
-			if(func(test_in_param, out_param, silent))
-				good_result = false;
+			out_param = func(test_in_param, silent);
 		}
 		catch(const std::exception &e)
 		{
@@ -1041,7 +920,7 @@ const int solve_MCMC( const f * func, const T init_in_param, const T init_min_in
 			}
 			else
 			{
-				if(drand48() < new_likelihood/last_likelihood)
+				if(drand() < new_likelihood/last_likelihood)
 					step_to_it = true;
 			}
 			if(step_to_it)
@@ -1084,22 +963,14 @@ const int solve_MCMC( const f * func, const T init_in_param, const T init_min_in
 	// Check if mean actually gives a better best
 	try
 	{
-		if(!(func(mean_in_param,out_param,silent)))
-		{
-			if(out_param < best_out_param)
-			{
-				best_in_param = mean_in_param;
-			}
-		}
+		out_param = func(mean_in_param,silent);
 	}
 	catch(const std::exception &e)
 	{
 		// Just leave it, no need to do anything
 	}
 
-	result_in_param = best_in_param;
-
-	return 0;
+	return best_in_param;
 }
 
 /** Attempts to find the minimum output value for the passed function using a Metropolis-Hastings
@@ -1119,11 +990,11 @@ const int solve_MCMC( const f * func, const T init_in_param, const T init_min_in
  * @return
  */
 template< typename f, typename T >
-const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
+std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 		const std::vector<T> & init_min_in_params,
 		const std::vector<T> & init_max_in_params,
 		const std::vector<T> & init_in_param_step_sigmas,
-		std::vector<T> & result_in_params, std::vector<T> & result_out_params, const int max_steps=1000000,
+		const int max_steps=1000000,
 		const int annealing_period=100000, const double annealing_factor=4,
 		const bool silent = false)
 {
@@ -1152,10 +1023,7 @@ const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 		{
 			if(min_in_params.at(i)>max_in_params.at(i))
 			{
-				// Swap them
-				T temp = min_in_params.at(i);
-				min_in_params.at(i) = max_in_params.at(i);
-				max_in_params.at(i) = temp;
+				std::swap(min_in_params.at(i),max_in_params.at(i));
 			} // if(min_in_params.at(i)>max_in_params.at(i))
 		} // for(unsigned int i = 0; i < max_in_params.size(); i++)
 	} // if(bounds_check)
@@ -1193,16 +1061,23 @@ const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 	int last_cycle_count = 0;
 
 	// Get value at initial point
-	if(( *func )(test_in_params, out_params, silent))
+	try
+	{
+		out_params = ( *func )(test_in_params, silent);
+	}
+	catch(const std::exception &e)
+	{
 		throw std::runtime_error("Cannot execute solve_MCMC at initial point.");
+	}
 	best_out_params = out_params;
 	double last_log_likelihood = brgastro::sum(
 			brgastro::multiply(-annealing/2,out_params));
 
+	const double (*Gaus_rand)(double,double) = brgastro::Gaus_rand;
+
 	for(int step = 0; step < max_steps; step++)
 	{
 		// Get a new value
-		const double (*Gaus_rand)(double,double) = brgastro::Gaus_rand;
 		test_in_params = brgastro::rand_vector(Gaus_rand,
 				                               current_in_params,
 				                               brgastro::divide(in_param_step_sigmas,annealing));
@@ -1217,8 +1092,7 @@ const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 		bool good_result = true;
 		try
 		{
-			if(( *func )(test_in_params, out_params, silent))
-				good_result = false;
+			out_params = ( *func )(test_in_params, silent);
 		}
 		catch(const std::exception &e)
 		{
@@ -1237,7 +1111,7 @@ const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 			}
 			else
 			{
-				if(drand48() < std::exp(new_log_likelihood - last_log_likelihood))
+				if(drand() < std::exp(new_log_likelihood - last_log_likelihood))
 					step_to_it = true;
 			}
 			if(step_to_it)
@@ -1280,13 +1154,11 @@ const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 	// Check if mean actually gives a better best
 	try
 	{
-		if(!(( *func )(mean_in_params,out_params,silent)))
+		out_params = ( *func )(mean_in_params,silent);
+		if(brgastro::sum(out_params) < brgastro::sum(best_out_params))
 		{
-			if(brgastro::sum(out_params) < brgastro::sum(best_out_params))
-			{
-				best_in_params = mean_in_params;
-				best_out_params = out_params;
-			}
+			best_in_params = mean_in_params;
+			best_out_params = out_params;
 		}
 	}
 	catch(const std::exception &e)
@@ -1294,10 +1166,7 @@ const int solve_MCMC( const f * func, const std::vector<T> & init_in_params,
 		// Just leave it, no need to do anything
 	}
 
-	result_in_params = best_in_params;
-	result_out_params = best_out_params;
-
-	return 0;
+	return best_in_params;
 }
 
 } // namespace brgastro

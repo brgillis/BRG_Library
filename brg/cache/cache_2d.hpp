@@ -474,10 +474,12 @@ public:
 			}
 		}
 
-		xi_1 = (unsigned int)( ( x_1 - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ );
-		xi_1 = bound(0, xi_1, SPCP(name)->_resolution_1_ - 2 );
-		xi_2 = (unsigned int)( ( x_2 - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ );
-		xi_2 = bound(0, xi_2, SPCP(name)->_resolution_2_ - 2 );
+		xi_1 = (unsigned int)bound(0,
+				( ( x_1 - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ),
+				SPCP(name)->_resolution_1_ - 2 );
+		xi_2 = (unsigned int)bound(0,
+				( ( x_2 - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ),
+				SPCP(name)->_resolution_2_ - 2 );
 
 		xlo_1 = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * xi_1;
 		xhi_1 = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( xi_1 + 1 );

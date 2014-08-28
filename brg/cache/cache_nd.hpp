@@ -450,9 +450,10 @@ public:
 			}
 		}
 
-		x_i = ( x - SPCP(name)->_mins_ ) / SPCP(name)->_steps_ ;
-		x_i = brgastro::max( x_i, 0 );
-		x_i = brgastro::min( x_i, SPCP(name)->_resolutions_ - 2 );
+
+		x_i = bound(0,
+				( ( x - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ),
+				SPCP(name)->_resolution_1_ - 2 );
 
 		xlo = SPCP(name)->_mins_ + SPCP(name)->_steps_ * x_i;
 		xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
