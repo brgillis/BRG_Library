@@ -443,47 +443,40 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 	int num_in_params_steps( 0 );
 
 	// Check for sanity and set up parameters
-	try
+	num_test_points = 1;
+	total_weight = 0;
+	for ( unsigned int i = 0; i < num_in_params; i++ )
 	{
-		num_test_points = 1;
-		total_weight = 0;
-		for ( unsigned int i = 0; i < num_in_params; i++ )
+		if ( max_in_params < min_in_params )
+			std::swap( max_in_params, min_in_params );
+		if ( init_init_in_params_step < 0 )
 		{
-			if ( max_in_params < min_in_params )
-				std::swap( max_in_params, min_in_params );
-			if ( init_init_in_params_step < 0 )
-			{
-				init_in_params_step = min( -init_init_in_params_step,
-						max_in_params - min_in_params );
-			}
-			else if ( init_init_in_params_step == 0 )
-			{
-				init_in_params_step = ( max_in_params - min_in_params )
-						/ default_step_number;
-			}
-			else
-			{
-				init_in_params_step = min( init_init_in_params_step,
-						max_in_params - min_in_params );
-			}
-			num_in_params_steps = (int)floor(
-					( max_in_params - min_in_params ) / init_in_params_step )
-					+ 1;
-			num_test_points *= num_in_params_steps;
-			out_params_weight = std::fabs( out_params_weight );
-			total_weight += out_params_weight;
+			init_in_params_step = min( -init_init_in_params_step,
+					max_in_params - min_in_params );
 		}
-		if ( ( init_init_precision > 0 ) && ( init_init_precision <= 1 ) )
-			init_precision = init_init_precision;
-		if ( total_weight <= 0 )
+		else if ( init_init_in_params_step == 0 )
 		{
-			out_params_weight = 1;
-			total_weight = num_in_params;
+			init_in_params_step = ( max_in_params - min_in_params )
+					/ default_step_number;
 		}
+		else
+		{
+			init_in_params_step = min( init_init_in_params_step,
+					max_in_params - min_in_params );
+		}
+		num_in_params_steps = (int)floor(
+				( max_in_params - min_in_params ) / init_in_params_step )
+				+ 1;
+		num_test_points *= num_in_params_steps;
+		out_params_weight = std::fabs( out_params_weight );
+		total_weight += out_params_weight;
 	}
-	catch ( const std::exception & )
+	if ( ( init_init_precision > 0 ) && ( init_init_precision <= 1 ) )
+		init_precision = init_init_precision;
+	if ( total_weight <= 0 )
 	{
-		return errorNOS( silent );
+		out_params_weight = 1;
+		total_weight = num_in_params;
 	}
 
 	// First step is to search solution space for the best starting point
@@ -668,60 +661,52 @@ const int solve_grid( const f * func, const unsigned int num_in_params,
 	std::vector< int > num_in_params_steps( num_in_params, 0 );
 
 	// Check for sanity and set up parameters
-	try
+	num_test_points = 1;
+	if ( out_params_weight.size() == 0 )
 	{
-		num_test_points = 1;
-		if ( out_params_weight.size() == 0 )
-		{
-			out_params_weight.resize( target_out_params.size(), 1 );
-		}
-		else if ( out_params_weight.size() != target_out_params.size() )
-		{
-			out_params_weight.resize( target_out_params.size(), 0 );
-		}
-		total_weight = 0;
-		for ( unsigned int i = 0; i < num_in_params; i++ )
-		{
-			if ( max_in_params.at( i ) < min_in_params.at( i ) )
-				std::swap( max_in_params[i], min_in_params[i] );
-			if ( init_init_in_params_step.at( i ) < 0 )
-			{
-				init_in_params_step.at( i ) = min(
-						-init_init_in_params_step[i],
-						max_in_params.at( i ) - min_in_params.at( i ) );
-			}
-			else if ( init_init_in_params_step.at( i ) == 0 )
-			{
-				init_in_params_step.at( i ) = ( max_in_params.at( i )
-						- min_in_params.at( i ) ) / default_step_number;
-			}
-			else
-			{
-				init_in_params_step.at( i ) = min( init_init_in_params_step[i],
-						max_in_params.at( i ) - min_in_params.at( i ) );
-			}
-			num_in_params_steps.at( i ) = (int)floor(
-					( max_in_params.at( i ) - min_in_params.at( i ) )
-							/ init_in_params_step.at( i ) ) + 1;
-			num_test_points *= num_in_params_steps.at( i );
-		}
-		for(unsigned int i = 0; i < out_params_weight.size(); i++)
-		{
-			out_params_weight.at( i ) = fabs( out_params_weight.at( i ) );
-			total_weight += out_params_weight.at( i );
-		}
-		if ( ( init_init_precision > 0 ) && ( init_init_precision <= 1 ) )
-			init_precision = init_init_precision;
-		if ( total_weight <= 0 )
-		{
-			out_params_weight.resize( num_in_params, 1 );
-			total_weight = num_in_params;
-		}
+		out_params_weight.resize( target_out_params.size(), 1 );
 	}
-	catch ( const std::exception & )
+	else if ( out_params_weight.size() != target_out_params.size() )
 	{
-
-		return errorNOS( silent );
+		out_params_weight.resize( target_out_params.size(), 0 );
+	}
+	total_weight = 0;
+	for ( unsigned int i = 0; i < num_in_params; i++ )
+	{
+		if ( max_in_params.at( i ) < min_in_params.at( i ) )
+			std::swap( max_in_params[i], min_in_params[i] );
+		if ( init_init_in_params_step.at( i ) < 0 )
+		{
+			init_in_params_step.at( i ) = min(
+					-init_init_in_params_step[i],
+					max_in_params.at( i ) - min_in_params.at( i ) );
+		}
+		else if ( init_init_in_params_step.at( i ) == 0 )
+		{
+			init_in_params_step.at( i ) = ( max_in_params.at( i )
+					- min_in_params.at( i ) ) / default_step_number;
+		}
+		else
+		{
+			init_in_params_step.at( i ) = min( init_init_in_params_step[i],
+					max_in_params.at( i ) - min_in_params.at( i ) );
+		}
+		num_in_params_steps.at( i ) = (int)floor(
+				( max_in_params.at( i ) - min_in_params.at( i ) )
+						/ init_in_params_step.at( i ) ) + 1;
+		num_test_points *= num_in_params_steps.at( i );
+	}
+	for(unsigned int i = 0; i < out_params_weight.size(); i++)
+	{
+		out_params_weight.at( i ) = fabs( out_params_weight.at( i ) );
+		total_weight += out_params_weight.at( i );
+	}
+	if ( ( init_init_precision > 0 ) && ( init_init_precision <= 1 ) )
+		init_precision = init_init_precision;
+	if ( total_weight <= 0 )
+	{
+		out_params_weight.resize( num_in_params, 1 );
+		total_weight = num_in_params;
 	}
 
 	// First step is to search solution space for the best starting point

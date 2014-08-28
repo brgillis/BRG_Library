@@ -31,23 +31,6 @@ namespace brgastro
 
 // Generic functions
 #if (1)
-inline const int errorNOS( const bool silent = false )
-{
-	if ( !silent )
-		std::cerr
-				<< "ERROR-not-otherwise-specified: I'm surprised the code actually found an error here.\n"
-				<< "So surprised I didn't bother writing a specific message for it. Sorry; you'll have to\n"
-				<< "start debugging and see where it hits this message. Put a breakpoint on the function\n"
-				<< "errorNOS() in the brg_functions.hpp file and step out from there.\n";
-	return UNSPECIFIED_ERROR;
-}
-
-inline const int memory_error( const bool silent = false )
-{
-	if ( !silent )
-		std::cerr << "ERROR: Could not assign sufficient dynamic memory.\n";
-	return MEMORY_ERROR;
-}
 
 // Returns true if val is Not a Number - Personal implementation, to make sure it's included
 template< typename T >

@@ -148,28 +148,23 @@ const int brgastro::tNFW_profile::set_parameters(
 						<< "Four are required for both num_parameters and parameters.size().\n";
 		return INVALID_ARGUMENTS_ERROR;
 	}
-	if ( set_mvir( parameters.at( 0 ) ) )
-		return errorNOS( silent );
+	set_mvir( parameters.at( 0 ) );
 	set_z( parameters.at( 1 ) );
 	if ( parameters.at( 2 ) <= 0 )
 	{
-		if ( set_c( _cfm( parameters.at( 0 ), parameters.at( 1 ) ) ) )
-			return errorNOS( silent );
+		set_c( _cfm( parameters.at( 0 ), parameters.at( 1 ) ) );
 	}
 	else
 	{
-		if ( set_c( parameters.at( 2 ) ) )
-			return errorNOS( silent );
+		set_c( parameters.at( 2 ) );
 	}
 	if ( parameters.at( 3 ) <= 0 )
 	{
-		if ( set_tau( default_tau_factor * _c_ ) )
-			return errorNOS( silent );
+		set_tau( default_tau_factor * _c_ );
 	}
 	else
 	{
-		if ( set_tau( parameters.at( 3 ) ) )
-			return errorNOS( silent );
+		set_tau( parameters.at( 3 ) );
 	}
 	return 0;
 }
@@ -304,18 +299,10 @@ const int brgastro::tNFW_profile::get_parameters( std::vector< BRG_UNITS > & par
 		const bool silent ) const
 {
 	parameters.resize( num_parameters() );
-
-	try
-	{
-		parameters.at( 0 ) = _mvir0_;
-		parameters.at( 1 ) = z();
-		parameters.at( 2 ) = _c_;
-		parameters.at( 3 ) = _tau_;
-	}
-	catch ( const std::exception & )
-	{
-		return errorNOS( silent );
-	}
+	parameters.at( 0 ) = _mvir0_;
+	parameters.at( 1 ) = z();
+	parameters.at( 2 ) = _c_;
+	parameters.at( 3 ) = _tau_;
 	return 0;
 }
 
@@ -324,17 +311,10 @@ const int brgastro::tNFW_profile::get_parameter_names( std::vector< std::string 
 {
 	parameter_names.resize( num_parameters() );
 
-	try
-	{
-		parameter_names.at( 0 ) = "mvir0";
-		parameter_names.at( 1 ) = "z";
-		parameter_names.at( 2 ) = "c";
-		parameter_names.at( 3 ) = "tau";
-	}
-	catch ( const std::exception & )
-	{
-		return errorNOS( silent );
-	}
+	parameter_names.at( 0 ) = "mvir0";
+	parameter_names.at( 1 ) = "z";
+	parameter_names.at( 2 ) = "c";
+	parameter_names.at( 3 ) = "tau";
 	return 0;
 }
 

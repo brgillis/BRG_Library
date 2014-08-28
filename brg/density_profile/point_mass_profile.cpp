@@ -60,8 +60,7 @@ const int brgastro::point_mass_profile::set_parameters(
 					<< "Four are required for both num_parameters and parameters.size().\n";
 		return INVALID_ARGUMENTS_ERROR;
 	}
-	if ( set_mvir( parameters.at( 0 ) ) )
-		return errorNOS();
+	set_mvir( parameters.at( 0 ) );
 	set_z( parameters.at( 1 ) );
 	return 0;
 }
@@ -136,15 +135,8 @@ const int brgastro::point_mass_profile::get_parameters( std::vector< BRG_UNITS >
 {
 	parameters.resize( num_parameters() );
 
-	try
-	{
-		parameters.at( 0 ) = _mass_;
-		parameters.at( 1 ) = z();
-	}
-	catch ( std::exception & )
-	{
-		return errorNOS();
-	}
+	parameters.at( 0 ) = _mass_;
+	parameters.at( 1 ) = z();
 	return 0;
 }
 
@@ -153,15 +145,8 @@ const int brgastro::point_mass_profile::get_parameter_names(std::vector< std::st
 {
 	parameter_names.resize( num_parameters() );
 
-	try
-	{
-		parameter_names.at( 0 ) = "mass";
-		parameter_names.at( 1 ) = "z";
-	}
-	catch ( const std::exception & )
-	{
-		return errorNOS();
-	}
+	parameter_names.at( 0 ) = "mass";
+	parameter_names.at( 1 ) = "z";
 	return 0;
 }
 
