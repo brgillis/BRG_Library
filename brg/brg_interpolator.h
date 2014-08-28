@@ -7,8 +7,8 @@
  *      Author: brg
  */
 
-#ifndef __BRG_INTERPOLATOR_H_INCLUDED__
-#define __BRG_INTERPOLATOR_H_INCLUDED__
+#ifndef _BRG_INTERPOLATOR_H_INCLUDED_
+#define _BRG_INTERPOLATOR_H_INCLUDED_
 
 #include <cstdlib>
 #include <vector>

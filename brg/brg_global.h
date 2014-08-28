@@ -1,5 +1,5 @@
-#ifndef __BRG_GLOBAL_H_INCLUDED__
-#define __BRG_GLOBAL_H_INCLUDED__
+#ifndef _BRG_GLOBAL_H_INCLUDED_
+#define _BRG_GLOBAL_H_INCLUDED_
 
 // Global compiler directives
 // Alter these by switching between #define and #undef
@@ -34,8 +34,8 @@
 #define MAX_STACK_DEPTH 100
 #endif
 
-#ifndef __PI_DEFINED__
-#define __PI_DEFINED__
+#ifndef _BRG_PI_DEFINED_
+#define _BRG_PI_DEFINED_
 // Defining pi to keep it short, but as a variable so it won't act unusually
 const double pi = 3.14159265358979323846;
 #endif
@@ -131,8 +131,8 @@ const double pi = 3.14159265358979323846;
 #endif // #ifndef NULL
 
 // Error code values
-#ifndef __BRG_ERR_CODES_DEFINED__
-#define __BRG_ERR_CODES_DEFINED__
+#ifndef _BRG_ERR_CODES_DEFINED_
+#define _BRG_ERR_CODES_DEFINED_
 #define LOWER_LEVEL_ERROR       10
 #define UNSPECIFIED_ERROR        1
 #define INVALID_ARGUMENTS_ERROR  2
@@ -142,6 +142,6 @@ const double pi = 3.14159265358979323846;
 #define MEMORY_ERROR             6
 #define FILE_ACCESS_ERROR        7
 #define INFINITE_LOOP_ERROR      8
-#endif // #ifndef __BRG_ERR_CODES_DEFINED__
+#endif // #ifndef _BRG_ERR_CODES_DEFINED_
 
 #endif

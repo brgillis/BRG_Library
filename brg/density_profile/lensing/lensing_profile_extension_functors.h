@@ -7,8 +7,8 @@
  *      Author: brg
  */
 
-#ifndef _BRG_lensing_profile_extension_FUNCTORS_H_
-#define _BRG_lensing_profile_extension_FUNCTORS_H_
+#ifndef _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
+#define _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 
 #include "../../brg_global.h"
 

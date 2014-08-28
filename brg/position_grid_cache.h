@@ -7,8 +7,8 @@ position_grid_cache.h
 
  \**********************************************************************/
 
-#ifndef __BRG_POSITION_GRID_CACHE_H_INCLUDED__
-#define __BRG_POSITION_GRID_CACHE_H_INCLUDED__
+#ifndef _BRG_POSITION_GRID_CACHE_H_INCLUDED_
+#define _BRG_POSITION_GRID_CACHE_H_INCLUDED_
 
 #include "brg_global.h"
 

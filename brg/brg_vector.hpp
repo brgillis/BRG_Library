@@ -7,8 +7,8 @@
  *      Author: brg
  */
 
-#ifndef __BRG_VECTOR_HPP_INCLUDED__
-#define __BRG_VECTOR_HPP_INCLUDED__
+#ifndef _BRG_VECTOR_HPP_INCLUDED_
+#define _BRG_VECTOR_HPP_INCLUDED_
 
 #include <vector>
 #include <iterator>

@@ -52,8 +52,8 @@ brg_astro.h
 
 // Physical Constants
 #if (1)
-#ifndef __PI_DEFINED__
-#define __PI_DEFINED__
+#ifndef _BRG_PI_DEFINED_
+#define _BRG_PI_DEFINED_
 const double pi = 3.14159265358979323846;
 #endif
 

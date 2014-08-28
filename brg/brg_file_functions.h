@@ -12,8 +12,8 @@ brg_file_functions.h
 
  \**********************************************************************/
 
-#ifndef __BRG_FILE_FUNCTIONS_H_INCLUDED__
-#define __BRG_FILE_FUNCTIONS_H_INCLUDED__
+#ifndef _BRG_FILE_FUNCTIONS_H_INCLUDED_
+#define _BRG_FILE_FUNCTIONS_H_INCLUDED_
 
 #include "brg_global.h"
 

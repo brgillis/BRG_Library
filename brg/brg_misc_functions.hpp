@@ -13,8 +13,8 @@
 
  \**********************************************************************/
 
-#ifndef __BRG_MISC_FUNCTIONS_HPP_INCLUDED__
-#define __BRG_MISC_FUNCTIONS_HPP_INCLUDED__
+#ifndef _BRG_MISC_FUNCTIONS_HPP_INCLUDED_
+#define _BRG_MISC_FUNCTIONS_HPP_INCLUDED_
 
 #include <iostream>
 #include <vector>

@@ -318,8 +318,8 @@ brg_units.h
 
  \**********************************************************************/
 
-#ifndef __BRG_UNITS_H_INCLUDED__
-#define __BRG_UNITS_H_INCLUDED__
+#ifndef _BRG_UNITS_H_INCLUDED_
+#define _BRG_UNITS_H_INCLUDED_
 
 #include "brg_global.h"
 

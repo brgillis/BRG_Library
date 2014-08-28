@@ -9,8 +9,8 @@
 
 
 
-#ifndef __BRG_ORBIT_H_INCLUDED__
-#define __BRG_ORBIT_H_INCLUDED__
+#ifndef _BRG_ORBIT_H_INCLUDED_
+#define _BRG_ORBIT_H_INCLUDED_
 
 #include <cstdlib>
 #include <cmath>

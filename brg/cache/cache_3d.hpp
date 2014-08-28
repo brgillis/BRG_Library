@@ -5,8 +5,8 @@
  *      Author: brg
  */
 
-#ifndef __BRG_CACHE_3D_HPP_INCLUDED__
-#define __BRG_CACHE_3D_HPP_INCLUDED__
+#ifndef _BRG_CACHE_3D_HPP_INCLUDED_
+#define _BRG_CACHE_3D_HPP_INCLUDED_
 
 #ifndef BRG_CACHE_ND_NAME_SIZE
 #define BRG_CACHE_ND_NAME_SIZE 9 // Needs an end character, so will only actually allow 8 chars

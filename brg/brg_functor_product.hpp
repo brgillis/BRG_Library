@@ -8,8 +8,8 @@ brg_functpr.hpp
 
  \**********************************************************************/
 
-#ifndef __BRG_FUNCTOR_HPP_INCLUDED__
-#define __BRG_FUNCTOR_HPP_INCLUDED__
+#ifndef _BRG_FUNCTOR_PRODUCT_HPP_INCLUDED_
+#define _BRG_FUNCTOR_PRODUCT_HPP_INCLUDED_
 
 #include <cassert>
 #include <iostream>

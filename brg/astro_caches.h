@@ -7,8 +7,8 @@ brg_astro_caches.h
 
  \**********************************************************************/
 
-#ifndef __BRG_ASTRO_CACHES_H_INCLUDED__
-#define __BRG_ASTRO_CACHES_H_INCLUDED__
+#ifndef _BRG_ASTRO_CACHES_H_INCLUDED_
+#define _BRG_ASTRO_CACHES_H_INCLUDED_
 
 #include <string>
 

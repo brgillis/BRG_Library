@@ -8,8 +8,8 @@ brg_phase.hpp
 
  \**********************************************************************/
 
-#ifndef __BRG_PHASE_HPP_INCLUDED__
-#define __BRG_PHASE_HPP_INCLUDED__
+#ifndef _BRG_PHASE_HPP_INCLUDED_
+#define _BRG_PHASE_HPP_INCLUDED_
 
 #include "brg_global.h"
 

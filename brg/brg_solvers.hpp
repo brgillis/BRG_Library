@@ -6,8 +6,8 @@
  *      Author: brg
  */
 
-#ifndef __BRG_SOLVERS_HPP_INCLUDED__
-#define __BRG_SOLVERS_HPP_INCLUDED__
+#ifndef _BRG_SOLVERS_HPP_INCLUDED_
+#define _BRG_SOLVERS_HPP_INCLUDED_
 
 #include "brg_global.h"
 

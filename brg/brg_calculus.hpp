@@ -5,8 +5,8 @@
  *      Author: brg
  */
 
-#ifndef __BRG_CALCULUS_HPP_INCLUDED__
-#define __BRG_CALCULUS_HPP_INCLUDED__
+#ifndef _BRG_CALCULUS_HPP_INCLUDED_
+#define _BRG_CALCULUS_HPP_INCLUDED_
 
 #include <cstdlib>
 #include <cmath>

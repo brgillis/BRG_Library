@@ -21,8 +21,8 @@ brg_random_functions.h
 
  \**********************************************************************/
 
-#ifndef __BRG_RANDOM_FUNCTIONS_H_INCLUDED__
-#define __BRG_RANDOM_FUNCTIONS_H_INCLUDED__
+#ifndef _BRG_RANDOM_FUNCTIONS_H_INCLUDED_
+#define _BRG_RANDOM_FUNCTIONS_H_INCLUDED_
 
 #include <stdlib.h>
 

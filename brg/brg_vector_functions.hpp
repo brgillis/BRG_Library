@@ -9,8 +9,8 @@
  *  This file contains element-wise operations for vectors, plus mathematical operations for vectors.
  */
 
-#ifndef __BRG_VECTOR_FUNCTIONS_HPP_INCLUDED__
-#define __BRG_VECTOR_FUNCTIONS_HPP_INCLUDED__
+#ifndef _BRG_VECTOR_FUNCTIONS_HPP_INCLUDED_
+#define _BRG_VECTOR_FUNCTIONS_HPP_INCLUDED_
 
 #include <algorithm>
 #include <cassert>
