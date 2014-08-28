@@ -4514,26 +4514,10 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 	// Get satellite parameters at init position
 	if ( _record_full_data_ )
 	{
-		if ( _current_satellite_ptr_->get_parameters( satellite_parameters ) )
-		{
-			if ( !silent )
-				std::cerr
-						<< "WARNING: Cannot get satellite parameters. No extra information can be output.\n";
-		}
-		else
-		{
-			_satellite_parameter_data_.push_back( satellite_parameters );
-		}
-		if ( _current_host_ptr_->get_parameters( host_parameters ) )
-		{
-			if ( !silent )
-				std::cerr
-						<< "WARNING: Cannot get host parameters. No extra information can be output.\n";
-		}
-		else
-		{
-			_host_parameter_data_.push_back( host_parameters );
-		}
+		satellite_parameters = _current_satellite_ptr_->get_parameters( );
+		_satellite_parameter_data_.push_back( satellite_parameters );
+		host_parameters = _current_host_ptr_->get_parameters( );
+		_host_parameter_data_.push_back( host_parameters );
 	}
 
 	const BRG_MASS init_mtot = _current_satellite_ptr_->mtot();
@@ -4575,14 +4559,7 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 					host_parameters.at( i ) = _host_parameter_splines_.at( i )(
 							t );
 				}
-				if ( _current_host_ptr_->set_parameters( num_host_parameters,
-						host_parameters ) )
-				{
-					if ( !silent )
-						std::cerr
-								<< "ERROR: Cannot update host in stripping_orbit.\n";
-					return 1;
-				}
+				_current_host_ptr_->set_parameters( host_parameters );
 			}
 
 			// Calculate effects of tidal stripping and shocks
@@ -4661,15 +4638,11 @@ const int brgastro::stripping_orbit_segment::calc( const bool silent ) const
 							_sum_delta_rho_list_.at( counter - 1 ) ) );
 			_rt_ratio_list_.push_back( _rt_list_.at( counter ) / _rvir( 0 ) );
 
-			if ( !_current_satellite_ptr_->get_parameters( satellite_parameters ) )
-			{
-				_satellite_parameter_data_.push_back( satellite_parameters );
-			}
+			satellite_parameters = _current_satellite_ptr_->get_parameters(  );
+			_satellite_parameter_data_.push_back( satellite_parameters );
 
-			if ( !_current_host_ptr_->get_parameters( host_parameters ) )
-			{
-				_host_parameter_data_.push_back( host_parameters );
-			}
+			host_parameters =_current_host_ptr_->get_parameters(  );
+			_host_parameter_data_.push_back( host_parameters );
 
 		}
 		catch ( const std::exception & e )
@@ -4889,8 +4862,7 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 		int extra_column_counter = 0;
 		std::vector< std::string > parameter_names( 0 );
 
-		if ( _current_satellite_ptr_->get_parameter_names( parameter_names ) )
-			return 1;
+		parameter_names = _current_satellite_ptr_->get_parameter_names(  );
 
 		for ( unsigned int i = 0; i < _satellite_output_parameters_.size();
 				i++ )
@@ -4919,8 +4891,7 @@ const int brgastro::stripping_orbit_segment::print_full_data(
 		int extra_column_counter = 0;
 		std::vector< std::string > parameter_names( 0 );
 
-		if ( _current_host_ptr_->get_parameter_names( parameter_names ) )
-			return 1;
+		parameter_names = _current_host_ptr_->get_parameter_names(  );
 
 		for ( unsigned int i = 0; i < _host_output_parameters_.size(); i++ )
 		{

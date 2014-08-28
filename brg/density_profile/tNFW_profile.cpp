@@ -7,6 +7,7 @@
  *      Author: brg
  */
 
+#include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -31,7 +32,7 @@ void brgastro::tNFW_profile::_uncache_mass()
 	hmtot_cached = false;
 }
 
-const double brgastro::tNFW_profile::_taufm( const double m_ratio,
+double brgastro::tNFW_profile::_taufm( const double m_ratio,
 		double precision, const bool silent ) const
 {
 	double m_target = m_ratio * _mftau();
@@ -109,100 +110,88 @@ brgastro::tNFW_profile::~tNFW_profile()
 
 #if (1) // Set functions
 
-const int brgastro::tNFW_profile::set_mvir( CONST_BRG_MASS_REF new_halo_mass,
+void brgastro::tNFW_profile::set_mvir( CONST_BRG_MASS_REF new_halo_mass,
 		const bool silent )
 {
 	_mvir0_ = new_halo_mass;
 	_uncache_mass();
-	return 0;
 }
-const int brgastro::tNFW_profile::set_tau( const double new_halo_tau,
+void brgastro::tNFW_profile::set_tau( const double new_halo_tau,
 		const bool silent )
 {
 	_tau_ = new_halo_tau;
 	_uncache_mass();
-	return 0;
 }
-const int brgastro::tNFW_profile::set_c( const double new_halo_c,
+void brgastro::tNFW_profile::set_c( const double new_halo_c,
 		const bool silent )
 {
 	_c_ = new_halo_c;
 	_uncache_mass();
-	return 0;
 }
 void brgastro::tNFW_profile::set_z( const double new_z )
 {
 	redshift_obj::set_z( new_z );
 	_uncache_mass();
 }
-const int brgastro::tNFW_profile::set_parameters(
-		const unsigned int num_parameters,
+void brgastro::tNFW_profile::set_parameters(
 		const std::vector< BRG_UNITS > &parameters, const bool silent )
 {
-	if ( ( num_parameters != 4 ) || ( num_parameters != parameters.size() ) )
+	assert(parameters.size()==num_parameters());
+
+	set_mvir( parameters[0] );
+	set_z( parameters[1] );
+	if ( parameters[2] <= 0 )
 	{
-		if ( !silent )
-			if ( !silent )
-				std::cerr
-						<< "ERROR: Invalid number of parameters passed to tNFW_profile::set_parameters.\n"
-						<< "Four are required for both num_parameters and parameters.size().\n";
-		return INVALID_ARGUMENTS_ERROR;
-	}
-	set_mvir( parameters.at( 0 ) );
-	set_z( parameters.at( 1 ) );
-	if ( parameters.at( 2 ) <= 0 )
-	{
-		set_c( _cfm( parameters.at( 0 ), parameters.at( 1 ) ) );
+		set_c( _cfm( parameters[0], parameters[1] ) );
 	}
 	else
 	{
-		set_c( parameters.at( 2 ) );
+		set_c( parameters[2] );
 	}
-	if ( parameters.at( 3 ) <= 0 )
+	if ( parameters[3] <= 0 )
 	{
 		set_tau( default_tau_factor * _c_ );
 	}
 	else
 	{
-		set_tau( parameters.at( 3 ) );
+		set_tau( parameters[3] );
 	}
-	return 0;
 }
 
 #endif // end set functions
 
-const BRG_MASS brgastro::tNFW_profile::mvir() const
+BRG_MASS brgastro::tNFW_profile::mvir() const
 {
 	return enc_mass(rvir());
 }
-const BRG_MASS brgastro::tNFW_profile::mvir0() const
+CONST_BRG_MASS_REF brgastro::tNFW_profile::mvir0() const
 {
 	return _mvir0_;
 }
 
-const double brgastro::tNFW_profile::tau() const
+double brgastro::tNFW_profile::tau() const
 {
 	return _tau_;
 }
-const double brgastro::tNFW_profile::c() const
+double brgastro::tNFW_profile::c() const
 {
 	return _c_;
 }
 
-const BRG_MASS brgastro::tNFW_profile::mtot() const
+BRG_MASS brgastro::tNFW_profile::mtot() const
 {
 	return _mvir0_ * _mftau();
 }
 
-const BRG_VELOCITY brgastro::tNFW_profile::vvir() const
+BRG_VELOCITY brgastro::tNFW_profile::vvir() const
 {
 	return std::pow( 10 * Gc * H() * mvir(), 1. / 3. );
 }
-const BRG_VELOCITY brgastro::tNFW_profile::vvir0() const
+BRG_VELOCITY brgastro::tNFW_profile::vvir0() const
 {
 	return std::pow( 10 * Gc * H() * _mvir0_, 1. / 3. );
 }
-const BRG_DISTANCE brgastro::tNFW_profile::rvir() const
+BRG_DISTANCE brgastro::tNFW_profile::rvir() const
 {
 	if(!_rvir_cached_)
 	{
@@ -233,20 +222,20 @@ const BRG_DISTANCE brgastro::tNFW_profile::rvir() const
 	}
 	return _rvir_cache_;
 }
-const BRG_DISTANCE brgastro::tNFW_profile::rvir0() const
+BRG_DISTANCE brgastro::tNFW_profile::rvir0() const
 {
 	return vvir0() / H() / 10;
 }
-const BRG_DISTANCE brgastro::tNFW_profile::rs() const
+BRG_DISTANCE brgastro::tNFW_profile::rs() const
 {
 	return rvir0() / _c_;
 }
-const BRG_DISTANCE brgastro::tNFW_profile::rt( const bool silent ) const
+BRG_DISTANCE brgastro::tNFW_profile::rt( const bool silent ) const
 {
 	return rvir0() / _tau_;
 }
 
-const BRG_UNITS brgastro::tNFW_profile::dens( CONST_BRG_DISTANCE_REF r ) const
+BRG_UNITS brgastro::tNFW_profile::dens( CONST_BRG_DISTANCE_REF r ) const
 {
 	BRG_UNITS result, rho_c;
 
@@ -265,7 +254,7 @@ const BRG_UNITS brgastro::tNFW_profile::dens( CONST_BRG_DISTANCE_REF r ) const
 
 	return result;
 }
-const BRG_MASS brgastro::tNFW_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
+BRG_MASS brgastro::tNFW_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	using brgastro::square;
@@ -300,30 +289,28 @@ const BRG_MASS brgastro::tNFW_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 			/ square(1 + tau_sq);
 }
 
-const int brgastro::tNFW_profile::get_parameters( std::vector< BRG_UNITS > & parameters,
-		const bool silent ) const
+std::vector< BRG_UNITS > brgastro::tNFW_profile::get_parameters( const bool silent ) const
 {
-	parameters.resize( num_parameters() );
-	parameters.at( 0 ) = _mvir0_;
-	parameters.at( 1 ) = z();
-	parameters.at( 2 ) = _c_;
-	parameters.at( 3 ) = _tau_;
-	return 0;
+	std::vector< BRG_UNITS > parameters( num_parameters() );
+	parameters[0] = _mvir0_;
+	parameters[1] = z();
+	parameters[2] = _c_;
+	parameters[3] = _tau_;
+	return parameters;
 }
 
-const int brgastro::tNFW_profile::get_parameter_names( std::vector< std::string > & parameter_names,
-		const bool silent ) const
+std::vector< std::string > brgastro::tNFW_profile::get_parameter_names( const bool silent ) const
 {
-	parameter_names.resize( num_parameters() );
+	std::vector< std::string > parameter_names( num_parameters() );
 
-	parameter_names.at( 0 ) = "mvir0";
-	parameter_names.at( 1 ) = "z";
-	parameter_names.at( 2 ) = "c";
-	parameter_names.at( 3 ) = "tau";
-	return 0;
+	parameter_names[0] = "mvir0";
+	parameter_names[1] = "z";
+	parameter_names[2] = "c";
+	parameter_names[3] = "tau";
+	return parameter_names;
 }
 
-const int brgastro::tNFW_profile::truncate_to_fraction( const double f,
+void brgastro::tNFW_profile::truncate_to_fraction( const double f,
 		const bool silent )
 {
 	if ( f <= 0 )
@@ -354,8 +341,6 @@ const int brgastro::tNFW_profile::truncate_to_fraction( const double f,
 		}
 		_uncache_mass();
 	}
-	return 0;
-
 }
 
 #endif // end tNFW_profile functions

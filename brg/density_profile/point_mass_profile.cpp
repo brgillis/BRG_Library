@@ -7,6 +7,7 @@
  *      Author: brg
  */
 
+#include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -41,70 +42,53 @@ brgastro::point_mass_profile::~point_mass_profile()
 
 #if (1) // Set functions
 
-const int brgastro::point_mass_profile::set_mvir(
+void brgastro::point_mass_profile::set_mvir(
 		CONST_BRG_MASS_REF new_halo_mass, bool silent )
 {
 	_mass_ = new_halo_mass;
-	return 0;
 }
-const int brgastro::point_mass_profile::set_parameters(
-		const unsigned int num_parameters,
-		const std::vector< BRG_UNITS > &parameters, bool silent )
+void brgastro::point_mass_profile::set_parameters( const std::vector< BRG_UNITS > &parameters, bool silent )
 {
-
-	if ( ( num_parameters != 2 ) || ( num_parameters != parameters.size() ) )
-	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Invalid number of parameters passed to tNFW_profile::set_parameters.\n"
-					<< "Four are required for both num_parameters and parameters.size().\n";
-		return INVALID_ARGUMENTS_ERROR;
-	}
+	assert(parameters.size()==2);
 	set_mvir( parameters.at( 0 ) );
 	set_z( parameters.at( 1 ) );
-	return 0;
 }
 
 #endif // end set functions
 
-const BRG_MASS brgastro::point_mass_profile::mvir() const
+BRG_MASS brgastro::point_mass_profile::mvir() const
 {
 	return _mass_;
 }
-const BRG_MASS brgastro::point_mass_profile::mass() const
-{
-	return _mass_;
-}
-
-const BRG_MASS brgastro::point_mass_profile::mtot() const
+BRG_MASS brgastro::point_mass_profile::mass() const
 {
 	return _mass_;
 }
 
-const BRG_VELOCITY brgastro::point_mass_profile::vvir() const
+BRG_MASS brgastro::point_mass_profile::mtot() const
+{
+	return _mass_;
+}
+
+BRG_VELOCITY brgastro::point_mass_profile::vvir() const
 {
 	return std::pow( 10 * Gc * H() * mvir(), 1. / 3. );
 }
-const BRG_DISTANCE brgastro::point_mass_profile::rvir() const
+BRG_DISTANCE brgastro::point_mass_profile::rvir() const
 {
 	return vvir() / H() / 10;
 }
-const BRG_DISTANCE brgastro::point_mass_profile::rs() const
+BRG_DISTANCE brgastro::point_mass_profile::rs() const
 {
 	return 0;
 }
-const BRG_DISTANCE brgastro::point_mass_profile::rt(
+BRG_DISTANCE brgastro::point_mass_profile::rt(
 		const bool silent) const
 {
 	return 0;
 }
 
-const BRG_MASS brgastro::point_mass_profile::hmvir() const
-{
-	return 0;
-}
-
-const BRG_UNITS brgastro::point_mass_profile::dens(
+BRG_UNITS brgastro::point_mass_profile::dens(
 		CONST_BRG_DISTANCE_REF r ) const
 {
 #ifdef _BRG_USE_UNITS_
@@ -117,40 +101,39 @@ const BRG_UNITS brgastro::point_mass_profile::dens(
 
 	return result;
 }
-const BRG_UNITS brgastro::point_mass_profile::enc_dens(
+BRG_UNITS brgastro::point_mass_profile::enc_dens(
 		CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	return enc_mass( r ) / ( 4. / 3. * pi * cube( r ) );
 }
-const BRG_MASS brgastro::point_mass_profile::enc_mass(
+BRG_MASS brgastro::point_mass_profile::enc_mass(
 		CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	return _mass_;
 }
 
-const int brgastro::point_mass_profile::get_parameters( std::vector< BRG_UNITS > & parameters,
-		const bool silent ) const
+std::vector< BRG_UNITS > brgastro::point_mass_profile::get_parameters( const bool silent ) const
 {
-	parameters.resize( num_parameters() );
+	std::vector< BRG_UNITS > parameters(num_parameters());
 
-	parameters.at( 0 ) = _mass_;
-	parameters.at( 1 ) = z();
-	return 0;
+	parameters[0] = _mass_;
+	parameters[1] = z();
+	return parameters;
 }
 
-const int brgastro::point_mass_profile::get_parameter_names(std::vector< std::string > & parameter_names,
+std::vector< std::string > brgastro::point_mass_profile::get_parameter_names(
 		const bool silent ) const
 {
-	parameter_names.resize( num_parameters() );
+	std::vector< std::string > parameter_names(num_parameters());
 
 	parameter_names.at( 0 ) = "mass";
 	parameter_names.at( 1 ) = "z";
-	return 0;
+	return parameter_names;
 }
 
-const int brgastro::point_mass_profile::truncate_to_fraction( const double f,
+void brgastro::point_mass_profile::truncate_to_fraction( const double f,
 		const bool silent )
 {
 	if ( ( f <= 0 ) || ( isbad( f ) ) )
@@ -165,7 +148,6 @@ const int brgastro::point_mass_profile::truncate_to_fraction( const double f,
 	{
 		_mass_ *= f;
 	}
-	return 0;
 
 }
 

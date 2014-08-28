@@ -56,7 +56,7 @@ class density_profile: public virtual redshift_obj
 
 private:
 #if (1)
-	int _hm_type_;
+	char _hm_type_;
 
 	mutable BRG_DISTANCE _rhmvir_cache_, _rhmtot_cache_;
 
@@ -96,8 +96,8 @@ public:
 
 #if (1) // Pure virtual functions (must be implemented by any derived classes)
 
-	virtual const BRG_MASS mvir() const =0; // Virial mass (exact definition can be chosen per profile)
-	virtual const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const =0; // Local density at radius r
+	virtual BRG_MASS mvir() const =0; // Virial mass (exact definition can be chosen per profile)
+	virtual BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const =0; // Local density at radius r
 
 	virtual density_profile *density_profile_clone() const =0; // Creates a clone of this
 #endif
@@ -106,78 +106,51 @@ public:
 
 #if (1) // Set functions - will return 1 if profile doesn't support this method of setting
 	// All take values in default unit set (m, s, kg, K, rad, C)
-	virtual const int set_mvir( CONST_BRG_MASS_REF new_mvir, bool silent = false )
+	virtual void set_mvir( CONST_BRG_MASS_REF new_mvir, bool silent = false )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::set_mvir(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::set_mvir(...) must be overloaded to be used.\n");
 	}
-	virtual const int set_vvir( CONST_BRG_VELOCITY_REF new_vvir, bool silent =
+	virtual void set_vvir( CONST_BRG_VELOCITY_REF new_vvir, bool silent =
 			false )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::set_vvir(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::set_vvir(...) must be overloaded to be used.\n");
 	}
-	virtual const int set_rvir( CONST_BRG_DISTANCE_REF new_rvir, bool silent =
+	virtual void set_rvir( CONST_BRG_DISTANCE_REF new_rvir, bool silent =
 			false )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::set_rvir(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::set_rvir(...) must be overloaded to be used.\n");
 	}
-	virtual const int set_rs( CONST_BRG_DISTANCE_REF new_rs, bool silent = false ) // Scale radius
+	virtual void set_rs( CONST_BRG_DISTANCE_REF new_rs, bool silent = false ) // Scale radius
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::set_rs(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::set_rs(...) must be overloaded to be used.\n");
 	}
-	virtual const int set_rt( CONST_BRG_DISTANCE_REF new_rt, bool silent = false ) // Tidal/truncation radius
+	virtual void set_rt( CONST_BRG_DISTANCE_REF new_rt, bool silent = false ) // Tidal/truncation radius
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::set_rt(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::set_rt(...) must be overloaded to be used.\n");
 	}
-	virtual const int set_parameters( const unsigned int num_parameters,
-			const std::vector< BRG_UNITS > &parameters, bool silent = false )
+	virtual void set_parameters( const std::vector< BRG_UNITS > &parameters, bool silent = false )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::set_parameters(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::set_parameters(...) must be overloaded to be used.\n");
 	}
-	virtual const int set_tau( const double new_tau, bool silent = false ) // Truncation parameter
+	virtual void set_tau( const double new_tau, bool silent = false ) // Truncation parameter
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::set_tau(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::set_tau(...) must be overloaded to be used.\n");
 	}
-	virtual const int set_c( const double new_c, bool silent = false ) // Concentration
+	virtual void set_c( const double new_c, bool silent = false ) // Concentration
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::set_c(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::set_c(...) must be overloaded to be used.\n");
 	}
-	const int override_rhmvir( CONST_BRG_DISTANCE_REF new_rhmvir, bool silent =
+	void override_rhmvir( CONST_BRG_DISTANCE_REF new_rhmvir, bool silent =
 			false )
 	{
 		_rhmvir_cache_ = new_rhmvir;
 		hmvir_cached = true;
-		return 0;
 	}
-	const int override_rhmtot( CONST_BRG_DISTANCE_REF new_rhmtot, bool silent =
+	void override_rhmtot( CONST_BRG_DISTANCE_REF new_rhmtot, bool silent =
 			false )
 	{
 		_rhmtot_cache_ = new_rhmtot;
 		hmtot_cached = true;
-		return 0;
 	}
 
 #endif
@@ -185,141 +158,128 @@ public:
 #if (1) // Basic get functions
 	// All return values in default unit set (m, s, kg, K, rad, C)
 
-	virtual const BRG_MASS mtot() const // Total mass
+	virtual BRG_MASS mtot() const // Total mass
 	{
 		return 0;
 	}
 
-	virtual const BRG_DISTANCE rt( const bool silent = false ) const // Tidal/truncation radius
+	virtual BRG_DISTANCE rt( const bool silent = false ) const // Tidal/truncation radius
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::get_parameters(...) must be overridden to be used.\n";
-		return 0;
+		throw std::logic_error("density_profile::rt() must be overloaded to be used.\n");
 	}
 
 #endif // end basic get functions
 
-	virtual const unsigned int num_parameters() const
+	virtual unsigned int num_parameters() const
 	{
-		throw std::runtime_error("ERROR: num_parameters must be overridden if it's used.");
-		return 0;
+		throw std::logic_error("density_profile::num_parameters() must be overloaded to be used.\n");
 	}
 
-	virtual const int get_parameters( std::vector< BRG_UNITS > & parameters,
-			const bool silent = false ) const // Returns a set of parameters for this halo (all the variables needed to define it - must be defined for each child)
+	virtual std::vector< BRG_UNITS > get_parameters( const bool silent = false ) const // Returns a set of parameters for this halo (all the variables needed to define it - must be defined for each child)
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::get_parameters(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::get_parameters() must be overloaded to be used.\n");
 	}
 
-	virtual const int get_parameter_names( std::vector< std::string > & parameter_names,
-			const bool silent = false ) const // Returns a set of names of this halo's parameters
+	virtual std::vector< std::string > get_parameter_names( const bool silent = false ) const // Returns a set of names of this halo's parameters
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::get_parameter_names(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::get_parameter_names() must be overloaded to be used.\n");
 	}
 
 #endif // end Virtual functions which must be overwritten if they're going to be used
 
 #if (1) // Virtual functions which should be overwritten if at all possible and if they'll be used
-	virtual const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r, const bool silent =
+	virtual BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r, const bool silent =
 			true ) const; // Mass enclosed with sphere of radius r
 #endif
 
 #if (1) // Virtual functions which shouldn't be overwritten in most cases and non-virtual functions
 
-	virtual const BRG_DISTANCE rvir() const // Virial radius (exact definition can be chosen per profile if preferred)
+	virtual BRG_DISTANCE rvir() const // Virial radius (exact definition can be chosen per profile if preferred)
 	{
 
 		return safe_pow(
 				2 * mvir() * Gc / ( square( H() ) * virial_density_factor ),
 				1. / 3. );
 	}
-	const BRG_MASS hmvir() const // Half virial mass
+	BRG_MASS hmvir() const // Half virial mass
 	{
 		return mvir() / 2;
 	}
-	const BRG_MASS hmtot() const // Half total mass
+	BRG_MASS hmtot() const // Half total mass
 	{
 		return mtot() / 2;
 	}
-	virtual const BRG_MASS hm() const // Half mass (which depends on hm_type value)
+	virtual BRG_MASS hm() const // Half mass (which depends on hm_type value)
 	{
 		return ( _hm_type_ == 0 ? hmvir() : hmtot() );
 	}
-	virtual const BRG_UNITS enc_dens( CONST_BRG_DISTANCE_REF r,
+	virtual BRG_UNITS enc_dens( CONST_BRG_DISTANCE_REF r,
 			const bool silent = false ) const // Mean density enclosed with sphere of radius r
 	{
 		BRG_DISTANCE r_to_use = max( std::fabs( r ), SMALL_FACTOR );
 		return enc_mass( r_to_use, silent )
 				/ ( 4. / 3. * pi * cube( std::fabs( r_to_use ) ) );
 	}
-	virtual const BRG_DISTANCE rhmvir( const bool silent = false ) const; // Half-virial-mass radius
-	virtual const BRG_DISTANCE rhmtot( const bool silent = false ) const; // Half-total-mass radius
-	virtual const BRG_DISTANCE rhm( const bool silent = false ) const // Half-mass radius
+	virtual BRG_DISTANCE rhmvir( const bool silent = false ) const; // Half-virial-mass radius
+	virtual BRG_DISTANCE rhmtot( const bool silent = false ) const; // Half-total-mass radius
+	virtual BRG_DISTANCE rhm( const bool silent = false ) const // Half-mass radius
 	{
 		return ( _hm_type_ == 0 ? rhmvir( silent ) : rhmtot( silent ) );
 	}
-	virtual const BRG_VELOCITY vvir() const // Orbital velocity at rvir
+	virtual BRG_VELOCITY vvir() const // Orbital velocity at rvir
 	{
 		return _v_from_r( rvir() );
 	}
-	virtual const BRG_VELOCITY vhmvir( const bool silent = false ) const // Orbital velocity at rhmvir
+	virtual BRG_VELOCITY vhmvir( const bool silent = false ) const // Orbital velocity at rhmvir
 	{
 		return _v_from_r( rhmvir( silent ) );
 	}
-	virtual const BRG_VELOCITY vhmtot( const bool silent = false ) const // Orbital velocity at rhmtot
+	virtual BRG_VELOCITY vhmtot( const bool silent = false ) const // Orbital velocity at rhmtot
 	{
 		return _v_from_r( rhmtot( silent ) );
 	}
-	virtual const BRG_VELOCITY vhm( const bool silent = false ) const // Orbital velocity at rhm
+	virtual BRG_VELOCITY vhm( const bool silent = false ) const // Orbital velocity at rhm
 	{
 		return ( _hm_type_ == 0 ? vhmvir( silent ) : vhmtot( silent ) );
 	}
-	virtual const BRG_VELOCITY vt( const bool silent = false ) const // Orbital velocity at rt
+	virtual BRG_VELOCITY vt( const bool silent = false ) const // Orbital velocity at rt
 	{
 		return _v_from_r( rt( silent ) );
 	}
-	const BRG_TIME otvir() const // Orbital period at rvir
+	BRG_TIME otvir() const // Orbital period at rvir
 	{
 		return 2 * pi * rvir() / vvir();
 	}
-	const BRG_TIME othmvir( const bool silent = false ) const // Orbital period at rhmvir
+	BRG_TIME othmvir( const bool silent = false ) const // Orbital period at rhmvir
 	{
 		return 2 * pi * rhmvir( silent ) / safe_d(vhmvir( silent ));
 	}
-	const BRG_TIME othmtot( const bool silent = false ) const // Orbital period at rhmtot
+	BRG_TIME othmtot( const bool silent = false ) const // Orbital period at rhmtot
 	{
 		return 2 * pi * rhmtot( silent ) / safe_d(vhmtot( silent ));
 	}
-	const BRG_TIME othm( const bool silent = false ) const // Orbital period at rhm
+	BRG_TIME othm( const bool silent = false ) const // Orbital period at rhm
 	{
 		return 2 * pi * rhm( silent ) / safe_d(vhm( silent ));
 	}
-	const BRG_TIME ott( const bool silent = false ) const // Orbital period at rt
+	BRG_TIME ott( const bool silent = false ) const // Orbital period at rt
 	{
 		return 2 * pi * rt( silent ) / safe_d(vt( silent ));
 	}
 
-	const int set_hm_type( int new_hm_type ) // Whether default half-mass is half virial, half total, or something else
+	void set_hm_type( int new_hm_type ) // Whether default half-mass is half virial, half total, or something else
 	{
 		_hm_type_ = new_hm_type;
-		return 0;
 	}
 
 #if (1) // advanced get functions
 
-	const BRG_UNITS accel( CONST_BRG_DISTANCE_REF r,
+	BRG_UNITS accel( CONST_BRG_DISTANCE_REF r,
 			const bool silent = false ) const // Gravitational acceleration at radius r
 	{
 		return r == 0 ? 0 : -Gc * enc_mass( r, silent ) / square( r );
 	}
-	virtual const BRG_UNITS Daccel( CONST_BRG_DISTANCE_REF r, const bool silent =
+	virtual BRG_UNITS Daccel( CONST_BRG_DISTANCE_REF r, const bool silent =
 			false ) const; // Derivative of acceleration at radius r
 
 #endif // end advanced get functions
@@ -328,13 +288,10 @@ public:
 
 #if (1) // Other operations
 
-	virtual const int truncate_to_fraction( const double fraction,
+	virtual void truncate_to_fraction( const double fraction,
 			bool silent = false ) // Adjusts parameters of this class to decrease the mass to fraction of its previous mass. Must be defined for each child
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: density_profile::truncate_to_fraction(...) must be overridden to be used.\n";
-		return MUST_OVERRIDE_ERROR;
+		throw std::logic_error("density_profile::truncate_to_fraction() must be overloaded to be used.\n");
 	}
 
 #endif
@@ -344,7 +301,7 @@ public:
 
 // Function to estimate orbital period from current position and velocity in a density profile
 // Note that this is merely an estimate from analogy to calculations in a Keplerian potential
-const BRG_TIME period( const density_profile *host, CONST_BRG_DISTANCE_REF r,
+BRG_TIME period( const density_profile *host, CONST_BRG_DISTANCE_REF r,
 		CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt = 0 );
 
 } // end namespace brgastro

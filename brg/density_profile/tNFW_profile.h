@@ -54,24 +54,24 @@ protected:
 
 	void _uncache_mass();
 
-	const double _taufm( const double mratio, double precision = 0.00001,
+	double _taufm( const double mratio, double precision = 0.00001,
 			const bool silent = false ) const; // tau from Mtot/Mvir
-	const double _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
+	double _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
 	{
 		return ( 200. / 3. ) * cube( _c_ )
 				/ ( log( 1 + _c_ ) - _c_ / ( 1 + _c_ ) );
 	}
 
 	// Functions relating to tNFW profiles
-	const double _cfm( const BRG_MASS mass, const double z=0 ) const // Concentration from mass relationship, from Neto
+	double _cfm( const BRG_MASS mass, const double z=0 ) const // Concentration from mass relationship, from Neto
 	{
 		return 4.67 * std::pow( mass * unitconv::kgtottMsun / ( 1e4 ), -0.11 );
 	}
-	const double _cfm() const // Concentration from mass relationship, from Neto
+	double _cfm() const // Concentration from mass relationship, from Neto
 	{
 		return _cfm(_mvir0_,z());
 	}
-	const double _mftau( const double tau, const double conc ) const // Mtot/Mvir from tau
+	double _mftau( const double tau, const double conc ) const // Mtot/Mvir from tau
 	{
 		if(tau<=0) return 0;
 		double M0oM200 = 1 / ( log( 1 + conc ) - conc / ( 1 + conc ) );
@@ -82,11 +82,11 @@ protected:
 								- ( tautau + 1 ) );
 		return result;
 	}
-	const double _mftau( const double tau ) const // Mtot/Mvir from tau
+	double _mftau( const double tau ) const // Mtot/Mvir from tau
 	{
 		return _mftau(tau,_c_);
 	}
-	const double _mftau() const // Mtot/Mvir from tau
+	double _mftau() const // Mtot/Mvir from tau
 	{
 		return _mftau(_tau_,_c_);
 	}
@@ -106,56 +106,53 @@ public:
 
 #if (1) // Set functions
 
-	const int set_mvir( CONST_BRG_MASS_REF new_halo_mass, const bool silent =
+	void set_mvir( CONST_BRG_MASS_REF new_halo_mass, const bool silent =
 			false );
-	const int set_parameters( const unsigned int num_parameters,
-			const std::vector< BRG_UNITS > & new_parameters,
+	void set_parameters( const std::vector< BRG_UNITS > & new_parameters,
 			const bool silent = false );
 
 	void set_z( const double new_z );
-	const int set_tau( const double new_halo_tau, const bool silent = false );
-	const int set_c( const double new_halo_c, const bool silent = false );
+	void set_tau( const double new_halo_tau, const bool silent = false );
+	void set_c( const double new_halo_c, const bool silent = false );
 
 #endif // End set functions
 
 #if (1) //Basic get functions
 
-	const BRG_MASS mvir() const;
-	const BRG_MASS mvir0() const;
+	BRG_MASS mvir() const;
+	CONST_BRG_MASS_REF mvir0() const;
 
-	const BRG_MASS mtot() const;
+	BRG_MASS mtot() const;
 
-	const BRG_DISTANCE rvir() const;
-	const BRG_DISTANCE rvir0() const;
-	const BRG_DISTANCE rt( const bool silent = false ) const;
-	const BRG_DISTANCE rs() const;
+	BRG_DISTANCE rvir() const;
+	BRG_DISTANCE rvir0() const;
+	BRG_DISTANCE rt( const bool silent = false ) const;
+	BRG_DISTANCE rs() const;
 
-	const BRG_VELOCITY vvir() const;
-	const BRG_VELOCITY vvir0() const;
+	BRG_VELOCITY vvir() const;
+	BRG_VELOCITY vvir0() const;
 
-	const double c() const;
-	const double tau() const;
+	double c() const;
+	double tau() const;
 #endif // end basic get functions
 
 #if (1) // advanced get functions
 
-	const BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const;
-	const BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r,
+	BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const;
+	BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r,
 			const bool silent = false ) const;
-	const unsigned int num_parameters() const
+	unsigned int num_parameters() const
 	{
 		return 4; // Mass, redshift, c, and tau
 	}
-	const int get_parameters( std::vector< BRG_UNITS > & parameters,
-			const bool silent = true ) const;
+	std::vector< BRG_UNITS > get_parameters( const bool silent = true ) const;
 
-	const int get_parameter_names( std::vector< std::string > & parameter_names,
-			const bool silent = true ) const;
+	std::vector< std::string > get_parameter_names( const bool silent = true ) const;
 #endif // end advanced get functions
 
 #if (1) // Other operations
 
-	virtual const int truncate_to_fraction( const double fraction,
+	virtual void truncate_to_fraction( const double fraction,
 			const bool silent = false );
 	virtual density_profile *density_profile_clone() const
 	{

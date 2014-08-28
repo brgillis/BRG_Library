@@ -19,7 +19,7 @@
 
 // brgastro::density_profile class methods
 #if (1)
-const BRG_UNITS brgastro::density_profile::Daccel( CONST_BRG_DISTANCE_REF r,
+BRG_UNITS brgastro::density_profile::Daccel( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	BRG_DISTANCE dr;
@@ -31,7 +31,7 @@ const BRG_UNITS brgastro::density_profile::Daccel( CONST_BRG_DISTANCE_REF r,
 	return ( a2 - a1 ) / safe_d( dr );
 }
 
-const BRG_DISTANCE brgastro::density_profile::rhmtot( const bool silent ) const
+BRG_DISTANCE brgastro::density_profile::rhmtot( const bool silent ) const
 {
 	// If cached, return the cached value
 	if ( hmtot_cached )
@@ -70,7 +70,7 @@ const BRG_DISTANCE brgastro::density_profile::rhmtot( const bool silent ) const
 	return _rhmtot_cache_;
 }
 
-const BRG_DISTANCE brgastro::density_profile::rhmvir( const bool silent ) const
+BRG_DISTANCE brgastro::density_profile::rhmvir( const bool silent ) const
 {
 	// If cached, return the cached value
 	if ( hmvir_cached )
@@ -107,7 +107,7 @@ const BRG_DISTANCE brgastro::density_profile::rhmvir( const bool silent ) const
 	return _rhmvir_cache_;
 }
 
-const BRG_MASS brgastro::density_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
+BRG_MASS brgastro::density_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 		const bool silent ) const
 {
 	if ( r == 0 )
@@ -122,7 +122,7 @@ const BRG_MASS brgastro::density_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 
 #endif
 
-const BRG_TIME brgastro::period( const brgastro::density_profile *host,
+BRG_TIME brgastro::period( const brgastro::density_profile *host,
 		CONST_BRG_DISTANCE_REF r, CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt )
 {
 	BRG_UNITS mu = host->enc_mass( r ) * Gc;
