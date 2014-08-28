@@ -60,46 +60,46 @@ public:
 	{
 	} // Virtual destructor, in case it needs to be overridden
 
-	virtual const int clear(); // Resets all variables to zero
-	virtual const int partial_clear(); // Resets all variables which can't be initialized
+	virtual void clear(); // Resets all variables to zero
+	virtual void partial_clear(); // Resets all variables which can't be initialized
 
 #if (1) // Set functions
-	virtual const int set_ra( CONST_BRG_ANGLE_REF new_ra );
-	virtual const int set_dec( CONST_BRG_ANGLE_REF new_dec );
-	virtual const int set_ra_err( CONST_BRG_ANGLE_REF new_ra_err );
-	virtual const int set_dec_err( CONST_BRG_ANGLE_REF new_dec_err );
-	virtual const int set_ra_dec( CONST_BRG_ANGLE_REF new_ra,
+	virtual void set_ra( CONST_BRG_ANGLE_REF new_ra );
+	virtual void set_dec( CONST_BRG_ANGLE_REF new_dec );
+	virtual void set_ra_err( CONST_BRG_ANGLE_REF new_ra_err );
+	virtual void set_dec_err( CONST_BRG_ANGLE_REF new_dec_err );
+	virtual void set_ra_dec( CONST_BRG_ANGLE_REF new_ra,
 			CONST_BRG_ANGLE_REF new_dec ); // Sets ra and dec
-	virtual const int set_ra_dec_z( CONST_BRG_ANGLE_REF new_ra,
+	virtual void set_ra_dec_z( CONST_BRG_ANGLE_REF new_ra,
 			CONST_BRG_ANGLE_REF new_dec, const double new_z ); // Sets all values
-	virtual const int set_ra_dec_z_err( CONST_BRG_ANGLE_REF new_ra,
+	virtual void set_ra_dec_z_err( CONST_BRG_ANGLE_REF new_ra,
 			CONST_BRG_ANGLE_REF new_dec, const double new_z,
 			CONST_BRG_ANGLE_REF new_ra_err, CONST_BRG_ANGLE_REF new_dec_err,
 			const double new_z_err ); // Sets all values and error
-	virtual const int set_ra_dec_err( CONST_BRG_ANGLE_REF new_ra,
+	virtual void set_ra_dec_err( CONST_BRG_ANGLE_REF new_ra,
 			CONST_BRG_ANGLE_REF new_dec, CONST_BRG_ANGLE_REF new_ra_err,
 			CONST_BRG_ANGLE_REF new_dec_err ); // Sets ra and dec and error
 
-	virtual const int set_weight( const double new_weight );
-	virtual const int set_index( const int new_index );
-	virtual const int set_ID( const std::string &new_ID );
+	virtual void set_weight( const double new_weight );
+	virtual void set_index( const int new_index );
+	virtual void set_ID( const std::string &new_ID );
 #endif // end set functions
 
 #if (1) //Get functions
 
-	virtual const BRG_ANGLE ra() const
+	virtual CONST_BRG_ANGLE_REF ra() const
 	{
 		return _ra_;
 	}
-	virtual const BRG_ANGLE dec() const
+	virtual CONST_BRG_ANGLE_REF dec() const
 	{
 		return _dec_;
 	}
-	virtual const BRG_ANGLE ra_err() const
+	virtual CONST_BRG_ANGLE_REF ra_err() const
 	{
 		return _ra_err_;
 	}
-	virtual const BRG_ANGLE dec_err() const
+	virtual CONST_BRG_ANGLE_REF dec_err() const
 	{
 		return _dec_err_;
 	}
@@ -112,7 +112,7 @@ public:
 	{
 		return _index_;
 	}
-	virtual const std::string ID() const
+	virtual const std::string & ID() const
 	{
 		return _ID_;
 	}
@@ -131,7 +131,7 @@ public:
 };
 // class sky_obj
 
-const BRG_DISTANCE dfa( const sky_obj *obj1, const sky_obj *obj2,
+BRG_DISTANCE dfa( const sky_obj *obj1, const sky_obj *obj2,
 		const double z = -1 );
 
 } // end namespace brgastro

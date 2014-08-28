@@ -61,7 +61,7 @@ public:
 	}
 
 	// Clear function
-	virtual const int clear();
+	virtual void clear();
 
 	// Clone functions
 	virtual redshift_obj *redshift_obj_clone()

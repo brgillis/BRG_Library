@@ -41,16 +41,16 @@ public:
 	double z_phot, z_phot_err;
 	double odds;
 
-	int BCG_index;
+	size_t BCG_index;
 
-	int num_members;
-	std::vector< int > member_indices;
+	size_t num_members;
+	std::vector< size_t > member_indices;
 	std::vector< galaxy * > members;
 
 	// Public member functions
 
 	// Constructor
-	galaxy_group( int init_num_members = 0 );
+	galaxy_group( size_t init_num_members = 0 );
 	galaxy_group( double init_mass, double init_z, double init_c = -1,
 			double init_tau = -1 );
 
@@ -61,15 +61,15 @@ public:
 	virtual ~galaxy_group();
 
 	// Functions to set parameters
-	virtual const int clear();
-	virtual const int resize( int new_num_members );
-	virtual const int set_member( int index, galaxy * new_member,
+	virtual void clear();
+	virtual void resize( size_t new_num_members );
+	virtual void set_member( size_t index, galaxy * new_member,
 			const bool silent = false );
-	virtual const int set_member_index( int index, int new_member_index,
+	virtual void set_member_index( size_t index, size_t new_member_index,
 			const bool silent = false );
-	virtual const int add_member( galaxy * new_member, const bool silent =
+	virtual void add_member( galaxy * new_member, const bool silent =
 			false );
-	virtual const int remove_member( galaxy * rem_member, const bool silent =
+	virtual void remove_member( galaxy * rem_member, const bool silent =
 			false );
 
 	// Clone functions

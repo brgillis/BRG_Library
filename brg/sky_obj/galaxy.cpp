@@ -16,7 +16,7 @@ brgastro::galaxy::galaxy()
 	clear();
 }
 
-const int brgastro::galaxy::clear()
+void brgastro::galaxy::clear()
 {
 
 	stellar_mass = 0;
@@ -31,7 +31,7 @@ const int brgastro::galaxy::clear()
 	host_group = 0;
 	host_group_index = -1;
 
-	return ( sky_obj::clear() );
+	sky_obj::clear();
 }
 
 #endif // end brgastro::galaxy class functions
