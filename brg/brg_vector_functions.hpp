@@ -13,6 +13,7 @@
 #define __BRG_VECTOR_FUNCTIONS_HPP_INCLUDED__
 
 #include <algorithm>
+#include <cassert>
 #include <cstdlib>
 #include <cmath>
 #include <vector>
@@ -122,7 +123,9 @@ const std::vector<T1> rand_vector(const f func, std::vector<T1> v1)
 template<typename f, typename T1, typename T2>
 const std::vector<T1> rand_vector(const f func, std::vector<T1> v1, const std::vector<T2> & v2)
 {
-	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = (func)(v1[i],v2.at(i));
+	std::assert(v1.size()==v2.size());
+
+	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = (func)(v1[i],v2[i]);
 
 	return v1;
 }
@@ -156,9 +159,11 @@ const std::vector<T1> rand_vector(const f func, const T1 & v1, const std::vector
 template< typename T1, typename T2 >
 const std::vector<T1> add( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
+
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] += v2.at(i);
+		v1[i] += v2[i];
 	}
 
 	return v1;
@@ -200,9 +205,10 @@ const T1 add( T1 v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<T1> subtract( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] -= v2.at(i);
+		v1[i] -= v2[i];
 	}
 
 	return v1;
@@ -244,9 +250,10 @@ const T1 subtract( T1 v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<T1> multiply( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] *= v2.at(i);
+		v1[i] *= v2[i];
 	}
 
 	return v1;
@@ -288,9 +295,10 @@ const T1 multiply( T1 v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<T1> divide( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] /= v2.at(i);
+		v1[i] /= v2[i];
 	}
 
 	return v1;
@@ -333,9 +341,10 @@ const T1 divide( T1 v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<T1> pow( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = pow(v1[i], v2.at(i));
+		v1[i] = pow(v1[i], v2[i]);
 	}
 
 	return v1;
@@ -372,9 +381,10 @@ const T1 pow( const T1 & v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<T1> ipow( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = ipow(v1[i], v2.at(i));
+		v1[i] = ipow(v1[i], v2[i]);
 	}
 
 	return v1;
@@ -411,9 +421,10 @@ template< typename T1, typename T2 >
 const std::vector<T1> safe_pow( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
 
+	std::assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = safe_pow(v1[i], v2.at(i));
+		v1[i] = safe_pow(v1[i], v2[i]);
 	}
 
 	return v1;
@@ -451,9 +462,10 @@ template< typename T1, typename T2 >
 const std::vector<T1> max( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
 
+	std::assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = max(v1[i], v2.at(i));
+		v1[i] = max(v1[i], v2[i]);
 	}
 
 	return v1;
@@ -491,9 +503,10 @@ template< typename T1, typename T2 >
 const std::vector<T1> min( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
 
+	std::assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		v1[i] = min(v1[i], v2.at(i));
+		v1[i] = min(v1[i], v2[i]);
 	}
 
 	return v1;
@@ -771,11 +784,13 @@ inline const std::vector<bool> operator!( std::vector<bool> v )
 template< typename T1, typename T2 >
 const std::vector<bool> equal( const std::vector<T1> & v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
+
 	std::vector<bool> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = (v1[i] == v2.at(i));
+		result[i] = (v1[i] == v2[i]);
 	}
 
 	return result;
@@ -820,11 +835,13 @@ const bool equal( const T1 & v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<bool> not_equal( const std::vector<T1> & v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
+
 	std::vector<bool> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = (v1[i] != v2.at(i));
+		result[i] = (v1[i] != v2[i]);
 	}
 
 	return result;
@@ -869,11 +886,13 @@ const bool not_equal( const T1 & v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<bool> less_than( const std::vector<T1> & v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
+
 	std::vector<bool> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = (v1[i] < v2.at(i));
+		result[i] = (v1[i] < v2[i]);
 	}
 
 	return result;
@@ -918,11 +937,13 @@ const bool less_than( const T1 & v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<bool> greater_than( const std::vector<T1> & v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
+
 	std::vector<bool> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = (v1[i] > v2.at(i));
+		result[i] = (v1[i] > v2[i]);
 	}
 
 	return result;
@@ -967,11 +988,13 @@ const bool greater_than( const T1 & v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<bool> less_than_or_equal( const std::vector<T1> & v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
+
 	std::vector<bool> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = (v1[i] <= v2.at(i));
+		result[i] = (v1[i] <= v2[i]);
 	}
 
 	return result;
@@ -1016,11 +1039,13 @@ const bool less_than_or_equal( const T1 & v1, const T2 & v2 )
 template< typename T1, typename T2 >
 const std::vector<bool> greater_than_or_equal( const std::vector<T1> & v1, const std::vector<T2> &v2 )
 {
+	std::assert(v1.size()==v2.size());
+
 	std::vector<bool> result(v1.size());
 
 	for(unsigned int i = 0; i < v1.size(); i++)
 	{
-		result[i] = (v1[i] >= v2.at(i));
+		result[i] = (v1[i] >= v2[i]);
 	}
 
 	return result;
