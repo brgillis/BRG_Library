@@ -1,5 +1,5 @@
-/*************************************
- units.cpp
+/**************************************\
+ unit_obj.cpp
  -------------
 
 
@@ -7,15 +7,19 @@
 
  \*************************************/
 
-#include "units.h"
+#include "brg/global.h"
+
+#ifdef _BRG_USE_UNITS_
+
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
 #include <sstream>
 #include <memory>
 
-#ifdef _BRG_USE_UNITS_
-#if (1)
+#include "brg/physics/units/unit_conversions.hpp"
+
+#include "unit_obj.h"
 
 using namespace unitconv;
 using std::cout;
@@ -1514,5 +1518,4 @@ brgastro::unit_charge::unit_charge(const brgastro::unit_obj & other_unit_obj)
 	_fix_unit_powers_ = true;
 }
 
-#endif
 #endif // #ifdef _BRG_USE_UNITS_

@@ -12,7 +12,7 @@
 
 #include "brg/math/calculus/calculus.hpp"
 #include "brg/math/solvers/solvers.hpp"
-#include "brg/physics/units/units.h"
+#include "brg/physics/units/unit_obj.h"
 #include "brg/physics/astro/density_profile/lensing/lensing_profile_extension_functors.h"
 
 #include "lensing_profile_extension.h"

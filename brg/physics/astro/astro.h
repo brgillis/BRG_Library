@@ -33,7 +33,8 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/units/units.h"
+#include "brg/physics/units/unit_conversions.hpp"
+#include "brg/physics/units/unit_obj.h"
 
 /** Constant Definitions **/
 #if (1)
@@ -69,7 +70,7 @@ const brgastro::unit_obj Gc(6.67384e-11,3,-2,-1,0,0); // In m^3 s^-2 kg^-1
 #else
 const float Gc = 6.67384e-11; // In m^3 s^-2 kg^-1
 #endif
-const BRG_VELOCITY c = unitconv::ctomps;
+const BRG_VELOCITY c = brgastro::unitconv::ctomps;
 
 #endif
 
@@ -83,7 +84,7 @@ const BRG_VELOCITY c = unitconv::ctomps;
 #ifdef _BRG_USE_UNITS_
 const brgastro::unit_obj H_0(70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom,0,-1,0,0,0,0); // So all results will implicitly be in h_70 units
 #else
-const double H_0 = 70 * unitconv::kmtom / unitconv::stos / unitconv::Mpctom; // So all results will implicitly be in h_70 units
+const double H_0 = 70 * brgastro::unitconv::kmtom / brgastro::unitconv::stos / brgastro::unitconv::Mpctom; // So all results will implicitly be in h_70 units
 #endif
 
 const float Omega_m = 0.288; // WMAP9 + priors

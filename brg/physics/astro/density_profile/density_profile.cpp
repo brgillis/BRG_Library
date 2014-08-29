@@ -13,8 +13,9 @@
 
 #include "brg/math/calculus/calculus.hpp"
 #include "brg/math/solvers/solvers.hpp"
-#include "brg/physics/units/units.h"
 #include "brg/physics/astro/density_profile/density_profile_functors.h"
+#include "brg/physics/units/unit_obj.h"
+
 #include "density_profile.h"
 
 // brgastro::density_profile class methods

@@ -23,7 +23,6 @@
 
 #include "global.h"
 
-#include "brg/physics/units/units.h"
 #include "brg/utility.hpp"
 
 namespace brgastro

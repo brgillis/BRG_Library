@@ -12,8 +12,8 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/units/units.h"
 #include "brg/physics/astro/density_profile/density_profile.h"
+#include "brg/physics/units/unit_obj.h"
 
 #define IMPLEMENT_VIRTUAL_BRG_LENSING_EXTENSION_METHODS(class_name)   \
 	virtual double z() const {return class_name::z();}                \

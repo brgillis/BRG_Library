@@ -15,9 +15,9 @@
 #include "brg/global.h"
 
 #include "brg/math/calculus/calculus.hpp"
-#include "brg/utility.hpp"
-#include "brg/physics/units/units.cpp"
 #include "brg/physics/astro/density_profile/density_profile.h"
+#include "brg/physics/units/unit_obj.cpp"
+#include "brg/utility.hpp"
 
 #include "gabdt.h"
 

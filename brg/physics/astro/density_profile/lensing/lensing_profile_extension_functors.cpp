@@ -14,7 +14,7 @@
 #include "brg/global.h"
 
 #include "brg/math/calculus/calculus.hpp"
-#include "brg/physics/units/units.h"
+#include "brg/physics/units/unit_obj.h"
 #include "brg/utility.hpp"
 
 #include "lensing_profile_extension_functors.h"

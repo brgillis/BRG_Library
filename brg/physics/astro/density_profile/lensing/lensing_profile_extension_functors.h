@@ -12,7 +12,7 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/units/units.h"
+#include "brg/physics/units/unit_obj.h"
 #include "brg/physics/astro/density_profile/lensing/lensing_profile_extension.h"
 
 namespace brgastro {

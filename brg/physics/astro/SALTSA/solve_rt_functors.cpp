@@ -12,7 +12,7 @@
 #include "brg/global.h"
 
 #include "brg/physics/astro/density_profile/density_profile.h"
-#include "brg/physics/units/units.h"
+#include "brg/physics/units/unit_obj.h"
 #include "brg/utility.hpp"
 
 #include "solve_rt_functors.h"

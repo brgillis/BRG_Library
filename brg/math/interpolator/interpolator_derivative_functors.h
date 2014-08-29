@@ -12,8 +12,8 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/units/units.h"
 #include "brg/math/interpolator/interpolator.h"
+#include "brg/physics/units/unit_obj.h"
 
 namespace brgastro {
 
