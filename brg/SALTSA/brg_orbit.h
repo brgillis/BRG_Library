@@ -7,8 +7,6 @@
  *      Author: brg
  */
 
-
-
 #ifndef _BRG_ORBIT_H_INCLUDED_
 #define _BRG_ORBIT_H_INCLUDED_
 
@@ -17,15 +15,15 @@
 #include <vector>
 #include <stdexcept>
 
-#include "brg_global.h"
+#include "../brg_global.h"
 
-#include "brg_astro.h"
-#include "brg_phase.hpp"
-#include "brg_units.h"
-#include "density_profile/density_profile.h"
-#include "density_profile/tNFW_profile.h"
-#include "interpolator/brg_interpolator.h"
-#include "interpolator/interpolator_derivative.h"
+#include "../brg_astro.h"
+#include "../brg_phase.hpp"
+#include "../brg_units.h"
+#include "../density_profile/density_profile.h"
+#include "../density_profile/tNFW_profile.h"
+#include "../interpolator/brg_interpolator.h"
+#include "../interpolator/interpolator_derivative.h"
 
 namespace brgastro
 {
@@ -41,9 +39,6 @@ class stripping_orbit;
 class stripping_orbit_segment;
 
 class gabdt;
-
-class solve_rt_it_functor;
-class solve_rt_grid_functor;
 class gabdt_functor;
 
 #endif // end Class forward declarations
@@ -1895,53 +1890,6 @@ public:
 
 };
 // class stripping_orbit_segment
-
-class solve_rt_it_functor // Always uses one param, returns new value for that parameter for iteration.
-{
-	/************************************************************
-	 solve_rt_it_functor
-	 --------------------
-
-	 Child of functor
-
-	 Provides a functor * to be used to iteratively solve
-	 for tidal radius.
-
-	 \************************************************************/
-public:
-	const density_profile *satellite_ptr;
-
-	long double sum_delta_rho, Daccel, omega;
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
-	solve_rt_it_functor( const BRG_UNITS init_omega,
-			const density_profile *init_satellite, const BRG_UNITS init_Daccel,
-			const long double init_sum_delta_rho = 0 );
-
-	solve_rt_it_functor();
-};
-
-class solve_rt_grid_functor
-{
-	/************************************************************
-	 solve_rt_grid_functor
-	 ----------------------
-
-	 Child of functor
-
-	 Provides a functor * to be used with the grid solver.
-
-	 \************************************************************/
-public:
-	const density_profile *satellite_ptr;
-
-	long double sum_delta_rho, Daccel, omega;
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
-	solve_rt_grid_functor( const BRG_UNITS init_omega,
-			const density_profile *init_satellite, const BRG_UNITS init_Daccel,
-			const long double init_sum_delta_rho = 0 );
-
-	solve_rt_grid_functor();
-};
 
 #endif // end class definitions
 
