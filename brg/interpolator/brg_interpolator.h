@@ -13,6 +13,9 @@
 #include <cstdlib>
 #include <vector>
 #include <stdexcept>
+
+#include "../brg_global.h"
+
 #include "tk_spline.h"
 
 namespace brgastro {

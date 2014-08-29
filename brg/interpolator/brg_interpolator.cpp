@@ -9,7 +9,7 @@
 
 #include <cassert>
 
-#include "brg_global.h"
+#include "../brg_global.h"
 
 #include "brg_interpolator.h"
 

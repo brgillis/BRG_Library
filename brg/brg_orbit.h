@@ -20,11 +20,12 @@
 #include "brg_global.h"
 
 #include "brg_astro.h"
-#include "brg_interpolator.h"
 #include "brg_phase.hpp"
 #include "brg_units.h"
 #include "density_profile/density_profile.h"
 #include "density_profile/tNFW_profile.h"
+#include "interpolator/brg_interpolator.h"
+#include "interpolator/interpolator_derivative.h"
 
 namespace brgastro
 {
@@ -39,12 +40,8 @@ namespace brgastro
 class stripping_orbit;
 class stripping_orbit_segment;
 
-class interpolator_derivative;
 class gabdt;
 
-class interpolator_functor;
-class interpolator_derivative_functor;
-class interpolator_derivative_weight_functor;
 class solve_rt_it_functor;
 class solve_rt_grid_functor;
 class gabdt_functor;
@@ -53,261 +50,6 @@ class gabdt_functor;
 
 /** Class Definitions **/
 #if (1)
-
-class interpolator_functor
-{
-	/************************************************************
-	 interpolator_functor
-	 ---------------
-
-	 Child of functor
-
-	 This class is used to provide a functor * for getting
-	 points along a spline (which is used here to differentiate the
-	 spline).
-
-	 Use of this class is handled by the spline_derivative class.
-	 No need for the end-user to worry too much about how this
-	 works.
-
-	 \************************************************************/
-
-private:
-
-	const brgastro::interpolator *_interpolator_ptr_;
-	bool _interpolator_ptr_set_up_;
-
-public:
-
-	// Swap functions
-	void swap(interpolator_functor & other);
-	friend void swap(interpolator_functor & same, interpolator_functor & other) {same.swap(other);}
-
-	// Constructors
-	interpolator_functor();
-	interpolator_functor(const interpolator_functor& other);
-	interpolator_functor(const brgastro::interpolator *init_interpolator_ptr );
-
-	// Destructor
-	virtual ~interpolator_functor()
-	{
-	}
-
-	// Operator=
-	interpolator_functor& operator=(interpolator_functor other);
-
-	// Set functions
-	const int set_interpolator_ptr( const brgastro::interpolator *new_interpolator_ptr );
-
-	// Function method
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
-
-};
-// class interpolator_functor
-
-class interpolator_derivative_functor
-{
-	/************************************************************
-	 interpolator_derivative_functor
-	 --------------------------
-
-	 Child of functor
-
-	 This class is used to provide a functor * for getting
-	 the derivative of an interpolator at a given point.
-
-	 Use of this class is handled by the interpolator_derivative class.
-	 No need for the end-user to worry too much about how this
-	 works.
-
-	 \************************************************************/
-
-private:
-
-	interpolator_functor _interpolator_functor_;
-	bool _interpolator_functor_set_up_;
-
-public:
-
-	// Swap functions
-	void swap(interpolator_derivative_functor& other);
-	friend void swap(interpolator_derivative_functor& same, interpolator_derivative_functor& other)
-		{same.swap(other);}
-
-	// Constructors
-	interpolator_derivative_functor();
-	interpolator_derivative_functor(const interpolator_derivative_functor& other);
-	interpolator_derivative_functor( brgastro::interpolator *init_interpolator_ptr );
-
-	// Destructor
-	virtual ~interpolator_derivative_functor()
-	{
-	}
-
-	// Operator=
-	interpolator_derivative_functor& operator=(interpolator_derivative_functor other);
-
-	// Set functions
-	const int set_interpolator_ptr( const brgastro::interpolator *new_interpolator_ptr );
-
-	// Function method
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
-
-};
-// class interpolator_derivative_functor
-
-class interpolator_derivative_weight_functor
-{
-	/************************************************************
-	 interpolator_derivative_weight_functor
-	 ---------------------------------
-
-	 Child of functor
-
-	 This class is used to provide a functor * for getting
-	 the weight of various points in the smoothing kernel for
-	 calculating the derivative of an interpolator.
-
-	 Use of this class is handled by the interpolator_derivative class.
-	 No need for the end-user to worry too much about how this
-	 works.
-
-	 \************************************************************/
-
-private:
-
-	double _sample_scale_, _sample_max_width_;
-	double _t_min_, _t_max_, _centre_point_;
-
-public:
-
-	// Swap functions
-	void swap(interpolator_derivative_weight_functor &other);
-	friend void swap(interpolator_derivative_weight_functor &same,
-			interpolator_derivative_weight_functor &other)
-				{same.swap(other);}
-
-	// Constructors
-	interpolator_derivative_weight_functor();
-	interpolator_derivative_weight_functor(const interpolator_derivative_weight_functor &other);
-
-	// Destructor
-	virtual ~interpolator_derivative_weight_functor()
-	{
-	}
-
-	// Operator=
-	interpolator_derivative_weight_functor & operator=(interpolator_derivative_weight_functor other);
-
-	// Set functions
-	const int set_sample_scale( double new_sample_scale );
-
-	const int set_sample_max_width( double new_sample_max_width );
-
-	const int set_center_point( double new_center_point );
-
-	const int set_t_min( double new_t_min );
-
-	const int set_t_max( double new_t_max );
-
-	// Function method
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
-};
-// class interpolator_derivative_sample_functor
-
-class interpolator_derivative
-{
-	/************************************************************
-	 interpolator_derivative
-	 -----------------
-
-	 This class operates like an interpolator with added
-	 features. The same functions can be used as with the basic
-	 interpolator class, but this class also has the ability to point
-	 to a different interpolator, which this is intended to be
-	 the derivative of. Then, "unknown" domain points can be
-	 passed to this class, and it will calculate the derivative of
-	 the other interpolator at those points to help fill in gaps.
-
-	 The points passed to this can all be "known" (domain and range
-	 passed), all "unknown" (only domain passed, range calculated),
-	 or a mix of the two.
-
-	 Unknown points are calculated using a smoothing kernel to help
-	 handle noise in the pointed-to interpolator. This must be adjusted
-	 by hand based on how noisy the interpolator's points are for optimal
-	 results. The noisier it is, the wider the kernel should be.
-	 Use the set_sample_scale(...) and set_sample_max_width(...)
-	 functions to adjust the kernel size (the scale is the sigma of
-	 a Gaussian, the max_width is the limits of integration). Both
-	 take in values as representing a fraction of t_max - t_min.
-
-	 \************************************************************/
-private:
-	brgastro::interpolator *_interpolator_ptr_;
-	mutable brgastro::interpolator _known_interpolator_, _estimated_interpolator_;
-	bool _interpolator_ptr_set_up_;
-	mutable bool _calculated_;
-
-	interpolator_functor _interpolator_func_;
-
-	std::vector< double > _unknown_t_list_;
-
-	static double _default_sample_scale_, _default_sample_max_width_,
-			_default_sample_precision_;
-	double _sample_scale_, _sample_max_width_, _sample_precision_;
-	mutable double _t_min_, _t_max_;
-
-	brgastro::interpolator::allowed_interpolation_type _interpolation_type_;
-
-public:
-
-	// Swap functions
-	void swap(interpolator_derivative &other);
-	friend void swap(interpolator_derivative &same, interpolator_derivative &other) {same.swap(other);}
-
-	// Constructors
-	interpolator_derivative();
-	interpolator_derivative( const interpolator_derivative &other);
-	interpolator_derivative( brgastro::interpolator *init_interpolator_ptr );
-
-	// Destructors
-	virtual ~interpolator_derivative()
-	{
-	}
-
-	// Operator=
-	interpolator_derivative & operator=(interpolator_derivative other);
-
-	// Set functions
-	const int set_spline_ptr( brgastro::interpolator *new_interpolator_ptr );
-	const int clear_spline_ptr();
-	const int set_default_sample_scale( double new_default_sample_scale );
-	const int set_default_sample_max_width(
-			double new_default_sample_max_width );
-	const int set_sample_scale( double new_sample_scale );
-	const int set_sample_max_width( double new_sample_max_width );
-	const int reset_sample_scale(); // Sets it to default
-	const int reset_sample_max_width(); // Sets it to default
-	const int set_interpolation_type(
-			brgastro::interpolator::allowed_interpolation_type new_interpolation_type);
-	const int reset_interpolation_type();
-
-	// Functions for adding/clearing points
-	const int add_point( const double t, const double x );
-	const int add_unknown_point( const double t );
-
-	const int clear_known_points();
-	const int clear_unknown_points();
-	const int clear_points(); // Clears all points
-
-	// Full clear function
-	const int clear();
-
-	// Get functions
-	const double operator()( double xval, bool silent = false ) const;
-};
-// class interpolator_derivative
 
 class gabdt
 {
