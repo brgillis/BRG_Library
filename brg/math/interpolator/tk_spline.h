@@ -1,5 +1,5 @@
-/*
- * tk_spline.h
+/**
+ * @file tk_spline.h
  *
  * simple cubic spline interpolation library without external
  * dependencies
@@ -25,6 +25,7 @@
  *
  */
 
+// body file: tk_spline.cpp
 
 #ifndef _tk_spline_h
 #define _tk_spline_h

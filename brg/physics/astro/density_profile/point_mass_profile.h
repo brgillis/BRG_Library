@@ -1,11 +1,26 @@
-/**       @file point_mass_profile.h
- *
- *     Project: brg
- *        Path: /brg/density_profile/point_mass_profile.h
- *
- *  Created on: 11 Aug 2014
- *      Author: brg
- */
+/**********************************************************************\
+  @file point_mass_profile.h
+
+ **********************************************************************
+
+ Copyright (C) 2014  Bryan R. Gillis
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+\**********************************************************************/
+
+// body file: point_mass_profile.cpp
 
 #ifndef _BRG_POINT_MASS_PROFILE_H_
 #define _BRG_POINT_MASS_PROFILE_H_

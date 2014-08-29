@@ -1,5 +1,5 @@
-/*
- * tk_spline.cpp
+/**
+ * @file tk_spline.cpp
  *
  * simple cubic spline interpolation library without external
  * dependencies

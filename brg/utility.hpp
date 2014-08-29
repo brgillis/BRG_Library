@@ -1,20 +1,27 @@
-/**********************************************************************
- utlity.hpp
- -----------------
+/**********************************************************************\
+  @file utility.hpp
 
- This is a self-contained header file, with no associated source file.
- This file contains various template and inline
- functions. Note that some functions declared as "inline" cannot actually
- be inlined. They are all declared as such so they'll have local scope,
- and this header can be included in multiple source files without linker
- errors.
+ **********************************************************************
 
- All functions in this file are declared in the namespace brgastro.
+ Copyright (C) 2014  Bryan R. Gillis
 
- \**********************************************************************/
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-#ifndef _BRG_MISC_FUNCTIONS_HPP_INCLUDED_
-#define _BRG_MISC_FUNCTIONS_HPP_INCLUDED_
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+\**********************************************************************/
+
+#ifndef _BRG_UTILITY_HPP_INCLUDED_
+#define _BRG_UTILITY_HPP_INCLUDED_
 
 #include <cassert>
 #include <cstdlib>
@@ -248,4 +255,4 @@ inline void make_array5d(
 
 } // end namespace brgastro
 
-#endif // __BRG_MISC_FUNCTIONS_HPP_INCLUDED__
+#endif // _BRG_UTILITY_HPP_INCLUDED_
