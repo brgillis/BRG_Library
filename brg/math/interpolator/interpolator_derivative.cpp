@@ -9,7 +9,8 @@
 
 #include <utility>
 
-#include "brg/math/calculus/calculus.hpp"
+#include "brg/math/calculus/differentiate.hpp"
+#include "brg/math/calculus/integrate.hpp"
 
 #include "interpolator_derivative.h"
 

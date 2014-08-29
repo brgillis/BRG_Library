@@ -11,7 +11,7 @@
 
 #include "brg/global.h"
 
-#include "brg/math/calculus/calculus.hpp"
+#include "brg/math/calculus/integrate.hpp"
 #include "brg/math/solvers/solvers.hpp"
 #include "brg/physics/astro/density_profile/density_profile_functors.h"
 #include "brg/physics/units/unit_obj.h"

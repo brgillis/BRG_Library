@@ -14,7 +14,7 @@
 
 #include "brg/global.h"
 
-#include "brg/math/calculus/calculus.hpp"
+#include "brg/math/calculus/differentiate.hpp"
 #include "brg/physics/astro/density_profile/density_profile.h"
 #include "brg/physics/units/unit_obj.cpp"
 #include "brg/utility.hpp"

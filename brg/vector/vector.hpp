@@ -15,7 +15,8 @@
 #include <stdexcept>
 #include <memory>
 
-#include "vector_functions.hpp"
+#include "brg/vector/elementwise_functions.hpp"
+#include "brg/vector/summary_functions.hpp"
 
 namespace brgastro {
 

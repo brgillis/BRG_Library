@@ -13,7 +13,7 @@
 
 #include "brg/global.h"
 
-#include "brg/math/calculus/calculus.hpp"
+#include "brg/math/calculus/integrate.hpp"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/utility.hpp"
 

@@ -20,7 +20,7 @@
 
 #include "brg/file_functions.h"
 
-#include "brg/math/calculus/calculus.hpp"
+#include "brg/math/calculus/integrate.hpp"
 #include "brg/math/interpolator/interpolator.h"
 #include "brg/math/interpolator/interpolator_derivative.h"
 #include "brg/math/solvers/solvers.hpp"

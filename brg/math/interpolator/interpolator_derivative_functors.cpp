@@ -12,7 +12,8 @@
 #include <stdexcept>
 #include <utility>
 
-#include "brg/math/calculus/calculus.hpp"
+#include "brg/math/calculus/differentiate.hpp"
+#include "brg/math/calculus/integrate.hpp"
 #include "brg/math/random/distributions.hpp"
 
 #include "interpolator_derivative_functors.h"
