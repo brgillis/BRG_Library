@@ -12,7 +12,7 @@
 
 #include <cstdlib>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
 #include "density_profile.h"
 #include "tNFW_profile.h"

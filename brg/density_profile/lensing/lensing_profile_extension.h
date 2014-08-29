@@ -10,10 +10,10 @@
 #ifndef _BRG_LENSING_PROFILE_EXTENSION_H_
 #define _BRG_LENSING_PROFILE_EXTENSION_H_
 
-#include "../../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../../brg_units.h"
-#include "../density_profile.h"
+#include "brg/brg_units.h"
+#include "brg/density_profile/density_profile.h"
 
 #define IMPLEMENT_VIRTUAL_BRG_LENSING_EXTENSION_METHODS(class_name)   \
 	virtual double z() const {return class_name::z();}                \

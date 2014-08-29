@@ -9,10 +9,10 @@
 
 #include <iostream>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_misc_functions.hpp"
-#include "../brg_units.h"
+#include "brg/brg_misc_functions.hpp"
+#include "brg/brg_units.h"
 #include "density_profile_functors.h"
 
 // brgastro::accel_functor class methods

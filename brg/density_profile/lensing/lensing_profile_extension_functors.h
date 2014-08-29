@@ -10,9 +10,9 @@
 #ifndef _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 #define _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 
-#include "../../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../../brg_units.h"
+#include "brg/brg_units.h"
 #include "lensing_profile_extension.h"
 
 namespace brgastro {

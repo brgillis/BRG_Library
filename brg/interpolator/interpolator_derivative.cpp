@@ -7,7 +7,7 @@
  *      Author: brg
  */
 
-#include "../brg_calculus.hpp"
+#include "brg/brg_calculus.hpp"
 #include "interpolator_derivative.h"
 
 // interpolator_derivative static member initialisations

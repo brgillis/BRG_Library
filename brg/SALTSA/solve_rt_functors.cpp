@@ -9,11 +9,11 @@
 
 #include <cstdlib>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../density_profile/density_profile.h"
-#include "../brg_misc_functions.hpp"
-#include "../brg_units.h"
+#include "brg/density_profile/density_profile.h"
+#include "brg/brg_misc_functions.hpp"
+#include "brg/brg_units.h"
 
 #include "solve_rt_functors.h"
 

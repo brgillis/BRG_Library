@@ -12,7 +12,7 @@
 
 #include <vector>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
 #include "brg_interpolator.h"
 #include "interpolator_derivative_functors.h"

@@ -10,12 +10,12 @@
 #ifndef _BRG_TNFW_GALAXY_H_
 #define _BRG_TNFW_GALAXY_H_
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../density_profile/density_profile.h"
-#include "../density_profile/tNFW_profile.h"
-#include "../sky_obj/sky_obj.h"
-#include "../sky_obj/galaxy.h"
+#include "brg/density_profile/density_profile.h"
+#include "brg/density_profile/tNFW_profile.h"
+#include "brg/sky_obj/sky_obj.h"
+#include "brg/sky_obj/galaxy.h"
 
 namespace brgastro {
 

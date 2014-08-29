@@ -16,11 +16,11 @@
 
 #include <vector>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_units.h"
-#include "../interpolator/brg_interpolator.h"
-#include "../interpolator/interpolator_derivative.h"
+#include "brg/brg_units.h"
+#include "brg/interpolator/brg_interpolator.h"
+#include "brg/interpolator/interpolator_derivative.h"
 #include "gabdt.h"
 
 namespace brgastro {

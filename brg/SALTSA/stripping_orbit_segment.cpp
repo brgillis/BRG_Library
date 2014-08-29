@@ -12,11 +12,11 @@
 #include <utility>
 #include <vector>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_file_functions.h"
-#include "../interpolator/brg_interpolator.h"
-#include "../interpolator/interpolator_derivative.h"
+#include "brg/brg_file_functions.h"
+#include "brg/interpolator/brg_interpolator.h"
+#include "brg/interpolator/interpolator_derivative.h"
 #include "gabdt.h"
 
 #include "stripping_orbit_segment.h"

@@ -10,9 +10,9 @@
 #ifndef _BRG_LENSING_TNFW_PROFILE_H_
 #define _BRG_LENSING_TNFW_PROFILE_H_
 
-#include "../../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../tNFW_profile.h"
+#include "brg/density_profile/tNFW_profile.h"
 #include "lensing_profile_extension.h"
 
 namespace brgastro {

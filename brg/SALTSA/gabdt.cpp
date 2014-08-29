@@ -12,12 +12,12 @@
 #include <utility>
 #include <vector>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_calculus.hpp"
-#include "../brg_misc_functions.hpp"
-#include "../brg_units.cpp"
-#include "../density_profile/density_profile.h"
+#include "brg/brg_calculus.hpp"
+#include "brg/brg_misc_functions.hpp"
+#include "brg/brg_units.cpp"
+#include "brg/density_profile/density_profile.h"
 #include "gabdt.h"
 
 // brgastro::gabdt class method implementations

@@ -12,9 +12,9 @@
 #include <iostream>
 #include <vector>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_units.h"
+#include "brg/brg_units.h"
 #include "point_mass_profile.h"
 
 // brgastro::point_mass_profile class methods

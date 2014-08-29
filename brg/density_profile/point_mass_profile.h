@@ -12,9 +12,9 @@
 
 #include <vector>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_units.h"
+#include "brg/brg_units.h"
 #include "density_profile.h"
 
 namespace brgastro {

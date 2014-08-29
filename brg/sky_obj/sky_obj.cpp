@@ -7,10 +7,10 @@
  *      Author: brg
  */
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../astro_caches.h"
-#include "../brg_astro.h"
+#include "brg/astro_caches.h"
+#include "brg/brg_astro.h"
 
 #include "sky_obj.h"
 

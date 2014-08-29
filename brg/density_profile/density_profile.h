@@ -13,11 +13,11 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_astro.h"
-#include "../brg_misc_functions.hpp"
-#include "../brg_units.h"
+#include "brg/brg_astro.h"
+#include "brg/brg_misc_functions.hpp"
+#include "brg/brg_units.h"
 
 namespace brgastro {
 

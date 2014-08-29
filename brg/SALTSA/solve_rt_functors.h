@@ -10,10 +10,10 @@
 #ifndef _SOLVE_RT_FUNCTORS_H_INCLUDED_
 #define _SOLVE_RT_FUNCTORS_H_INCLUDED_
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../density_profile/density_profile.h"
-#include "../brg_units.h"
+#include "brg/density_profile/density_profile.h"
+#include "brg/brg_units.h"
 
 namespace brgastro {
 

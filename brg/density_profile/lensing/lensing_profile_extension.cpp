@@ -10,9 +10,9 @@
 #include <iostream>
 #include <vector>
 
-#include "../../brg_calculus.hpp"
-#include "../../brg_solvers.hpp"
-#include "../../brg_units.h"
+#include "brg/brg_calculus.hpp"
+#include "brg/brg_solvers.hpp"
+#include "brg/brg_units.h"
 #include "lensing_profile_extension.h"
 #include "lensing_profile_extension_functors.h"
 

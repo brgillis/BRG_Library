@@ -10,9 +10,9 @@
 #ifndef _INTERPOLATOR_DERIVATIVE_FUNCTORS_H_INCLUDED_
 #define _INTERPOLATOR_DERIVATIVE_FUNCTORS_H_INCLUDED_
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_units.h"
+#include "brg/brg_units.h"
 #include "brg_interpolator.h"
 
 namespace brgastro {

@@ -19,12 +19,12 @@
 #include <sstream>
 #include <exception>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_file_functions.h"
-#include "../brg_vector.hpp"
-#include "../brg_vector_functions.hpp"
-#include "../brg_units.h"
+#include "brg/brg_file_functions.h"
+#include "brg/brg_vector.hpp"
+#include "brg/brg_vector_functions.hpp"
+#include "brg/brg_units.h"
 
 // Macro definitions
 

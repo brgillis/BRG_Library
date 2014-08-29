@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
 #include "galaxy_group.h"
 #include "galaxy.h"

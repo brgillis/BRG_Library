@@ -13,10 +13,10 @@
 #include <string>
 #include <vector>
 
-#include "../../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../../cache/cache_3d.hpp"
-#include "../../cache/cache_4d.hpp"
+#include "brg/cache/cache_3d.hpp"
+#include "brg/cache/cache_4d.hpp"
 
 namespace brgastro {
 

@@ -13,9 +13,9 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../brg_misc_functions.hpp"
-#include "../brg_solvers.hpp"
-#include "../brg_units.h"
+#include "brg/brg_misc_functions.hpp"
+#include "brg/brg_solvers.hpp"
+#include "brg/brg_units.h"
 #include "tNFW_profile_functors.hpp"
 
 #include "tNFW_profile.h"

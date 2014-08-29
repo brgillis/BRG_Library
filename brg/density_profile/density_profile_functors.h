@@ -10,9 +10,9 @@
 #ifndef _BRG_DENSITY_PROFILE_FUNCTORS_H_
 #define _BRG_DENSITY_PROFILE_FUNCTORS_H_
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_units.h"
+#include "brg/brg_units.h"
 #include "density_profile.h"
 
 namespace brgastro {

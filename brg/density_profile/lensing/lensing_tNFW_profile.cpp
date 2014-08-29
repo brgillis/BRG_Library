@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "../../brg_global.h"
+#include "brg/brg_global.h"
 #include "lensing_tNFW_profile.h"
 #include "lensing_tNFW_caches.h"
 

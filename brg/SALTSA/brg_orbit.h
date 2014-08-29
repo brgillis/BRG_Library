@@ -15,15 +15,15 @@
 #include <vector>
 #include <stdexcept>
 
-#include "../brg_global.h"
+#include "brg/brg_global.h"
 
-#include "../brg_astro.h"
-#include "../brg_phase.hpp"
-#include "../brg_units.h"
-#include "../density_profile/density_profile.h"
-#include "../density_profile/tNFW_profile.h"
-#include "../interpolator/brg_interpolator.h"
-#include "../interpolator/interpolator_derivative.h"
+#include "brg/brg_astro.h"
+#include "brg/brg_phase.hpp"
+#include "brg/brg_units.h"
+#include "brg/density_profile/density_profile.h"
+#include "brg/density_profile/tNFW_profile.h"
+#include "brg/interpolator/brg_interpolator.h"
+#include "brg/interpolator/interpolator_derivative.h"
 #include "gabdt.h"
 
 namespace brgastro
