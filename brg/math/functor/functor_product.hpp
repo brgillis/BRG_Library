@@ -18,7 +18,7 @@
 
 #include "brg/global.h"
 
-#include "brg/vector/vector_functions.hpp"
+#include "brg/vector/elementwise_functions.hpp"
 
 namespace brgastro
 {

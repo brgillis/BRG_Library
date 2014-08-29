@@ -14,6 +14,8 @@
 #include "brg/global.h"
 
 #include "brg/math/functor/functor_product.hpp"
+#include "brg/math/misc_math.hpp"
+#include "brg/math/safe_math.hpp"
 #include "brg/utility.hpp"
 #include "brg/physics/phase.hpp"
 #ifdef _BRG_USE_UNITS

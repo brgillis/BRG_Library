@@ -17,9 +17,9 @@
 #include "brg/global.h"
 
 #include "brg/file_functions.h"
-#ifdef _BRG_USE_UNITS_
-#include "brg/units.h"
-#endif
+#include "brg/math/misc_math.hpp"
+#include "brg/math/safe_math.hpp"
+#include "brg/physics/units/unit_obj.h"
 
 
 // Macro definitions

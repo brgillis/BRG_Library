@@ -16,7 +16,8 @@
 #include "brg/utility.hpp"
 #include "brg/math/random/random_functions.h"
 #include "brg/physics/units/unit_obj.h"
-#include "brg/vector/vector_functions.hpp"
+#include "brg/vector/elementwise_functions.hpp"
+#include "brg/vector/summary_functions.hpp"
 
 namespace brgastro
 {

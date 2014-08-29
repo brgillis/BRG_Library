@@ -22,7 +22,11 @@
 #include "brg/global.h"
 
 #include "brg/file_functions.h"
+#include "brg/math/misc_math.hpp"
+#include "brg/math/safe_math.hpp"
 #include "brg/physics/units/unit_obj.h"
+#include "brg/utility.hpp"
+
 
 // Macro definitions
 

@@ -5,6 +5,7 @@
 
 #include "brg/global.h"
 
+#include "brg/math/misc_math.hpp"
 #include "brg/math/random/random_functions.h"
 #include "brg/utility.hpp"
 

@@ -22,9 +22,9 @@
 #include "brg/global.h"
 
 #include "brg/file_functions.h"
-#include "brg/vector.hpp"
-#include "brg/vector_functions.hpp"
-#include "brg/units.h"
+#include "brg/physics/units/unit_obj.h"
+#include "brg/vector/vector.hpp"
+#include "brg/vector/elementwise_functions.hpp"
 
 // Macro definitions
 
@@ -520,42 +520,6 @@ public:
 }; // class brg_cache
 
 } // namespace brgastro
-
-// Initialisation of static members
-#if (1)
-
-// These ones must be specialised for default values. The zeros in the initialisers and templates
-// should be replaced with the number of dimensions.
-template<typename name>
-brgastro::vector<double> brgastro::brg_cache_nd<name>::_mins_ = {0};
-
-template<typename name>
-brgastro::vector<double> brgastro::brg_cache_nd<name>::_maxes_ = {0};
-
-template<typename name>
-brgastro::vector<double> brgastro::brg_cache_nd<name>::_steps_ = {2}; // Never let any of the steps be zero
-
-// These ones don't need to be altered for each child, but they must be copied
-
-template<typename name>
-brgastro::vector<double> brgastro::brg_cache_nd<name>::_results_;
-
-template<typename name>
-bool brgastro::brg_cache_nd<name>::_loaded_ = false;
-
-template<typename name>
-bool brgastro::brg_cache_nd<name>::_initialised_ = false;
-
-template<typename name>
-brgastro::vector<unsigned int> brgastro::brg_cache_nd<name>::_resolutions_ = {0};
-
-template<typename name>
-std::string brgastro::brg_cache_nd<name>::_file_name_ = "";
-
-template<typename name>
-unsigned int brgastro::brg_cache_nd<name>::_version_number_ = 0;
-
-#endif
 
 // Undef macros
 #undef SPP

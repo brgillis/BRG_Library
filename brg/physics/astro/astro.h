@@ -177,6 +177,14 @@ double integrate_distance( const double z1, const double z2,
 BRG_DISTANCE ad_distance( double z1, double z2 = 0 );
 BRG_UNITS sigma_crit( const double z_lens, const double z_source );
 
+// Like dist2d, but using corrections for spherical geometry
+template< typename Tr1, typename Td1, typename Tr2, typename Td2 >
+inline const Tr1 skydist2d( const Tr1 ra1, const Td1 dec1,
+		const Tr2 ra2, const Td2 dec2 )
+{
+	return quad_add( ( ra2 - ra1 ) * std::cos( ( dec2 + dec1 ) / 2 ), dec2 - dec1 );
+}
+
 #endif // end function declarations
 
 /** Class Definitions **/

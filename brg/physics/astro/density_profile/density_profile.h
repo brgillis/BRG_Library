@@ -15,9 +15,10 @@
 
 #include "brg/global.h"
 
+#include "brg/math/misc_math.hpp"
+#include "brg/math/safe_math.hpp"
 #include "brg/physics/astro/astro.h"
 #include "brg/physics/units/unit_obj.h"
-#include "brg/utility.hpp"
 
 namespace brgastro {
 
