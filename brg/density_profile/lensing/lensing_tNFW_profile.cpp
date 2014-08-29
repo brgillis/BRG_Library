@@ -10,8 +10,9 @@
 #include <vector>
 
 #include "brg/brg_global.h"
+#include "brg/density_profile/lensing/lensing_tNFW_caches.h"
+
 #include "lensing_tNFW_profile.h"
-#include "lensing_tNFW_caches.h"
 
 const double min_x = 0.000001;
 

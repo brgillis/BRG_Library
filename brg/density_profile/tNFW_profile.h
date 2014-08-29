@@ -17,7 +17,7 @@
 
 #include "brg/brg_misc_functions.hpp"
 #include "brg/brg_units.h"
-#include "density_profile.h"
+#include "brg/density_profile/density_profile.h"
 
 namespace brgastro {
 

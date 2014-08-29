@@ -13,7 +13,7 @@
 #include "brg/brg_global.h"
 
 #include "brg/brg_units.h"
-#include "brg_interpolator.h"
+#include "brg/interpolator/brg_interpolator.h"
 
 namespace brgastro {
 

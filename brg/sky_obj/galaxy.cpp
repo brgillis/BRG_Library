@@ -7,6 +7,8 @@
  *      Author: brg
  */
 
+#include "brg/brg_global.h"
+
 #include "galaxy.h"
 
 // brgastro::galaxy class methods

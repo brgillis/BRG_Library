@@ -13,7 +13,7 @@
 #include "brg/brg_global.h"
 
 #include "brg/brg_units.h"
-#include "density_profile.h"
+#include "brg/density_profile/density_profile.h"
 
 namespace brgastro {
 

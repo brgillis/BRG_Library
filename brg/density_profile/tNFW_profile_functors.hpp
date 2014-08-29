@@ -14,8 +14,8 @@
 
 #include "brg/brg_global.h"
 
-#include "density_profile.h"
-#include "tNFW_profile.h"
+#include "brg/density_profile/density_profile.h"
+#include "brg/density_profile/tNFW_profile.h"
 
 namespace brgastro
 {

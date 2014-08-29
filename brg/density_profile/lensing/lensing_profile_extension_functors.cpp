@@ -16,6 +16,7 @@
 #include "brg/brg_calculus.hpp"
 #include "brg/brg_misc_functions.hpp"
 #include "brg/brg_units.h"
+
 #include "lensing_profile_extension_functors.h"
 
 // brgastro::projected_density_functor class methods

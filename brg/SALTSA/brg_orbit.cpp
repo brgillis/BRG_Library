@@ -26,8 +26,8 @@
 #include "brg/brg_units.h"
 #include "brg/interpolator/brg_interpolator.h"
 #include "brg/interpolator/interpolator_derivative.h"
-#include "gabdt.h"
-#include "solve_rt_functors.h"
+#include "brg/SALTSA/gabdt.h"
+#include "brg/SALTSA/solve_rt_functors.h"
 
 #include "brg_orbit.h"
 

@@ -24,7 +24,7 @@
 #include "brg/density_profile/tNFW_profile.h"
 #include "brg/interpolator/brg_interpolator.h"
 #include "brg/interpolator/interpolator_derivative.h"
-#include "gabdt.h"
+#include "brg/SALTSA/gabdt.h"
 
 namespace brgastro
 {

@@ -13,7 +13,7 @@
 #include "brg/brg_global.h"
 
 #include "brg/density_profile/tNFW_profile.h"
-#include "lensing_profile_extension.h"
+#include "brg/density_profile/lensing/lensing_profile_extension.h"
 
 namespace brgastro {
 

@@ -10,7 +10,9 @@
 #ifndef _BRG_GALAXY_H_
 #define _BRG_GALAXY_H_
 
-#include "sky_obj.h"
+#include "brg/brg_global.h"
+
+#include "brg/sky_obj/sky_obj.h"
 
 namespace brgastro {
 

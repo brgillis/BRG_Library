@@ -18,6 +18,7 @@
 #include "brg/brg_misc_functions.hpp"
 #include "brg/brg_units.cpp"
 #include "brg/density_profile/density_profile.h"
+
 #include "gabdt.h"
 
 // brgastro::gabdt class method implementations

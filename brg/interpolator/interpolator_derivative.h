@@ -14,8 +14,8 @@
 
 #include "brg/brg_global.h"
 
-#include "brg_interpolator.h"
-#include "interpolator_derivative_functors.h"
+#include "brg/interpolator/brg_interpolator.h"
+#include "brg/interpolator/interpolator_derivative_functors.h"
 
 namespace brgastro {
 

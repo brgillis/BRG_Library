@@ -13,8 +13,9 @@
 
 #include "brg/brg_global.h"
 
+#include "brg/sky_obj/galaxy.h"
+
 #include "galaxy_group.h"
-#include "galaxy.h"
 
 // brgastro::galaxy_group class methods
 #if (1)

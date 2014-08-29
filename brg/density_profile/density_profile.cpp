@@ -14,7 +14,7 @@
 #include "brg/brg_calculus.hpp"
 #include "brg/brg_solvers.hpp"
 #include "brg/brg_units.h"
-#include "density_profile_functors.h"
+#include "brg/density_profile/density_profile_functors.h"
 #include "density_profile.h"
 
 // brgastro::density_profile class methods

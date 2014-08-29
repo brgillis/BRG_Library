@@ -16,7 +16,7 @@
 
 #include "brg/brg_global.h"
 
-#include "tk_spline.h"
+#include "brg/interpolator/tk_spline.h"
 
 namespace brgastro {
 

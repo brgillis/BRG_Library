@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "brg/brg_calculus.hpp"
+
 #include "interpolator_derivative_functors.h"
 
 // brgastro::interpolator_functor class method implementations

@@ -17,10 +17,8 @@
 
 #include "brg/brg_astro.h"
 #include "brg/brg_units.h"
-
 #include "brg/cache/cache_4d.hpp"
-
-#include "lensing_tNFW_profile.h"
+#include "brg/density_profile/lensing/lensing_tNFW_profile.h"
 
 #include "lensing_tNFW_caches.h"
 

@@ -13,8 +13,9 @@
 #include "brg/brg_calculus.hpp"
 #include "brg/brg_solvers.hpp"
 #include "brg/brg_units.h"
+#include "brg/density_profile/lensing/lensing_profile_extension_functors.h"
+
 #include "lensing_profile_extension.h"
-#include "lensing_profile_extension_functors.h"
 
 // Lensing profile extension private methods
 

@@ -12,8 +12,10 @@
 
 #include <vector>
 
-#include "sky_obj.h"
-#include "galaxy.h"
+#include "brg/brg_global.h"
+
+#include "brg/sky_obj/sky_obj.h"
+#include "brg/sky_obj/galaxy.h"
 
 namespace brgastro {
 

@@ -17,7 +17,7 @@
 #include "brg/brg_file_functions.h"
 #include "brg/interpolator/brg_interpolator.h"
 #include "brg/interpolator/interpolator_derivative.h"
-#include "gabdt.h"
+#include "brg/SALTSA/gabdt.h"
 
 #include "stripping_orbit_segment.h"
 

@@ -13,6 +13,7 @@
 
 #include "brg/brg_misc_functions.hpp"
 #include "brg/brg_units.h"
+
 #include "density_profile_functors.h"
 
 // brgastro::accel_functor class methods
