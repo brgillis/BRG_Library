@@ -26,7 +26,7 @@
 // Global compiler directives
 // Alter these by switching between #define and #undef
 
-#undef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_ // Warns if a function like "safe_d" prevents an error
+//#define _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_ // Warns if a function like "safe_d" prevents an error
 // This may be expected or not an issue in some cases though,
 // so just undef this for release builds if you're satisfied
 // there's no actual problem.
@@ -37,8 +37,11 @@
 #undef _BRG_USE_CPP_11_STD_
 #endif
 
-#undef _BRG_USE_UNITS_ // Will use "number-with-units" class for applicable values in code
-// This slows things down a bit, but can be useful in debugging.
+#ifndef NDEBUG
+//#define _BRG_USE_UNITS_ // Will use "number-with-units" class for applicable values in code
+// This slows things down a bit, but can be useful in debugging. Comment/uncomment or define
+// at command line to decide whether or not to use this
+#endif // #ifndef NDEBUG
 
 #define _BRG_WARN_FOR_UNIT_MISMATCH_
 // Warns in the following scenarios:
@@ -70,20 +73,28 @@ const double pi = 3.14159265358979323846;
 #define SMALL_FACTOR 1e-9
 #endif
 
+#ifndef INT_MAX
+#define INT_MAX std::numeric_limits<int>::max()
+#endif
+
+#ifndef INT_MIN
+#define INT_MIN std::numeric_limits<int>::min()
+#endif
+
 #ifndef DBL_MAX
-#define DBL_MAX 1.7976931348623158e+308
+#define DBL_MAX std::numeric_limits<double>::max()
 #endif
 
 #ifndef DBL_MIN
-#define DBL_MIN 2.2250738585072014e-308
+#define DBL_MIN std::numeric_limits<double>::min()
 #endif
 
 #ifndef FLT_EPSILON
-#define FLT_EPSILON 1e-07
+#define FLT_EPSILON std::numeric_limits<float>::epsilon()
 #endif
 
 #ifndef DBL_EPSILON
-#define DBL_EPSILON 1e-14
+#define DBL_EPSILON std::numeric_limits<double>::epsilon()
 #endif
 
 #ifndef FLT_ROUNDING_EPSILON
@@ -140,7 +151,7 @@ const double pi = 3.14159265358979323846;
 #define BRG_UNIQUE_PTR std::unique_ptr
 #define BRG_SHARED_PTR std::shared_ptr
 #else
-#define BRG_UNIQUE_PTR boost::shared_ptr // Next best thing
+#define BRG_UNIQUE_PTR std::auto_ptr
 #define BRG_SHARED_PTR boost::shared_ptr
 #endif // #ifdef _BRG_USE_CPP_11_STD_
 

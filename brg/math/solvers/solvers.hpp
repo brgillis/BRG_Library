@@ -406,9 +406,6 @@ T solve_grid( const f * func, const T & init_min_in_params, const T & init_max_i
 			+ 1;
 	num_test_points = num_in_params_steps;
 
-	if ( ( init_init_precision > 0 ) && ( init_init_precision <= 1 ) )
-		init_precision = init_init_precision;
-
 	// First step is to search solution space for the best starting point
 	i_best = 0;
 	d_best = DBL_MAX;
@@ -508,7 +505,7 @@ T solve_grid( const f * func, const T & init_min_in_params, const T & init_max_i
 		} // for(int i = 0; i < num_test_points; i++ )
 
 		// Figure out best_in_params for next step
-		best_in_params += in_params_step * (i_best-1);
+		best_in_params += in_params_step * i_best - in_params_step;
 
 		step_dist *= grid_shortening_factor;
 

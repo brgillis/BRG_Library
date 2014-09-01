@@ -245,7 +245,7 @@ BRG_DISTANCE brgastro::tNFW_profile::rs() const
 }
 BRG_DISTANCE brgastro::tNFW_profile::rt( const bool silent ) const
 {
-	return rvir0() / _tau_;
+	return rvir0() * _c_ / _tau_;
 }
 
 BRG_UNITS brgastro::tNFW_profile::dens( CONST_BRG_DISTANCE_REF r ) const

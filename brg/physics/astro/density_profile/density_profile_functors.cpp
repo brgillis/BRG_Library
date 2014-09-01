@@ -110,7 +110,7 @@ BRG_UNITS brgastro::solve_rhm_functor::operator()( CONST_BRG_UNITS_REF  in_param
 {
 	if ( _host_ptr_ == NULL )
 	{
-		throw std::runtime_error("ERROR: Host must be assigned to solve_rhm_functor before function can be called.\n");
+		throw std::logic_error("ERROR: Host must be assigned to solve_rhm_functor before function can be called.\n");
 	}
 	return std::fabs(_target_mass_ - _host_ptr_->enc_mass( fabs( in_param ), silent ) );
 }

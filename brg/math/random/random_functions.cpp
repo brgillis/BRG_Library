@@ -23,8 +23,6 @@
 #include <cstdlib>
 #include <cmath>
 
-#include <boost/math/special_functions/erf.hpp>
-
 #include "brg/global.h"
 
 #include "brg/math/misc_math.hpp"

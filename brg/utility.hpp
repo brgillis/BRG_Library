@@ -27,9 +27,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <vector>
-
-#include <boost/math/special_functions/erf.hpp>
 
 #include "global.h"
 
@@ -76,12 +75,6 @@ inline void set_zero( float & obj )
 {
 	obj = 0;
 }
-#ifdef _BRG_USE_UNITS_
-inline void set_zero( unit_obj obj)
-{
-	obj = unit_obj(0);
-}
-#endif
 inline void set_zero( std::string obj )
 {
 	obj = "";

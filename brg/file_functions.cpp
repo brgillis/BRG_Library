@@ -20,9 +20,11 @@
 
 \**********************************************************************/
 
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <stdexcept>
 #include <string>
 
 #include "brg/global.h"

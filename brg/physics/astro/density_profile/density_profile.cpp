@@ -68,7 +68,7 @@ BRG_DISTANCE brgastro::density_profile::rhmtot( const bool silent ) const
 
 	try
 	{
-		rhm_test = solve_grid( func_ptr, 0., max_r, 10, 0. );
+		rhm_test = solve_grid( func_ptr, 0., max_r, 10, 0. ); // TODO: Figure out what's going wrong with this calculation
 	}
 	catch(const std::exception &e)
 	{
