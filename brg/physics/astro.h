@@ -122,6 +122,23 @@ const float default_tau_factor = 2;
 
 BRG_UNITS H( const double z );
 
+// Functions to get grid integers or grid boundaries from integers
+int get_ra_grid( CONST_BRG_ANGLE_REF ra );
+int get_dec_grid( CONST_BRG_ANGLE_REF dec );
+int get_z_grid( const double z );
+
+BRG_ANGLE get_ra_grid_lower( const int ra_grid );
+BRG_ANGLE get_dec_grid_lower( const int dec_grid );
+double get_z_grid_lower( const int z_grid );
+
+BRG_ANGLE get_ra_grid_upper( const int ra_grid );
+BRG_ANGLE get_dec_grid_upper( const int dec_grid );
+double get_z_grid_upper( const int z_grid );
+
+BRG_ANGLE get_ra_grid_mid( const int ra_grid );
+BRG_ANGLE get_dec_grid_mid( const int dec_grid );
+double get_z_grid_mid( const int z_grid );
+
 // Functions to get transverse distance (in m) from angle (in rad) or vice-versa
 BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF da, const double z );
 BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
