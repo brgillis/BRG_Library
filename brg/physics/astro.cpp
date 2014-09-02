@@ -340,4 +340,25 @@ double brgastro::integrate_distance( const double z1_init,
 }
 #endif
 
+// Lensing functions
+#if (1)
+
+BRG_DISTANCE brgastro::ad_distance( double z1, double z2 )
+{
+	if ( z2 < z1 )
+		std::swap( z1, z2 );
+	return brgastro::add_cache().get( z1, z2 );
+}
+
+BRG_UNITS brgastro::sigma_crit( const double z_lens,
+		const double z_source )
+{
+	return square( c ) / ( 4. * pi * Gc )
+			* brgastro::ad_distance( 0, z_source )
+			/ ( brgastro::ad_distance( 0, z_lens )
+					* brgastro::ad_distance( z_lens, z_source ) );
+
+}
+#endif // end lensing functions
+
 #endif // end Global function definitions
