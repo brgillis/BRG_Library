@@ -27,13 +27,27 @@
 #include "brg/global.h"
 
 #include "brg/math/cache/cache.hpp"
+#include "brg/math/cache/cache_2d.hpp"
 
 #include "brg/physics/astro_caches.h"
 #include "brg/physics/astro.h"
+#include "brg/physics/sky_obj/position_grid_cache.h"
 #include "brg/physics/units/unit_obj.h"
 
 // brgastro::redshift_obj class methods
 #if (1)
+int brgastro::redshift_obj::z_grid() const
+{
+	if ( _z_grid_cached_ )
+	{
+		if ( _local_z_grid_change_num_ == grid_cache().z_grid_change_num() )
+			return _z_grid_;
+	}
+	_z_grid_ = brgastro::get_z_grid( z() );
+	_z_grid_cached_ = true;
+	_local_z_grid_change_num_ = grid_cache().z_grid_change_num();
+	return _z_grid_;
+}
 
 BRG_UNITS brgastro::redshift_obj::H() const
 {
@@ -340,7 +354,7 @@ double brgastro::integrate_distance( const double z1_init,
 }
 #endif
 
-// Lensing functions
+// Other functions
 #if (1)
 
 BRG_DISTANCE brgastro::ad_distance( double z1, double z2 )
@@ -359,6 +373,6 @@ BRG_UNITS brgastro::sigma_crit( const double z_lens,
 					* brgastro::ad_distance( z_lens, z_source ) );
 
 }
-#endif // end lensing functions
+#endif // end other functions
 
 #endif // end Global function definitions
