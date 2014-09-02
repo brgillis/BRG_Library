@@ -173,6 +173,10 @@ double integrate_ltd( const double z );
 double integrate_distance( const double z1, const double z2,
 		const int mode, const int resolution = 10000 );
 
+// Lensing functions
+BRG_DISTANCE ad_distance( double z1, double z2 = 0 );
+BRG_UNITS sigma_crit( const double z_lens, const double z_source );
+
 // Like dist2d, but using corrections for spherical geometry
 template< typename Tr1, typename Td1, typename Tr2, typename Td2 >
 inline const Tr1 skydist2d( const Tr1 ra1, const Td1 dec1,
