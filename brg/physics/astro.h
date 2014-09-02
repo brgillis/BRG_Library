@@ -20,7 +20,7 @@
 
 \**********************************************************************/
 
-// body file: brg/physics/astro/astro.cpp
+// body file: brg/physics/astro.cpp
 
 #ifndef __BRG_ASTRO_H_INCLUDED__
 #define __BRG_ASTRO_H_INCLUDED__
@@ -211,6 +211,9 @@ private:
 	double _z_, _z_err_;
 	mutable BRG_UNITS _H_cache_;
 	mutable bool _H_cached_;
+	mutable int _z_grid_;
+	mutable bool _z_grid_cached_;
+	mutable int _local_z_grid_change_num_;
 public:
 
 	// Constructor
@@ -220,6 +223,9 @@ public:
 		_z_err_ = init_z_err;
 		_H_cache_ = 0;
 		_H_cached_ = false;
+		_z_grid_ = 0;
+		_z_grid_cached_ = false;
+		_local_z_grid_change_num_ = -1;
 	}
 
 	// Copy constructor
@@ -236,6 +242,7 @@ public:
 	{
 		_z_ = new_z;
 		_H_cached_ = false;
+		_z_grid_cached_ = false;
 	}
 	virtual void set_z_err( const double new_z_err ) // Sets z error
 	{
@@ -253,6 +260,7 @@ public:
 	{
 		return _z_err_;
 	}
+	int z_grid() const;
 #endif
 
 	// Astro calculations
