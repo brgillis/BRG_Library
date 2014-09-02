@@ -75,6 +75,74 @@ BRG_UNITS brgastro::H( const double test_z )
 							+ Omega_k * square( zp1 ) + Omega_l );
 }
 
+// grid functions
+#if (1)
+int brgastro::get_ra_grid( CONST_BRG_ANGLE_REF ra )
+{
+	grid_cache cache;
+	return (int)floor(
+			( ra - cache.ra_grid_min() ) / safe_d( cache.ra_grid_step() ) );
+}
+int brgastro::get_dec_grid( CONST_BRG_ANGLE_REF dec )
+{
+	grid_cache cache;
+	return (int)floor( ( dec - cache.dec_grid_min() ) / cache.dec_grid_step() );
+}
+int brgastro::get_z_grid( const double z )
+{
+	grid_cache cache;
+	return (int)floor( ( z - cache.z_grid_min() ) / cache.z_grid_step() );
+}
+
+BRG_ANGLE brgastro::get_ra_grid_lower( const int ra_grid )
+{
+	grid_cache cache;
+	return cache.ra_grid_min() + cache.ra_grid_step() * ra_grid;
+}
+BRG_ANGLE brgastro::get_dec_grid_lower( const int dec_grid )
+{
+	grid_cache cache;
+	return cache.dec_grid_min() + cache.dec_grid_step() * dec_grid;
+}
+double brgastro::get_z_grid_lower( const int z_grid )
+{
+	grid_cache cache;
+	return cache.z_grid_min() + cache.z_grid_step() * z_grid;
+}
+
+BRG_ANGLE brgastro::get_ra_grid_upper( const int ra_grid )
+{
+	grid_cache cache;
+	return cache.ra_grid_min() + cache.ra_grid_step() * ( ra_grid + 1 );
+}
+BRG_ANGLE brgastro::get_dec_grid_upper( const int dec_grid )
+{
+	grid_cache cache;
+	return cache.dec_grid_min() + cache.dec_grid_step() * ( dec_grid + 1 );
+}
+double brgastro::get_z_grid_upper( const int z_grid )
+{
+	grid_cache cache;
+	return cache.z_grid_min() + cache.z_grid_step() * ( z_grid + 1 );
+}
+
+BRG_ANGLE brgastro::get_ra_grid_mid( const int ra_grid )
+{
+	grid_cache cache;
+	return cache.ra_grid_min() + cache.ra_grid_step() * ( ra_grid + 0.5 );
+}
+BRG_ANGLE brgastro::get_dec_grid_mid( const int dec_grid )
+{
+	grid_cache cache;
+	return cache.dec_grid_min() + cache.dec_grid_step() * ( dec_grid + 0.5 );
+}
+double brgastro::get_z_grid_mid( const int z_grid )
+{
+	grid_cache cache;
+	return cache.z_grid_min() + cache.z_grid_step() * ( z_grid + 0.5 );
+}
+#endif // end grid functions
+
 // dfa and afd functions
 #if (1)
 
