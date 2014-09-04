@@ -23,6 +23,7 @@
 #ifndef _BRG_SAFE_MATH_HPP_INCLUDED_
 #define _BRG_SAFE_MATH_HPP_INCLUDED_
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <limits>

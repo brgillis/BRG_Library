@@ -27,6 +27,7 @@
 #include "brg/math/solvers/solvers.hpp"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/physics/density_profile/lensing/lensing_profile_extension_functors.h"
+#include "brg/physics/density_profile/lensing/shifting/shifting_cache.h"
 
 #include "lensing_profile_extension.h"
 
@@ -38,10 +39,7 @@ const double brgastro::lensing_profile_extension::shift_factor( CONST_BRG_DISTAN
 		const bool silent) const
 {
 	const BRG_ANGLE theta_separation = afd(R,z());
-	if(theta_separation>1*unitconv::amintorad)
-		return 0.01*z();
-	else
-		return 0.001*z()+0.009*z()*(theta_separation/(1*unitconv::amintorad)); // TODO: Replace placeholder here with actual function
+	return shifting_cache().get(theta_separation,z())/theta_separation;
 }
 
 // Gives the expected shift in physical coordinates for a given physical separation
