@@ -9,7 +9,7 @@ def main(argv):
         
     data_file_name = argv[1]
     name_root = os.path.splitext(data_file_name)[0]
-    name = name_root[name_root.rfind('/'):-1]
+    name = name_root[name_root.rfind('/')+1:-1]
     upper_name = name.upper()
     hpp_name = name_root + ".hpp"
     
@@ -29,10 +29,10 @@ def main(argv):
         # Write the data storage line by line
         with open(data_file_name,'r') as fi:
             for line in fi:
-                fo.write(line + ",\n")
+                fo.write("\""+line[0:-1] + "\",\n")
 
         # Write end of data storage
-        fo.write("NULL };\n\n")
+        fo.write("\"\\0\" };\n\n")
         
         # Write include guard (bottom)
         fo.write("#endif\n")
