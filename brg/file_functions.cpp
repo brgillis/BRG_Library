@@ -107,13 +107,10 @@ void brgastro::print_table( std::ostream & out_stream,
 
 // Load table, either loading in the entire table, or only loading in certain columns into pointed-to
 // variables, found by matching header entries to the strings passed
-std::vector<std::vector<std::string> > brgastro::load_table( const std::string & table_file_name, const bool silent)
+std::vector<std::vector<std::string> > brgastro::load_table( std::istream & fi,
+		const bool silent)
 {
 	std::vector<std::vector<std::string> > table_data;
-	std::ifstream fi;
-
-	// Open the file
-	open_file(fi, table_file_name);
 
 	// Trim the header
 	trim_comments_all_at_top(fi);
@@ -144,16 +141,12 @@ std::vector<std::vector<std::string> > brgastro::load_table( const std::string &
 
 	return table_data;
 }
-void brgastro::load_table_and_header( const std::string & table_file_name,
+void brgastro::load_table_and_header( std::istream & fi,
 		std::vector<std::vector<std::string> > & table_data,
 		std::vector<std::string> & header, const bool silent)
 {
-	std::ifstream fi;
 	std::string line_data;
 	std::istringstream line_data_stream;
-
-	// Open the file
-	brgastro::open_file(fi, table_file_name);
 
 	// Clear the output vectors
 	header.resize(0);
@@ -211,7 +204,7 @@ void brgastro::load_table_and_header( const std::string & table_file_name,
 	    table_data.push_back(temp_vector);
 	}
 }
-void brgastro::load_table_columns( const std::string & table_file_name,
+void brgastro::load_table_columns( std::istream & fi,
 		std::vector< std::pair< std::string, std::vector<std::string>* > > & header_links,
 		const bool case_sensitive, const bool silent)
 {
@@ -219,7 +212,7 @@ void brgastro::load_table_columns( const std::string & table_file_name,
 	std::vector<std::vector<std::string> > table_data;
 	std::vector<std::string> header;
 
-	brgastro::load_table_and_header( table_file_name, table_data, header, silent);
+	brgastro::load_table_and_header( fi, table_data, header, silent);
 
 	// Now, loop through each key and search for it in the header.
 	for(size_t i = 0; i < header_links.size(); i++)
@@ -343,7 +336,7 @@ void brgastro::open_bin_file( std::fstream & stream, const std::string & name,
 	}
 }
 
-void brgastro::trim_comments_one_line( std::ifstream & stream,
+void brgastro::trim_comments_one_line( std::istream & stream,
 		const bool silent )
 {
 	std::string file_data;
@@ -365,7 +358,7 @@ void brgastro::trim_comments_one_line( std::fstream & stream,
 	}
 }
 
-void brgastro::trim_comments_all_at_top( std::ifstream & stream,
+void brgastro::trim_comments_all_at_top( std::istream & stream,
 		const bool silent )
 {
 	std::string file_data;
