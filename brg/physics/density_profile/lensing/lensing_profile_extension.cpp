@@ -38,6 +38,7 @@
 const double brgastro::lensing_profile_extension::shift_factor( CONST_BRG_DISTANCE_REF R,
 		const bool silent) const
 {
+	if(R==0) return 0;
 	const BRG_ANGLE theta_separation = afd(R,z());
 	return shifting_cache().get(theta_separation,z())/theta_separation;
 }

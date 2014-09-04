@@ -403,7 +403,7 @@ BRG_UNITS brgastro::shifted_WLsig_circ_functor::operator()(
 		extra_shear_factor = 0;
 	else
 		extra_shear_factor = (R_actual-_R_)/_R_shift_*
-			_host_ptr_->shift_factor(0);
+			_host_ptr_->shift_factor(1*brgastro::unitconv::kpctom);
 
 	if(isbad(theta))
 	{
