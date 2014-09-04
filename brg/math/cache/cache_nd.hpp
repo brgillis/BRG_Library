@@ -52,7 +52,7 @@
 
 #define DECLARE_BRG_CACHE_ND_STATIC_VARS()		       \
 	static brgastro::vector<double> _mins_, _maxes_, _steps_;      \
-	static brgastro::vector<unsigned int> _resolutions_;           \
+	static brgastro::vector<size_t> _resolutions_;           \
 	static brgastro::vector<double> _results_;                     \
 											                       \
 	static std::string _file_name_;                                \
@@ -70,7 +70,7 @@
 	brgastro::vector<double> brgastro::class_name::_steps_ = init_steps;                         \
 	bool brgastro::class_name::_loaded_ = false;							                     \
 	bool brgastro::class_name::_initialised_ = false;					                         \
-	brgastro::vector<unsigned int> brgastro::class_name::_resolutions_ =                         \
+	brgastro::vector<size_t> brgastro::class_name::_resolutions_ =                         \
 		max( (((brgastro::class_name::_maxes_-brgastro::class_name::_mins_) /                    \
 				safe_d(brgastro::class_name::_steps_))+1), 1);                                   \
 	std::string brgastro::class_name::_file_name_ = "";					     	                 \
@@ -146,7 +146,7 @@ private:
 			// Check that it has the right name and version
 
 			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			unsigned int file_version = std::numeric_limits<unsigned short int>::max();
+			unsigned int file_version = std::numeric_limits<unsigned int>::max();
 
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
@@ -165,7 +165,7 @@ private:
 			SPCP(name)->_mins_.resize(SPCP(name)->_num_dim_,0);
 			SPCP(name)->_maxes_.resize(SPCP(name)->_num_dim_,0);
 			SPCP(name)->_steps_.resize(SPCP(name)->_num_dim_,0);
-			for(unsigned int i = 0; i < SPCP(name)->_num_dim_; i++)
+			for(size_t i = 0; i < SPCP(name)->_num_dim_; i++)
 			{
 				in_file.read((char *)&(SPCP(name)->_mins_[i]),sizeof(SPCP(name)->_mins_[i]));
 				in_file.read((char *)&(SPCP(name)->_maxes_[i]),sizeof(SPCP(name)->_maxes_[i]));
@@ -187,16 +187,16 @@ private:
 			// Read in data
 
 			// Initialize
-			unsigned int i = 0;
+			size_t i = 0;
 			const std::streamsize size = sizeof(SPCP(name)->_results_[0]); // Store the size for speed
-			brgastro::vector<unsigned int> position(SPCP(name)->_num_dim_,0);
+			brgastro::vector<size_t> position(SPCP(name)->_num_dim_,0);
 
 			while ( ( !in_file.eof() ) && ( i < product(SPCP(name)->_resolutions_) ) && (in_file) )
 			{
 				in_file.read((char *)&(SPCP(name)->_results_(position)),size);
 				i++;
 
-				for(unsigned int d=0; d<SPCP(name)->_num_dim_; d++)
+				for(size_t d=0; d<SPCP(name)->_num_dim_; d++)
 				{
 					position[d]++;
 					if(position[d] != SPCP(name)->_resolutions_[d])
@@ -231,7 +231,7 @@ private:
 	void _calc( const bool silent = false ) const
 	{
 		// Test that range is sane
-		for(unsigned int i = 0; i < SPCP(name)->_num_dim_; i++)
+		for(size_t i = 0; i < SPCP(name)->_num_dim_; i++)
 		{
 			try {
 				if ( ( SPCP(name)->_maxes_.at(i) <= SPCP(name)->_mins_.at(i) ) || ( SPCP(name)->_steps_.at(i) <= 0 ) )
@@ -254,15 +254,15 @@ private:
 		SPCP(name)->_resolutions_ = max( (((SPCP(name)->_maxes_-SPCP(name)->_mins_) / safe_d(SPCP(name)->_steps_))+1.), 1.);
 		SPCP(name)->_results_.reshape(SPCP(name)->_resolutions_.v() );
 
-		brgastro::vector<unsigned int> position(SPCP(name)->_num_dim_,0);
+		brgastro::vector<size_t> position(SPCP(name)->_num_dim_,0);
 		brgastro::vector<double> x(SPCP(name)->_num_dim_,0);
-		for ( unsigned int i = 0; i < SPCP(name)->_results_.size(); i++ )
+		for ( size_t i = 0; i < SPCP(name)->_results_.size(); i++ )
 		{
 			x = SPCP(name)->_mins_ + SPCP(name)->_steps_*position;
 			double result = 0;
 			SPCP(name)->_results_(position) = SPCP(name)->_calculate(x);
 
-			for(unsigned int d=0; d<SPCP(name)->_num_dim_; d++)
+			for(size_t d=0; d<SPCP(name)->_num_dim_; d++)
 			{
 				position[d]++;
 				if(position[d] != SPCP(name)->_resolutions_[d])
@@ -302,7 +302,7 @@ private:
 		out_file.write((char *)&file_version,sizeof(file_version));
 
 		// Output range parameters
-		for(unsigned int i = 0; i < SPCP(name)->_num_dim_; i++)
+		for(size_t i = 0; i < SPCP(name)->_num_dim_; i++)
 		{
 			out_file.write((char *)&(SPCP(name)->_mins_[i]),sizeof(SPCP(name)->_mins_[i]));
 			out_file.write((char *)&(SPCP(name)->_maxes_[i]),sizeof(SPCP(name)->_maxes_[i]));
@@ -312,16 +312,16 @@ private:
 		// Output data
 
 		// Initialize
-		unsigned int i = 0;
+		size_t i = 0;
 		const std::streamsize size = sizeof(SPCP(name)->_results_[0]);
-		brgastro::vector<unsigned int> position(SPCP(name)->_num_dim_,0);
+		brgastro::vector<size_t> position(SPCP(name)->_num_dim_,0);
 
 		while ( i < product(SPCP(name)->_resolutions_) )
 		{
 			out_file.write((char *)&(SPCP(name)->_results_(position)),size);
 			i++;
 
-			for(unsigned int d=0; d<SPCP(name)->_num_dim_; d++)
+			for(size_t d=0; d<SPCP(name)->_num_dim_; d++)
 			{
 				position[d]++;
 				if(position[d] != SPCP(name)->_resolutions_[d])
@@ -345,11 +345,11 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have. Only the units matter in the return, not the value
-	virtual const brgastro::unit_obj _units() const throw()
+	const brgastro::unit_obj _units() const throw()
 	{
 		return brgastro::unit_obj(0);
 	}
-	virtual const brgastro::unit_obj _inverse_units() const throw()
+	const brgastro::unit_obj _inverse_units() const throw()
 	{
 		return brgastro::unit_obj(0);
 	}
@@ -357,13 +357,13 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	virtual const double _calculate(const brgastro::vector<double> & x) const
+	const double _calculate(const brgastro::vector<double> & x) const
 	{
 		return 0;
 	}
 
 	// This function should be overloaded to provide a unique name for this cache
-	virtual const std::string _name_base() const throw()
+	const std::string _name_base() const throw()
 	{
 		char name_base[BRG_CACHE_ND_NAME_SIZE] = "";
 		return name_base;
@@ -372,7 +372,7 @@ protected:
 	// This function should be overloaded to call each cache of the same dimensionality
 	// this cache depends upon in calculation. This is necessary in order to avoid critical
 	// sections of the same name being called recursively.
-	virtual void _load_cache_dependencies() const
+	void _load_cache_dependencies() const
 	{
 	}
 
@@ -411,7 +411,7 @@ public:
 		}
 
 		// Go through variables, check if any are actually changed. If so, recalculate cache
-		for(unsigned int i = 0; i < SPCP(name)->_num_dim_; i++)
+		for(size_t i = 0; i < SPCP(name)->_num_dim_; i++)
 		{
 			if ( ( SPCP(name)->_mins_.at(i) != new_mins.at(i) ) || ( SPCP(name)->_maxes_.at(i) != new_maxes.at(i) )
 					|| ( SPCP(name)->_steps_.at(i) != new_steps.at(i) ) )
@@ -431,7 +431,7 @@ public:
 	{
 
 		brgastro::vector<double> xlo, xhi;
-		brgastro::vector<unsigned int> x_i; // Lower nearby array points
+		brgastro::vector<size_t> x_i; // Lower nearby array points
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
@@ -473,18 +473,18 @@ public:
 		xlo = SPCP(name)->_mins_ + SPCP(name)->_steps_ * x_i;
 		xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
 
-		unsigned int num_surrounding_points = 2;
+		size_t num_surrounding_points = 2;
 		for(int i=0; i<SPCP(name)->_num_dim_-1; ++i ) num_surrounding_points*=2;
 
 		result = 0;
 		double total_weight = 0;
-		brgastro::vector<unsigned int> position(SPCP(name)->_num_dim_,0);
+		brgastro::vector<size_t> position(SPCP(name)->_num_dim_,0);
 
-		for(unsigned int j=0; j < num_surrounding_points; j++)
+		for(size_t j=0; j < num_surrounding_points; j++)
 		{
 			double weight = 1;
 			unsigned int divisor = 1;
-			for(unsigned int i=0; i < SPCP(name)->_num_dim_; i++)
+			for(size_t i=0; i < SPCP(name)->_num_dim_; i++)
 			{
 				if(divisible(j/divisor,2))
 				{
@@ -526,7 +526,7 @@ public:
 	}
 
 	// Deconstructor
-	virtual ~brg_cache_nd()
+	~brg_cache_nd()
 	{
 	}
 

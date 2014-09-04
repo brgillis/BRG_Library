@@ -53,9 +53,9 @@
 
 #define DECLARE_BRG_CACHE_2D_STATIC_VARS()		               \
 	static double _min_1_, _max_1_, _step_1_;                  \
-	static unsigned int _resolution_1_;                        \
+	static size_t _resolution_1_;                        \
 	static double _min_2_, _max_2_, _step_2_;                  \
-	static unsigned int _resolution_2_;                        \
+	static size_t _resolution_2_;                        \
 	static std::vector< std::vector< double > > _results_;     \
 											                   \
 	static std::string _file_name_;                            \
@@ -68,11 +68,11 @@
 	double brgastro::class_name::_min_1_ = init_min_1;						\
 	double brgastro::class_name::_max_1_ = init_max_1; 						\
 	double brgastro::class_name::_step_1_ = init_step_1;					\
-	unsigned int brgastro::class_name::_resolution_1_ = 0;					\
+	size_t brgastro::class_name::_resolution_1_ = 0;					\
 	double brgastro::class_name::_min_2_ = init_min_2;						\
 	double brgastro::class_name::_max_2_ = init_max_2; 						\
 	double brgastro::class_name::_step_2_ = init_step_2;					\
-	unsigned int brgastro::class_name::_resolution_2_ = 0;					\
+	size_t brgastro::class_name::_resolution_2_ = 0;					\
 	bool brgastro::class_name::_loaded_ = false;							\
 	bool brgastro::class_name::_initialised_ = false;						\
 	std::string brgastro::class_name::_file_name_ = "";						\
@@ -106,8 +106,8 @@ private:
 		#pragma omp critical(init_brg_cache_2d)
 		if(!SPCP(name)->_initialised_)
 		{
-			SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
 			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
 			SPCP(name)->_version_number_ = 2; // This should be changed when there are changes to this code
 
@@ -152,7 +152,7 @@ private:
 			// Check that it has the right name and version
 
 			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			unsigned int file_version = std::numeric_limits<unsigned short int>::max();
+			unsigned int file_version = std::numeric_limits<unsigned int>::max();
 
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
@@ -175,15 +175,15 @@ private:
 			in_file.read((char *)&(SPCP(name)->_step_2_),sizeof(SPCP(name)->_step_2_));
 
 			// Set up data
-			SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
 			make_array2d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
 
 			// Read in data
 
 			// Initialise
 			const std::streamsize size = sizeof(SPCP(name)->_results_[0][0]); // Store the size for speed
-			unsigned int i_1=0, i_2=0;
+			size_t i_1=0, i_2=0;
 
 			while ( ( !in_file.eof() ) && ( i_2 < SPCP(name)->_resolution_2_ )
 					&& (in_file) )
@@ -245,10 +245,10 @@ private:
 		// Calculate data
 		bool bad_result = false;
 		#pragma omp parallel for
-		for ( unsigned int i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
+		for ( size_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
 		{
 			double x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
-			for( unsigned int i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
+			for( size_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
 			{
 				double x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
 				double result = 0;
@@ -306,7 +306,7 @@ private:
 
 		// Initialize
 		const std::streamsize size = sizeof(SPCP(name)->_results_[0][0]);
-		unsigned int i_1=0, i_2=0;
+		size_t i_1=0, i_2=0;
 
 		while ( i_2<SPCP(name)->_resolution_2_ )
 		{
@@ -334,7 +334,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have. Only the units matter in the return, not the value
-	virtual const brgastro::unit_obj _units() const throw()
+	const brgastro::unit_obj _units() const throw()
 	{
 		return brgastro::unit_obj(0);
 	}
@@ -342,13 +342,13 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	virtual const double _calculate(const double x_1, const double x_2) const
+	const double _calculate(const double x_1, const double x_2) const
 	{
 		return 0;
 	}
 
 	// This function should be overloaded to provide a unique name for this cache
-	virtual const std::string _name_base() const
+	const std::string _name_base() const
 	{
 		char name_base[BRG_CACHE_ND_NAME_SIZE] = "";
 		return name_base;
@@ -357,7 +357,7 @@ protected:
 	// This function should be overloaded to call each cache of the same dimensionality
 	// this cache depends upon in calculation. This is necessary in order to avoid critical
 	// sections of the same name being called recursively.
-	virtual void _load_cache_dependencies() const
+	void _load_cache_dependencies() const
 	{
 	}
 
@@ -431,9 +431,9 @@ public:
 		// Fill up data
 		std::vector< std::vector<std::string> > data(4);
 		std::stringstream ss;
-		for(unsigned int i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
+		for(size_t i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
 		{
-			for(unsigned int i_2=0; i_2<SPCP(name)->_resolution_2_; ++i_2)
+			for(size_t i_2=0; i_2<SPCP(name)->_resolution_2_; ++i_2)
 			{
 				data[0].push_back("");
 				ss.str("");
@@ -455,9 +455,9 @@ public:
 	{
 
 		double xlo_1, xhi_1;
-		unsigned int xi_1; // Lower nearby array point
+		size_t xi_1; // Lower nearby array point
 		double xlo_2, xhi_2;
-		unsigned int xi_2; // Lower nearby array point
+		size_t xi_2; // Lower nearby array point
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
@@ -492,10 +492,10 @@ public:
 			}
 		}
 
-		xi_1 = (unsigned int)bound(0,
+		xi_1 = (size_t)bound(0,
 				( ( x_1 - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ),
 				SPCP(name)->_resolution_1_ - 2 );
-		xi_2 = (unsigned int)bound(0,
+		xi_2 = (size_t)bound(0,
 				( ( x_2 - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ),
 				SPCP(name)->_resolution_2_ - 2 );
 
@@ -535,7 +535,7 @@ public:
 	}
 
 	// Deconstructor
-	virtual ~brg_cache_2d()
+	~brg_cache_2d()
 	{
 	}
 

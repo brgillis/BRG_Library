@@ -316,11 +316,11 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have. Only the units matter in the return, not the value
-	virtual const brgastro::unit_obj _units() const throw()
+	const brgastro::unit_obj _units() const throw()
 	{
 		return brgastro::unit_obj(0);
 	}
-	virtual const brgastro::unit_obj _inverse_units() const throw()
+	const brgastro::unit_obj _inverse_units() const throw()
 	{
 		return brgastro::unit_obj(0);
 	}
@@ -328,7 +328,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	virtual const double _calculate(const double x) const
+	const double _calculate(const double x) const
 	{
 		return 0;
 	}
@@ -336,7 +336,7 @@ protected:
 	// This function should be overloaded to call each cache of the same dimensionality as
 	// this cache depends upon in calculation. This is necessary in order to avoid critical
 	// sections of the same name being called recursively.
-	virtual void _load_cache_dependencies() const
+	void _load_cache_dependencies() const
 	{
 	}
 
@@ -569,7 +569,7 @@ public:
 	}
 
 	// Deconstructor
-	virtual ~brg_cache()
+	~brg_cache()
 	{
 	}
 

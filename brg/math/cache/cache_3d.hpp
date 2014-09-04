@@ -53,11 +53,11 @@
 
 #define DECLARE_BRG_CACHE_3D_STATIC_VARS()		               \
 	static double _min_1_, _max_1_, _step_1_;                  \
-	static unsigned int _resolution_1_;                        \
+	static size_t _resolution_1_;                        \
 	static double _min_2_, _max_2_, _step_2_;                  \
-	static unsigned int _resolution_2_;                        \
+	static size_t _resolution_2_;                        \
 	static double _min_3_, _max_3_, _step_3_;                  \
-	static unsigned int _resolution_3_;                        \
+	static size_t _resolution_3_;                        \
 	static std::vector< std::vector< std::vector< double > > > _results_;     \
 											                   \
 	static std::string _file_name_;                            \
@@ -71,15 +71,15 @@
 	double brgastro::class_name::_min_1_ = init_min_1;						\
 	double brgastro::class_name::_max_1_ = init_max_1; 						\
 	double brgastro::class_name::_step_1_ = init_step_1;					\
-	unsigned int brgastro::class_name::_resolution_1_ = 0;					\
+	size_t brgastro::class_name::_resolution_1_ = 0;					\
 	double brgastro::class_name::_min_2_ = init_min_2;						\
 	double brgastro::class_name::_max_2_ = init_max_2; 						\
 	double brgastro::class_name::_step_2_ = init_step_2;					\
-	unsigned int brgastro::class_name::_resolution_2_ = 0;					\
+	size_t brgastro::class_name::_resolution_2_ = 0;					\
 	double brgastro::class_name::_min_3_ = init_min_3;						\
 	double brgastro::class_name::_max_3_ = init_max_3; 						\
 	double brgastro::class_name::_step_3_ = init_step_3;					\
-	unsigned int brgastro::class_name::_resolution_3_ = 0;					\
+	size_t brgastro::class_name::_resolution_3_ = 0;					\
 	bool brgastro::class_name::_loaded_ = false;							\
 	bool brgastro::class_name::_initialised_ = false;						\
 	std::string brgastro::class_name::_file_name_ = "";						\
@@ -113,9 +113,9 @@ private:
 		#pragma omp critical(init_brg_cache_3d)
 		if(!SPCP(name)->_initialised_)
 		{
-			SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-			SPCP(name)->_resolution_3_ = (unsigned int) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_3_ = (size_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
 			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
 			SPCP(name)->_version_number_ = 2; // This should be changed when there are changes to this code
 
@@ -160,7 +160,7 @@ private:
 			// Check that it has the right name and version
 
 			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			unsigned int file_version = std::numeric_limits<unsigned short int>::max();
+			unsigned int file_version = std::numeric_limits<unsigned int>::max();
 
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
@@ -186,9 +186,9 @@ private:
 			in_file.read((char *)&(SPCP(name)->_step_3_),sizeof(SPCP(name)->_step_3_));
 
 			// Set up data
-			SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-			SPCP(name)->_resolution_3_ = (unsigned int) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_3_ = (size_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
 			make_array3d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 					SPCP(name)->_resolution_3_ );
 
@@ -196,7 +196,7 @@ private:
 
 			// Initialise
 			const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0]); // Store the size for speed
-			unsigned int i_1=0, i_2=0, i_3=0;
+			size_t i_1=0, i_2=0, i_3=0;
 
 			while ( ( !in_file.eof() ) && ( i_3 < SPCP(name)->_resolution_3_ )
 					&& (in_file) )
@@ -256,23 +256,23 @@ private:
 		}
 
 		// Set up data
-		SPCP(name)->_resolution_1_ = (unsigned int) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-		SPCP(name)->_resolution_2_ = (unsigned int) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-		SPCP(name)->_resolution_3_ = (unsigned int) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
+		SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+		SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+		SPCP(name)->_resolution_3_ = (size_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
 		make_array3d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 				SPCP(name)->_resolution_3_ );
 
 		// Calculate data
 		bool bad_result = false;
 		#pragma omp parallel for
-		for ( unsigned int i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
+		for ( size_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
 		{
 			std::cout << i_1 << std::endl;
 			double x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
-			for( unsigned int i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
+			for( size_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
 			{
 				double x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
-				for( unsigned int i_3 = 0; i_3 < SPCP(name)->_resolution_3_; ++i_3)
+				for( size_t i_3 = 0; i_3 < SPCP(name)->_resolution_3_; ++i_3)
 				{
 					double x_3 = SPCP(name)->_min_3_ + i_3*SPCP(name)->_step_3_;
 					double result = 0;
@@ -335,7 +335,7 @@ private:
 
 		// Initialize
 		const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0]);
-		unsigned int i_1=0, i_2=0, i_3=0;
+		size_t i_1=0, i_2=0, i_3=0;
 
 		while ( i_3<SPCP(name)->_resolution_3_ )
 		{
@@ -368,7 +368,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have. Only the units matter in the return, not the value
-	virtual const brgastro::unit_obj _units() const throw()
+	const brgastro::unit_obj _units() const throw()
 	{
 		return brgastro::unit_obj(0);
 	}
@@ -471,11 +471,11 @@ public:
 		// Fill up data
 		std::vector< std::vector<std::string> > data(5);
 		std::stringstream ss;
-		for(unsigned int i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
+		for(size_t i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
 		{
-			for(unsigned int i_2=0; i_2<SPCP(name)->_resolution_2_; ++i_2)
+			for(size_t i_2=0; i_2<SPCP(name)->_resolution_2_; ++i_2)
 			{
-				for(unsigned int i_3=0; i_3<SPCP(name)->_resolution_3_; ++i_3)
+				for(size_t i_3=0; i_3<SPCP(name)->_resolution_3_; ++i_3)
 				{
 					data[0].push_back("");
 					ss.str("");
@@ -502,11 +502,11 @@ public:
 	{
 
 		double xlo_1, xhi_1;
-		unsigned int xi_1; // Lower nearby array point
+		size_t xi_1; // Lower nearby array point
 		double xlo_2, xhi_2;
-		unsigned int xi_2; // Lower nearby array point
+		size_t xi_2; // Lower nearby array point
 		double xlo_3, xhi_3;
-		unsigned int xi_3; // Lower nearby array point
+		size_t xi_3; // Lower nearby array point
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
@@ -541,13 +541,13 @@ public:
 			}
 		}
 
-		xi_1 = (unsigned int)bound(0,
+		xi_1 = (size_t)bound(0,
 				( ( x_1 - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ),
 				SPCP(name)->_resolution_1_ - 2 );
-		xi_2 = (unsigned int)bound(0,
+		xi_2 = (size_t)bound(0,
 				( ( x_2 - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ),
 				SPCP(name)->_resolution_2_ - 2 );
-		xi_3 = (unsigned int)bound(0,
+		xi_3 = (size_t)bound(0,
 				( ( x_3 - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ),
 				SPCP(name)->_resolution_3_ - 2 );
 

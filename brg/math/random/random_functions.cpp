@@ -34,7 +34,7 @@ using namespace std;
 /** Global function implementations **/
 #if (1)
 
-const double brgastro::Gaus_rand()
+double brgastro::Gaus_rand()
 {
 	double x1, x2, w;
 
@@ -49,7 +49,7 @@ const double brgastro::Gaus_rand()
 	return x1 * w;
 }
 
-const double brgastro::Gaus_rand( double mean, double stddev )
+double brgastro::Gaus_rand( double mean, double stddev )
 {
 	if ( stddev <= 0 )
 		return mean;
@@ -57,7 +57,7 @@ const double brgastro::Gaus_rand( double mean, double stddev )
 
 } // double Gaus_rand(double mean, double stddev)
 
-const double brgastro::log10Gaus_rand()
+double brgastro::log10Gaus_rand()
 {
 	double x1, x2, w, fact;
 
@@ -73,7 +73,7 @@ const double brgastro::log10Gaus_rand()
 	w = sqrt( ( -2.0 * log( w ) ) / w );
 	return ( fact * pow(10., x1 * w ) );
 } // double lnGaus_rand(double mean, double stddev)
-const double brgastro::log10Gaus_rand( double mean, double stddev )
+double brgastro::log10Gaus_rand( double mean, double stddev )
 {
 	double x1, x2, w, fact;
 
@@ -95,16 +95,16 @@ const double brgastro::log10Gaus_rand( double mean, double stddev )
 } // double lnGaus_rand(double mean, double stddev)
 
 // Returns a random variable from a Rayleigh distribution
-const double brgastro::Rayleigh_rand()
+double brgastro::Rayleigh_rand()
 {
 	return sqrt(-2.*log(drand()));
 }
-const double brgastro::Rayleigh_rand( const double sigma )
+double brgastro::Rayleigh_rand( double sigma )
 {
 	return sigma*Rayleigh_rand();
 }
 
-const int brgastro::Pois_rand( double lambda )
+int brgastro::Pois_rand( double lambda )
 {
 	double L, p;
 	int k;
