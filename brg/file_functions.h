@@ -130,6 +130,7 @@ std::vector<std::vector<T> > load_table( std::istream & table_file_name,
 	{
 		for(size_t j=0; j<string_data[i].size(); ++j)
 		{
+			ss.clear();
 			ss.str(string_data[i][j]);
 			ss >> data[i].at(j);
 		}
@@ -176,6 +177,7 @@ void load_table_and_header( std::istream & fi,
 	{
 		for(size_t j=0; j<string_data[i].size(); ++j)
 		{
+			ss.clear();
 			ss.str(string_data[i][j]);
 			ss >> table_data[i].at(j);
 		}
@@ -229,7 +231,6 @@ void load_table_columns( std::istream & fi,
 		header_links[i].second->resize(string_data[i].size());
 		for(size_t j=0; j<string_data[i].size(); ++j)
 		{
-			ss.str("");
 			ss.clear();
 			ss.str(string_data[i][j]);
 			ss >> header_links[i].second->at(j);

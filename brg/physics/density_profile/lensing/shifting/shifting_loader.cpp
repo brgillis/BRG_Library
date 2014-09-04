@@ -27,38 +27,35 @@
 
 #include <cassert>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "brg/global.h"
 
 #include "brg/file_functions.h"
+#include "brg/physics/density_profile/lensing/shifting/corr_alpha.hpp"
+#include "brg/vector/manipulations.hpp"
 
 #include "shifting_loader.h"
 
 // Initialisation of static vars
 #if (1)
 bool brgastro::shifting_loader::_loaded_(false);
-std::string brgastro::shifting_loader::_full_file_name_("");
 std::vector< std::vector<double> > brgastro::shifting_loader::_data_;
 #endif
 
-void brgastro::shifting_loader::_get_file_name()
-{
-	std::string filename = __FILE__;
-
-	size_t pos = filename.rfind(_class_source_name_);
-	_full_file_name_ = filename.replace(pos,filename.size()-pos,_corr_alpha_name_);
-}
 void brgastro::shifting_loader::_load()
 {
 #pragma omp critical(brg_load_shifting_loader)
 	{
 		if(!_loaded_)
 		{
-			if(_full_file_name_=="") _get_file_name();
+			std::stringstream ss(corr_alph_data);
 
-			_data_ = load_table<double>(_full_file_name_);
+			_data_ = load_table<double>(ss);
+
+			_data_ = reverse_vertical(_data_);
 
 			assert(_data_.size()==_zvals_size_+1);
 			assert(_data_[0].size()>=2);

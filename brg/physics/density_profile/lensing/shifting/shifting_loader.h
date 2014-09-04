@@ -43,7 +43,6 @@ namespace brgastro {
  */
 class shifting_loader {
 	static bool _loaded_;
-	static std::string _full_file_name_;
 	static std::vector< std::vector<double> > _data_;
 
 	const size_t _zvals_size_;
@@ -52,7 +51,6 @@ class shifting_loader {
 	const char * _class_source_name_;
 	const char * _corr_alpha_name_;
 
-	void _get_file_name();
 	void _load();
 	size_t _lower_theta_index(double theta);
 	size_t _lower_z_index(double z);

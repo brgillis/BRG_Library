@@ -30,8 +30,9 @@
 #include "brg/global.h"
 
 #include "brg/utility.hpp"
+#include "brg/vector/manipulations.hpp"
 
-#include "brg/file_functions.h"
+#include "file_functions.h"
 
 using namespace std;
 
@@ -120,26 +121,24 @@ std::vector<std::vector<std::string> > brgastro::load_table( std::istream & fi,
 
 	std::string line_data;
 	std::istringstream line_data_stream;
-	while ( !fi.eof() )
+	while ( getline(fi, line_data) )
 	{
 		std::vector<std::string> temp_vector(0);
 
-		getline(fi, line_data);
 		line_data_stream.clear();
 		line_data_stream.str(line_data);
 
 	    // Split the line on whitespace
-		do
+        std::string value;
+		while (line_data_stream >> value)
 	    {
-	        std::string value;
-	        line_data_stream >> value;
 	        temp_vector.push_back(value);
-	    } while (line_data_stream);
+	    }
 
 	    table_data.push_back(temp_vector);
 	}
 
-	return table_data;
+	return transpose(table_data);
 }
 void brgastro::load_table_and_header( std::istream & fi,
 		std::vector<std::vector<std::string> > & table_data,
@@ -184,7 +183,7 @@ void brgastro::load_table_and_header( std::istream & fi,
 	trim_comments_all_at_top(fi);
 
 	// Load in the data now
-	while ( !fi.eof() )
+	while ( fi )
 	{
 		std::vector<std::string> temp_vector(0);
 
@@ -203,6 +202,7 @@ void brgastro::load_table_and_header( std::istream & fi,
 
 	    table_data.push_back(temp_vector);
 	}
+	table_data = transpose(table_data);
 }
 void brgastro::load_table_columns( std::istream & fi,
 		std::vector< std::pair< std::string, std::vector<std::string>* > > & header_links,
@@ -340,7 +340,7 @@ void brgastro::trim_comments_one_line( std::istream & stream,
 		const bool silent )
 {
 	std::string file_data;
-	if ( !stream.eof() )
+	if ( stream )
 	{
 		if ( stream.peek() == (int)( *"#" ) )
 			getline( stream, file_data );
@@ -351,7 +351,7 @@ void brgastro::trim_comments_one_line( std::fstream & stream,
 		const bool silent )
 {
 	std::string file_data;
-	if ( !stream.eof() )
+	if ( stream )
 	{
 		if ( stream.peek() == (int)( *"#" ) )
 			getline( stream, file_data );
@@ -362,7 +362,7 @@ void brgastro::trim_comments_all_at_top( std::istream & stream,
 		const bool silent )
 {
 	std::string file_data;
-	while ( !stream.eof() )
+	while ( stream )
 	{
 		if ( stream.peek() == (int)( *"#" ) )
 		{
@@ -379,7 +379,7 @@ void brgastro::trim_comments_all_at_top( std::fstream & stream,
 		const bool silent )
 {
 	std::string file_data;
-	while ( !stream.eof() )
+	while ( stream )
 	{
 		if ( stream.peek() == (int)( *"#" ) )
 		{

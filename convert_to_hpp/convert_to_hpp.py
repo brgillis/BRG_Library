@@ -24,15 +24,15 @@ def main(argv):
                  "#define _BRG_" + upper_name + "_HPP_INCLUDED_\n\n")
         
         # Write beginning of data storage
-        fo.write("const char *"+name+"_data[] = {\n")
+        fo.write("const char *"+name+"_data = \"")
                                     
         # Write the data storage line by line
         with open(data_file_name,'r') as fi:
             for line in fi:
-                fo.write("\""+line[0:-1] + "\",\n")
+                fo.write(line[0:-1]+"\\n")
 
         # Write end of data storage
-        fo.write("\"\\0\" };\n\n")
+        fo.write("\\0\";\n\n")
         
         # Write include guard (bottom)
         fo.write("#endif\n")
