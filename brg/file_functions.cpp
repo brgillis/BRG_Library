@@ -140,133 +140,75 @@ std::vector<std::vector<std::string> > brgastro::load_table( std::istream & fi,
 
 	return transpose(table_data);
 }
-void brgastro::load_table_and_header( std::istream & fi,
-		std::vector<std::vector<std::string> > & table_data,
-		std::vector<std::string> & header, const bool silent)
+
+brgastro::header::type brgastro::load_header( std::istream & table_stream,
+		const bool silent)
 {
-	std::string line_data;
-	std::istringstream line_data_stream;
+	std::string temp_line;
+	std::vector<header::type> possible_headers;
 
-	// Clear the output vectors
-	header.resize(0);
-	table_data.resize(0);
+	// Get all comment lines at the top of the file
+	while ( table_stream )
+	{
+		if ( table_stream.peek() == (int)( *"#" ) )
+		{
+			getline( table_stream, temp_line );
 
-	// Get the header line and store it
-	getline(fi, line_data);
-	line_data_stream.clear();
-	line_data_stream.str(line_data);
+			header::type temp_header = convert_to_header(temp_line);
 
-    // Split the line on whitespace
+			if(temp_header.size() > 0)
+				possible_headers.push_back(temp_header);
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if(possible_headers.size()==1) return possible_headers[0];
+	if(possible_headers.size()==0) return header::type();
+
+	// If we get here, more than one line is a possible header candidate. Our next step is to
+	// go to the data and count the columns in the first line. If only one possible header has
+	// the right length, we know that's the one.
+
+	unsigned short int n_cols = 0;
 	do
-    {
-        std::string value;
-        line_data_stream >> value;
-        header.push_back(value);
-    } while (line_data_stream);
-
-	// Check if the first entry in the header is a comment marker. If so, remove it
-	if(header.at(0) == "#")
 	{
-		header.erase(header.begin());
-	}
-	else
-	{
-		// Check if the first character of the first entry is a comment marker. Again,
-		// delete it if so (but not the whole entry!)
-		if(header.at(0).at(0) == (char)'#')
+		getline( table_stream, temp_line );
+		std::string junk;
+		std::istringstream line_data_stream(temp_line);
+		while (line_data_stream >> junk)
 		{
-			header.at(0).erase(header.at(0).begin());
+			++n_cols;
+		}
+	} while(n_cols==0 && table_stream);
+
+	if(n_cols==0) // If we can't find any data
+	{
+		std::cerr << "ERROR: Header line ambiguous; returning null header.\n";
+		return header::type();
+	}
+
+	// Search through the possible headers, and see if we find exactly one with the right size
+	unsigned short int num_right_size = 0;
+	size_t i_best = 0;
+	for(size_t i=0; i<possible_headers.size(); ++i)
+	{
+		if(possible_headers[i].size()==n_cols)
+		{
+			++num_right_size;
+			i_best = i;
 		}
 	}
 
-	// Trim any remaining comments
-	trim_comments_all_at_top(fi);
-
-	// Load in the data now
-	while ( fi )
+	if(num_right_size != 1) // If multiple or zero lines are the right size
 	{
-		std::vector<std::string> temp_vector(0);
-
-		getline(fi, line_data);
-		if(line_data.size()==0) break;
-		line_data_stream.clear();
-		line_data_stream.str(line_data);
-
-	    // Split the line on whitespace
-		do
-	    {
-	        std::string value;
-	        line_data_stream >> value;
-	        temp_vector.push_back(value);
-	    } while (line_data_stream);
-
-	    table_data.push_back(temp_vector);
-	}
-	table_data = transpose(table_data);
-}
-void brgastro::load_table_columns( std::istream & fi,
-		std::vector< std::pair< std::string, std::vector<std::string>* > > & header_links,
-		const bool case_sensitive, const bool silent)
-{
-	// First, load in the table
-	std::vector<std::vector<std::string> > table_data;
-	std::vector<std::string> header;
-
-	brgastro::load_table_and_header( fi, table_data, header, silent);
-
-	// Now, loop through each key and search for it in the header.
-	for(size_t i = 0; i < header_links.size(); i++)
-	{
-		std::string test_string_key( header_links.at(i).first );
-
-		if(!case_sensitive)
-		{
-			std::transform(test_string_key.begin(), test_string_key.end(),
-					test_string_key.begin(), ::tolower);
-		}
-
-		bool key_found = false;
-
-		for(size_t j = 0; j < header.size(); j++)
-		{
-			std::string test_string_header(header.at(j));
-
-			if(!case_sensitive)
-			{
-				std::transform(test_string_header.begin(), test_string_header.end(),
-						test_string_header.begin(), ::tolower);
-			}
-
-			if(test_string_key==test_string_header)
-			{
-				// Found it, now load in the data
-				key_found = true;
-
-				std::vector<std::string> column_data(table_data.size());
-				try
-				{
-					for(size_t k = 0; k < table_data.size(); k++)
-					{
-						column_data.at(k) = table_data.at(k).at(j);
-					}
-					*(header_links.at(i).second) = column_data;
-				}
-				catch (const std::out_of_range &e)
-				{
-					throw std::runtime_error("Improperly formatted data table in load_table_columns.");
-				}
-
-				break;
-			}
-		}
-
-		if(!key_found)
-		{
-			throw std::runtime_error("Key not found in header in load_table_columns.");
-		}
+		std::cerr << "ERROR: Header line ambiguous; returning null header.\n";
+		return header::type();
 	}
 
-	return;
+	return possible_headers[i_best];
 }
 
 void brgastro::open_file( std::ofstream & stream, const std::string & name,
@@ -390,6 +332,41 @@ void brgastro::trim_comments_all_at_top( std::fstream & stream,
 			return;
 		}
 	}
+}
+
+std::vector< std::string > brgastro::split_on_whitespace( const std::string & sentence )
+{
+	std::vector< std::string > result;
+	std::istringstream sentence_data_stream(sentence);
+
+	std::string word;
+	while (sentence_data_stream >> word)
+	{
+		result.push_back(word);
+	}
+
+	return result;
+}
+brgastro::header::type brgastro::convert_to_header( const std::string & line )
+{
+	header::type result;
+	std::istringstream line_data_stream(line);
+
+	std::string word;
+
+	// Get rid of first word if it's the comment indicator
+	if ( line_data_stream.peek() == (int)( *"#" ) )
+	{
+		line_data_stream >> word;
+	}
+
+	while (line_data_stream >> word)
+	{
+
+		result.push_back(word);
+	}
+
+	return result;
 }
 
 #endif // end global function implementations

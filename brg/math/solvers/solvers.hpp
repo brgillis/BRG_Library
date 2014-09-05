@@ -1085,7 +1085,7 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 	double last_log_likelihood = brgastro::sum(
 			brgastro::multiply(-annealing/2,out_params));
 
-	const double (*Gaus_rand)(double,double) = brgastro::Gaus_rand;
+	double (*Gaus_rand)(double,double) = brgastro::Gaus_rand;
 
 	for(int step = 0; step < max_steps; step++)
 	{

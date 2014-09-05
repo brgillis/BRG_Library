@@ -29,7 +29,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
-#include <memory>
+#include <map>
 #include <sstream>
 
 #include "global.h"
@@ -38,6 +38,25 @@
 
 namespace brgastro
 {
+
+// Typedefs
+#if(1)
+
+struct header {
+    typedef std::vector< std::string > type;
+};
+
+template <typename T>
+struct table {
+    typedef std::vector< std::vector< T > > type;
+};
+
+template <typename T>
+struct table_map {
+    typedef std::map< std::string, std::vector< T > > type;
+};
+
+#endif
 
 /** Global function declarations **/
 #if (1)
@@ -60,21 +79,21 @@ void open_bin_file( std::fstream & stream, const std::string & name,
 // Prints a formatted table in the passed stream. header is a vector of strings representing the labels for each column,
 // and data is a 2-d vector of the data to be printed, in the format data[c][r], where c is the column index and r is the row index.
 void print_table( std::ostream & out_stream,
-		const std::vector< std::vector< std::string > > & data,
-		const std::vector< std::string > & header = std::vector< std::string >(0),
+		const table<std::string>::type & data,
+		const header::type & header = header::type(),
 		const bool silent = false );
 
 // Some templates to coerce any type of data to be printed out
 template<typename T>
 void print_table( std::ostream & out_stream,
-		const std::vector< std::vector< T > > & data,
-		const std::vector< std::string > & header = std::vector< std::string >(0),
+		const typename table<T>::type & data,
+		const header::type & header = header::type(),
 		const bool silent = false )
 {
 	std::stringstream ss;
-	std::vector< std::vector<std::string> > string_data(0);
+	table<std::string>::type string_data(0);
 
-	make_array(string_data, data.size(), data.at(0).size());
+	make_array2d(string_data, data);
 	for( size_t i=0; i<data.size(); ++i )
 	{
 		for( size_t j=0; i<data[i].size(); ++j )
@@ -89,8 +108,8 @@ void print_table( std::ostream & out_stream,
 
 // And to allow us to print to a file name instead of a stream
 inline void print_table( const std::string & file_name,
-		const std::vector< std::vector< std::string > > & data,
-		const std::vector< std::string > & header = std::vector< std::string >(0),
+		const table<std::string>::type & data,
+		const header::type & header = header::type(),
 		const bool silent = false )
 {
 	std::ofstream fo;
@@ -100,8 +119,8 @@ inline void print_table( const std::string & file_name,
 }
 template<typename T>
 void print_table( const std::string & file_name,
-		const std::vector< std::vector< T > > & data,
-		const std::vector< std::string > & header = std::vector< std::string >(0),
+		const typename table<T>::type & data,
+		const header::type & header = header::type(),
 		const bool silent = false )
 {
 	std::ofstream of;
@@ -112,19 +131,19 @@ void print_table( const std::string & file_name,
 
 // Load table, either loading in the entire table, or only loading in certain columns into pointed-to
 // variables, found by matching header entries to the strings passed
-std::vector<std::vector<std::string> > load_table( std::istream & table_file_name,
+table<std::string>::type load_table( std::istream & table_file_name,
 		const bool silent=false);
 
 template<typename T>
-std::vector<std::vector<T> > load_table( std::istream & table_file_name,
+typename table<T>::type load_table( std::istream & table_file_name,
 		const bool silent=false)
 {
 	std::stringstream ss;
 
-	std::vector< std::vector<std::string> > string_data(load_table( table_file_name, silent ));
-	std::vector< std::vector<T> > data;
+	table<std::string>::type string_data(load_table( table_file_name, silent ));
+	typename table<T>::type data;
 
-	make_array2d(data,string_data.size(),string_data.at(0).size());
+	make_array2d(data,string_data);
 
 	for(size_t i=0; i<string_data.size(); ++i)
 	{
@@ -139,7 +158,7 @@ std::vector<std::vector<T> > load_table( std::istream & table_file_name,
 }
 
 // And to allow us to load from a file name instead of a stream
-inline std::vector<std::vector<std::string> > load_table( const std::string & file_name,
+inline table<std::string>::type load_table( const std::string & file_name,
 		const bool silent = false )
 {
 	std::ifstream fi;
@@ -148,7 +167,7 @@ inline std::vector<std::vector<std::string> > load_table( const std::string & fi
 	return load_table(fi,silent);
 }
 template<typename T>
-inline std::vector<std::vector<T> > load_table( const std::string & file_name,
+inline typename table<T>::type load_table( const std::string & file_name,
 		const bool silent = false )
 {
 	std::ifstream fi;
@@ -157,106 +176,186 @@ inline std::vector<std::vector<T> > load_table( const std::string & file_name,
 	return load_table<T>(fi,silent);
 }
 
-void load_table_and_header( std::istream & fi,
-		std::vector<std::vector<std::string> > & table_data,
-		std::vector<std::string> & header, const bool silent=false);
+// Load a table's header as a vector of strings
+header::type load_header( std::istream & table_stream,
+		const bool silent=false);
+
+// And to allow us to load from a file name instead of a stream
+inline header::type load_header( const std::string & file_name,
+		const bool silent = false )
+{
+	std::ifstream fi;
+	open_file(fi,file_name,silent);
+
+	return load_header(fi,silent);
+}
+
+// Merge a header and data table into a map
+template<typename T>
+typename table_map<T>::type make_table_map(
+		const typename table<T>::type & data,
+		const header::type & header,
+		const bool silent=false)
+{
+	typename table_map<T>::type result;
+
+	size_t h_size = header.size();
+	size_t d_size = data.size();
+
+	const header::type *header_to_use = &header;
+	header::type new_header;
+	const typename table<T>::type *data_to_use = &data;
+	typename table<T>::type new_data;
+
+	// First, check if the header and data aren't the same size
+	if(h_size<d_size)
+	{
+		// We'll pad the header with default values
+		new_header = header;
+		new_header.resize(d_size);
+		for(size_t i=h_size; i<d_size; ++i)
+		{
+			std::stringstream ss("col_");
+			ss << i+1;
+			new_header[i] = ss.str();
+		}
+		header_to_use = &new_header;
+		h_size = d_size;
+	}
+	else if(d_size<h_size)
+	{
+		// We'll pad the data with default values
+		new_data = data;
+		new_data.resize(h_size);
+		if(d_size>0)
+		{
+			// If we have some data, match the size of it in new columns
+			for(size_t i=d_size; i<h_size; ++i)
+			{
+				make_array1d(new_data[i],new_data[0].size());
+			}
+		}
+		data_to_use = &new_data;
+		d_size = h_size;
+	}
+
+	for(size_t i=0; i<h_size; ++i)
+	{
+		result[(*header_to_use)[i]] = (*data_to_use)[i];
+	}
+	return result;
+}
+inline table_map<std::string>::type make_table_map(
+		const table<std::string>::type & data,
+		const header::type & header,
+		const bool silent=false)
+{
+	return make_table_map<std::string>(data,header,silent);
+}
+
+// Directly load a map of the data
+inline table_map<std::string>::type load_table_map( std::istream & fi,
+		const bool silent=false)
+{
+	header::type header = load_header(fi,silent);
+	table<std::string>::type data = load_table(fi,silent);
+	return make_table_map(data,header,silent);
+}
 
 template<typename T>
-void load_table_and_header( std::istream & fi,
-		std::vector<std::vector<T> > & table_data,
-		std::vector<std::string> & header, const bool silent=false)
+typename table_map<T>::type load_table_map( std::istream & fi,
+		const bool silent=false)
 {
-	std::stringstream ss;
-
-	std::vector< std::vector<std::string> > string_data;
-	load_table_and_header( fi, string_data, header, silent );
-
-	make_array2d(table_data,string_data.size(),string_data.at(0).size());
-
-	for(size_t i=0; i<string_data.size(); ++i)
-	{
-		for(size_t j=0; j<string_data[i].size(); ++j)
-		{
-			ss.clear();
-			ss.str(string_data[i][j]);
-			ss >> table_data[i].at(j);
-		}
-	}
+	header::type header = load_header(fi,silent);
+	typename table<T>::type data = load_table<T>(fi,silent);
+	return make_table_map<T>(data,header,silent);
 }
 
 // And to allow us to load from a file name instead of a stream
-inline void load_table_and_header( const std::string & file_name,
-		std::vector<std::vector< std::string > > & table_data,
-		std::vector<std::string> & header, const bool silent = false )
+inline table_map<std::string>::type load_table_map( const std::string & file_name,
+		const bool silent = false )
 {
 	std::ifstream fi;
 	open_file(fi,file_name,silent);
 
-	return load_table_and_header(fi,table_data,header,silent);
+	return load_table_map(fi,silent);
 }
 template<typename T>
-void load_table_and_header( const std::string & file_name,
-		std::vector<std::vector<T> > & table_data,
-		std::vector<std::string> & header, const bool silent = false )
+typename table_map<T>::type load_table_map( const std::string & file_name,
+		const bool silent = false )
 {
 	std::ifstream fi;
 	open_file(fi,file_name,silent);
 
-	return load_table_and_header<T>(fi,table_data,header,silent);
+	return load_table_map<T>(fi,silent);
 }
 
-void load_table_columns( std::istream & fi,
-		std::vector< std::pair< std::string, std::vector<std::string>* > > & header_links,
-		const bool case_sensitive=false, const bool silent=false);
-
-template<typename T>
-void load_table_columns( std::istream & fi,
-		std::vector< std::pair< std::string, std::vector<T>* > > & header_links,
+inline void load_table_columns( std::istream & fi,
+		std::map< std::string, std::vector<std::string>* > & column_map,
 		const bool case_sensitive=false, const bool silent=false)
 {
-	std::stringstream ss;
+	table_map<std::string>::type table_map = load_table_map(fi);
 
-	std::vector< std::pair< std::string, std::vector<std::string>* > > string_header_links;
-	std::vector< std::vector< std::string > > string_data(header_links.size());
-	for(size_t i=0; i<header_links.size(); ++i)
+	for(std::map< std::string, std::vector<std::string>* >::iterator it=column_map.begin();
+			it!=column_map.end(); ++it)
 	{
-		string_header_links.push_back(std::make_pair(
-				header_links[i].first,&(string_data[i])));
-	}
+		*(it->second) = table_map[it->first];
 
-	load_table_columns( fi, string_header_links, case_sensitive, silent);
-
-	for(size_t i=0; i<header_links.size(); ++i)
-	{
-		header_links[i].second->resize(string_data[i].size());
-		for(size_t j=0; j<string_data[i].size(); ++j)
+		// Check that we found it
+		if(!silent)
 		{
-			ss.clear();
-			ss.str(string_data[i][j]);
-			ss >> header_links[i].second->at(j);
+			if(it->second->size()==0)
+			{
+				std::cerr << "WARNING: Column " << it->first << " not found in table.\n";
+			}
 		}
+
+	}
+}
+
+template<typename T>
+void load_table_columns( std::istream & fi,
+		std::map< std::string, std::vector<T>* > & column_map,
+		const bool case_sensitive=false, const bool silent=false)
+{
+	typename table_map<T>::type table_map = load_table_map<T>(fi);
+
+	for(typename std::map< std::string, std::vector<T>* >::iterator it=column_map.begin();
+			it!=column_map.end(); ++it)
+	{
+		*(it->second) = table_map[it->first];
+
+		// Check that we found it
+		if(!silent)
+		{
+			if(it->second->size()==0)
+			{
+				std::cerr << "WARNING: Column " << it->first << " not found in table.\n";
+			}
+		}
+
 	}
 }
 
 // And to allow us to load from a file name instead of a stream
 inline void load_table_columns( const std::string & file_name,
-		std::vector< std::pair< std::string, std::vector<std::string>* > > & header_links,
+		std::map< std::string, std::vector<std::string>* > & column_map,
 		const bool case_sensitive=false, const bool silent=false)
 {
 	std::ifstream fi;
 	open_file(fi,file_name,silent);
 
-	return load_table_columns(fi,header_links,case_sensitive,silent);
+	load_table_columns(fi,column_map,case_sensitive,silent);
 }
 template<typename T>
 void load_table_columns( const std::string & file_name,
-		std::vector< std::pair< std::string, std::vector<T>* > > & header_links,
+		std::map< std::string, std::vector<T>* > & column_map,
 		const bool case_sensitive=false, const bool silent=false)
 {
 	std::ifstream fi;
 	open_file(fi,file_name,silent);
 
-	return load_table_columns<T>(fi,header_links,case_sensitive,silent);
+	load_table_columns<T>(fi,column_map,case_sensitive,silent);
 }
 
 // Functions to get rid of comments lines (those starting with #) from open fstreams and ifstreams. The "one_line" versions will
@@ -272,6 +371,12 @@ void trim_comments_all_at_top( std::istream & stream, const bool silent =
 		false );
 void trim_comments_all_at_top( std::fstream & stream, const bool silent =
 		false );
+
+// Utility functions
+
+// Splits a string into a vector of "word" strings on whitespace
+std::vector< std::string > split_on_whitespace( const std::string & sentence );
+header::type convert_to_header( const std::string & line );
 
 #endif // End global function declarations
 
