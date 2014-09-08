@@ -27,7 +27,7 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/density_profile/lensing/lensing_profile_extension.h"
+#include "brg/physics/density_profile/lensing/lensing_profile_extension.hpp"
 #include "brg/physics/density_profile/tNFW_profile.h"
 
 namespace brgastro {
@@ -35,7 +35,7 @@ namespace brgastro {
 /*
  *
  */
-class lensing_tNFW_profile: public tNFW_profile, public lensing_profile_extension {
+class lensing_tNFW_profile: public tNFW_profile, public lensing_profile_extension<lensing_tNFW_profile> {
 public:
 	// Constructors and destructor
 #if (1)
@@ -70,11 +70,6 @@ public:
 
 #endif // Lensing related methods
 
-	// Implementations of pure virtual parts of lensing_profile_extension
-#if (1)
-	IMPLEMENT_BRG_LENSING_EXTENSION_METHODS(tNFW_profile);
-#endif
-
 	// Implementations of clone functions
 #if (1)
 	virtual density_profile *density_profile_clone() const
@@ -82,10 +77,6 @@ public:
 		return new lensing_tNFW_profile( *this );
 	}
 	virtual tNFW_profile *tNFW_profile_clone() const
-	{
-		return new lensing_tNFW_profile( *this );
-	}
-	virtual lensing_profile_extension *lensing_profile_extension_clone() const
 	{
 		return new lensing_tNFW_profile( *this );
 	}
