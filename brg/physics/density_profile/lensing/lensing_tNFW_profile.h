@@ -36,6 +36,28 @@ namespace brgastro {
  *
  */
 class lensing_tNFW_profile: public tNFW_profile, public lensing_profile_extension<lensing_tNFW_profile> {
+private:
+
+	// Lensing related calculation methods
+#if (1)
+	const BRG_UNITS _proj_dens( CONST_BRG_DISTANCE_REF R,
+			const bool silent = false ) const;
+	const BRG_UNITS _proj_enc_dens( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const;
+	const BRG_MASS _proj_enc_mass( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const;
+	const BRG_UNITS _quick_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const;
+	const BRG_UNITS _quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const;
+	const BRG_UNITS _quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
+			const double group_c, const bool silent = false ) const;
+	const BRG_UNITS _quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = false ) const;
+
+#endif // Lensing related calculation methods
+
+	friend class lensing_profile_extension<lensing_tNFW_profile>;
+
 public:
 	// Constructors and destructor
 #if (1)
@@ -51,24 +73,6 @@ public:
 	{
 	}
 #endif // Constructors and destructor
-
-	// Lensing related methods
-#if (1)
-	const BRG_UNITS proj_dens( CONST_BRG_DISTANCE_REF R,
-			const bool silent = false ) const;
-	const BRG_UNITS proj_enc_dens( CONST_BRG_DISTANCE_REF R, const bool silent =
-			false ) const;
-	const BRG_MASS proj_enc_mass( CONST_BRG_DISTANCE_REF R, const bool silent =
-			false ) const;
-	const BRG_UNITS quick_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent =
-			false ) const;
-	const BRG_UNITS quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
-			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const;
-	const BRG_UNITS quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c, const bool silent = false ) const;
-	const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = false ) const;
-
-#endif // Lensing related methods
 
 	// Implementations of clone functions
 #if (1)

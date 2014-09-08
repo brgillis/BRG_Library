@@ -407,7 +407,7 @@ public:
 		}
 		else
 		{
-			BRG_UNIQUE_PTR<name> group_profile(_host_ptr_->clone());
+			BRG_UNIQUE_PTR<name> group_profile(_host_ptr_->lensing_profile_extension_clone());
 			group_profile->set_c(_c_);
 			group_profile->set_tau(group_profile->tau()*_c_/_host_ptr_->c());
 			return 2 * pi * in_param * group_profile->proj_dens(in_param);

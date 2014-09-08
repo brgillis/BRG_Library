@@ -44,41 +44,13 @@ template<typename name>
 class lensing_profile_extension {
 private:
 
-	const BRG_DISTANCE _shift_sigma( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const
-	{
-		return R*shift_factor(R,silent);
-	}
+// Calculation functions
+#if(1)
 
-public:
+// Basic calculation functions which should be overridden if possible
+#if(1) // Basic calculation functions which should be overridden if possible
 
-	// Constructors and destructors
-#if (1)
-	lensing_profile_extension()
-	{
-	}
-	virtual ~lensing_profile_extension()
-	{
-	}
-#endif
-
-	// Virtual functions that will need to be implemented by base classes
-#if (1)
-
-	// Clone function for this
-	virtual name* clone() const
-	{
-		return new name(*SPCP(name));
-	}
-
-#endif // Virtual functions that will need to be implemented by base classes
-
-	// Projected mass and density functions
-#if (1)
-
-	// These ones should be overridden if at all possible, as otherwise they'll have to be
-	// integrated
-#if (1)
-	virtual const BRG_UNITS proj_dens( CONST_BRG_DISTANCE_REF R,
+	const BRG_UNITS _proj_dens( CONST_BRG_DISTANCE_REF R,
 			const bool silent = true ) const // Projected surface density at radius R
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
@@ -106,7 +78,8 @@ public:
 		}
 		return 2 * out_params;
 	}
-	virtual const BRG_MASS proj_enc_mass( CONST_BRG_DISTANCE_REF R,
+
+	const BRG_MASS _proj_enc_mass( CONST_BRG_DISTANCE_REF R,
 			const bool silent = true ) const // Mass enclosed within a cylinder of radius R
 	{
 		if ( R == 0 )
@@ -118,41 +91,13 @@ public:
 				max_in_params, 0.00001, false, silent );
 		return out_params;
 	}
+
 #endif
 
-	// These ones typically don't need to be overridden, but they can be if it's convenient
-#if (1)
-	virtual const BRG_UNITS proj_enc_dens( CONST_BRG_DISTANCE_REF R,
-			const bool silent = false ) const // Mean surface density enclosed within a cylinder of radius R
-	{
-		BRG_DISTANCE R_to_use = max( std::fabs( R ), SMALL_FACTOR );
-		return SPCP(name)->proj_enc_mass( R_to_use, silent )
-				/ ( pi * square( R_to_use ) );
-	}
-#endif
+// Advanced calculations which usually can't be overridden, but should be if possible
+#if(1)
 
-#endif // Projected mass and density functions
-
-	// Weak lensing functions
-#if (1)
-
-	// WLsig (delta sigma)
-#if (1)
-	virtual const BRG_UNITS WLsig( CONST_BRG_DISTANCE_REF R, const bool silent =
-			false ) const // Weak lensing signal in tangential shear Delta-Sigma at radius R
-	{
-		return SPCP(name)->proj_enc_dens( R, silent ) - SPCP(name)->proj_dens( R, silent );
-	}
-	virtual const BRG_UNITS quick_WLsig( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const // As deltasigma, but uses cache to speed it up if overwritten
-	{
-		return SPCP(name)->WLsig( R, silent );
-	}
-#endif
-
-	// Offset WLsig
-#if (1)
-	virtual const BRG_UNITS offset_WLsig( CONST_BRG_DISTANCE_REF R,
+	const BRG_UNITS _offset_WLsig( CONST_BRG_DISTANCE_REF R,
 			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
 	{
 		if ( offset_R == 0 )
@@ -190,16 +135,7 @@ public:
 
 		return result;
 	}
-	virtual const BRG_UNITS quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
-			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // As offset_WLsig, but uses cache to speed it up if overwritten
-	{
-		return SPCP(name)->offset_WLsig( R, offset_R, silent );
-	}
-#endif
-
-	// Group WLsig
-#if (1)
-	virtual const BRG_UNITS group_WLsig( CONST_BRG_DISTANCE_REF R,
+	const BRG_UNITS _group_WLsig( CONST_BRG_DISTANCE_REF R,
 			const double group_c, const bool silent = true ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
@@ -211,7 +147,7 @@ public:
 				min_in_params, max_in_params, 0.00001, false, silent);
 		return out_params;
 	}
-	virtual const BRG_UNITS semiquick_group_WLsig( CONST_BRG_DISTANCE_REF R,
+	const BRG_UNITS _semiquick_group_WLsig( CONST_BRG_DISTANCE_REF R,
 			const double group_c, const bool silent = true ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
@@ -223,26 +159,8 @@ public:
 				min_in_params, max_in_params, 0.00001, false, silent);
 		return out_params;
 	}
-	virtual const BRG_UNITS quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c, const bool silent = true ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
-	{
-		return SPCP(name)->semiquick_group_WLsig( R, group_c, silent );
-	}
-#endif
 
-	// Shifted WLsig
-#if (1)
-	// This represents the weak-lensing signal after being corrected for errors due to relative
-	// shifting of the lens and source due to an intervening mass distribution
-
-	const double shift_factor( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const
-	{
-		if(R==0) return 0;
-		const BRG_ANGLE theta_separation = afd(R,SPCP(name)->z());
-		return shifting_cache().get(theta_separation,SPCP(name)->z())/theta_separation;
-	}
-
-	virtual const BRG_UNITS shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+	const BRG_UNITS _shifted_WLsig( CONST_BRG_DISTANCE_REF R,
 			const bool silent = true ) const
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
@@ -260,7 +178,7 @@ public:
 				min_in_params, max_in_params, precision, false, silent );
 		return out_params;
 	}
-	virtual const BRG_UNITS semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+	const BRG_UNITS _semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
 			const bool silent = true ) const
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
@@ -276,10 +194,185 @@ public:
 				min_in_params, max_in_params, 0.00001, false, silent);
 		return out_params;
 	}
-	virtual const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+
+#endif // Advanced calculations which usually can't be overridden, but should be if possible
+
+// Quick functions - should be overridden if a cache is implemented for the halo
+#if(1)
+
+	const BRG_UNITS _quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // As offset_WLsig, but uses cache to speed it up if overwritten
+	{
+		return SPCP(name)->offset_WLsig( R, offset_R, silent );
+	}
+	const BRG_UNITS _quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
+			const double group_c, const bool silent = true ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
+	{
+		return SPCP(name)->semiquick_group_WLsig( R, group_c, silent );
+	}
+	const BRG_UNITS _quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
 			const bool silent = true ) const
 	{
 		return SPCP(name)->semiquick_shifted_WLsig( R, silent );
+	}
+
+#endif // Quick functions - should be overridden if a cache is implemented for the halo
+
+// Simple calculation functions that should rarely need to be overridden
+#if (1)
+	const BRG_UNITS _proj_enc_dens( CONST_BRG_DISTANCE_REF R,
+			const bool silent = false ) const // Mean surface density enclosed within a cylinder of radius R
+	{
+		BRG_DISTANCE R_to_use = max( std::fabs( R ), SMALL_FACTOR );
+		return SPCP(name)->proj_enc_mass( R_to_use, silent )
+				/ ( pi * square( R_to_use ) );
+	}
+
+	const BRG_DISTANCE _shift_sigma( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const
+	{
+		return R*shift_factor(R,silent);
+	}
+	const double _shift_factor( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const
+	{
+		if(R==0) return 0;
+		const BRG_ANGLE theta_separation = afd(R,SPCP(name)->z());
+		return shifting_cache().get(theta_separation,SPCP(name)->z())/theta_separation;
+	}
+	virtual const BRG_UNITS _WLsig( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const // Weak lensing signal in tangential shear Delta-Sigma at radius R
+	{
+		return SPCP(name)->proj_enc_dens( R, silent ) - SPCP(name)->proj_dens( R, silent );
+	}
+#endif // Simple calculation functions that should rarely need to be overridden
+
+#endif // Calculation functions
+
+public:
+
+	// Constructors and destructors
+#if (1)
+	lensing_profile_extension()
+	{
+	}
+	virtual ~lensing_profile_extension()
+	{
+	}
+#endif
+
+	// Virtual functions that will need to be implemented by base classes
+#if (1)
+
+	// Clone function for this
+	name* lensing_profile_extension_clone() const
+	{
+		return new name(*SPCP(name));
+	}
+
+#endif // Virtual functions that will need to be implemented by base classes
+
+	// Projected mass and density functions
+#if (1)
+
+	// These ones should be overridden if at all possible, as otherwise they'll have to be
+	// integrated
+#if (1)
+	const BRG_UNITS proj_dens( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const // Projected surface density at radius R
+	{
+		return SPCP(name)->_proj_dens(R,silent);
+	}
+	const BRG_MASS proj_enc_mass( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const // Mass enclosed within a cylinder of radius R
+	{
+		return SPCP(name)->_proj_enc_mass(R,silent);
+	}
+#endif
+
+	// These ones typically don't need to be overridden, but they can be if it's convenient
+#if (1)
+	const BRG_UNITS proj_enc_dens( CONST_BRG_DISTANCE_REF R,
+			const bool silent = false ) const // Mean surface density enclosed within a cylinder of radius R
+	{
+		return SPCP(name)->_proj_enc_dens(R,silent);
+	}
+#endif
+
+#endif // Projected mass and density functions
+
+	// Weak lensing functions
+#if (1)
+
+	// WLsig (delta sigma)
+#if (1)
+	const BRG_UNITS WLsig( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const // Weak lensing signal in tangential shear Delta-Sigma at radius R
+	{
+		return SPCP(name)->_WLsig(R,silent);
+	}
+	const BRG_UNITS quick_WLsig( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const // As deltasigma, but uses cache to speed it up if overwritten
+	{
+		return SPCP(name)->_quick_WLsig( R, silent );
+	}
+#endif
+
+	// Offset WLsig
+#if (1)
+	const BRG_UNITS offset_WLsig( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
+	{
+		return SPCP(name)->_offset_WLsig( R, offset_R, silent );
+	}
+	const BRG_UNITS quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // As offset_WLsig, but uses cache to speed it up if overwritten
+	{
+		return SPCP(name)->_quick_offset_WLsig( R, offset_R, silent );
+	}
+#endif
+
+	// Group WLsig
+#if (1)
+	const BRG_UNITS group_WLsig( CONST_BRG_DISTANCE_REF R,
+			const double group_c=2.5, const bool silent = true ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+	{
+		return SPCP(name)->_group_WLsig( R, group_c, silent );
+	}
+	const BRG_UNITS semiquick_group_WLsig( CONST_BRG_DISTANCE_REF R,
+			const double group_c=2.5, const bool silent = true ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
+	{
+		return SPCP(name)->_semiquick_group_WLsig( R, group_c, silent );
+	}
+	const BRG_UNITS quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
+			const double group_c=2.5, const bool silent = true ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
+	{
+		return SPCP(name)->_quick_group_WLsig( R, group_c, silent );
+	}
+#endif
+
+	// Shifted WLsig
+#if (1)
+	// This represents the weak-lensing signal after being corrected for errors due to relative
+	// shifting of the lens and source due to an intervening mass distribution
+
+	const double shift_factor( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const
+	{
+		return SPCP(name)->_shift_factor( R, silent );
+	}
+
+	const BRG_UNITS shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const
+	{
+		return SPCP(name)->_shifted_WLsig( R, silent );
+	}
+	const BRG_UNITS semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const
+	{
+		return SPCP(name)->_semiquick_shifted_WLsig( R, silent );
+	}
+	const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
+			const bool silent = true ) const
+	{
+		return SPCP(name)->_quick_shifted_WLsig( R, silent );
 	}
 #endif
 
