@@ -48,7 +48,8 @@ namespace brgastro {
 class lens_source_pair {
 private:
 
-	bool _using_clones_;
+	bool _using_lens_clone_;
+	bool _using_source_clone_;
 	const sky_obj *_init_lens_ptr_;
 	const source_obj *_init_source_ptr_;
 	BRG_SHARED_PTR<const sky_obj> _lens_clone_;
@@ -56,6 +57,8 @@ private:
 
 	mutable bool _data_stored_;
 	mutable double _z_lens_, _z_source_;
+	mutable BRG_MASS _m_lens_;
+	mutable double _mag_lens_, _mag_source_;
 	mutable BRG_DISTANCE _R_proj_;
 	mutable BRG_ANGLE _theta_;
 	mutable double _gamma_t_, _gamma_x_;
@@ -81,6 +84,12 @@ public:
 	virtual ~lens_source_pair();
 #endif
 
+	// Set lens and source
+#if(1)
+	void set_lens( const sky_obj *lens_ptr, const bool make_clone=false);
+	void set_source( const source_obj *source_ptr, const bool make_clone=false);
+#endif
+
 	// Lens and source access
 #if(1)
 	const sky_obj *lens() const;
@@ -92,6 +101,9 @@ public:
 
 	double z_lens() const;
 	double z_source() const;
+	BRG_MASS m_lens() const;
+	double mag_lens() const;
+	double mag_source() const;
 	BRG_DISTANCE R_proj();
 	BRG_ANGLE theta();
 	double gamma_t();

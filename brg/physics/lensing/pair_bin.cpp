@@ -2,7 +2,7 @@
  @file pair_bin.cpp
  ------------------
 
- TODO <Insert file description here>
+ Source file for the pair_bin class.
 
  **********************************************************************
 
@@ -22,9 +22,39 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  \**********************************************************************/
-#include <brg/physics/lensing/pair_bin.h>
+
+#include "brg/global.h"
+
+#include "brg/physics/units/unit_obj.h"
+#include "brg/vector/summary_functions.hpp"
+
+#include "pair_bin.h"
 
 namespace brgastro {
+
+// Adding and clearing data
+#if(1)
+
+void pair_bin::add_pair( lens_source_pair new_pair)
+{
+	_R_values_.push_back(new_pair.R_proj());
+	_m_values_.push_back(new_pair.m_lens());
+	_z_values_.push_back(new_pair.z_lens());
+	_mag_lens_values_.push_back(new_pair.mag_source());
+	_delta_Sigma_t_values_.push_back(new_pair.delta_Sigma_t());
+	_delta_Sigma_x_values_.push_back(new_pair.delta_Sigma_x());
+}
+void pair_bin::clear()
+{
+	_R_values_.clear();
+	_m_values_.clear();
+	_z_values_.clear();
+	_mag_lens_values_.clear();
+	_delta_Sigma_t_values_.clear();
+	_delta_Sigma_x_values_.clear();
+}
+
+#endif
 
 // Calculations on stored values
 #if (1)

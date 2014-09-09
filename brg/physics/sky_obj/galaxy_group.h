@@ -89,6 +89,18 @@ public:
 	virtual void remove_member( galaxy * rem_member, const bool silent =
 			false );
 
+	// Implementations of pure virtual functions from sky_obj
+#if (1)
+	BRG_MASS m() const
+	{
+		return 0; // TODO: Should be combine magnitude of member galaxies
+	}
+	double mag() const
+	{
+		return 0; // TODO: Should be combine magnitude of member galaxies
+	}
+#endif
+
 	// Clone functions
 	virtual redshift_obj *redshift_obj_clone() const
 	{

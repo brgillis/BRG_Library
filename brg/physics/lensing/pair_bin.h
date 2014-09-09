@@ -32,6 +32,7 @@
 
 #include "brg/global.h"
 
+#include "brg/physics/lensing/lens_source_pair.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
 
@@ -59,7 +60,8 @@ private:
 	std::vector<BRG_DISTANCE> _R_values_;
 	std::vector<BRG_MASS> _m_values_;
 	std::vector<double> _z_values_;
-	std::vector<double> _mag_values_;
+	std::vector<double> _mag_lens_values_;
+	std::vector<double> _mag_source_values_;
 	std::vector<BRG_UNITS> _delta_Sigma_t_values_;
 	std::vector<BRG_UNITS> _delta_Sigma_x_values_;
 
@@ -76,6 +78,14 @@ public:
 	virtual ~pair_bin()
 	{
 	}
+#endif
+
+	// Adding and clearing data
+#if(1)
+
+	void add_pair( lens_source_pair new_pair);
+	void clear();
+
 #endif
 
 	// Limits accessors
@@ -134,9 +144,13 @@ public:
 	{
 		return _z_values_;
 	}
-	std::vector<double> mag_values()
+	std::vector<double> mag_lens_values()
 	{
-		return _mag_values_;
+		return _mag_lens_values_;
+	}
+	std::vector<double> mag_source_values()
+	{
+		return _mag_source_values_;
 	}
 	std::vector<BRG_UNITS> delta_Sigma_t_values()
 	{

@@ -68,6 +68,9 @@ void lens_source_pair::store_data() const
 
 	_z_lens_ = lens_ptr->z();
 	_z_source_ = source_ptr->z();
+	_m_lens_ = lens_ptr->m();
+	_mag_lens_ = lens_ptr->mag();
+	_mag_source_ = source_ptr->mag();
 
 	// Note minus sign in dra to correct for ra's reverse orientation in the sky
 	BRG_ANGLE dra = -(source_ptr->ra()-lens_ptr->ra())*cos(lens_ptr->dec());
@@ -83,12 +86,16 @@ void lens_source_pair::store_data() const
 // Constructors and destructor
 #if(1)
 lens_source_pair::lens_source_pair()
-:	_using_clones_(false),
+:	_using_lens_clone_(false),
+ 	_using_source_clone_(false),
 	_init_lens_ptr_(NULL),
 	_init_source_ptr_(NULL),
 	_data_stored_(false),
 	_z_lens_(0),
 	_z_source_(0),
+	_m_lens_(0),
+	_mag_lens_(0),
+	_mag_source_(0),
 	_R_proj_(0),
 	_theta_(0),
 	_gamma_t_(0),
@@ -97,12 +104,16 @@ lens_source_pair::lens_source_pair()
 }
 lens_source_pair::lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr,
 		bool make_clones)
-:	_using_clones_(make_clones),
+:	_using_lens_clone_(make_clones),
+ 	_using_source_clone_(make_clones),
  	_init_lens_ptr_(lens_ptr),
 	_init_source_ptr_(source_ptr),
 	_data_stored_(false),
 	_z_lens_(0),
 	_z_source_(0),
+	_m_lens_(0),
+	_mag_lens_(0),
+	_mag_source_(0),
 	_R_proj_(0),
 	_theta_(0),
 	_gamma_t_(0),
@@ -114,11 +125,6 @@ lens_source_pair::lens_source_pair( const sky_obj* lens_ptr, const source_obj* s
 	{
 		_lens_clone_ = BRG_SHARED_PTR<const sky_obj>(lens_ptr->sky_obj_clone());
 		_source_clone_ = BRG_SHARED_PTR<const source_obj>(source_ptr->source_obj_clone());
-		_using_clones_ = true;
-	}
-	else
-	{
-		_using_clones_ = false;
 	}
 	store_data();
 }
@@ -127,11 +133,47 @@ lens_source_pair::~lens_source_pair()
 }
 #endif
 
+// Set lens and source
+#if(1)
+
+void lens_source_pair::set_lens( const sky_obj *lens_ptr, const bool make_clone)
+{
+	assert(lens_ptr!=NULL);
+
+	if(make_clone)
+	{
+		_lens_clone_ = BRG_SHARED_PTR<const sky_obj>(lens_ptr->sky_obj_clone());
+	}
+	else
+	{
+		_init_lens_ptr_ = lens_ptr;
+	}
+	_using_lens_clone_ = make_clone;
+}
+
+void lens_source_pair::set_source( const source_obj *source_ptr, const bool make_clone)
+{
+	assert(source_ptr!=NULL);
+
+	if(make_clone)
+	{
+		_source_clone_ = BRG_SHARED_PTR<const source_obj>(source_ptr->source_obj_clone());
+	}
+	else
+	{
+		_init_source_ptr_ = source_ptr;
+	}
+	_using_source_clone_ = make_clone;
+}
+
+#endif
+
+
 // Lens and source access
 #if(1)
 const sky_obj *lens_source_pair::lens() const
 {
-	if(_using_clones_)
+	if(_using_lens_clone_)
 	{
 		return _lens_clone_.get();
 	}
@@ -142,7 +184,7 @@ const sky_obj *lens_source_pair::lens() const
 }
 const source_obj *lens_source_pair::source() const
 {
-	if(_using_clones_)
+	if(_using_source_clone_)
 	{
 		return _source_clone_.get();
 	}

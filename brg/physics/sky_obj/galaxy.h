@@ -77,6 +77,18 @@ public:
 	{
 	}
 
+	// Implementations of pure virtual functions from sky_obj
+#if (1)
+	BRG_MASS m() const
+	{
+		return stellar_mass;
+	}
+	double mag() const
+	{
+		return umag;
+	}
+#endif
+
 	// Clear function
 	virtual void clear();
 

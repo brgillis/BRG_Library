@@ -76,8 +76,8 @@ public:
 #if (1) // Set functions
 	virtual void set_ra( CONST_BRG_ANGLE_REF new_ra );
 	virtual void set_dec( CONST_BRG_ANGLE_REF new_dec );
-	virtual void set_ra_err( CONST_BRG_ANGLE_REF new_ra_err );
-	virtual void set_dec_err( CONST_BRG_ANGLE_REF new_dec_err );
+	void set_ra_err( CONST_BRG_ANGLE_REF new_ra_err );
+	void set_dec_err( CONST_BRG_ANGLE_REF new_dec_err );
 	virtual void set_ra_dec( CONST_BRG_ANGLE_REF new_ra,
 			CONST_BRG_ANGLE_REF new_dec ); // Sets ra and dec
 	virtual void set_ra_dec_z( CONST_BRG_ANGLE_REF new_ra,
@@ -90,47 +90,52 @@ public:
 			CONST_BRG_ANGLE_REF new_dec, CONST_BRG_ANGLE_REF new_ra_err,
 			CONST_BRG_ANGLE_REF new_dec_err ); // Sets ra and dec and error
 
-	virtual void set_weight( const double new_weight );
-	virtual void set_index( const int new_index );
-	virtual void set_ID( const std::string &new_ID );
+	void set_weight( const double new_weight );
+	void set_index( const int new_index );
+	void set_ID( const std::string &new_ID );
 #endif // end set functions
 
 #if (1) //Get functions
 
-	virtual CONST_BRG_ANGLE_REF ra() const
+	CONST_BRG_ANGLE_REF ra() const
 	{
 		return _ra_;
 	}
-	virtual CONST_BRG_ANGLE_REF dec() const
+	CONST_BRG_ANGLE_REF dec() const
 	{
 		return _dec_;
 	}
-	virtual CONST_BRG_ANGLE_REF ra_err() const
+	CONST_BRG_ANGLE_REF ra_err() const
 	{
 		return _ra_err_;
 	}
-	virtual CONST_BRG_ANGLE_REF dec_err() const
+	CONST_BRG_ANGLE_REF dec_err() const
 	{
 		return _dec_err_;
 	}
 
-	virtual const double weight() const
+	const double weight() const
 	{
 		return _weight_;
 	}
-	virtual const int index() const
+	const int index() const
 	{
 		return _index_;
 	}
-	virtual const std::string & ID() const
+	const std::string & ID() const
 	{
 		return _ID_;
 	}
 
-	virtual const int ra_grid() const;
-	virtual const int dec_grid() const;
-
 #endif // end get functions
+
+	// Pure virtual get functions
+#if (1)
+
+	virtual BRG_MASS m() const = 0;
+	virtual double mag() const = 0;
+
+#endif
 
 	// Clone function (to enable copies to be made of pointed-to objects)
 	virtual redshift_obj *redshift_obj_clone() const =0;
