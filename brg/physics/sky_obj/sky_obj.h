@@ -53,11 +53,6 @@ private:
 
 	double _weight_;
 
-	mutable int _ra_grid_, _dec_grid_;
-
-	mutable bool _ra_grid_cached_, _dec_grid_cached_;
-	mutable int _local_ra_grid_change_num_, _local_dec_grid_change_num_;
-
 	BRG_ANGLE _ra_, _ra_err_, _dec_, _dec_err_;
 #endif
 public:

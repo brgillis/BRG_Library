@@ -50,18 +50,11 @@ void brgastro::sky_obj::partial_clear()
 	_index_ = 0;
 	_ID_ = "0";
 	_weight_ = 1;
-	_ra_grid_ = _dec_grid_ = 0;
-	_ra_grid_cached_ = _dec_grid_cached_ = false;
-	_local_ra_grid_change_num_ = -1;
-	_local_dec_grid_change_num_ = -1;
 }
 
 void brgastro::sky_obj::set_ra( CONST_BRG_ANGLE_REF new_ra )
 {
-	if ( _ra_ == new_ra )
-		return;
 	_ra_ = new_ra;
-	_ra_grid_cached_ = false;
 }
 void brgastro::sky_obj::set_ra_err( CONST_BRG_ANGLE_REF new_ra_err )
 {
@@ -69,10 +62,7 @@ void brgastro::sky_obj::set_ra_err( CONST_BRG_ANGLE_REF new_ra_err )
 }
 void brgastro::sky_obj::set_dec( CONST_BRG_ANGLE_REF new_dec )
 {
-	if ( _dec_ == new_dec )
-		return;
 	_dec_ = new_dec;
-	_dec_grid_cached_ = false;
 }
 void brgastro::sky_obj::set_dec_err( CONST_BRG_ANGLE_REF new_dec_err )
 {
@@ -123,32 +113,6 @@ void brgastro::sky_obj::set_index( const int new_index )
 void brgastro::sky_obj::set_ID( const std::string &new_ID )
 {
 	_ID_ = new_ID;
-}
-
-const int brgastro::sky_obj::ra_grid() const
-{
-	if ( _ra_grid_cached_ )
-	{
-		if ( _local_ra_grid_change_num_ == grid_cache().ra_grid_change_num() )
-			return _ra_grid_;
-	}
-	_ra_grid_ = brgastro::get_ra_grid( ra() );
-	_ra_grid_cached_ = true;
-	_local_ra_grid_change_num_ = grid_cache().ra_grid_change_num();
-	return _ra_grid_;
-}
-const int brgastro::sky_obj::dec_grid() const
-{
-	if ( _dec_grid_cached_ )
-	{
-		if ( _local_dec_grid_change_num_
-				== grid_cache().dec_grid_change_num() )
-			return _dec_grid_;
-	}
-	_dec_grid_ = brgastro::get_dec_grid( dec() );
-	_dec_grid_cached_ = true;
-	_local_dec_grid_change_num_ = grid_cache().dec_grid_change_num();
-	return _dec_grid_;
 }
 
 #endif // end brgastro::sky_obj class methods

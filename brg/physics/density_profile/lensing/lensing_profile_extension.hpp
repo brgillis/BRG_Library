@@ -382,4 +382,8 @@ public:
 
 } // end namespace brgastro
 
+// Undef macros
+#undef SPP
+#undef SPCP
+
 #endif /* _BRG_LENSING_PROFILE_EXTENSION_H_ */
