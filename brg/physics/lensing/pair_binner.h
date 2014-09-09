@@ -29,7 +29,6 @@
 #ifndef _BRG_PAIR_BINNER_H_INCLUDED_
 #define _BRG_PAIR_BINNER_H_INCLUDED_
 
-#include <stack>
 #include <vector>
 
 #include "brg/global.h"
@@ -56,24 +55,61 @@ private:
 	std::vector< double > _z_bin_limits_;
 	std::vector< double > _mag_bin_limits_;
 
+	bool _valid_limits_;
+
 #endif // Limits for the bins
 
 	// Data to be sorted into bins
 #if(1)
 
-	std::stack<lens_source_pair> _sorted_pairs_;
-	std::stack<lens_source_pair> _unsorted_pairs_;
+	std::vector<lens_source_pair> _pairs_;
+	size_t _sorting_index_;
+
+#endif
+
+	// Private methods
+#if(1)
+
+	void _check_limits();
 
 #endif
 
 public:
-	pair_binner() {
-		// TODO Auto-generated constructor stub
 
+	// Constructors and destructor
+#if(1)
+	// Default constructor
+	pair_binner()
+	: _valid_limits_(false),
+	  _sorting_index_(0)
+	{
 	}
-	virtual ~pair_binner() {
-		// TODO Auto-generated destructor stub
+
+	// Set limits by vectors
+	pair_binner(std::vector< BRG_DISTANCE > R_bin_limits,
+				std::vector< BRG_MASS > m_bin_limits=std::vector<double>(),
+				std::vector< double > z_bin_limits=std::vector<double>(),
+				std::vector< double > mag_bin_limits=std::vector<double>());
+
+	// Set limits by min, max, and step
+	pair_binner(CONST_BRG_DISTANCE_REF R_min,
+				CONST_BRG_DISTANCE_REF R_max,
+				CONST_BRG_DISTANCE_REF R_step,
+				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
+				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
+				CONST_BRG_MASS_REF m_step=std::numeric_limits<double>::infinity(),
+				double z_min=-std::numeric_limits<double>::infinity(),
+				double z_max=std::numeric_limits<double>::infinity(),
+				double z_step=std::numeric_limits<double>::infinity(),
+				double mag_min=-std::numeric_limits<double>::infinity(),
+				double mag_max=std::numeric_limits<double>::infinity(),
+				double mag_step=std::numeric_limits<double>::infinity());
+
+
+	virtual ~pair_binner()
+	{
 	}
+#endif
 };
 
 } // end namespace brgastro
