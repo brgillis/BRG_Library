@@ -143,9 +143,57 @@ const T stderr(const T &v)
 
 #endif
 
+// Monotonically increasing
+#if(1)
+
+template<typename T>
+bool is_monotonically_increasing(const std::vector<T> &v)
+{
+	if(v.size()<=1) return false;
+	T last_value = v[0];
+	for(size_t i=1; i<v.size(); ++i)
+	{
+		if(v[i]<=last_value) return false;
+		last_value = v[i];
+	}
+	return true;
+}
+
+template<typename T>
+bool is_monotonically_increasing(T v)
+{
+	return false;
+}
+
+#endif // Monotonically increasing
+
+// Monotonically decreasing
+#if(1)
+
+template<typename T>
+bool is_monotonically_decreasing(const std::vector<T> &v)
+{
+	if(v.size()<=1) return false;
+	T last_value = v[0];
+	for(size_t i=1; i<v.size(); ++i)
+	{
+		if(v[i]>=last_value) return false;
+		last_value = v[i];
+	}
+	return true;
+}
+
+template<typename T>
+bool is_monotonically_decreasing(T v)
+{
+	return false;
+}
+
+#endif // Monotonically decreasing
+
 // all_true
 #if (1)
-inline const bool all_true(const std::vector<bool> v)
+inline bool all_true(const std::vector<bool> v)
 {
 	for(unsigned int i=0; i < v.size(); i++)
 	{
@@ -154,7 +202,7 @@ inline const bool all_true(const std::vector<bool> v)
 	return true;
 }
 
-inline const bool all_true(const bool v)
+inline bool all_true(const bool v)
 {
 	return v;
 }
@@ -162,7 +210,7 @@ inline const bool all_true(const bool v)
 
 // all_false
 #if (1)
-inline const bool all_false(const std::vector<bool> v)
+inline bool all_false(const std::vector<bool> v)
 {
 	for(unsigned int i=0; i < v.size(); i++)
 	{
@@ -171,7 +219,7 @@ inline const bool all_false(const std::vector<bool> v)
 	return true;
 }
 
-inline const bool all_false(const bool v)
+inline bool all_false(const bool v)
 {
 	return (!v);
 }
@@ -179,12 +227,12 @@ inline const bool all_false(const bool v)
 
 // not_all_true
 #if (1)
-inline const bool not_all_true(const std::vector<bool> v)
+inline bool not_all_true(const std::vector<bool> v)
 {
 	return !all_true(v);
 }
 
-inline const bool not_all_true(const bool v)
+inline bool not_all_true(const bool v)
 {
 	return !v;
 }
@@ -192,12 +240,12 @@ inline const bool not_all_true(const bool v)
 
 // not_all_false
 #if (1)
-inline const bool not_all_false(const std::vector<bool> v)
+inline bool not_all_false(const std::vector<bool> v)
 {
 	return !all_false(v);
 }
 
-inline const bool not_all_false(const bool v)
+inline bool not_all_false(const bool v)
 {
 	return v;
 }
@@ -205,12 +253,12 @@ inline const bool not_all_false(const bool v)
 
 // some_true_some_false
 #if (1)
-inline const bool some_true_some_false(const std::vector<bool> v)
+inline bool some_true_some_false(const std::vector<bool> v)
 {
 	return ( (!all_true(v)) && (!all_false(v)) );
 }
 
-inline const bool some_true_some_false(const bool v)
+inline bool some_true_some_false(const bool v)
 {
 	return false;
 }

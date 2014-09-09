@@ -29,6 +29,7 @@
 #ifndef _BRG_PAIR_BINNER_H_INCLUDED_
 #define _BRG_PAIR_BINNER_H_INCLUDED_
 
+#include <limits>
 #include <vector>
 
 #include "brg/global.h"
