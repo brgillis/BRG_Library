@@ -83,7 +83,7 @@ public:
 	// Adding and clearing data
 #if(1)
 
-	void add_pair( lens_source_pair new_pair);
+	void add_pair( const lens_source_pair & new_pair);
 	void clear();
 
 #endif

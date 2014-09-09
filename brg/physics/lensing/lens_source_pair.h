@@ -104,19 +104,19 @@ public:
 	BRG_MASS m_lens() const;
 	double mag_lens() const;
 	double mag_source() const;
-	BRG_DISTANCE R_proj();
-	BRG_ANGLE theta();
-	double gamma_t();
-	double gamma_x();
+	BRG_DISTANCE R_proj() const;
+	BRG_ANGLE theta() const;
+	double gamma_t() const;
+	double gamma_x() const;
 
 #endif // Access to stored values
 
 	// Calculated values
 #if(1)
 
-	BRG_UNITS sigma_crit();
-	BRG_UNITS delta_Sigma_t();
-	BRG_UNITS delta_Sigma_x();
+	BRG_UNITS sigma_crit() const;
+	BRG_UNITS delta_Sigma_t() const;
+	BRG_UNITS delta_Sigma_x() const;
 #endif
 };
 

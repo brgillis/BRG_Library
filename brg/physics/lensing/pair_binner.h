@@ -46,7 +46,7 @@ class pair_binner {
 private:
 
 	// The bins, contained in a 4D vector, for one dimension for each parameter
-	std::vector< std::vector< std::vector< std::vector<pair_bin> > > > _pair_bins_;
+	mutable std::vector< std::vector< std::vector< std::vector<pair_bin> > > > _pair_bins_;
 
 	// Limits for the bins
 #if(1)
@@ -64,7 +64,8 @@ private:
 #if(1)
 
 	std::vector<lens_source_pair> _pairs_;
-	size_t _sorting_index_;
+	mutable size_t _sorting_index_;
+	mutable bool _sorted_;
 
 #endif
 
@@ -72,6 +73,8 @@ private:
 #if(1)
 
 	void _check_limits();
+	void _sort() const;
+	void _resort() const;
 
 #endif
 
@@ -82,7 +85,8 @@ public:
 	// Default constructor
 	pair_binner()
 	: _valid_limits_(false),
-	  _sorting_index_(0)
+	  _sorting_index_(0),
+	  _sorted_(false)
 	{
 	}
 
@@ -110,6 +114,14 @@ public:
 	virtual ~pair_binner()
 	{
 	}
+#endif
+
+	// Adding and clearing data
+#if(1)
+
+	void add_pair( const lens_source_pair & new_pair);
+	void clear_pairs();
+
 #endif
 };
 

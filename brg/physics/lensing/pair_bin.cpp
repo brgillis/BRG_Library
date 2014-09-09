@@ -35,7 +35,7 @@ namespace brgastro {
 // Adding and clearing data
 #if(1)
 
-void pair_bin::add_pair( lens_source_pair new_pair)
+void pair_bin::add_pair( const lens_source_pair & new_pair)
 {
 	_R_values_.push_back(new_pair.R_proj());
 	_m_values_.push_back(new_pair.m_lens());
