@@ -28,8 +28,6 @@
 #ifndef _BRG_LENS_SOURCE_PAIR_H_INCLUDED_
 #define _BRG_LENS_SOURCE_PAIR_H_INCLUDED_
 
-#include <cassert>
-
 #ifndef _BRG_USE_CPP_11_STD_
 #include <boost/shared_ptr.hpp>
 #else
@@ -38,7 +36,6 @@
 
 #include "brg/global.h"
 
-#include "brg/math/misc_math.hpp"
 #include "brg/physics/lensing/source_obj.hpp"
 #include "brg/physics/sky_obj/sky_obj.h"
 
@@ -62,107 +59,51 @@ private:
 	mutable BRG_ANGLE _theta_;
 	mutable double _gamma_t_, _gamma_x_;
 
-	void _conditional_store_data()
+	void _conditional_store_data() const
 	{
 		if(!_data_stored_) store_data();
 	}
 
-	void _calc_gamma(const double gamma_1, const double gamma_2) const
-	{
-		double rot_cos = cos(-2*_theta_);
-		double rot_sin = sin(-2*_theta_);
-		_gamma_t_ = -(rot_cos*gamma_1-rot_sin*gamma_2);
-		_gamma_x_ = rot_sin*gamma_1+rot_cos*gamma_2;
-	}
+	void _calc_gamma(const double gamma_1, const double gamma_2) const;
 
 public:
 
 	// Calculation/recalculation function
 #if(1)
-	void store_data() const
-	{
-		assert(lens()!=NULL);
-		assert(source()!=NULL);
-		const sky_obj *lens_ptr = lens();
-		const source_obj *source_ptr = source();
-
-		_z_lens_ = lens_ptr->z();
-		_z_source_ = source_ptr->z();
-
-		// Note minus sign in dra to correct for ra's reverse orientation in the sky
-		BRG_ANGLE dra = -(source_ptr->ra()-lens_ptr->ra())*cos(lens_ptr->dec());
-		BRG_ANGLE ddec = source_ptr->dec()-lens_ptr->dec();
-
-		_R_proj_ = dfa(dist2d(dra,ddec),_z_lens_);
-		_theta_ = atan2(ddec,dra);
-
-		_calc_gamma(source_ptr->gamma_1(),source_ptr->gamma_2());
-	}
+	void store_data() const;
 #endif
 
 	// Constructors and destructor
 #if(1)
-	lens_source_pair()
-	:	_using_clones_(false),
-		_init_lens_ptr_(NULL),
-		_init_source_ptr_(NULL),
-		_data_stored_(false),
-		_z_lens_(0),
-		_z_source_(0),
-		_R_proj_(0),
-		_theta_(0),
-		_gamma_t_(0),
-		_gamma_x_(0)
-	{
-	}
-	lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr, bool make_clones=false)
-	:	_using_clones_(make_clones),
-	 	_init_lens_ptr_(lens_ptr),
-		_init_source_ptr_(source_ptr)
-	{
-		_init_lens_ptr_ = lens_ptr;
-		_init_source_ptr_ = source_ptr;
-		if(make_clones)
-		{
-			_lens_clone_ = BRG_SHARED_PTR<const sky_obj>(lens_ptr->sky_obj_clone());
-			_source_clone_ = BRG_SHARED_PTR<const source_obj>(source_ptr->source_obj_clone());
-			_using_clones_ = true;
-		}
-		else
-		{
-			_using_clones_ = false;
-		}
-		store_data();
-	}
-	virtual ~lens_source_pair()
-	{
-	}
+	lens_source_pair();
+	lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr, bool make_clones=false);
+	virtual ~lens_source_pair();
 #endif
 
 	// Lens and source access
 #if(1)
-	const sky_obj *lens() const
-	{
-		if(_using_clones_)
-		{
-			return _lens_clone_.get();
-		}
-		else
-		{
-			return _init_lens_ptr_;
-		}
-	}
-	const source_obj *source() const
-	{
-		if(_using_clones_)
-		{
-			return _source_clone_.get();
-		}
-		else
-		{
-			return _init_source_ptr_;
-		}
-	}
+	const sky_obj *lens() const;
+	const source_obj *source() const;
+#endif // Lens and source access
+
+	// Access to stored values
+#if(1)
+
+	double z_lens() const;
+	double z_source() const;
+	BRG_DISTANCE R_proj();
+	BRG_ANGLE theta();
+	double gamma_t();
+	double gamma_x();
+
+#endif // Access to stored values
+
+	// Calculated values
+#if(1)
+
+	BRG_UNITS sigma_crit();
+	BRG_UNITS delta_Sigma_t();
+	BRG_UNITS delta_Sigma_x();
 #endif
 };
 

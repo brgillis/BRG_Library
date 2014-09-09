@@ -23,8 +23,191 @@
 
  \**********************************************************************/
 
+
+#include <cassert>
+
+#ifndef _BRG_USE_CPP_11_STD_
+#include <boost/shared_ptr.hpp>
+#else
+#include <memory>
+#endif
+
+#include "brg/global.h"
+
+#include "brg/math/misc_math.hpp"
+
 #include "lens_source_pair.h"
 
 namespace brgastro {
+
+#if(1) // Private methods
+
+void lens_source_pair::_calc_gamma(const double gamma_1, const double gamma_2) const
+{
+	double rot_cos = cos(-2*_theta_);
+	double rot_sin = sin(-2*_theta_);
+	_gamma_t_ = -(rot_cos*gamma_1-rot_sin*gamma_2);
+	_gamma_x_ = rot_sin*gamma_1+rot_cos*gamma_2;
+}
+
+#endif // Private methods
+
+#if(1) // Public methods
+
+// Calculation/recalculation function
+#if(1)
+void lens_source_pair::store_data() const
+{
+	assert(lens()!=NULL);
+	assert(source()!=NULL);
+	const sky_obj *lens_ptr = lens();
+	const source_obj *source_ptr = source();
+
+	_z_lens_ = lens_ptr->z();
+	_z_source_ = source_ptr->z();
+
+	// Note minus sign in dra to correct for ra's reverse orientation in the sky
+	BRG_ANGLE dra = -(source_ptr->ra()-lens_ptr->ra())*cos(lens_ptr->dec());
+	BRG_ANGLE ddec = source_ptr->dec()-lens_ptr->dec();
+
+	_R_proj_ = dfa(dist2d(dra,ddec),_z_lens_);
+	_theta_ = atan2(ddec,dra);
+
+	_calc_gamma(source_ptr->gamma_1(),source_ptr->gamma_2());
+}
+#endif
+
+// Constructors and destructor
+#if(1)
+lens_source_pair::lens_source_pair()
+:	_using_clones_(false),
+	_init_lens_ptr_(NULL),
+	_init_source_ptr_(NULL),
+	_data_stored_(false),
+	_z_lens_(0),
+	_z_source_(0),
+	_R_proj_(0),
+	_theta_(0),
+	_gamma_t_(0),
+	_gamma_x_(0)
+{
+}
+lens_source_pair::lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr,
+		bool make_clones)
+:	_using_clones_(make_clones),
+ 	_init_lens_ptr_(lens_ptr),
+	_init_source_ptr_(source_ptr),
+	_data_stored_(false),
+	_z_lens_(0),
+	_z_source_(0),
+	_R_proj_(0),
+	_theta_(0),
+	_gamma_t_(0),
+	_gamma_x_(0)
+{
+	_init_lens_ptr_ = lens_ptr;
+	_init_source_ptr_ = source_ptr;
+	if(make_clones)
+	{
+		_lens_clone_ = BRG_SHARED_PTR<const sky_obj>(lens_ptr->sky_obj_clone());
+		_source_clone_ = BRG_SHARED_PTR<const source_obj>(source_ptr->source_obj_clone());
+		_using_clones_ = true;
+	}
+	else
+	{
+		_using_clones_ = false;
+	}
+	store_data();
+}
+lens_source_pair::~lens_source_pair()
+{
+}
+#endif
+
+// Lens and source access
+#if(1)
+const sky_obj *lens_source_pair::lens() const
+{
+	if(_using_clones_)
+	{
+		return _lens_clone_.get();
+	}
+	else
+	{
+		return _init_lens_ptr_;
+	}
+}
+const source_obj *lens_source_pair::source() const
+{
+	if(_using_clones_)
+	{
+		return _source_clone_.get();
+	}
+	else
+	{
+		return _init_source_ptr_;
+	}
+}
+#endif // Lens and source access
+
+// Access to stored values
+#if(1)
+
+double lens_source_pair::z_lens() const
+{
+	_conditional_store_data();
+	return _z_lens_;
+}
+double lens_source_pair::z_source() const
+{
+	_conditional_store_data();
+	return _z_source_;
+}
+BRG_DISTANCE lens_source_pair::R_proj()
+{
+	_conditional_store_data();
+	return _R_proj_;
+}
+BRG_ANGLE lens_source_pair::theta()
+{
+	_conditional_store_data();
+	return _theta_;
+}
+double lens_source_pair::gamma_t()
+{
+	_conditional_store_data();
+	return _gamma_t_;
+}
+double lens_source_pair::gamma_x()
+{
+	_conditional_store_data();
+	return _gamma_x_;
+}
+
+#endif // Access to stored values
+
+// Calculated values
+#if(1)
+
+BRG_UNITS lens_source_pair::sigma_crit()
+{
+	_conditional_store_data();
+	return square( c ) / ( 4. * pi * Gc )
+			* ad_distance( 0, _z_source_ )
+			/ ( ad_distance( 0, _z_lens_ ) * ad_distance( _z_lens_, _z_source_ ) );
+}
+
+BRG_UNITS lens_source_pair::delta_Sigma_t()
+{
+	return sigma_crit()*gamma_t();
+}
+
+BRG_UNITS lens_source_pair::delta_Sigma_x()
+{
+	return sigma_crit()*gamma_x();
+}
+#endif // Calculated values
+
+#endif // Public methods
 
 } // end namespace brgastro
