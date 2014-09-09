@@ -26,8 +26,8 @@
 #include "brg/global.h"
 
 #include "brg/physics/density_profile/density_profile.h"
-#include "brg/physics/density_profile/lensing/lensing_profile_extension_functors.hpp"
-#include "brg/physics/density_profile/lensing/shifting/shifting_cache.h"
+#include "brg/physics/lensing/lensing_profile_extension_functors.hpp"
+#include "brg/physics/lensing/shifting/shifting_cache.h"
 #include "brg/physics/units/unit_obj.h"
 
 // Macro definitions

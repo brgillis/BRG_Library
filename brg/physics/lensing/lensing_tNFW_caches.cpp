@@ -30,7 +30,7 @@
 
 #include "brg/math/cache/cache_4d.hpp"
 #include "brg/physics/astro.h"
-#include "brg/physics/density_profile/lensing/lensing_tNFW_profile.h"
+#include "brg/physics/lensing/lensing_tNFW_profile.h"
 #include "brg/physics/units/unit_obj.h"
 
 #include "lensing_tNFW_caches.h"

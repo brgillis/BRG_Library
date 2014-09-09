@@ -28,7 +28,7 @@
 #include "brg/global.h"
 
 #include "brg/math/safe_math.hpp"
-#include "brg/physics/density_profile/lensing/shifting/shifting_loader.h"
+#include "brg/physics/lensing/shifting/shifting_loader.h"
 #include "brg/physics/units/unit_conversions.hpp"
 
 #include "shifting_cache.h"

@@ -34,7 +34,7 @@
 #include "brg/global.h"
 
 #include "brg/file_functions.h"
-#include "brg/physics/density_profile/lensing/shifting/corr_alpha.hpp"
+#include "brg/physics/lensing/shifting/corr_alpha.hpp"
 #include "brg/vector/manipulations.hpp"
 
 #include "shifting_loader.h"

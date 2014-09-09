@@ -27,7 +27,7 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/density_profile/lensing/lensing_profile_extension.hpp"
+#include "brg/physics/lensing/lensing_profile_extension.hpp"
 #include "brg/physics/density_profile/tNFW_profile.h"
 
 namespace brgastro {

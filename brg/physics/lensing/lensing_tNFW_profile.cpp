@@ -24,7 +24,7 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/density_profile/lensing/lensing_tNFW_caches.h"
+#include "brg/physics/lensing/lensing_tNFW_caches.h"
 
 #include "lensing_tNFW_profile.h"
 
