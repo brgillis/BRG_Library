@@ -38,6 +38,7 @@
 
 #include "brg/physics/lensing/source_obj.hpp"
 #include "brg/physics/sky_obj/sky_obj.h"
+#include "brg/physics/units/unit_obj.h"
 
 namespace brgastro {
 

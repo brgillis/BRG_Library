@@ -34,7 +34,10 @@
 
 #include "brg/global.h"
 
+#include "brg/physics/lensing/source_obj.hpp"
+#include "brg/physics/sky_obj/sky_obj.h"
 #include "brg/math/misc_math.hpp"
+#include "brg/physics/units/unit_obj.h"
 
 #include "lens_source_pair.h"
 

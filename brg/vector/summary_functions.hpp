@@ -124,6 +124,25 @@ const T stddev(const T v)
 
 #endif // Standard Deviation
 
+// Sample standard error
+#if(1)
+
+template< typename T >
+const T stderr(const std::vector<T> &v)
+{
+	if(v.size()<=2) return std::numeric_limits<T>::infinity();
+
+	return std(v)/std::sqrt(v.size()-1);
+}
+
+template< typename T >
+const T stderr(const T &v)
+{
+	return 0;
+}
+
+#endif
+
 // all_true
 #if (1)
 inline const bool all_true(const std::vector<bool> v)
