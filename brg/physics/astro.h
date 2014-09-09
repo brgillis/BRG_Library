@@ -250,8 +250,8 @@ public:
 
 #endif
 
-	// Clone function - Not needed in current implementation
-	// virtual redshift_obj *redshift_obj_clone()=0;
+	// Clone function
+	virtual redshift_obj *redshift_obj_clone() const =0;
 };
 
 #endif // end Class Definitions

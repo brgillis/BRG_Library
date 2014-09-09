@@ -81,15 +81,15 @@ public:
 	virtual void clear();
 
 	// Clone functions
-	virtual redshift_obj *redshift_obj_clone()
+	virtual redshift_obj *redshift_obj_clone() const
 	{
 		return new galaxy( *this );
 	}
-	virtual sky_obj *sky_obj_clone()
+	virtual sky_obj *sky_obj_clone() const
 	{
 		return new galaxy( *this );
 	}
-	virtual galaxy *galaxy_clone()
+	virtual galaxy *galaxy_clone() const
 	{
 		return new galaxy( *this );
 	}

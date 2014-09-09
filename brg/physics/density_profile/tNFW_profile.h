@@ -169,6 +169,10 @@ public:
 
 	virtual void truncate_to_fraction( const double fraction,
 			const bool silent = false );
+	virtual redshift_obj *redshift_obj_clone() const
+	{
+		return new tNFW_profile( *this );
+	}
 	virtual density_profile *density_profile_clone() const
 	{
 		return new tNFW_profile( *this );

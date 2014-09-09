@@ -133,8 +133,8 @@ public:
 #endif // end get functions
 
 	// Clone function (to enable copies to be made of pointed-to objects)
-	virtual redshift_obj *redshift_obj_clone()=0;
-	virtual sky_obj *sky_obj_clone()=0;
+	virtual redshift_obj *redshift_obj_clone() const =0;
+	virtual sky_obj *sky_obj_clone() const =0;
 
 #endif
 
@@ -143,6 +143,8 @@ public:
 
 BRG_DISTANCE dfa( const sky_obj *obj1, const sky_obj *obj2,
 		const double z = -1 );
+
+BRG_ANGLE skydist2d( const sky_obj *obj1, const sky_obj *obj2 );
 
 } // end namespace brgastro
 

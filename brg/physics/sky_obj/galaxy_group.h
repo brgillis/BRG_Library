@@ -90,15 +90,15 @@ public:
 			false );
 
 	// Clone functions
-	virtual redshift_obj *redshift_obj_clone()
+	virtual redshift_obj *redshift_obj_clone() const
 	{
 		return new galaxy_group( *this );
 	}
-	virtual sky_obj *sky_obj_clone()
+	virtual sky_obj *sky_obj_clone() const
 	{
 		return new galaxy_group( *this );
 	}
-	virtual galaxy_group *galaxy_group_clone()
+	virtual galaxy_group *galaxy_group_clone() const
 	{
 		return new galaxy_group( *this );
 	}

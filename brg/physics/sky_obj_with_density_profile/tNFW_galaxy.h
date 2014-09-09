@@ -43,6 +43,10 @@ public:
 		galaxy();
 		tNFW_profile();
 	}
+	virtual redshift_obj *redshift_obj_clone() const
+	{
+		return new tNFW_galaxy( *this );
+	}
 	virtual density_profile *density_profile_clone() const
 	{
 		return new tNFW_galaxy( *this );

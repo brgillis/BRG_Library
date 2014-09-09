@@ -129,3 +129,8 @@ BRG_DISTANCE brgastro::dfa( const brgastro::sky_obj *obj1,
 			skydist2d( obj1->ra(), obj1->dec(), obj2->ra(), obj2->dec() ),
 			z_to_use );
 }
+
+BRG_ANGLE brgastro::skydist2d( const sky_obj *obj1, const sky_obj *obj2 )
+{
+	return skydist2d(obj1->ra(),obj1->dec(),obj2->ra(),obj2->dec());
+}

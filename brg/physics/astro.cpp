@@ -48,7 +48,6 @@ BRG_UNITS brgastro::redshift_obj::H() const
 		}
 		else
 		{
-			// Friedmann equation, assuming omega = -1
 			_H_cache_ = brgastro::H(_z_);
 		}
 		_H_cached_ = true;
