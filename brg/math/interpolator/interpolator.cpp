@@ -20,6 +20,7 @@
 
 \**********************************************************************/
 
+#include <algorithm>
 #include <cassert>
 
 #include "brg/global.h"

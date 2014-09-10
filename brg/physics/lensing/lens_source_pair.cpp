@@ -208,22 +208,22 @@ double lens_source_pair::z_source() const
 	_conditional_store_data();
 	return _z_source_;
 }
-BRG_DISTANCE lens_source_pair::R_proj()
+BRG_DISTANCE lens_source_pair::R_proj() const
 {
 	_conditional_store_data();
 	return _R_proj_;
 }
-BRG_ANGLE lens_source_pair::theta()
+BRG_ANGLE lens_source_pair::theta() const
 {
 	_conditional_store_data();
 	return _theta_;
 }
-double lens_source_pair::gamma_t()
+double lens_source_pair::gamma_t() const
 {
 	_conditional_store_data();
 	return _gamma_t_;
 }
-double lens_source_pair::gamma_x()
+double lens_source_pair::gamma_x() const
 {
 	_conditional_store_data();
 	return _gamma_x_;
@@ -234,7 +234,7 @@ double lens_source_pair::gamma_x()
 // Calculated values
 #if(1)
 
-BRG_UNITS lens_source_pair::sigma_crit()
+BRG_UNITS lens_source_pair::sigma_crit() const
 {
 	_conditional_store_data();
 	return square( c ) / ( 4. * pi * Gc )
@@ -242,12 +242,12 @@ BRG_UNITS lens_source_pair::sigma_crit()
 			/ ( ad_distance( 0, _z_lens_ ) * ad_distance( _z_lens_, _z_source_ ) );
 }
 
-BRG_UNITS lens_source_pair::delta_Sigma_t()
+BRG_UNITS lens_source_pair::delta_Sigma_t() const
 {
 	return sigma_crit()*gamma_t();
 }
 
-BRG_UNITS lens_source_pair::delta_Sigma_x()
+BRG_UNITS lens_source_pair::delta_Sigma_x() const
 {
 	return sigma_crit()*gamma_x();
 }

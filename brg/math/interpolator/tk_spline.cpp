@@ -25,6 +25,10 @@
  *
  */
 
+#include <algorithm>
+#include <cassert>
+#include <cstdio>
+
 #include "tk_spline.h"
 
 // band_matrix implementation

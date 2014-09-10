@@ -30,10 +30,7 @@
 #ifndef _tk_spline_h
 #define _tk_spline_h
 
-#include <cstdio>
-#include <cassert>
 #include <vector>
-#include <algorithm>
 
 namespace tk {
 

@@ -49,14 +49,46 @@ std::vector<T> make_limit_vector(T min, T max, T step)
 		if( isinf(min) || isinf(max) )
 			throw std::logic_error("Cannot generate limit vector with finite step and infinite limits.");
 
-		T cur_val = min+step;
-		while(cur_val<max)
+		size_t num_bins = (size_t)std::ceil((max-min)/step);
+
+		for(size_t limit_num=1; limit_num<num_bins; ++limit_num)
 		{
-			result.push_back(cur_val);
-			cur_val += step;
+			// Recalculate at each step to minimize round-off error
+			result.push_back( min + step*limit_num );
 		}
 	}
 	result.push_back(max);
+
+	return result;
+}
+
+template<typename T>
+std::vector<T> make_log_limit_vector(T min, T max, size_t num_bins)
+{
+	assert(max>min);
+	assert(min>0);
+	assert(num_bins>0);
+
+	std::vector<T> result(1,min);
+
+	double log_step = std::pow((double)max/(double)min,1./(num_bins));
+
+	if( isinf(max) )
+	{
+		if(num_bins>1)
+			throw std::logic_error("Cannot generate limit vector with finite step and infinite limits.");
+		result.push_back(max);
+		return result;
+	}
+
+	for(size_t limit_num=1; limit_num<num_bins; ++limit_num)
+	{
+		// Recalculate at each step to minimize round-off error
+		result.push_back( min * std::pow(log_step,limit_num) );
+	}
+
+	result.push_back(max);
+
 
 	return result;
 }
