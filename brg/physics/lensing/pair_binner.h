@@ -30,6 +30,8 @@
 #define _BRG_PAIR_BINNER_H_INCLUDED_
 
 #include <limits>
+#include <iostream>
+#include <string>
 #include <vector>
 
 #include <boost/tuple/tuple.hpp>
@@ -283,6 +285,10 @@ public:
 #endif // Access by index
 
 #endif // Accessing summary data for bins
+
+	// Print data for all bins
+	void print_bin_data(std::ostream &out);
+	void print_bin_data(std::string file_name);
 };
 
 // Function template implementations

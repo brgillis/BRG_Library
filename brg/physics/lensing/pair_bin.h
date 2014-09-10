@@ -88,7 +88,7 @@ public:
 
 #endif
 
-	// Limits accessors
+	// Limits and means accessors
 #if(1)
 
 	CONST_BRG_DISTANCE_REF R_min() const
@@ -99,14 +99,22 @@ public:
 	{
 		return _R_max_;
 	}
+	BRG_DISTANCE R_mean() const
+	{
+		return mean(_R_values_);
+	}
 
 	CONST_BRG_MASS_REF m_min() const
 	{
-		return _R_min_;
+		return _m_min_;
 	}
 	CONST_BRG_MASS_REF m_max() const
 	{
-		return _R_max_;
+		return _m_max_;
+	}
+	BRG_MASS m_mean() const
+	{
+		return mean(_m_values_);
 	}
 
 	double z_min() const
@@ -117,14 +125,22 @@ public:
 	{
 		return _z_max_;
 	}
+	double z_mean() const
+	{
+		return mean(_z_values_);
+	}
 
 	double mag_min() const
 	{
-		return _z_min_;
+		return _mag_min_;
 	}
 	double mag_max() const
 	{
-		return _z_max_;
+		return _mag_max_;
+	}
+	double mag_mean() const
+	{
+		return mean(_mag_lens_values_);
 	}
 
 #endif
