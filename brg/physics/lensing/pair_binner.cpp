@@ -535,6 +535,113 @@ void pair_binner::clear_pairs()
 	_pairs_.clear();
 }
 
-#endif
+#endif // Adding and clearing data
+
+// Accessing summary data for bins
+#if(1)
+
+// Access by index (will throw if out of bounds)
+#if(1)
+BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+{
+	_sort();
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
+}
+BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+{
+	_sort();
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
+}
+
+BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+{
+	_sort();
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
+}
+BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+{
+	_sort();
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
+}
+
+BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+{
+	_sort();
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
+}
+BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+{
+	_sort();
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
+}
+#endif // Access by index
+
+// Access by position
+#if(1)
+BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+		double z, double mag)
+{
+	_sort();
+	size_t R_i = get_bin_index(R,_R_bin_limits_);
+	size_t m_i = get_bin_index(m,_m_bin_limits_);
+	size_t z_i = get_bin_index(z,_z_bin_limits_);
+	size_t mag_i = get_bin_index(mag,_mag_bin_limits_);
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
+}
+BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+		double z, double mag)
+{
+	_sort();
+	size_t R_i = get_bin_index(R,_R_bin_limits_);
+	size_t m_i = get_bin_index(m,_m_bin_limits_);
+	size_t z_i = get_bin_index(z,_z_bin_limits_);
+	size_t mag_i = get_bin_index(mag,_mag_bin_limits_);
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
+}
+
+BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+		double z, double mag)
+{
+	_sort();
+	size_t R_i = get_bin_index(R,_R_bin_limits_);
+	size_t m_i = get_bin_index(m,_m_bin_limits_);
+	size_t z_i = get_bin_index(z,_z_bin_limits_);
+	size_t mag_i = get_bin_index(mag,_mag_bin_limits_);
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
+}
+BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+		double z, double mag)
+{
+	_sort();
+	size_t R_i = get_bin_index(R,_R_bin_limits_);
+	size_t m_i = get_bin_index(m,_m_bin_limits_);
+	size_t z_i = get_bin_index(z,_z_bin_limits_);
+	size_t mag_i = get_bin_index(mag,_mag_bin_limits_);
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
+}
+
+BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+		double z, double mag)
+{
+	_sort();
+	size_t R_i = get_bin_index(R,_R_bin_limits_);
+	size_t m_i = get_bin_index(m,_m_bin_limits_);
+	size_t z_i = get_bin_index(z,_z_bin_limits_);
+	size_t mag_i = get_bin_index(mag,_mag_bin_limits_);
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
+}
+BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+		double z, double mag)
+{
+	_sort();
+	size_t R_i = get_bin_index(R,_R_bin_limits_);
+	size_t m_i = get_bin_index(m,_m_bin_limits_);
+	size_t z_i = get_bin_index(z,_z_bin_limits_);
+	size_t mag_i = get_bin_index(mag,_mag_bin_limits_);
+	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_stderr();
+}
+#endif // Access by index
+
+#endif // Accessing summary data for bins
 
 } // end namespace brgastro

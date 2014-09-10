@@ -239,7 +239,7 @@ public:
 				double mag_max=std::numeric_limits<double>::infinity(),
 				size_t mag_num_bins=1);
 
-#endif
+#endif // Set/change limits
 
 	// Adding and clearing data
 #if(1)
@@ -247,7 +247,42 @@ public:
 	void add_pair( const lens_source_pair & new_pair);
 	void clear_pairs();
 
-#endif
+#endif // Adding and clearing data
+
+	// Accessing summary data for bins
+#if(1)
+
+	// Access by index (will throw if out of bounds)
+#if(1)
+	BRG_UNITS delta_Sigma_t_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	BRG_UNITS delta_Sigma_x_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+
+	BRG_UNITS delta_Sigma_t_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	BRG_UNITS delta_Sigma_x_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+
+	BRG_UNITS delta_Sigma_t_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	BRG_UNITS delta_Sigma_x_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+#endif // Access by index
+
+	// Access by position
+#if(1)
+	BRG_UNITS delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+			double z, double mag);
+	BRG_UNITS delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+			double z, double mag);
+
+	BRG_UNITS delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+			double z, double mag);
+	BRG_UNITS delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+			double z, double mag);
+
+	BRG_UNITS delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+			double z, double mag);
+	BRG_UNITS delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+			double z, double mag);
+#endif // Access by index
+
+#endif // Accessing summary data for bins
 };
 
 // Function template implementations

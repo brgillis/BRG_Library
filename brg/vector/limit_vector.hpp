@@ -93,6 +93,26 @@ std::vector<T> make_log_limit_vector(T min, T max, size_t num_bins)
 	return result;
 }
 
+template<typename T>
+size_t checked_get_bin_index(T val, std::vector<T> vec)
+{
+	if(!is_monotonically_increasing(vec))
+		throw std::logic_error("Invalid limit vector passed to checked_get_bin_index.");
+	return get_bin_index(val,vec);
+}
+
+template<typename T>
+size_t get_bin_index(T val, std::vector<T> vec)
+{
+	if((val<vec.front())||(val>vec.back()))
+			throw std::runtime_error("Value outside limits of vector in get_bin_index.");
+	for(size_t i=1; i<vec.size(); ++i)
+	{
+		if(vec[i]>val) return i-1;
+	}
+	throw std::logic_error("Invalid limit vector passed to get_bin_index.");
+}
+
 } // namespace brgastro
 
 
