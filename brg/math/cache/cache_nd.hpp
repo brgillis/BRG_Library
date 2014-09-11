@@ -37,7 +37,7 @@
 #include "brg/global.h"
 
 #include "brg/file_access/ascii_table.h"
-#include "brg/file_access/bin_table.h"
+#include "brg/file_access/open_file.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/vector.hpp"
 #include "brg/vector/elementwise_functions.hpp"
@@ -135,7 +135,7 @@ private:
 			}
 			need_to_calc = false;
 
-			if ( open_bin_file( in_file, SPCP(name)->_file_name_, true ) )
+			if ( open_bin_file_input( in_file, SPCP(name)->_file_name_ ) )
 			{
 				need_to_calc = true;
 				SPCP(name)->_calc( silent );
@@ -292,7 +292,7 @@ private:
 			SPCP(name)->_calc( silent );;
 		}
 
-		open_bin_file( out_file, SPCP(name)->_file_name_, true );
+		open_bin_file_output( out_file, SPCP(name)->_file_name_ );
 
 		// Output name and version
 

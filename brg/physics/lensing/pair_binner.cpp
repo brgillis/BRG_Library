@@ -651,8 +651,8 @@ BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CO
 void pair_binner::print_bin_data(std::ostream &out)
 {
 	// Set up the data and header to be printed
-	table<double>::type data;
-	header::type header;
+	table_t<double> data;
+	header_t header;
 
 	size_t num_columns = 18;
 
@@ -715,7 +715,7 @@ void pair_binner::print_bin_data(std::ostream &out)
 void pair_binner::print_bin_data(std::string file_name)
 {
 	std::ofstream fo;
-	open_file(fo,file_name);
+	open_file_output(fo,file_name);
 
 	print_bin_data(fo);
 }

@@ -1,8 +1,8 @@
 /**********************************************************************\
- @file bin_table.h
+ @file table_utility.cpp
  ------------------
 
- Functions for dealing with binary data tables.
+ TODO <Insert file description here>
 
  **********************************************************************
 
@@ -23,22 +23,51 @@
 
 \**********************************************************************/
 
+#include <sstream>
+#include <string>
+#include <vector>
 
-// body file: bin_table.cpp
+#include "brg/global.h"
 
+#include "brg/file_access/table_typedefs.hpp"
 
-#ifndef _BRG_BIN_TABLE_H_INCLUDED_
-#define _BRG_BIN_TABLE_H_INCLUDED_
+#include "table_utility.h"
 
 namespace brgastro {
 
-void open_bin_file( std::ofstream & stream, const std::string & name,
-		const bool silent = false );
-void open_bin_file( std::ifstream & stream, const std::string & name,
-		const bool silent = false );
-void open_bin_file( std::fstream & stream, const std::string & name,
-		const bool silent = false );
+std::vector< std::string > split_on_whitespace( const std::string & sentence )
+{
+	std::vector< std::string > result;
+	std::istringstream sentence_data_stream(sentence);
 
-} // namespace brgastro
+	std::string word;
+	while (sentence_data_stream >> word)
+	{
+		result.push_back(word);
+	}
 
-#endif // _BRG_BIN_TABLE_H_INCLUDED_
+	return result;
+}
+header_t convert_to_header( const std::string & line )
+{
+	header_t result;
+	std::istringstream line_data_stream(line);
+
+	std::string word;
+
+	// Get rid of first word if it's the comment indicator
+	if ( line_data_stream.peek() == (int)( *"#" ) )
+	{
+		line_data_stream >> word;
+	}
+
+	while (line_data_stream >> word)
+	{
+
+		result.push_back(word);
+	}
+
+	return result;
+}
+
+}

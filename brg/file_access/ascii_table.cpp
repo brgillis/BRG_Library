@@ -31,9 +31,12 @@
 #include <string>
 #include <vector>
 
+#include <boost/spirit/home/support/detail/hold_any.hpp>
+
 #include "brg/global.h"
 
 #include "brg/file_access/table_typedefs.hpp"
+#include "brg/file_access/trim_comments.hpp"
 #include "brg/vector/manipulations.hpp"
 
 #include "ascii_table.h"
@@ -42,13 +45,13 @@
 namespace brgastro {
 
 void print_table( std::ostream & out_stream,
-		const std::vector< std::vector< std::string > > &data,
+		const std::vector< std::vector< boost::spirit::hold_any > > &data,
 		const std::vector< std::string > & header,
 		const bool silent )
 {
 	size_t num_columns = data.size();
 	size_t num_rows = data.at(0).size();
-	std::vector< int > width(num_columns,0);
+	std::vector< size_t > width(num_columns,0);
 
 	const bool skip_header = (header.size()==0);
 
@@ -60,7 +63,7 @@ void print_table( std::ostream & out_stream,
 		{
 			for ( size_t c = 0; c < num_columns; c++ )
 			{
-				if ( (int)header[c].length() > width[c] )
+				if ( header[c].length() > width[c] )
 				{
 					width[c] = header[c].length();
 				}
@@ -72,9 +75,11 @@ void print_table( std::ostream & out_stream,
 		{
 			for ( size_t c = 0; c < num_columns; c++ )
 			{
-				if ( (int)data[c].at(i).length() > width[c] )
+				std::stringstream ss("");
+				ss << data[c].at(i);
+				if ( ss.str().length() > width[c] )
 				{
-					width[c] = data[c][i].length();
+					width[c] = ss.str().length();
 				}
 			} // for( int c = 0; c < num_columns; c++ )
 		} // for( int i = 0; i < num_rows; i++ ) (testing width)
@@ -111,10 +116,10 @@ void print_table( std::ostream & out_stream,
 
 // Load table, either loading in the entire table, or only loading in certain columns into pointed-to
 // variables, found by matching header entries to the strings passed
-std::vector<std::vector<std::string> > load_table( std::istream & fi,
+table_t<boost::spirit::hold_any> load_table( std::istream & fi,
 		const bool silent)
 {
-	table<std::string>::type table_data;
+	table_t<boost::spirit::hold_any> table_data;
 
 	// Trim the header
 	trim_comments_all_at_top(fi);
@@ -126,15 +131,17 @@ std::vector<std::vector<std::string> > load_table( std::istream & fi,
 	std::istringstream line_data_stream;
 	while ( getline(fi, line_data) )
 	{
-		std::vector<std::string> temp_vector(0);
+		std::vector<boost::spirit::hold_any> temp_vector(0);
 
 		line_data_stream.clear();
 		line_data_stream.str(line_data);
 
 	    // Split the line on whitespace
-        std::string value;
-		while (line_data_stream >> value)
+		boost::spirit::hold_any value;
+		std::string str_value;
+		while (line_data_stream >> str_value)
 	    {
+			value = str_value;
 	        temp_vector.push_back(value);
 	    }
 
@@ -144,11 +151,11 @@ std::vector<std::vector<std::string> > load_table( std::istream & fi,
 	return transpose(table_data);
 }
 
-brgastro::header::type load_header( std::istream & table_stream,
+header_t load_header( std::istream & table_stream,
 		const bool silent)
 {
 	std::string temp_line;
-	std::vector<header::type> possible_headers;
+	std::vector<header_t> possible_headers;
 
 	// Get all comment lines at the top of the file
 	while ( table_stream )
@@ -157,7 +164,7 @@ brgastro::header::type load_header( std::istream & table_stream,
 		{
 			getline( table_stream, temp_line );
 
-			header::type temp_header = convert_to_header(temp_line);
+			header_t temp_header = convert_to_header(temp_line);
 
 			if(temp_header.size() > 0)
 				possible_headers.push_back(temp_header);
@@ -169,7 +176,7 @@ brgastro::header::type load_header( std::istream & table_stream,
 	}
 
 	if(possible_headers.size()==1) return possible_headers[0];
-	if(possible_headers.size()==0) return header::type();
+	if(possible_headers.size()==0) return header_t();
 
 	// If we get here, more than one line is a possible header candidate. Our next step is to
 	// go to the data and count the columns in the first line. If only one possible header has
@@ -190,7 +197,7 @@ brgastro::header::type load_header( std::istream & table_stream,
 	if(n_cols==0) // If we can't find any data
 	{
 		std::cerr << "ERROR: Header line ambiguous; returning null header.\n";
-		return header::type();
+		return header_t();
 	}
 
 	// Search through the possible headers, and see if we find exactly one with the right size
@@ -208,7 +215,7 @@ brgastro::header::type load_header( std::istream & table_stream,
 	if(num_right_size != 1) // If multiple or zero lines are the right size
 	{
 		std::cerr << "ERROR: Header line ambiguous; returning null header.\n";
-		return header::type();
+		return header_t();
 	}
 
 	return possible_headers[i_best];

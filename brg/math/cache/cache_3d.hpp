@@ -37,7 +37,7 @@
 #include "brg/global.h"
 
 #include "brg/file_access/ascii_table.h"
-#include "brg/file_access/bin_table.h"
+#include "brg/file_access/open_file.h"
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
 #include "brg/physics/units/unit_obj.h"
@@ -147,7 +147,7 @@ private:
 
 			try
 			{
-				open_bin_file( in_file, SPCP(name)->_file_name_, true );
+				open_bin_file_input( in_file, SPCP(name)->_file_name_ );
 			}
 			catch(const std::exception &e)
 			{
@@ -311,7 +311,7 @@ private:
 		}
 
 
-		open_bin_file( out_file, SPCP(name)->_file_name_, true );
+		open_bin_file_output( out_file, SPCP(name)->_file_name_ );
 
 		// Output name and version
 

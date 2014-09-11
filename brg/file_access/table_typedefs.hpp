@@ -38,19 +38,13 @@ namespace brgastro
 // Typedefs
 #if(1)
 
-struct header {
-    typedef std::vector< std::string > type;
-};
+typedef std::vector< std::string > header_t;
 
 template <typename T>
-struct table {
-    typedef std::vector< std::vector< T > > type;
-};
+using table_t = std::vector< std::vector< T > >;
 
 template <typename T>
-struct table_map {
-    typedef std::map< std::string, std::vector< T > > type;
-};
+using table_map_t = std::map< std::string, std::vector< T > >;
 
 #endif
 

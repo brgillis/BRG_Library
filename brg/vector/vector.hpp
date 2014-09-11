@@ -114,7 +114,7 @@ public:
 
 	using vec::get_allocator;
 
-#if(_BRG_USE_CPP_11_STD_)
+#ifdef _BRG_USE_CPP_11_STD_
 	using vec::cbegin;
 	using vec::cend;
 	using vec::crbegin;
@@ -254,14 +254,14 @@ public:
 
 #ifdef _BRG_USE_CPP_11_STD_
 	template <class... Args>
-	iterator emplace (const_iterator position, Args&&... args)
+	typename vec::iterator emplace (typename vec::const_iterator position, Args&&... args)
 	{
 		if(_num_dim_ != 1)
 			throw std::out_of_range("Cannot emplace in vector of num_dim!=1.");
 		_shape_[0] += 1;
 		try
 		{
-			vec::emplace(position,args);
+			vec::emplace(position,args...);
 		}
 		catch(const std::exception &e)
 		{
@@ -270,14 +270,14 @@ public:
 		}
 	}
 	template <class... Args>
-	iterator emplace_back (Args&&... args)
+	typename vec::iterator emplace_back (Args&&... args)
 	{
 		if(_num_dim_ != 1)
 			throw std::out_of_range("Cannot emplace_back in vector of num_dim!=1.");
 		_shape_[0] += 1;
 		try
 		{
-			vec::emplace_back(args);
+			vec::emplace_back(args...);
 		}
 		catch(const std::exception &e)
 		{
