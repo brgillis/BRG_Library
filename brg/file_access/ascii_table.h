@@ -98,6 +98,57 @@ void print_table( const std::string & file_name,
 	print_table<T>(of,data,header,silent);
 }
 
+// Print a table from a map
+template<typename T>
+void print_table_map( std::ostream & out,
+		const typename table_map<T>::type & table_map,
+		const bool silent = false)
+{
+	header::type header;
+	typename table<T>::type data;
+
+	for(auto it=table_map.begin(); it!=table_map.end(); ++it)
+	{
+		header.push_back(it->first);
+		data.push_back(it->second);
+	}
+	print_table<T>(out,data,header,silent);
+}
+inline void print_table_map( std::ostream & out,
+		const table_map<std::string>::type & table_map,
+		const bool silent = false)
+{
+	header::type header;
+	table<std::string>::type data;
+
+	for(auto it=table_map.begin(); it!=table_map.end(); ++it)
+	{
+		header.push_back(it->first);
+		data.push_back(it->second);
+	}
+	print_table(out,data,header,silent);
+}
+// And to allow us to print to a file name instead of a stream
+template<typename T>
+inline void print_table_map( const std::string & file_name,
+		const typename table_map<T>::type & table_map,
+		const bool silent = false )
+{
+	std::ofstream fo;
+	open_file(fo,file_name,silent);
+
+	print_table_map<T>(fo,table_map,silent);
+}
+void print_table_map( const std::string & file_name,
+		const table_map<std::string>::type & table_map,
+		const bool silent = false )
+{
+	std::ofstream of;
+	open_file(of,file_name,silent);
+
+	print_table_map(of,table_map,silent);
+}
+
 // Load table, either loading in the entire table, or only loading in certain columns into pointed-to
 // variables, found by matching header entries to the strings passed
 table<std::string>::type load_table( std::istream & table_file_name,
@@ -157,69 +208,6 @@ inline header::type load_header( const std::string & file_name,
 	open_file(fi,file_name,silent);
 
 	return load_header(fi,silent);
-}
-
-// Merge a header and data table into a map
-template<typename T>
-typename table_map<T>::type make_table_map(
-		const typename table<T>::type & data,
-		const header::type & header,
-		const bool silent=false)
-{
-	typename table_map<T>::type result;
-
-	size_t h_size = header.size();
-	size_t d_size = data.size();
-
-	const header::type *header_to_use = &header;
-	header::type new_header;
-	const typename table<T>::type *data_to_use = &data;
-	typename table<T>::type new_data;
-
-	// First, check if the header and data aren't the same size
-	if(h_size<d_size)
-	{
-		// We'll pad the header with default values
-		new_header = header;
-		new_header.resize(d_size);
-		for(size_t i=h_size; i<d_size; ++i)
-		{
-			std::stringstream ss("col_");
-			ss << i+1;
-			new_header[i] = ss.str();
-		}
-		header_to_use = &new_header;
-		h_size = d_size;
-	}
-	else if(d_size<h_size)
-	{
-		// We'll pad the data with default values
-		new_data = data;
-		new_data.resize(h_size);
-		if(d_size>0)
-		{
-			// If we have some data, match the size of it in new columns
-			for(size_t i=d_size; i<h_size; ++i)
-			{
-				make_array1d(new_data[i],new_data[0].size());
-			}
-		}
-		data_to_use = &new_data;
-		d_size = h_size;
-	}
-
-	for(size_t i=0; i<h_size; ++i)
-	{
-		result[(*header_to_use)[i]] = (*data_to_use)[i];
-	}
-	return result;
-}
-inline table_map<std::string>::type make_table_map(
-		const table<std::string>::type & data,
-		const header::type & header,
-		const bool silent=false)
-{
-	return make_table_map<std::string>(data,header,silent);
 }
 
 // Directly load a map of the data
