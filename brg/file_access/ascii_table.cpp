@@ -1,5 +1,8 @@
 /**********************************************************************\
-  @file file_functions.cpp
+ @file ascii_table.cpp
+ ------------------
+
+ Source file for functions defined in ascii_table.h.
 
  **********************************************************************
 
@@ -20,32 +23,32 @@
 
 \**********************************************************************/
 
-#include <algorithm>
-#include <iostream>
 #include <iomanip>
-#include <fstream>
+#include <iostream>
+#include <map>
+#include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "brg/global.h"
 
-#include "brg/utility.hpp"
+#include "brg/file_access/table_typedefs.hpp"
 #include "brg/vector/manipulations.hpp"
 
-#include "file_functions.h"
+#include "ascii_table.h"
 
-using namespace std;
 
-/** Global function implementations **/
-#if (1)
-void brgastro::print_table( std::ostream & out_stream,
+namespace brgastro {
+
+void print_table( std::ostream & out_stream,
 		const std::vector< std::vector< std::string > > &data,
 		const std::vector< std::string > & header,
 		const bool silent )
 {
 	size_t num_columns = data.size();
 	size_t num_rows = data.at(0).size();
-	vector< int > width(num_columns,0);
+	std::vector< int > width(num_columns,0);
 
 	const bool skip_header = (header.size()==0);
 
@@ -83,7 +86,7 @@ void brgastro::print_table( std::ostream & out_stream,
 		// Output the header
 		if ( !skip_header )
 			for ( size_t c = 0; c < num_columns; c++ )
-				out_stream << setfill( ' ' ) << setw( width[c] ) << header[c];
+				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << header[c];
 
 		out_stream << std::endl;
 
@@ -92,7 +95,7 @@ void brgastro::print_table( std::ostream & out_stream,
 		{
 			for ( size_t c = 0; c < num_columns; c++ )
 			{
-				out_stream << setfill( ' ' ) << setw( width[c] ) << data[c][i];
+				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << data[c][i];
 			}
 			out_stream << std::endl;
 		}
@@ -108,10 +111,10 @@ void brgastro::print_table( std::ostream & out_stream,
 
 // Load table, either loading in the entire table, or only loading in certain columns into pointed-to
 // variables, found by matching header entries to the strings passed
-std::vector<std::vector<std::string> > brgastro::load_table( std::istream & fi,
+std::vector<std::vector<std::string> > load_table( std::istream & fi,
 		const bool silent)
 {
-	std::vector<std::vector<std::string> > table_data;
+	table<std::string>::type table_data;
 
 	// Trim the header
 	trim_comments_all_at_top(fi);
@@ -141,7 +144,7 @@ std::vector<std::vector<std::string> > brgastro::load_table( std::istream & fi,
 	return transpose(table_data);
 }
 
-brgastro::header::type brgastro::load_header( std::istream & table_stream,
+brgastro::header::type load_header( std::istream & table_stream,
 		const bool silent)
 {
 	std::string temp_line;
@@ -211,162 +214,6 @@ brgastro::header::type brgastro::load_header( std::istream & table_stream,
 	return possible_headers[i_best];
 }
 
-void brgastro::open_file( std::ofstream & stream, const std::string & name,
-		const bool silent )
-{
-	stream.close();
-	stream.clear();
-	stream.open( name.c_str() );
-	if ( !stream )
-	{
-		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
-	}
-}
-void brgastro::open_file( std::ifstream & stream, const std::string & name,
-		const bool silent )
-{
-	stream.close();
-	stream.clear();
-	stream.open( name.c_str() );
-	if ( !stream )
-	{
-		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
-	}
-}
-void brgastro::open_file( std::fstream & stream, const std::string & name,
-		const bool silent )
-{
-	stream.close();
-	stream.clear();
-	stream.open( name.c_str() );
-	if ( !stream )
-	{
-		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
-	}
-}
-void brgastro::open_bin_file( std::ofstream & stream, const std::string & name,
-		const bool silent )
-{
-	stream.close();
-	stream.clear();
-	stream.open( name.c_str(), ios::out | ios::binary );
-	if ( !stream )
-	{
-		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
-	}
-}
-void brgastro::open_bin_file( std::ifstream & stream, const std::string & name,
-		const bool silent )
-{
-	stream.close();
-	stream.clear();
-	stream.open( name.c_str(), ios::in | ios::binary );
-	if ( !stream )
-	{
-		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
-	}
-}
-void brgastro::open_bin_file( std::fstream & stream, const std::string & name,
-		const bool silent )
-{
-	stream.close();
-	stream.clear();
-	stream.open( name.c_str(), ios::out | ios::in | ios::binary  );
-	if ( !stream )
-	{
-		throw std::runtime_error("ERROR: Could not open file " + name + "!\n");
-	}
-}
 
-void brgastro::trim_comments_one_line( std::istream & stream,
-		const bool silent )
-{
-	std::string file_data;
-	if ( stream )
-	{
-		if ( stream.peek() == (int)( *"#" ) )
-			getline( stream, file_data );
-	}
-}
+} // namespace brgastro
 
-void brgastro::trim_comments_one_line( std::fstream & stream,
-		const bool silent )
-{
-	std::string file_data;
-	if ( stream )
-	{
-		if ( stream.peek() == (int)( *"#" ) )
-			getline( stream, file_data );
-	}
-}
-
-void brgastro::trim_comments_all_at_top( std::istream & stream,
-		const bool silent )
-{
-	std::string file_data;
-	while ( stream )
-	{
-		if ( stream.peek() == (int)( *"#" ) )
-		{
-			getline( stream, file_data );
-		}
-		else
-		{
-			return;
-		}
-	}
-}
-
-void brgastro::trim_comments_all_at_top( std::fstream & stream,
-		const bool silent )
-{
-	std::string file_data;
-	while ( stream )
-	{
-		if ( stream.peek() == (int)( *"#" ) )
-		{
-			getline( stream, file_data );
-		}
-		else
-		{
-			return;
-		}
-	}
-}
-
-std::vector< std::string > brgastro::split_on_whitespace( const std::string & sentence )
-{
-	std::vector< std::string > result;
-	std::istringstream sentence_data_stream(sentence);
-
-	std::string word;
-	while (sentence_data_stream >> word)
-	{
-		result.push_back(word);
-	}
-
-	return result;
-}
-brgastro::header::type brgastro::convert_to_header( const std::string & line )
-{
-	header::type result;
-	std::istringstream line_data_stream(line);
-
-	std::string word;
-
-	// Get rid of first word if it's the comment indicator
-	if ( line_data_stream.peek() == (int)( *"#" ) )
-	{
-		line_data_stream >> word;
-	}
-
-	while (line_data_stream >> word)
-	{
-
-		result.push_back(word);
-	}
-
-	return result;
-}
-
-#endif // end global function implementations

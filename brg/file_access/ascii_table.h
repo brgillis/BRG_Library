@@ -1,5 +1,9 @@
 /**********************************************************************\
-  @file file_functions.h
+ @file ascii_table.h
+ ------------------
+
+ This header file contains definitions of various functions used to
+ read from and write to ASCII data tables.
 
  **********************************************************************
 
@@ -20,61 +24,26 @@
 
 \**********************************************************************/
 
-// body file: brg/file_functions.cpp
 
-#ifndef _BRG_FILE_FUNCTIONS_H_INCLUDED_
-#define _BRG_FILE_FUNCTIONS_H_INCLUDED_
+// body file: ascii_table.cpp
 
-#include <cstdlib>
-#include <cmath>
-#include <fstream>
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <string>
+#include <vector>
 
-#include "global.h"
+#include "brg/global.h"
 
+#include "brg/file_access/file_functions.h"
+#include "brg/file_access/table_typedefs.hpp"
 #include "brg/utility.hpp"
 
-namespace brgastro
-{
 
-// Typedefs
-#if(1)
+#ifndef _BRG_ASCII_TABLE_H_INCLUDED_
+#define _BRG_ASCII_TABLE_H_INCLUDED_
 
-struct header {
-    typedef std::vector< std::string > type;
-};
-
-template <typename T>
-struct table {
-    typedef std::vector< std::vector< T > > type;
-};
-
-template <typename T>
-struct table_map {
-    typedef std::map< std::string, std::vector< T > > type;
-};
-
-#endif
-
-/** Global function declarations **/
-#if (1)
-
-// Functions to open a file and check that it's been opened successfully. An exception will be thrown
-// if the file isn't opened successfully.
-void open_file( std::ofstream & stream, const std::string & name,
-		const bool silent = false );
-void open_file( std::ifstream & stream, const std::string & name,
-		const bool silent = false );
-void open_file( std::fstream & stream, const std::string & name,
-		const bool silent = false );
-void open_bin_file( std::ofstream & stream, const std::string & name,
-		const bool silent = false );
-void open_bin_file( std::ifstream & stream, const std::string & name,
-		const bool silent = false );
-void open_bin_file( std::fstream & stream, const std::string & name,
-		const bool silent = false );
+namespace brgastro {
 
 // Prints a formatted table in the passed stream. header is a vector of strings representing the labels for each column,
 // and data is a 2-d vector of the data to be printed, in the format data[c][r], where c is the column index and r is the row index.
@@ -358,28 +327,6 @@ void load_table_columns( const std::string & file_name,
 	load_table_columns<T>(fi,column_map,case_sensitive,silent);
 }
 
-// Functions to get rid of comments lines (those starting with #) from open fstreams and ifstreams. The "one_line" versions will
-// trim the next line if it's commented out, and the "all_at_top" versions will trim all commented lines from the current
-// position until they find a line which isn't a comment.
-// The "one_line" functions will return 1 if the file is already at the end, and 0 otherwise.
-// The "all_at_top" functions will return 1 if they reach the end of the file before the run out of comments, and 0 otherwise.
-void trim_comments_one_line( std::istream & stream, const bool silent =
-		false );
-void trim_comments_one_line( std::fstream & stream, const bool silent =
-		false );
-void trim_comments_all_at_top( std::istream & stream, const bool silent =
-		false );
-void trim_comments_all_at_top( std::fstream & stream, const bool silent =
-		false );
+} // namespace brgastro
 
-// Utility functions
-
-// Splits a string into a vector of "word" strings on whitespace
-std::vector< std::string > split_on_whitespace( const std::string & sentence );
-header::type convert_to_header( const std::string & line );
-
-#endif // End global function declarations
-
-}
-
-#endif // __BRG_FILE_FUNCTIONS_H_INCLUDED__
+#endif // _BRG_ASCII_TABLE_H_INCLUDED_

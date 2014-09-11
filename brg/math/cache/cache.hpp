@@ -31,7 +31,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_functions.h"
+#include "brg/file_access/ascii_table.h"
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
 #include "brg/physics/units/unit_obj.h"

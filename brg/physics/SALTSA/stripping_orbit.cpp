@@ -29,7 +29,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_functions.h"
+#include "brg/file_access/ascii_table.h"
 
 #include "brg/math/calculus/integrate.hpp"
 #include "brg/math/interpolator/interpolator.h"

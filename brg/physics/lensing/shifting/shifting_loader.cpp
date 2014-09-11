@@ -33,7 +33,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_functions.h"
+#include "brg/file_access/ascii_table.h"
 #include "brg/physics/lensing/shifting/corr_alpha.hpp"
 #include "brg/vector/manipulations.hpp"
 

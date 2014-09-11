@@ -27,7 +27,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_functions.h"
+#include "brg/file_access/ascii_table.h"
 
 #include "brg/math/interpolator/interpolator.h"
 #include "brg/math/interpolator/interpolator_derivative.h"

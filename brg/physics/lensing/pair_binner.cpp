@@ -33,7 +33,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_functions.h"
+#include "brg/file_access/ascii_table.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
