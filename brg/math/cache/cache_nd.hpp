@@ -37,7 +37,7 @@
 #include "brg/global.h"
 
 #include "brg/file_access/ascii_table.h"
-#include "brg/file_access/open_file.h"
+#include "brg/file_access/open_file.hpp"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/vector.hpp"
 #include "brg/vector/elementwise_functions.hpp"

@@ -44,113 +44,6 @@
 
 namespace brgastro {
 
-void print_table( std::ostream & out_stream,
-		const std::vector< std::vector< boost::spirit::hold_any > > &data,
-		const std::vector< std::string > & header,
-		const bool silent )
-{
-	size_t num_columns = data.size();
-	size_t num_rows = data.at(0).size();
-	std::vector< size_t > width(num_columns,0);
-
-	const bool skip_header = (header.size()==0);
-
-	try
-	{
-		// First, we loop through to get the maximum width of each column
-		// Check the header first
-		if(!skip_header)
-		{
-			for ( size_t c = 0; c < num_columns; c++ )
-			{
-				if ( header[c].length() > width[c] )
-				{
-					width[c] = header[c].length();
-				}
-			} // for( int c = 0; c < num_columns; c++ )
-		}
-
-		// Now loop through the data
-		for ( size_t i = 0; i < num_rows; i++ )
-		{
-			for ( size_t c = 0; c < num_columns; c++ )
-			{
-				std::stringstream ss("");
-				ss << data[c].at(i);
-				if ( ss.str().length() > width[c] )
-				{
-					width[c] = ss.str().length();
-				}
-			} // for( int c = 0; c < num_columns; c++ )
-		} // for( int i = 0; i < num_rows; i++ ) (testing width)
-
-		// Increase all widths by 1 to ensure spacing
-		for ( size_t c = 0; c < num_columns; c++ )
-			width[c] += 1;
-
-		// Output the header
-		if ( !skip_header )
-			for ( size_t c = 0; c < num_columns; c++ )
-				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << header[c];
-
-		out_stream << std::endl;
-
-		// Output the data
-		for ( size_t i = 0; i < num_rows; i++ )
-		{
-			for ( size_t c = 0; c < num_columns; c++ )
-			{
-				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << data[c][i];
-			}
-			out_stream << std::endl;
-		}
-
-	}
-	catch ( const std::out_of_range &e )
-	{
-		throw std::runtime_error((std::string)"ERROR: Could not print table. Check that the data is properly formatted\n"
-					+ "at least num_columns length for header and first index of data, and at\n"
-					+ "least num_rows length for all vectors contained within data.\n");
-	}
-}
-
-// Load table, either loading in the entire table, or only loading in certain columns into pointed-to
-// variables, found by matching header entries to the strings passed
-table_t<boost::spirit::hold_any> load_table( std::istream & fi,
-		const bool silent)
-{
-	table_t<boost::spirit::hold_any> table_data;
-
-	// Trim the header
-	trim_comments_all_at_top(fi);
-
-	// Clear the output vector
-	table_data.resize(0);
-
-	std::string line_data;
-	std::istringstream line_data_stream;
-	while ( getline(fi, line_data) )
-	{
-		std::vector<boost::spirit::hold_any> temp_vector(0);
-
-		line_data_stream.clear();
-		line_data_stream.str(line_data);
-
-	    // Split the line on whitespace
-		boost::spirit::hold_any value;
-		std::string str_value;
-		while (line_data_stream >> str_value)
-	    {
-			value = str_value;
-	        temp_vector.push_back(value);
-	    }
-
-	    table_data.push_back(temp_vector);
-	}
-
-	return transpose(table_data);
-}
-
 header_t load_header( std::istream & table_stream,
 		const bool silent)
 {
@@ -220,7 +113,6 @@ header_t load_header( std::istream & table_stream,
 
 	return possible_headers[i_best];
 }
-
 
 } // namespace brgastro
 

@@ -33,8 +33,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/spirit/home/support/detail/hold_any.hpp>
-
 #include "brg/global.h"
 
 #include "brg/file_access/table_typedefs.hpp"
@@ -96,13 +94,6 @@ table_map_t<T> make_table_map(
 		result[(*header_to_use)[i]] = (*data_to_use)[i];
 	}
 	return result;
-}
-inline table_map_t<boost::spirit::hold_any> make_table_map(
-		const table_t<boost::spirit::hold_any> & data,
-		const header_t & header,
-		const bool silent=false)
-{
-	return make_table_map<boost::spirit::hold_any>(data,header,silent);
 }
 
 // Splits a string into a vector of "word" strings on whitespace

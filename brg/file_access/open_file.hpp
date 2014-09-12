@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file open_file.cpp
+ @file open_file.hpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,6 +23,10 @@
 
 \**********************************************************************/
 
+
+#ifndef _BRG_OPEN_FILE_H_INCLUDED_
+#define _BRG_OPEN_FILE_H_INCLUDED_
+
 #include <fstream>
 #include <stdexcept>
 #include <string>
@@ -31,7 +35,22 @@
 
 namespace brgastro {
 
-void open_file_input( std::ifstream & stream, const std::string & name )
+// Functions to open a file and check that it's been opened successfully. An exception will be thrown
+// if the file isn't opened successfully.
+
+template<typename stream_type>
+void open_file( stream_type & stream, const std::string & name )
+{
+	stream.close();
+	stream.clear();
+	stream.open( name.c_str() );
+	if ( !stream )
+	{
+		throw std::runtime_error("Could not open file " + name + ".");
+	}
+}
+template<typename stream_type>
+void open_file_input( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -41,7 +60,8 @@ void open_file_input( std::ifstream & stream, const std::string & name )
 		throw std::runtime_error("Could not open file " + name + ".");
 	}
 }
-void open_file_output( std::ofstream & stream, const std::string & name )
+template<typename stream_type>
+void open_file_output( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -51,7 +71,8 @@ void open_file_output( std::ofstream & stream, const std::string & name )
 		throw std::runtime_error("Could not open file " + name + ".");
 	}
 }
-void open_file_io( std::fstream & stream, const std::string & name )
+template<typename stream_type>
+void open_file_io( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -61,7 +82,8 @@ void open_file_io( std::fstream & stream, const std::string & name )
 		throw std::runtime_error("Could not open file " + name + ".");
 	}
 }
-void open_file_append( std::ofstream & stream, const std::string & name )
+template<typename stream_type>
+void open_file_append( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -72,7 +94,30 @@ void open_file_append( std::ofstream & stream, const std::string & name )
 	}
 }
 
-void open_bin_file_input( std::ifstream & stream, const std::string & name )
+template<typename stream_type>
+inline void open_bin_file( stream_type & stream, const std::string & name )
+{
+	stream.close();
+	stream.clear();
+	stream.open( name.c_str(), std::ios::binary  );
+	if ( !stream )
+	{
+		throw std::runtime_error("Could not open file " + name + ".");
+	}
+}
+template<>
+void open_bin_file( std::fstream & stream, const std::string & name )
+{
+	stream.close();
+	stream.clear();
+	stream.open( name.c_str(), std::ios::out | std::ios::in | std::ios::binary  );
+	if ( !stream )
+	{
+		throw std::runtime_error("Could not open file " + name + ".");
+	}
+}
+template<typename stream_type>
+void open_bin_file_input( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -82,7 +127,8 @@ void open_bin_file_input( std::ifstream & stream, const std::string & name )
 		throw std::runtime_error("Could not open file " + name + ".");
 	}
 }
-void open_bin_file_io( std::fstream & stream, const std::string & name )
+template<typename stream_type>
+void open_bin_file_io( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -92,7 +138,8 @@ void open_bin_file_io( std::fstream & stream, const std::string & name )
 		throw std::runtime_error("Could not open file " + name + ".");
 	}
 }
-void open_bin_file_output( std::ofstream & stream, const std::string & name )
+template<typename stream_type>
+void open_bin_file_output( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -102,7 +149,8 @@ void open_bin_file_output( std::ofstream & stream, const std::string & name )
 		throw std::runtime_error("Could not open file " + name + ".");
 	}
 }
-void open_bin_file_append( std::ofstream & stream, const std::string & name )
+template<typename stream_type>
+void open_bin_file_append( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -115,3 +163,6 @@ void open_bin_file_append( std::ofstream & stream, const std::string & name )
 
 
 } // namespace brgastro
+
+
+#endif // _BRG_OPEN_FILE_H_INCLUDED_

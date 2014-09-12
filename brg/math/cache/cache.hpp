@@ -32,7 +32,7 @@
 #include "brg/global.h"
 
 #include "brg/file_access/ascii_table.h"
-#include "brg/file_access/open_file.h"
+#include "brg/file_access/open_file.hpp"
 #include "brg/file_access/trim_comments.hpp"
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
