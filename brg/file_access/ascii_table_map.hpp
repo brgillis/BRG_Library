@@ -71,29 +71,29 @@ inline void print_table_map( const std::string & file_name,
 // Directly load a map of the data
 template<typename T>
 table_map_t<T> load_table_map( std::istream & fi,
-		const bool silent=false)
+		const bool silent=false, const T default_value=T())
 {
 	header_t header = load_header(fi,silent);
-	table_t<T> data = load_table<T>(fi,silent);
+	table_t<T> data = load_table<T>(fi,silent,default_value);
 	return make_table_map<T>(data,header,silent);
 }
 
 // And to allow us to load from a file name instead of a stream
 template<typename T>
 table_map_t<T> load_table_map( const std::string & file_name,
-		const bool silent = false )
+		const bool silent = false, const T default_value=T() )
 {
 	std::ifstream fi;
 	open_file_input(fi,file_name);
 
-	return load_table_map<T>(fi,silent);
+	return load_table_map<T>(fi,silent,default_value);
 }
 template<typename T>
 void load_table_columns( std::istream & fi,
 		std::map< std::string, std::vector<T>* > & column_map,
-		const bool case_sensitive=false, const bool silent=false)
+		const bool case_sensitive=false, const bool silent=false, const T default_value=T())
 {
-	table_map_t<T> table_map = load_table_map<T>(fi);
+	table_map_t<T> table_map = load_table_map<T>(fi,silent,default_value);
 
 	for(typename std::map< std::string, std::vector<T>* >::iterator it=column_map.begin();
 			it!=column_map.end(); ++it)
@@ -116,12 +116,12 @@ void load_table_columns( std::istream & fi,
 template<typename T>
 void load_table_columns( const std::string & file_name,
 		std::map< std::string, std::vector<T>* > & column_map,
-		const bool case_sensitive=false, const bool silent=false)
+		const bool case_sensitive=false, const bool silent=false, const T default_value=T())
 {
 	std::ifstream fi;
 	open_file_input(fi,file_name);
 
-	load_table_columns<T>(fi,column_map,case_sensitive,silent);
+	load_table_columns<T>(fi,column_map,case_sensitive,silent,default_value);
 }
 
 } // namespace brgastro

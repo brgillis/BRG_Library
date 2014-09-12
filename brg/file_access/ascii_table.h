@@ -55,7 +55,7 @@ namespace brgastro {
 template<typename T>
 void print_table( std::ostream & out_stream,
 		const table_t<T> & data,
-		const header_t & header = header_t(),
+		header_t header = header_t(),
 		const bool silent = false )
 {
 	size_t num_columns = data.size();
@@ -66,12 +66,24 @@ void print_table( std::ostream & out_stream,
 
 	try
 	{
+		bool add_comment_marker = false;
+
 		// First, we loop through to get the maximum width of each column
 		// Check the header first
 		if(!skip_header)
 		{
 			for ( size_t c = 0; c < num_columns; c++ )
 			{
+				if(c==0)
+				{
+					// For the first header element, we'll check if it starts with a
+					// '#'. If it doesn't, we'll add one to it.
+					std::stringstream ss(header[c]);
+					if ( ss.peek() != (int)( *"#" ) )
+					{
+						add_comment_marker = true;
+					}
+				}
 				if ( header[c].length() > width[c] )
 				{
 					width[c] = header[c].length();
@@ -93,20 +105,39 @@ void print_table( std::ostream & out_stream,
 			} // for( int c = 0; c < num_columns; c++ )
 		} // for( int i = 0; i < num_rows; i++ ) (testing width)
 
-		// Increase all widths by 1 to ensure spacing
-		for ( size_t c = 0; c < num_columns; c++ )
-			width[c] += 1;
+		if(add_comment_marker)
+		{
+			// Increase all widths by 1 to ensure spacing
+			for ( size_t c = 0; c < num_columns; c++ )
+				width[c] += 1;
+		}
+		else
+		{
+			// Increase all widths except the first by 1 to ensure spacing
+			for ( size_t c = 1; c < num_columns; c++ )
+				width[c] += 1;
+		}
 
 		// Output the header
 		if ( !skip_header )
+		{
+			if(add_comment_marker)
+			{
+				out_stream << "# ";
+			}
 			for ( size_t c = 0; c < num_columns; c++ )
 				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << header[c];
+		}
 
 		out_stream << std::endl;
 
 		// Output the data
 		for ( size_t i = 0; i < num_rows; i++ )
 		{
+			if(add_comment_marker)
+			{
+				out_stream << "  ";
+			}
 			for ( size_t c = 0; c < num_columns; c++ )
 			{
 				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << data[c][i];
@@ -139,7 +170,7 @@ void print_table( const std::string & file_name,
 // variables, found by matching header entries to the strings passed
 template<typename T>
 table_t<T> load_table( std::istream & fi,
-		const bool silent=false)
+		const bool silent=false, const T & default_value=T())
 {
 	table_t<T> table_data;
 
@@ -159,7 +190,7 @@ table_t<T> load_table( std::istream & fi,
 		line_data_stream.str(line_data);
 
 		// Split the line on whitespace
-		T value;
+		T value(default_value);
 		while (line_data_stream >> value)
 		{
 			temp_vector.push_back(value);
@@ -168,18 +199,18 @@ table_t<T> load_table( std::istream & fi,
 		table_data.push_back(temp_vector);
 	}
 
-	return transpose(table_data);
+	return transpose(table_data,default_value);
 }
 
 // And to allow us to load from a file name instead of a stream
 template<typename T>
 inline table_t<T> load_table( const std::string & file_name,
-		const bool silent = false )
+		const bool silent = false, const T default_value=T() )
 {
 	std::ifstream fi;
 	open_file_input(fi,file_name);
 
-	return load_table<T>(fi,silent);
+	return load_table<T>(fi,silent,default_value);
 }
 
 // Load a table's header as a vector of strings

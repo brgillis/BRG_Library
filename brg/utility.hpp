@@ -120,32 +120,42 @@ inline void make_array( std::unique_ptr<array_type []> & array_pointer, const si
 }
 #endif
 template< typename array_type >
-inline void make_array1d( array_type & array_pointer,
-		const size_t num_elem )
+inline void make_array1d( std::vector< array_type > & array_pointer,
+		const size_t num_elem, const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
-	array_pointer.resize( num_elem );
-	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
-		set_zero( *it );
+	array_pointer.resize( num_elem, default_value );
+	if(!specified_default)
+	{
+		for ( typename std::vector< array_type >::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
+			set_zero( *it );
+	}
 }
 template< typename array_type >
-inline void make_array( array_type & array_pointer,
-		const int num_elem )
+inline void make_array( std::vector< array_type > & array_pointer,
+		const int num_elem, const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
-	return make_array1d( array_pointer, num_elem );
+	return make_array1d( array_pointer, num_elem, specified_default, default_value );
 }
 template< typename array_type, typename other_array_type >
-inline void make_array1d( array_type & array_pointer,
-		const other_array_type & other_array )
+inline void make_array1d( std::vector< array_type > & array_pointer,
+		const other_array_type & other_array, const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
-	array_pointer.resize( other_array.size() );
-	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
-		set_zero( *it );
+	array_pointer.resize( other_array.size(), default_value );
+	if(!specified_default)
+	{
+		for ( typename std::vector< array_type >::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
+			set_zero( *it );
+	}
 }
 template< typename array_type, typename other_array_type >
-inline void make_array( array_type & array_pointer,
-		const other_array_type & other_array )
+inline void make_array( std::vector< array_type > & array_pointer,
+		const other_array_type & other_array, const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
-	return make_array1d( array_pointer, other_array );
+	return make_array1d( array_pointer, other_array, specified_default, default_value );
 }
 
 #ifdef _BRG_USE_CPP_11_STD_
@@ -162,23 +172,28 @@ inline void make_array2d( std::unique_ptr<std::unique_ptr<array_type []> []> & a
 template< typename array_type >
 inline void make_array2d(
 		std::vector< std::vector< array_type > > & array_pointer,
-		const size_t num_elem1, const size_t num_elem2, const bool silent = false )
+		const size_t num_elem1, const size_t num_elem2, const bool specified_default = false,
+		const array_type default_value = array_type())
 {
 	array_pointer.resize( num_elem1 );
 	for ( size_t i = 0; i < num_elem1; i++ )
 	{
-		make_array1d( array_pointer[i], num_elem2 );
+		make_array1d( array_pointer[i], num_elem2, specified_default, default_value );
 	}
 }
 template< typename array_type, typename other_array_type >
-inline void make_array2d( array_type & array_pointer,
-		const other_array_type & other_array )
+inline void make_array2d( std::vector< std::vector< array_type > > & array_pointer,
+		const std::vector< std::vector< other_array_type > > & other_array,
+		const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
 	array_pointer.resize( other_array.size() );
 	typename other_array_type::const_iterator it_o = other_array.begin();
 	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
-		make_array1d(*it,*it_o);
+	{
+		make_array1d(*it,*it_o, specified_default, default_value);
 		++it_o;
+	}
 }
 
 #ifdef _BRG_USE_CPP_11_STD_
@@ -198,24 +213,28 @@ inline void make_array3d( std::unique_ptr<std::unique_ptr<std::unique_ptr<array_
 template< typename array_type >
 inline void make_array3d(
 		std::vector< std::vector< std::vector< array_type > > > & array_pointer,
-		const size_t num_elem1, const size_t num_elem2, const size_t num_elem3,
-		const bool silent = false )
+		const size_t num_elem1, const size_t num_elem2, const size_t num_elem3, const bool specified_default = false,
+		const array_type default_value = array_type())
 {
 	array_pointer.resize( num_elem1 );
 	for ( size_t i = 0; i < num_elem1; i++ )
 	{
-		make_array2d( array_pointer[i], num_elem2, num_elem3 );
+		make_array2d( array_pointer[i], num_elem2, num_elem3, specified_default, default_value );
 	}
 }
 template< typename array_type, typename other_array_type >
-inline void make_array3d( array_type & array_pointer,
-		const other_array_type & other_array )
+inline void make_array3d( std::vector< std::vector< std::vector< array_type > > >  & array_pointer,
+		const std::vector< std::vector< std::vector< other_array_type > > >  & other_array,
+		const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
 	array_pointer.resize( other_array.size() );
 	typename other_array_type::const_iterator it_o = other_array.begin();
 	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
-		make_array2d(*it,*it_o);
+	{
+		make_array2d(*it,*it_o, specified_default, default_value);
 		++it_o;
+	}
 }
 
 #ifdef _BRG_USE_CPP_11_STD_
@@ -236,23 +255,28 @@ template< typename array_type >
 inline void make_array4d(
 		std::vector< std::vector< std::vector< std::vector< array_type > > > > & array_pointer,
 		const size_t num_elem1, const size_t num_elem2, const size_t num_elem3,
-		const size_t num_elem4, const bool silent = false )
+		const size_t num_elem4, const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
 	array_pointer.resize( num_elem1 );
 	for ( size_t i = 0; i < num_elem1; i++ )
 	{
-		make_array3d( array_pointer[i], num_elem2, num_elem3, num_elem4 );
+		make_array3d( array_pointer[i], num_elem2, num_elem3, num_elem4, specified_default, default_value );
 	}
 }
 template< typename array_type, typename other_array_type >
-inline void make_array4d( array_type & array_pointer,
-		const other_array_type & other_array )
+inline void make_array4d( std::vector< std::vector< std::vector< std::vector< array_type > > > > & array_pointer,
+		const std::vector< std::vector< std::vector< std::vector< other_array_type > > > > & other_array,
+		const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
 	array_pointer.resize( other_array.size() );
 	typename other_array_type::const_iterator it_o = other_array.begin();
 	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
-		make_array3d(*it,*it_o);
+	{
+		make_array3d(*it,*it_o, specified_default, default_value);
 		++it_o;
+	}
 }
 
 #ifdef _BRG_USE_CPP_11_STD_
@@ -276,24 +300,33 @@ inline void make_array5d(
 				std::vector<
 						std::vector< std::vector< std::vector< array_type > > > > > & array_pointer,
 		const size_t num_elem1, const size_t num_elem2, const size_t num_elem3,
-		const size_t num_elem4, const size_t num_elem5, const bool silent = false )
+		const size_t num_elem4, const size_t num_elem5, const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
 	array_pointer.resize( num_elem1 );
 	for ( size_t i = 0; i < num_elem1; i++ )
 	{
 		make_array4d( array_pointer[i], num_elem2,
-				num_elem3, num_elem4, num_elem5 );
+				num_elem3, num_elem4, num_elem5, specified_default, default_value );
 	}
 }
 template< typename array_type, typename other_array_type >
-inline void make_array5d( array_type & array_pointer,
-		const other_array_type & other_array )
+inline void make_array5d( std::vector<
+		std::vector<
+				std::vector< std::vector< std::vector< array_type > > > > > & array_pointer,
+		const std::vector<
+		std::vector<
+				std::vector< std::vector< std::vector< other_array_type > > > > > & other_array,
+				const bool specified_default = false,
+		const array_type default_value = array_type() )
 {
 	array_pointer.resize( other_array.size() );
 	typename other_array_type::const_iterator it_o = other_array.begin();
 	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
-		make_array4d(*it,*it_o);
+	{
+		make_array4d(*it,*it_o, specified_default, default_value);
 		++it_o;
+	}
 }
 #endif // Ending functions
 

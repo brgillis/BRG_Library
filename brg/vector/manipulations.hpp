@@ -35,7 +35,7 @@
 namespace brgastro {
 
 template<typename T>
-std::vector< std::vector<T> > transpose(const std::vector< std::vector<T> > & v)
+std::vector< std::vector<T> > transpose(const std::vector< std::vector<T> > & v, const T & default_value=T())
 {
 	size_t n_cols = v.size();
 	size_t n_rows = 0;
@@ -44,7 +44,7 @@ std::vector< std::vector<T> > transpose(const std::vector< std::vector<T> > & v)
 
 	std::vector< std::vector<T> > result;
 
-	make_array2d(result,n_rows,n_cols);
+	make_array2d(result,n_rows,n_cols,true,default_value);
 
 	for(size_t i=0;i<n_cols;++i)
 	{
