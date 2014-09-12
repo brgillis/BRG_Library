@@ -95,7 +95,7 @@ void open_file_append( stream_type & stream, const std::string & name )
 }
 
 template<typename stream_type>
-inline void open_bin_file( stream_type & stream, const std::string & name )
+void open_bin_file( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
@@ -105,8 +105,7 @@ inline void open_bin_file( stream_type & stream, const std::string & name )
 		throw std::runtime_error("Could not open file " + name + ".");
 	}
 }
-template<>
-void open_bin_file( std::fstream & stream, const std::string & name )
+inline void open_bin_file( std::fstream & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
