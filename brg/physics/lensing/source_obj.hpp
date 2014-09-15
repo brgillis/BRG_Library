@@ -30,18 +30,12 @@
 
 #include <brg/physics/sky_obj/sky_obj.h>
 
-// SPCP: "Static Polymorphic Const Pointer"
-#define SPCP(name) static_cast<const name*>(this)
-
-// SPP: "Static Polymorphic Pointer"
-#define SPP(name) static_cast<name*>(this)
-
 namespace brgastro {
 
 /**
  *
  */
-class source_obj: public sky_obj {
+class source_obj: public virtual sky_obj {
 private:
 
 	double _gamma_1_, _gamma_2_; // Gamma components in ra/dec coordinates

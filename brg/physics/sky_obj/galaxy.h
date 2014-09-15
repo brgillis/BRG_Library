@@ -34,7 +34,7 @@ namespace brgastro {
 // Forward declare galaxy_group class so we can point to it
 class galaxy_group;
 
-class galaxy: public sky_obj
+class galaxy: public virtual sky_obj
 {
 	/**********************************
 	 galaxy class
@@ -85,7 +85,7 @@ public:
 	}
 	double mag() const
 	{
-		return umag;
+		return imag;
 	}
 #endif
 

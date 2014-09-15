@@ -32,6 +32,15 @@
 
 namespace brgastro {
 
+
+pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min=0, CONST_BRG_DISTANCE_REF init_R_max=0,
+		CONST_BRG_MASS_REF init_m_min=0, CONST_BRG_MASS_REF init_m_max=0,
+		double init_z_min=0, double init_z_max=0,
+		double init_mag_min=0, double init_mag_max=0 );
+{
+	// TODO: Fill this out!
+}
+
 // Adding and clearing data
 #if(1)
 
