@@ -25,6 +25,8 @@
 
 #include "brg/global.h"
 
+#include "brg/physics/lensing/lens_source_pair.h"
+#include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
 
@@ -33,12 +35,13 @@
 namespace brgastro {
 
 
-pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min=0, CONST_BRG_DISTANCE_REF init_R_max=0,
-		CONST_BRG_MASS_REF init_m_min=0, CONST_BRG_MASS_REF init_m_max=0,
-		double init_z_min=0, double init_z_max=0,
-		double init_mag_min=0, double init_mag_max=0 );
+pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF init_R_max,
+		CONST_BRG_MASS_REF init_m_min, CONST_BRG_MASS_REF init_m_max,
+		double init_z_min, double init_z_max,
+		double init_mag_min, double init_mag_max )
+:	pair_bin_summary(init_R_min,init_R_max,init_m_min,init_m_max,
+		init_z_min,init_z_max,init_mag_min,init_mag_max)
 {
-	// TODO: Fill this out!
 }
 
 // Adding and clearing data
@@ -61,6 +64,7 @@ void pair_bin::clear()
 	_mag_lens_values_.clear();
 	_delta_Sigma_t_values_.clear();
 	_delta_Sigma_x_values_.clear();
+	pair_bin_summary::clear();
 }
 
 #endif
@@ -68,29 +72,38 @@ void pair_bin::clear()
 // Calculations on stored values
 #if (1)
 
-BRG_UNITS pair_bin::delta_Sigma_t_mean()
+BRG_UNITS pair_bin::delta_Sigma_t_mean() const
 {
 	return mean(_delta_Sigma_t_values_);
 }
-BRG_UNITS pair_bin::delta_Sigma_x_mean()
+BRG_UNITS pair_bin::delta_Sigma_x_mean() const
 {
 	return mean(_delta_Sigma_x_values_);
 }
 
-BRG_UNITS pair_bin::delta_Sigma_t_std()
+BRG_UNITS pair_bin::delta_Sigma_t_mean_square() const
+{
+	return mean(square(_delta_Sigma_t_values_));
+}
+BRG_UNITS pair_bin::delta_Sigma_x_mean_square() const
+{
+	return mean(square(_delta_Sigma_x_values_));
+}
+
+BRG_UNITS pair_bin::delta_Sigma_t_std() const
 {
 	return std(_delta_Sigma_t_values_);
 }
-BRG_UNITS pair_bin::delta_Sigma_x_std()
+BRG_UNITS pair_bin::delta_Sigma_x_std() const
 {
 	return std(_delta_Sigma_x_values_);
 }
 
-BRG_UNITS pair_bin::delta_Sigma_t_stderr()
+BRG_UNITS pair_bin::delta_Sigma_t_stderr() const
 {
 	return stderr(_delta_Sigma_t_values_);
 }
-BRG_UNITS pair_bin::delta_Sigma_x_stderr()
+BRG_UNITS pair_bin::delta_Sigma_x_stderr() const
 {
 	return stderr(_delta_Sigma_x_values_);
 }

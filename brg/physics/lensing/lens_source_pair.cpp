@@ -119,8 +119,6 @@ lens_source_pair::lens_source_pair( const sky_obj* lens_ptr, const source_obj* s
 	_gamma_t_(0),
 	_gamma_x_(0)
 {
-	_init_lens_ptr_ = lens_ptr;
-	_init_source_ptr_ = source_ptr;
 	if(make_clones)
 	{
 		_lens_clone_ = BRG_SHARED_PTR<const sky_obj>(lens_ptr->sky_obj_clone());
@@ -208,6 +206,21 @@ double lens_source_pair::z_source() const
 	_conditional_store_data();
 	return _z_source_;
 }
+BRG_MASS lens_source_pair::m_lens() const
+{
+	_conditional_store_data();
+	return _m_lens_;
+}
+double lens_source_pair::mag_lens() const
+{
+	_conditional_store_data();
+	return _mag_lens_;
+}
+double lens_source_pair::mag_source() const
+{
+	_conditional_store_data();
+	return _mag_source_;
+}
 BRG_DISTANCE lens_source_pair::R_proj() const
 {
 	_conditional_store_data();
@@ -237,6 +250,7 @@ double lens_source_pair::gamma_x() const
 BRG_UNITS lens_source_pair::sigma_crit() const
 {
 	_conditional_store_data();
+	if(_z_lens_>=_z_source_) return 0;
 	return square( c ) / ( 4. * pi * Gc )
 			* ad_distance( 0, _z_source_ )
 			/ ( ad_distance( 0, _z_lens_ ) * ad_distance( _z_lens_, _z_source_ ) );

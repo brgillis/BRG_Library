@@ -46,10 +46,9 @@ public:
 			CONST_BRG_MASS_REF init_mstar=0, double init_mag=0)
 	: sky_obj(init_ra,init_dec,init_z),
 	  source_obj(init_ra, init_dec, init_z,
-	  			init_gamma_1, init_gamma_2, init_kappa)
+	  			init_gamma_1, init_gamma_2, init_kappa),
+	  galaxy(init_ra,init_dec,init_z,0,0,0,init_mstar,init_mag)
 	{
-		galaxy::stellar_mass = init_mstar;
-		galaxy::umag = init_mag;
 	}
 	virtual ~source_galaxy() {
 		// TODO Auto-generated destructor stub

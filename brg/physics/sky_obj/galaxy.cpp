@@ -26,13 +26,27 @@
 
 // brgastro::galaxy class methods
 #if (1)
-brgastro::galaxy::galaxy()
+brgastro::galaxy::galaxy( CONST_BRG_ANGLE_REF init_ra, CONST_BRG_ANGLE_REF init_dec, double init_z,
+		CONST_BRG_ANGLE_REF init_ra_err, CONST_BRG_ANGLE_REF init_dec_err, double init_z_err,
+		CONST_BRG_MASS_REF init_stellar_mass, double init_mag, double init_mag_err )
+:	sky_obj(init_ra,init_dec,init_z,init_ra_err,init_dec_err,init_z_err),
+ 	stellar_mass(init_stellar_mass),
+ 	umag(init_mag), umag_err(init_mag_err),
+	gmag(init_mag), gmag_err(init_mag_err),
+ 	rmag(init_mag), rmag_err(init_mag_err),
+ 	imag(init_mag), imag_err(init_mag_err),
+ 	zmag(init_mag), zmag_err(init_mag_err),
+ 	z_phot(z()), z_phot_err(0),
+ 	odds(1), phot_template(0),
+ 	host_group(NULL), host_group_index(-1)
 {
-	clear();
+
 }
 
 void brgastro::galaxy::clear()
 {
+
+	sky_obj::clear();
 
 	stellar_mass = 0;
 	umag = gmag = rmag = imag = zmag = 0;
@@ -45,8 +59,6 @@ void brgastro::galaxy::clear()
 
 	host_group = 0;
 	host_group_index = -1;
-
-	sky_obj::clear();
 }
 
 #endif // end brgastro::galaxy class functions

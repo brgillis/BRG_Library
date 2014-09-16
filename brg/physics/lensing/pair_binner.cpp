@@ -85,6 +85,23 @@ void pair_binner::_sort() const
 	{
 		make_array4d(_pair_bins_,_R_bin_limits_.size()-1,_m_bin_limits_.size()-1,
 				_z_bin_limits_.size()-1,_mag_bin_limits_.size()-1);
+		for(size_t R_i=0; R_i<_R_bin_limits_.size()-1;++R_i)
+		{
+			for(size_t m_i=0; m_i<_m_bin_limits_.size()-1;++m_i)
+			{
+				for(size_t z_i=0; z_i<_z_bin_limits_.size()-1;++z_i)
+				{
+					for(size_t mag_i=0; mag_i<_mag_bin_limits_.size()-1;++mag_i)
+					{
+						_pair_bins_[R_i][m_i][z_i][mag_i] = pair_bin(
+								_R_bin_limits_[R_i],_R_bin_limits_[R_i+1],
+								_m_bin_limits_[m_i],_m_bin_limits_[m_i+1],
+								_z_bin_limits_[z_i],_z_bin_limits_[z_i+1],
+								_mag_bin_limits_[mag_i],_mag_bin_limits_[mag_i+1]);
+					}
+				}
+			}
+		}
 	}
 	else
 	{
@@ -537,6 +554,10 @@ void pair_binner::clear_pairs()
 	_pair_bins_.clear();
 	_pairs_.clear();
 }
+void pair_binner::sort()
+{
+	_sort();
+}
 
 #endif // Adding and clearing data
 
@@ -650,11 +671,13 @@ BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CO
 // Print data for all bins
 void pair_binner::print_bin_data(std::ostream &out)
 {
+	_sort();
+
 	// Set up the data and header to be printed
 	table_t<double> data;
 	header_t header;
 
-	size_t num_columns = 18;
+	size_t num_columns = 19;
 
 	header.resize(num_columns);
 	header[0] = "R_min";
@@ -669,13 +692,15 @@ void pair_binner::print_bin_data(std::ostream &out)
 	header[9] = "mag_min";
 	header[10]= "mag_max";
 	header[11]= "mag_mean";
-	header[12]= "dS_t_mean";
-	header[13]= "dS_x_mean";
-	header[14]= "dS_t_stddev";
-	header[15]= "dS_x_stddev";
-	header[16]= "dS_t_stderr";
-	header[17]= "dS_x_stderr";
+	header[12]= "N";
+	header[13]= "dS_t_mean";
+	header[14]= "dS_x_mean";
+	header[15]= "dS_t_stddev";
+	header[16]= "dS_x_stddev";
+	header[17]= "dS_t_stderr";
+	header[18]= "dS_x_stderr";
 
+	data.resize(num_columns);
 	for(size_t R_i=0; R_i<_pair_bins_.size(); ++R_i)
 	{
 		for(size_t m_i=0; m_i<_pair_bins_[R_i].size(); ++m_i)
@@ -697,12 +722,13 @@ void pair_binner::print_bin_data(std::ostream &out)
 					data[9].push_back(bin.mag_min());
 					data[10].push_back(bin.mag_max());
 					data[11].push_back(bin.mag_mean());
-					data[12].push_back(bin.delta_Sigma_t_mean());
-					data[13].push_back(bin.delta_Sigma_x_mean());
-					data[14].push_back(bin.delta_Sigma_t_std());
-					data[15].push_back(bin.delta_Sigma_x_std());
-					data[16].push_back(bin.delta_Sigma_t_stderr());
-					data[17].push_back(bin.delta_Sigma_x_stderr());
+					data[12].push_back(bin.count());
+					data[13].push_back(bin.delta_Sigma_t_mean());
+					data[14].push_back(bin.delta_Sigma_x_mean());
+					data[15].push_back(bin.delta_Sigma_t_std());
+					data[16].push_back(bin.delta_Sigma_x_std());
+					data[17].push_back(bin.delta_Sigma_t_stderr());
+					data[18].push_back(bin.delta_Sigma_x_stderr());
 				}
 			}
 		}

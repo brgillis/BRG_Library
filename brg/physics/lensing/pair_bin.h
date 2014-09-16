@@ -33,6 +33,7 @@
 #include "brg/global.h"
 
 #include "brg/physics/lensing/lens_source_pair.h"
+#include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
 
@@ -41,18 +42,8 @@ namespace brgastro {
 /**
  *
  */
-class pair_bin {
+class pair_bin: public pair_bin_summary {
 private:
-
-	// Bin limits
-#if(1)
-
-	BRG_DISTANCE _R_min_, _R_max_;
-	BRG_MASS _m_min_, _m_max_;
-	double _z_min_, _z_max_;
-	double _mag_min_, _mag_max_;
-
-#endif // Bin limits
 
 	// Pair data
 #if(1)
@@ -88,56 +79,30 @@ public:
 
 #endif
 
+	// Count
+	size_t count() const
+	{
+		return _R_values_.size();
+	}
+
 	// Limits and means accessors
 #if(1)
 
-	CONST_BRG_DISTANCE_REF R_min() const
-	{
-		return _R_min_;
-	}
-	CONST_BRG_DISTANCE_REF R_max() const
-	{
-		return _R_max_;
-	}
 	BRG_DISTANCE R_mean() const
 	{
 		return mean(_R_values_);
 	}
 
-	CONST_BRG_MASS_REF m_min() const
-	{
-		return _m_min_;
-	}
-	CONST_BRG_MASS_REF m_max() const
-	{
-		return _m_max_;
-	}
 	BRG_MASS m_mean() const
 	{
 		return mean(_m_values_);
 	}
 
-	double z_min() const
-	{
-		return _z_min_;
-	}
-	double z_max() const
-	{
-		return _z_max_;
-	}
 	double z_mean() const
 	{
 		return mean(_z_values_);
 	}
 
-	double mag_min() const
-	{
-		return _mag_min_;
-	}
-	double mag_max() const
-	{
-		return _mag_max_;
-	}
 	double mag_mean() const
 	{
 		return mean(_mag_lens_values_);
@@ -182,14 +147,17 @@ public:
 	// Calculations on stored values
 #if (1)
 
-	BRG_UNITS delta_Sigma_t_mean();
-	BRG_UNITS delta_Sigma_x_mean();
+	BRG_UNITS delta_Sigma_t_mean() const;
+	BRG_UNITS delta_Sigma_x_mean() const;
 
-	BRG_UNITS delta_Sigma_t_std();
-	BRG_UNITS delta_Sigma_x_std();
+	BRG_UNITS delta_Sigma_t_mean_square() const;
+	BRG_UNITS delta_Sigma_x_mean_square() const;
 
-	BRG_UNITS delta_Sigma_t_stderr();
-	BRG_UNITS delta_Sigma_x_stderr();
+	BRG_UNITS delta_Sigma_t_std() const;
+	BRG_UNITS delta_Sigma_x_std() const;
+
+	BRG_UNITS delta_Sigma_t_stderr() const;
+	BRG_UNITS delta_Sigma_x_stderr() const;
 
 #endif
 };

@@ -34,8 +34,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/tuple/tuple.hpp>
-
 #include "brg/global.h"
 
 #include "brg/physics/lensing/pair_bin.h"
@@ -243,11 +241,12 @@ public:
 
 #endif // Set/change limits
 
-	// Adding and clearing data
+	// Adding, sorting, and clearing data
 #if(1)
 
 	void add_pair( const lens_source_pair & new_pair);
 	void clear_pairs();
+	void sort();
 
 #endif // Adding and clearing data
 

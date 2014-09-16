@@ -54,8 +54,11 @@ public:
 	// Public member variables
 
 	BRG_MASS stellar_mass;
-	double umag, gmag, rmag, imag, zmag;
-	double umag_err, gmag_err, rmag_err, imag_err, zmag_err;
+	double umag, umag_err;
+	double gmag, gmag_err;
+	double rmag, rmag_err;
+	double imag, imag_err;
+	double zmag, zmag_err;
 
 	double z_phot, z_phot_err;
 	double odds;
@@ -66,8 +69,11 @@ public:
 
 	// Public member functions
 
-	// Constructor
-	galaxy();
+	// Constructors
+	galaxy( CONST_BRG_ANGLE_REF init_ra = 0, CONST_BRG_ANGLE_REF init_dec = 0, double init_z = 0,
+			CONST_BRG_ANGLE_REF init_ra_err = 0, CONST_BRG_ANGLE_REF init_dec_err = 0, double init_z_err =
+			0, CONST_BRG_MASS_REF init_stellar_mass=0,
+			double init_mag=0, double init_mag_err=0 );
 
 	// Copy constructor
 	//galaxy(const galaxy other_galaxy); // Implicit is fine for us

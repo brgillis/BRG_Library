@@ -101,7 +101,7 @@ const T std(const std::vector<T> &v)
 {
 	if(v.size()<=1) return 0;
 
-	return std::sqrt( divide(subtract(sum( square(v) ), square(sum(v)) ), v.size() ) );
+	return std::sqrt( subtract(sum( square(v) )/v.size(), square(sum(v)/v.size()) ) );
 }
 
 template< typename T >
@@ -130,7 +130,7 @@ const T stddev(const T v)
 template< typename T >
 const T stderr(const std::vector<T> &v)
 {
-	if(v.size()<=2) return std::numeric_limits<T>::infinity();
+	if(v.size()<=2) return std::numeric_limits<T>::max();
 
 	return std(v)/std::sqrt(v.size()-1);
 }
@@ -138,7 +138,7 @@ const T stderr(const std::vector<T> &v)
 template< typename T >
 const T stderr(const T &v)
 {
-	return 0;
+	return std::numeric_limits<T>::max();
 }
 
 #endif
