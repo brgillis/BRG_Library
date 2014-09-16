@@ -26,15 +26,13 @@
 
 // body file: pair_binner.cpp
 
-#ifndef _BRG_PAIR_BINNER_H_INCLUDED_
-#define _BRG_PAIR_BINNER_H_INCLUDED_
+#ifndef _BRG_PAIR_BINS_SUMMARY_H_INCLUDED_
+#define _BRG_PAIR_BINS_SUMMARY_H_INCLUDED_
 
 #include <limits>
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <boost/tuple/tuple.hpp>
 
 #include "brg/global.h"
 
@@ -246,9 +244,7 @@ public:
 	// Adding, sorting, and clearing data
 #if(1)
 
-	void add_pair( const lens_source_pair & new_pair);
-	void clear_pairs();
-	void sort();
+	virtual void clear();
 
 #endif // Adding and clearing data
 
@@ -257,31 +253,31 @@ public:
 
 	// Access by index (will throw if out of bounds)
 #if(1)
-	BRG_UNITS delta_Sigma_t_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
-	BRG_UNITS delta_Sigma_x_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	virtual BRG_UNITS delta_Sigma_t_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	virtual BRG_UNITS delta_Sigma_x_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
 
-	BRG_UNITS delta_Sigma_t_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
-	BRG_UNITS delta_Sigma_x_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	virtual BRG_UNITS delta_Sigma_t_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	virtual BRG_UNITS delta_Sigma_x_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
 
-	BRG_UNITS delta_Sigma_t_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
-	BRG_UNITS delta_Sigma_x_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	virtual BRG_UNITS delta_Sigma_t_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
+	virtual BRG_UNITS delta_Sigma_x_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i);
 #endif // Access by index
 
 	// Access by position
 #if(1)
-	BRG_UNITS delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+	virtual BRG_UNITS delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 			double z, double mag);
-	BRG_UNITS delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag);
-
-	BRG_UNITS delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag);
-	BRG_UNITS delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+	virtual BRG_UNITS delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 			double z, double mag);
 
-	BRG_UNITS delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+	virtual BRG_UNITS delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 			double z, double mag);
-	BRG_UNITS delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+	virtual BRG_UNITS delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+			double z, double mag);
+
+	virtual BRG_UNITS delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
+			double z, double mag);
+	virtual BRG_UNITS delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 			double z, double mag);
 #endif // Access by index
 
@@ -292,13 +288,6 @@ public:
 	void print_bin_data(std::string file_name);
 };
 
-// Function template implementations
-template<typename tup_type, typename val_type>
-bool t1first_lt_v2(tup_type tup, val_type val)
-{
-	return boost::get<0>(tup) < val;
-}
-
 } // end namespace brgastro
 
-#endif // _BRG_PAIR_BINNER_H_INCLUDED_
+#endif // _BRG_PAIR_BINS_SUMMARY_H_INCLUDED_
