@@ -80,6 +80,11 @@ public:
 			double init_z_min=0, double init_z_max=0,
 			double init_mag_min=0, double init_mag_max=0 );
 	pair_bin_summary( const pair_bin & bin);
+	pair_bin_summary & operator=(const pair_bin & bin)
+	{
+		*this = pair_bin_summary(bin);
+		return *this;
+	}
 	virtual ~pair_bin_summary()
 	{
 	}

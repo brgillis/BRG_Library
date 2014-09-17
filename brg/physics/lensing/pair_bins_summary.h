@@ -1,9 +1,8 @@
 /**********************************************************************\
- @file pair_binner.h
+ @file pair_bins_summary.h
  ------------------
 
- A class which stores data on lens-source pairs and sorts them into
- bins.
+ A class which stores summary data on a grid of pair bins.
 
  **********************************************************************
 
@@ -36,19 +35,19 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/lensing/pair_bin.h"
+#include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/units/unit_obj.h"
 
 namespace brgastro {
 
+// Forward declare the pair_binner child
+class pair_binner;
+
 /**
  *
  */
-class pair_binner {
+class pair_bins_summary {
 private:
-
-	// The bins, contained in a 4D vector, for one dimension for each parameter
-	mutable std::vector< std::vector< std::vector< std::vector<pair_bin> > > > _pair_bins_;
 
 	// Limits for the bins
 #if(1)
@@ -62,21 +61,10 @@ private:
 
 #endif // Limits for the bins
 
-	// Data to be sorted into bins
-#if(1)
-
-	std::vector<lens_source_pair> _pairs_;
-	mutable size_t _sorting_index_;
-	mutable bool _sorted_;
-
-#endif
-
 	// Private methods
 #if(1)
 
 	void _check_limits();
-	void _sort() const;
-	void _resort() const;
 
 	// Private implementations of setting/clearing limits
 	// Unlike the public versions, these don't check for valid
@@ -127,26 +115,29 @@ private:
 
 #endif
 
+protected:
+
+	// The bins, contained in a 4D vector, for one dimension for each parameter
+	mutable std::vector< std::vector< std::vector< std::vector<pair_bin_summary> > > > _pair_bin_summaries_;
+
 public:
 
 	// Constructors and destructor
 #if(1)
 	// Default constructor
-	pair_binner()
-	: _valid_limits_(false),
-	  _sorting_index_(0),
-	  _sorted_(false)
+	pair_bins_summary()
+	: _valid_limits_(false)
 	{
 	}
 
 	// Set limits by vectors
-	pair_binner(std::vector< BRG_DISTANCE > R_bin_limits,
+	pair_bins_summary(std::vector< BRG_DISTANCE > R_bin_limits,
 				std::vector< BRG_MASS > m_bin_limits=std::vector<double>(),
 				std::vector< double > z_bin_limits=std::vector<double>(),
 				std::vector< double > mag_bin_limits=std::vector<double>());
 
 	// Set limits by min, max, and step
-	pair_binner(CONST_BRG_DISTANCE_REF R_min,
+	pair_bins_summary(CONST_BRG_DISTANCE_REF R_min,
 				CONST_BRG_DISTANCE_REF R_max,
 				CONST_BRG_DISTANCE_REF R_step,
 				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
@@ -159,8 +150,15 @@ public:
 				double mag_max=std::numeric_limits<double>::infinity(),
 				double mag_step=std::numeric_limits<double>::infinity());
 
+	// Construct from pair_bins
+	pair_bins_summary( const pair_binner & bins);
+	pair_bins_summary & operator=(const pair_binner & bins)
+	{
+		*this = pair_bins_summary(bins);
+		return *this;
+	}
 
-	virtual ~pair_binner()
+	virtual ~pair_bins_summary()
 	{
 	}
 #endif
@@ -241,6 +239,32 @@ public:
 
 #endif // Set/change limits
 
+	// Accessors to limit vectors and valid_limits
+#if(1)
+
+	const std::vector< BRG_DISTANCE > & R_limits() const
+	{
+		return _R_bin_limits_;
+	}
+	const std::vector< BRG_MASS > & m_limits() const
+	{
+		return _m_bin_limits_;
+	}
+	const std::vector< double > & z_limits() const
+	{
+		return _z_bin_limits_;
+	}
+	const std::vector< double > & mag_limits() const
+	{
+		return _mag_bin_limits_;
+	}
+	bool valid_limits() const
+	{
+		return _valid_limits_;
+	}
+
+#endif
+
 	// Adding, sorting, and clearing data
 #if(1)
 
@@ -284,8 +308,24 @@ public:
 #endif // Accessing summary data for bins
 
 	// Print data for all bins
+#if (1)
+
 	void print_bin_data(std::ostream &out);
 	void print_bin_data(std::string file_name);
+
+#endif
+
+	// Operators to combine data
+#if (1)
+
+	pair_bins_summary & operator+=( const pair_bins_summary & other );
+	pair_bins_summary operator+( pair_bins_summary other ) const
+	{
+		return other += *this;
+	}
+
+#endif
+
 };
 
 } // end namespace brgastro

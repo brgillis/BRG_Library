@@ -68,7 +68,7 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 	_z_min_(bin.z_min()),
 	_z_max_(bin.z_max()),
 	_mag_min_(bin.mag_min()),
-	_mag_max_(bin.mag_min()),
+	_mag_max_(bin.mag_max()),
 	_count_(bin.count()),
 	_R_mean_(bin.R_mean()),
 	_m_mean_(bin.m_mean()),

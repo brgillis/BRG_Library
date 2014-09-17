@@ -39,6 +39,7 @@
 #include "brg/global.h"
 
 #include "brg/physics/lensing/pair_bin.h"
+#include "brg/physics/lensing/pair_bins_summary.h"
 #include "brg/physics/units/unit_obj.h"
 
 namespace brgastro {
@@ -46,23 +47,11 @@ namespace brgastro {
 /**
  *
  */
-class pair_binner {
+class pair_binner: public pair_bins_summary {
 private:
 
 	// The bins, contained in a 4D vector, for one dimension for each parameter
 	mutable std::vector< std::vector< std::vector< std::vector<pair_bin> > > > _pair_bins_;
-
-	// Limits for the bins
-#if(1)
-
-	std::vector< BRG_DISTANCE > _R_bin_limits_;
-	std::vector< BRG_MASS > _m_bin_limits_;
-	std::vector< double > _z_bin_limits_;
-	std::vector< double > _mag_bin_limits_;
-
-	bool _valid_limits_;
-
-#endif // Limits for the bins
 
 	// Data to be sorted into bins
 #if(1)
@@ -75,58 +64,8 @@ private:
 
 	// Private methods
 #if(1)
-
-	void _check_limits();
 	void _sort() const;
 	void _resort() const;
-
-	// Private implementations of setting/clearing limits
-	// Unlike the public versions, these don't check for valid
-	// limits at the end.
-#if(1)
-
-	// Set specific limits through a limits vector
-	void _set_R_limits(std::vector< BRG_DISTANCE > R_bin_limits);
-	void _set_m_limits(std::vector< BRG_MASS > m_bin_limits);
-	void _set_z_limits(std::vector< double > z_bin_limits);
-	void _set_mag_limits(std::vector< double > mag_bin_limits);
-
-	// Set specific limits through a linear spacing
-	void _set_linear_R_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
-			CONST_BRG_DISTANCE_REF R_step);
-	void _set_linear_m_limits(CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
-			CONST_BRG_MASS_REF m_step);
-	void _set_linear_z_limits(double z_min,
-			double z_max,
-			double z_step);
-	void _set_linear_mag_limits(double mag_min,
-			double mag_max,
-			double mag_step);
-
-	// Set specific limits through a log spacing
-	void _set_log_R_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
-			size_t R_num_bins=1);
-	void _set_log_m_limits(CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
-			size_t m_num_bins=1);
-	void _set_log_z_limits(double z_min,
-			double z_max,
-			size_t z_num_bins=1);
-	void _set_log_mag_limits(double mag_min,
-			double mag_max,
-			size_t mag_num_bins=1);
-
-	// Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
-	void _clear_R_limits();
-	void _clear_m_limits();
-	void _clear_z_limits();
-	void _clear_mag_limits();
-
-#endif
-
 #endif
 
 public:
@@ -135,8 +74,7 @@ public:
 #if(1)
 	// Default constructor
 	pair_binner()
-	: _valid_limits_(false),
-	  _sorting_index_(0),
+	: _sorting_index_(0),
 	  _sorted_(false)
 	{
 	}
@@ -145,7 +83,12 @@ public:
 	pair_binner(std::vector< BRG_DISTANCE > R_bin_limits,
 				std::vector< BRG_MASS > m_bin_limits=std::vector<double>(),
 				std::vector< double > z_bin_limits=std::vector<double>(),
-				std::vector< double > mag_bin_limits=std::vector<double>());
+				std::vector< double > mag_bin_limits=std::vector<double>())
+	:	pair_bins_summary(R_bin_limits,m_bin_limits,z_bin_limits,mag_bin_limits),
+	 	_sorting_index_(0),
+	 	_sorted_(false)
+	{
+	}
 
 	// Set limits by min, max, and step
 	pair_binner(CONST_BRG_DISTANCE_REF R_min,
@@ -159,96 +102,35 @@ public:
 				double z_step=std::numeric_limits<double>::infinity(),
 				double mag_min=-std::numeric_limits<double>::infinity(),
 				double mag_max=std::numeric_limits<double>::infinity(),
-				double mag_step=std::numeric_limits<double>::infinity());
-
+				double mag_step=std::numeric_limits<double>::infinity())
+	:	pair_bins_summary(R_min,R_max,R_step,m_min,m_max,m_step,z_min,z_max,z_step,
+			mag_min,mag_max,mag_step),
+	 	_sorting_index_(0),
+	 	_sorted_(false)
+	{
+	}
 
 	virtual ~pair_binner()
 	{
 	}
 #endif
 
-	// Set/change limits
+	// pair_bins accessor
 #if(1)
 
-	// Set specific limits through a limits vector
-	void set_R_limits(std::vector< BRG_DISTANCE > R_bin_limits);
-	void set_m_limits(std::vector< BRG_MASS > m_bin_limits);
-	void set_z_limits(std::vector< double > z_bin_limits);
-	void set_mag_limits(std::vector< double > mag_bin_limits);
+	const std::vector< std::vector< std::vector< std::vector<pair_bin> > > > & pair_bins() const
+	{
+		return _pair_bins_;
+	}
 
-	// Set specific limits through a linear spacing
-	void set_linear_R_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
-			CONST_BRG_DISTANCE_REF R_step);
-	void set_linear_m_limits(CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
-			CONST_BRG_MASS_REF m_step);
-	void set_linear_z_limits(double z_min,
-			double z_max,
-			double z_step);
-	void set_linear_mag_limits(double mag_min,
-			double mag_max,
-			double mag_step);
-
-	// Set specific limits through a log spacing
-	void set_log_R_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
-			size_t R_num_bins=1);
-	void set_log_m_limits(CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
-			size_t m_num_bins=1);
-	void set_log_z_limits(double z_min,
-			double z_max,
-			size_t z_num_bins=1);
-	void set_log_mag_limits(double mag_min,
-			double mag_max,
-			size_t mag_num_bins=1);
-
-	// Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
-	void clear_R_limits();
-	void clear_m_limits();
-	void clear_z_limits();
-	void clear_mag_limits();
-
-	void set_limits(std::vector< BRG_DISTANCE > R_bin_limits,
-				std::vector< BRG_MASS > m_bin_limits=std::vector<double>(),
-				std::vector< double > z_bin_limits=std::vector<double>(),
-				std::vector< double > mag_bin_limits=std::vector<double>());
-
-	void set_linear_limits(CONST_BRG_DISTANCE_REF R_min,
-				CONST_BRG_DISTANCE_REF R_max,
-				CONST_BRG_DISTANCE_REF R_step,
-				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
-				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
-				CONST_BRG_MASS_REF m_step=std::numeric_limits<double>::infinity(),
-				double z_min=-std::numeric_limits<double>::infinity(),
-				double z_max=std::numeric_limits<double>::infinity(),
-				double z_step=std::numeric_limits<double>::infinity(),
-				double mag_min=-std::numeric_limits<double>::infinity(),
-				double mag_max=std::numeric_limits<double>::infinity(),
-				double mag_step=std::numeric_limits<double>::infinity());
-
-	void set_log_limits(CONST_BRG_DISTANCE_REF R_min,
-				CONST_BRG_DISTANCE_REF R_max,
-				size_t R_num_bins=1,
-				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
-				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
-				size_t m_num_bins=1,
-				double z_min=-std::numeric_limits<double>::infinity(),
-				double z_max=std::numeric_limits<double>::infinity(),
-				size_t z_num_bins=1,
-				double mag_min=-std::numeric_limits<double>::infinity(),
-				double mag_max=std::numeric_limits<double>::infinity(),
-				size_t mag_num_bins=1);
-
-#endif // Set/change limits
+#endif
 
 	// Adding, sorting, and clearing data
 #if(1)
 
 	void add_pair( const lens_source_pair & new_pair);
-	void clear_pairs();
-	void sort();
+	void clear();
+	void sort() const;
 
 #endif // Adding and clearing data
 
@@ -286,10 +168,6 @@ public:
 #endif // Access by index
 
 #endif // Accessing summary data for bins
-
-	// Print data for all bins
-	void print_bin_data(std::ostream &out);
-	void print_bin_data(std::string file_name);
 };
 
 // Function template implementations

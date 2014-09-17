@@ -188,8 +188,8 @@ inline void make_array2d( std::vector< std::vector< array_type > > & array_point
 		const array_type default_value = array_type() )
 {
 	array_pointer.resize( other_array.size() );
-	typename other_array_type::const_iterator it_o = other_array.begin();
-	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
+	typename std::vector< std::vector< other_array_type > >::const_iterator it_o = other_array.begin();
+	for ( typename std::vector< std::vector< array_type > >::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
 	{
 		make_array1d(*it,*it_o, specified_default, default_value);
 		++it_o;
@@ -229,8 +229,8 @@ inline void make_array3d( std::vector< std::vector< std::vector< array_type > > 
 		const array_type default_value = array_type() )
 {
 	array_pointer.resize( other_array.size() );
-	typename other_array_type::const_iterator it_o = other_array.begin();
-	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
+	typename std::vector< std::vector< std::vector< other_array_type > > >::const_iterator it_o = other_array.begin();
+	for ( typename std::vector< std::vector< std::vector< array_type > > >::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
 	{
 		make_array2d(*it,*it_o, specified_default, default_value);
 		++it_o;
@@ -271,8 +271,8 @@ inline void make_array4d( std::vector< std::vector< std::vector< std::vector< ar
 		const array_type default_value = array_type() )
 {
 	array_pointer.resize( other_array.size() );
-	typename other_array_type::const_iterator it_o = other_array.begin();
-	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
+	typename std::vector< std::vector< std::vector< std::vector< other_array_type > > > >::const_iterator it_o = other_array.begin();
+	for ( typename std::vector< std::vector< std::vector< std::vector< array_type > > > >::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
 	{
 		make_array3d(*it,*it_o, specified_default, default_value);
 		++it_o;
@@ -321,8 +321,11 @@ inline void make_array5d( std::vector<
 		const array_type default_value = array_type() )
 {
 	array_pointer.resize( other_array.size() );
-	typename other_array_type::const_iterator it_o = other_array.begin();
-	for ( typename array_type::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
+	typename std::vector<
+	std::vector<
+			std::vector< std::vector< std::vector< other_array_type > > > > >::const_iterator it_o = other_array.begin();
+	for ( typename std::vector< std::vector<
+			std::vector< std::vector< std::vector< array_type > > > > >::iterator it=array_pointer.begin(); it != array_pointer.end(); ++it)
 	{
 		make_array4d(*it,*it_o, specified_default, default_value);
 		++it_o;
