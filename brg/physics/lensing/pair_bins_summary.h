@@ -268,12 +268,22 @@ public:
 	// Adding, sorting, and clearing data
 #if(1)
 
+	virtual void sort() const
+	{
+	}
 	virtual void clear();
 
 #endif // Adding and clearing data
 
 	// Accessing summary data for bins
 #if(1)
+
+	// Accessing full vector
+	const std::vector< std::vector< std::vector< std::vector<pair_bin_summary> > > > &
+		pair_bin_summaries() const
+	{
+		return _pair_bin_summaries_;
+	}
 
 	// Access by index (will throw if out of bounds)
 #if(1)

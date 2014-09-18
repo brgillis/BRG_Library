@@ -55,6 +55,8 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 	_mag_lens_values_.push_back(new_pair.mag_source());
 	_delta_Sigma_t_values_.push_back(new_pair.delta_Sigma_t());
 	_delta_Sigma_x_values_.push_back(new_pair.delta_Sigma_x());
+	_distinct_lens_ids_.insert(new_pair.lens()->index());
+	_uncache_values();
 }
 void pair_bin::clear()
 {

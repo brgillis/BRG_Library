@@ -69,7 +69,20 @@ private:
 	BRG_UNITS _delta_Sigma_t_mean_, _delta_Sigma_x_mean_;
 	BRG_UNITS _delta_Sigma_t_mean_square_, _delta_Sigma_x_mean_square_;
 
+	mutable double _mu_hat_cached_value_;
+	mutable double _mu_W_cached_value_;
+	std::vector<double> _source_magnitudes_;
+	size_t _num_lenses_;
+
 #endif
+
+protected:
+
+	void _uncache_values()
+	{
+		_mu_hat_cached_value_ = std::numeric_limits<double>::infinity();
+		_mu_W_cached_value_ = std::numeric_limits<double>::infinity();
+	}
 
 public:
 
@@ -163,6 +176,8 @@ public:
 	// Summary values
 #if (1)
 
+	// Shear
+#if (1)
 	virtual BRG_UNITS delta_Sigma_t_mean() const
 	{
 		return _delta_Sigma_t_mean_;
@@ -200,6 +215,32 @@ public:
 		if(_count_<2) return std::numeric_limits<double>::max();
 		return delta_Sigma_x_std()/std::sqrt(_count_-1);
 	}
+
+#endif // Shear
+
+	// Magnification
+#if (1)
+
+	BRG_UNITS area_per_lens() const
+	{
+		return pi*(square(_R_max_)-square(_R_min_));
+	}
+	BRG_UNITS area() const
+	{
+		return area_per_lens()*num_lenses();
+	}
+	virtual size_t num_lenses() const
+	{
+		return _num_lenses_;
+	}
+	double mu_hat() const;
+	double mu_W() const;
+	const std::vector<double> & source_magnitudes() const
+	{
+		return _source_magnitudes_;
+	}
+
+#endif // Magnification
 
 #endif
 

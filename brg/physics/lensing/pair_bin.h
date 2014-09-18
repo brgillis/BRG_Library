@@ -28,6 +28,7 @@
 #ifndef _BRG_PAIR_BIN_H_INCLUDED_
 #define _BRG_PAIR_BIN_H_INCLUDED_
 
+#include <set>
 #include <vector>
 
 #include "brg/global.h"
@@ -55,6 +56,7 @@ private:
 	std::vector<double> _mag_source_values_;
 	std::vector<BRG_UNITS> _delta_Sigma_t_values_;
 	std::vector<BRG_UNITS> _delta_Sigma_x_values_;
+	std::set<size_t> _distinct_lens_ids_;
 
 #endif // Pair data
 
@@ -83,6 +85,10 @@ public:
 	size_t count() const
 	{
 		return _R_values_.size();
+	}
+	size_t num_lenses() const
+	{
+		return _distinct_lens_ids_.size();
 	}
 
 	// Limits and means accessors

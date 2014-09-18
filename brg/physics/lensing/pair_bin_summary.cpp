@@ -56,7 +56,10 @@ pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG
 	_delta_Sigma_t_mean_(0),
 	_delta_Sigma_x_mean_(0),
 	_delta_Sigma_t_mean_square_(0),
-	_delta_Sigma_x_mean_square_(0)
+	_delta_Sigma_x_mean_square_(0),
+	_mu_hat_cached_value_(std::numeric_limits<double>::infinity()),
+	_mu_W_cached_value_(std::numeric_limits<double>::infinity()),
+	_num_lenses_(0)
 {
 }
 
@@ -77,7 +80,10 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 	_delta_Sigma_t_mean_(bin.delta_Sigma_t_mean()),
 	_delta_Sigma_x_mean_(bin.delta_Sigma_x_mean()),
 	_delta_Sigma_t_mean_square_(bin.delta_Sigma_t_mean_square()),
-	_delta_Sigma_x_mean_square_(bin.delta_Sigma_x_mean_square())
+	_delta_Sigma_x_mean_square_(bin.delta_Sigma_x_mean_square()),
+	_mu_hat_cached_value_(std::numeric_limits<double>::infinity()),
+	_mu_W_cached_value_(std::numeric_limits<double>::infinity()),
+	_num_lenses_(bin.num_lenses())
 {
 }
 
@@ -86,10 +92,58 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 
 void pair_bin_summary::clear()
 {
-	*this = pair_bin_summary(_R_min_,_R_max_,_m_min_,_m_max_,_z_min_,_z_max_,_mag_min_,_mag_max_);
+	_count_ = 0;
+	_R_mean_ = 0;
+	_m_mean_ = 0;
+	_z_mean_ = 0;
+	_mag_mean_ = 0;
+	_delta_Sigma_t_mean_ = 0;
+	_delta_Sigma_x_mean_ = 0;
+	_delta_Sigma_t_mean_square_ = 0;
+	_delta_Sigma_x_mean_square_ = 0;
+	_num_lenses_ = 0;
+	_uncache_values();
 }
 
 #endif // Adding and clearing data
+
+// Magnification calculations
+#if(1)
+
+double pair_bin_summary::mu_W() const
+{
+	if(_mu_W_cached_value_==std::numeric_limits<double>::infinity())
+	{
+		// Not cached, so calculate and cache it
+
+		// TODO correct magnitude limits
+		_mu_W_cached_value_ = integrate_Romberg(&mu_weight_integration_functor(area()),m_min,m_max);
+	}
+	return _mu_W_cached_value_;
+
+}
+
+double pair_bin_summary::mu_hat() const
+{
+	if(_mu_hat_cached_value_==std::numeric_limits<double>::infinity())
+	{
+		// Not cached, so calculate and cache it
+
+		double mu_observed = 0;
+		for(size_t source_i=0;source_i<_source_magnitudes_.size();++source_i)
+		{
+			mu_observed += magnification_alpha(_source_magnitudes_[source_i])-1;
+		}
+		// TODO correct magnitude limits
+		const double mu_base = integrate_Romberg(&mu_signal_integration_functor(area()),m_min,m_max);
+
+		_mu_hat_cached_value_ = (mu_observed-mu_base)/mu_W();
+	}
+	return _mu_hat_cached_value_;
+
+}
+
+#endif
 
 // Combining summaries together
 #if(1)
@@ -106,6 +160,15 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	assert(_mag_min_==other.mag_min());
 	assert(_mag_max_==other.mag_max());
 
+	// Check for zero count in this or the other
+	if(other.count()==0) return *this;
+	if(_count_==0)
+	{
+		*this = other;
+		_uncache_values();
+		return *this;
+	}
+
 	size_t new_count = _count_ + other.count();
 
 	_R_mean_ = ( _R_mean_*count() + other.R_mean()*other.count())/new_count;
@@ -118,12 +181,15 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	_delta_Sigma_t_mean_square_ = ( _delta_Sigma_t_mean_square_*count() +
 			other.delta_Sigma_t_mean_square()*other.count())
 			/new_count;
-	_delta_Sigma_x_mean_ = ( _delta_Sigma_t_mean_square_*count() +
+	_delta_Sigma_x_mean_ = ( _delta_Sigma_x_mean_*count() + other.delta_Sigma_x_mean()*other.count())
+					/new_count;
+	_delta_Sigma_x_mean_square_ = ( _delta_Sigma_x_mean_square_*count() +
 			other.delta_Sigma_x_mean_square()*other.count())
 			/new_count;
 
 	_count_ = new_count;
 
+	_uncache_values();
 	return *this;
 }
 

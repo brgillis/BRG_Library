@@ -619,4 +619,40 @@ void pair_bins_summary::print_bin_data(std::string file_name)
 	print_bin_data(fo);
 }
 
+// Operators to combine data
+#if (1)
+
+pair_bins_summary & pair_bins_summary::operator+=( const pair_bins_summary & other )
+{
+	// Check for same size
+	assert(_R_bin_limits_==other.R_limits());
+	assert(_m_bin_limits_==other.m_limits());
+	assert(_z_bin_limits_==other.z_limits());
+	assert(_mag_bin_limits_==other.mag_limits());
+
+	// Make sure the other is sorted
+	other.sort();
+
+	// And add the bins together
+
+	for(size_t R_i=0; R_i<_pair_bin_summaries_.size(); ++R_i)
+	{
+		for(size_t m_i=0; m_i<_pair_bin_summaries_[R_i].size(); ++m_i)
+		{
+			for(size_t z_i=0; z_i<_pair_bin_summaries_[R_i][m_i].size(); ++z_i)
+			{
+				for(size_t mag_i=0; mag_i<_pair_bin_summaries_[R_i][m_i][z_i].size(); ++mag_i)
+				{
+					_pair_bin_summaries_[R_i][m_i][z_i][mag_i] +=
+							other.pair_bin_summaries()[R_i][m_i][z_i][mag_i];
+				}
+			}
+		}
+	}
+
+	return *this;
+}
+
+#endif
+
 } // end namespace brgastro
