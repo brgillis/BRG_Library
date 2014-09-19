@@ -52,6 +52,7 @@ pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG
 	_mag_min_(init_mag_min),
 	_mag_max_(init_mag_max),
 	_count_(0),
+	_effective_count_(0),
 	_R_mean_(0),
 	_m_mean_(0),
 	_z_mean_(0),
@@ -76,6 +77,7 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 	_mag_min_(bin.mag_min()),
 	_mag_max_(bin.mag_max()),
 	_count_(bin.count()),
+	_effective_count_(bin.effective_count()),
 	_R_mean_(bin.R_mean()),
 	_m_mean_(bin.m_mean()),
 	_z_mean_(bin.z_mean()),
@@ -96,6 +98,7 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 void pair_bin_summary::clear()
 {
 	_count_ = 0;
+	_effective_count_ = 0;
 	_R_mean_ = 0;
 	_m_mean_ = 0;
 	_z_mean_ = 0;
@@ -176,25 +179,26 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 		return *this;
 	}
 
-	size_t new_count = _count_ + other.count();
+	double new_effective_count = _effective_count_ + other.effective_count();
 
-	_R_mean_ = ( _R_mean_*count() + other.R_mean()*other.count())/new_count;
-	_m_mean_ = ( _m_mean_*count() + other.m_mean()*other.count())/new_count;
-	_z_mean_ = ( _z_mean_*count() + other.z_mean()*other.count())/new_count;
-	_mag_mean_ = ( _mag_mean_*count() + other.mag_mean()*other.count())/new_count;
+	_R_mean_ = ( _R_mean_*effective_count() + other.R_mean()*other.effective_count())/new_effective_count;
+	_m_mean_ = ( _m_mean_*effective_count() + other.m_mean()*other.effective_count())/new_effective_count;
+	_z_mean_ = ( _z_mean_*effective_count() + other.z_mean()*other.effective_count())/new_effective_count;
+	_mag_mean_ = ( _mag_mean_*effective_count() + other.mag_mean()*other.effective_count())/new_effective_count;
 
-	_delta_Sigma_t_mean_ = ( _delta_Sigma_t_mean_*count() + other.delta_Sigma_t_mean()*other.count())
-			/new_count;
-	_delta_Sigma_t_mean_square_ = ( _delta_Sigma_t_mean_square_*count() +
-			other.delta_Sigma_t_mean_square()*other.count())
-			/new_count;
-	_delta_Sigma_x_mean_ = ( _delta_Sigma_x_mean_*count() + other.delta_Sigma_x_mean()*other.count())
-					/new_count;
-	_delta_Sigma_x_mean_square_ = ( _delta_Sigma_x_mean_square_*count() +
-			other.delta_Sigma_x_mean_square()*other.count())
-			/new_count;
+	_delta_Sigma_t_mean_ = ( _delta_Sigma_t_mean_*effective_count() + other.delta_Sigma_t_mean()*other.effective_count())
+			/new_effective_count;
+	_delta_Sigma_t_mean_square_ = ( _delta_Sigma_t_mean_square_*effective_count() +
+			other.delta_Sigma_t_mean_square()*other.effective_count())
+			/new_effective_count;
+	_delta_Sigma_x_mean_ = ( _delta_Sigma_x_mean_*effective_count() + other.delta_Sigma_x_mean()*other.effective_count())
+					/new_effective_count;
+	_delta_Sigma_x_mean_square_ = ( _delta_Sigma_x_mean_square_*effective_count() +
+			other.delta_Sigma_x_mean_square()*other.effective_count())
+			/new_effective_count;
 
-	_count_ = new_count;
+	_effective_count_ = new_effective_count;
+	_count_ += other.count();
 
 	_uncache_values();
 	return *this;

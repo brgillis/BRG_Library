@@ -61,6 +61,7 @@ private:
 #if (1)
 
 	size_t _count_;
+	double _effective_count_;
 	BRG_DISTANCE _R_mean_;
 	BRG_MASS _m_mean_;
 	double _z_mean_;
@@ -114,6 +115,11 @@ public:
 	virtual size_t count() const
 	{
 		return _count_;
+	}
+	// Count
+	virtual double effective_count() const
+	{
+		return _effective_count_;
 	}
 
 	// Limits and means accessors
@@ -208,12 +214,12 @@ public:
 	virtual BRG_UNITS delta_Sigma_t_stderr() const
 	{
 		if(_count_<2) return std::numeric_limits<double>::max();
-		return delta_Sigma_t_std()/std::sqrt(_count_-1);
+		return delta_Sigma_t_std()*std::sqrt(_count_/(_effective_count_*(_count_-1)) );
 	}
 	virtual BRG_UNITS delta_Sigma_x_stderr() const
 	{
 		if(_count_<2) return std::numeric_limits<double>::max();
-		return delta_Sigma_x_std()/std::sqrt(_count_-1);
+		return delta_Sigma_x_std()*std::sqrt(_count_/(_effective_count_*(_count_-1)) );
 	}
 
 #endif // Shear
