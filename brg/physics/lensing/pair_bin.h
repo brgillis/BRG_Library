@@ -31,12 +31,22 @@
 #include <set>
 #include <vector>
 
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics/count.hpp>
+#include <boost/accumulators/statistics/error_of_mean.hpp>
+#include <boost/accumulators/statistics/mean.hpp>
+#include <boost/accumulators/statistics/moment.hpp>
+#include <boost/accumulators/statistics/variance.hpp>
+#include <boost/accumulators/statistics/stats.hpp>
+
 #include "brg/global.h"
 
 #include "brg/physics/lensing/lens_source_pair.h"
 #include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
+
+namespace b_acc = boost::accumulators;
 
 namespace brgastro {
 
@@ -46,16 +56,30 @@ namespace brgastro {
 class pair_bin: public pair_bin_summary {
 private:
 
+	template <typename T>
+	using bin_stat_vec_t = boost::accumulators::accumulator_set<T,
+			boost::accumulators::stats<
+				boost::accumulators::tag::count,
+				boost::accumulators::tag::mean > >;
+	template <typename T>
+	using stat_vec_t = boost::accumulators::accumulator_set<T,
+			boost::accumulators::stats<
+				boost::accumulators::tag::count,
+				boost::accumulators::tag::mean,
+				boost::accumulators::tag::moment<2>,
+				boost::accumulators::tag::variance,
+				boost::accumulators::tag::error_of<boost::accumulators::tag::mean> > >;
+
 	// Pair data
 #if(1)
+	bin_stat_vec_t<BRG_DISTANCE> _R_values_;
+	bin_stat_vec_t<BRG_MASS> _m_values_;
+	bin_stat_vec_t<double> _z_values_;
+	bin_stat_vec_t<double> _mag_lens_values_;
+	stat_vec_t<double> _mag_source_values_;
+	stat_vec_t<BRG_UNITS> _delta_Sigma_t_values_;
+	stat_vec_t<BRG_UNITS> _delta_Sigma_x_values_;
 
-	std::vector<BRG_DISTANCE> _R_values_;
-	std::vector<BRG_MASS> _m_values_;
-	std::vector<double> _z_values_;
-	std::vector<double> _mag_lens_values_;
-	std::vector<double> _mag_source_values_;
-	std::vector<BRG_UNITS> _delta_Sigma_t_values_;
-	std::vector<BRG_UNITS> _delta_Sigma_x_values_;
 	std::set<size_t> _distinct_lens_ids_;
 
 #endif // Pair data
@@ -84,7 +108,7 @@ public:
 	// Count
 	size_t count() const
 	{
-		return _R_values_.size();
+		return boost::accumulators::count(_R_values_);
 	}
 	size_t num_lenses() const
 	{
@@ -96,22 +120,22 @@ public:
 
 	BRG_DISTANCE R_mean() const
 	{
-		return mean(_R_values_);
+		return boost::accumulators::mean(_R_values_);
 	}
 
 	BRG_MASS m_mean() const
 	{
-		return mean(_m_values_);
+		return boost::accumulators::mean(_m_values_);
 	}
 
 	double z_mean() const
 	{
-		return mean(_z_values_);
+		return boost::accumulators::mean(_z_values_);
 	}
 
 	double mag_mean() const
 	{
-		return mean(_mag_lens_values_);
+		return boost::accumulators::mean(_mag_lens_values_);
 	}
 
 #endif
@@ -119,31 +143,31 @@ public:
 	// Accessors to pair values
 #if (1)
 
-	std::vector<BRG_DISTANCE> R_values()
+	bin_stat_vec_t<BRG_DISTANCE> R_values()
 	{
 		return _R_values_;
 	}
-	std::vector<BRG_MASS> m_values()
+	bin_stat_vec_t<BRG_MASS> m_values()
 	{
 		return _m_values_;
 	}
-	std::vector<double> z_values()
+	bin_stat_vec_t<double> z_values()
 	{
 		return _z_values_;
 	}
-	std::vector<double> mag_lens_values()
+	bin_stat_vec_t<double> mag_lens_values()
 	{
 		return _mag_lens_values_;
 	}
-	std::vector<double> mag_source_values()
+	stat_vec_t<double> mag_source_values()
 	{
 		return _mag_source_values_;
 	}
-	std::vector<BRG_UNITS> delta_Sigma_t_values()
+	stat_vec_t<BRG_UNITS> delta_Sigma_t_values()
 	{
 		return _delta_Sigma_t_values_;
 	}
-	std::vector<BRG_UNITS> delta_Sigma_x_values()
+	stat_vec_t<BRG_UNITS> delta_Sigma_x_values()
 	{
 		return _delta_Sigma_x_values_;
 	}

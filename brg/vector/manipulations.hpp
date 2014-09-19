@@ -35,6 +35,22 @@
 namespace brgastro {
 
 template<typename T>
+std::vector< std::vector<T> > pad(const std::vector< std::vector<T> > & v, const T & default_value=T())
+{
+	size_t n_cols = v.size();
+	size_t n_rows = 0;
+	for(size_t i=0; i<n_cols; ++i)
+		if(v[i].size() > n_rows) n_rows = v[i].size();
+
+	std::vector< std::vector<T> > result = v;
+
+	for(size_t i=0; i<n_cols; ++i)
+		if(result[i].size() < n_rows) result[i].resize(n_rows,default_value);
+
+	return result;
+}
+
+template<typename T>
 std::vector< std::vector<T> > transpose(const std::vector< std::vector<T> > & v, const T & default_value=T())
 {
 	size_t n_cols = v.size();

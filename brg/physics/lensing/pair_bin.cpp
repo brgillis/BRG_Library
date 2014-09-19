@@ -23,12 +23,21 @@
 
  \**********************************************************************/
 
+
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics/count.hpp>
+#include <boost/accumulators/statistics/error_of_mean.hpp>
+#include <boost/accumulators/statistics/mean.hpp>
+#include <boost/accumulators/statistics/moment.hpp>
+#include <boost/accumulators/statistics/variance.hpp>
+#include <boost/accumulators/statistics/stats.hpp>
+
 #include "brg/global.h"
 
 #include "brg/physics/lensing/lens_source_pair.h"
 #include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/units/unit_obj.h"
-#include "brg/vector/summary_functions.hpp"
+#include "brg/utility.hpp"
 
 #include "pair_bin.h"
 
@@ -49,23 +58,25 @@ pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF in
 
 void pair_bin::add_pair( const lens_source_pair & new_pair)
 {
-	_R_values_.push_back(new_pair.R_proj());
-	_m_values_.push_back(new_pair.m_lens());
-	_z_values_.push_back(new_pair.z_lens());
-	_mag_lens_values_.push_back(new_pair.mag_source());
-	_delta_Sigma_t_values_.push_back(new_pair.delta_Sigma_t());
-	_delta_Sigma_x_values_.push_back(new_pair.delta_Sigma_x());
+	_R_values_(new_pair.R_proj());
+	_m_values_(new_pair.m_lens());
+	_z_values_(new_pair.z_lens());
+	_mag_lens_values_(new_pair.mag_lens());
+	_mag_source_values_(new_pair.mag_source());
+	_delta_Sigma_t_values_(new_pair.delta_Sigma_t());
+	_delta_Sigma_x_values_(new_pair.delta_Sigma_x());
 	_distinct_lens_ids_.insert(new_pair.lens()->index());
 	_uncache_values();
 }
 void pair_bin::clear()
 {
-	_R_values_.clear();
-	_m_values_.clear();
-	_z_values_.clear();
-	_mag_lens_values_.clear();
-	_delta_Sigma_t_values_.clear();
-	_delta_Sigma_x_values_.clear();
+	set_zero(_R_values_);
+	set_zero(_m_values_);
+	set_zero(_z_values_);
+	set_zero(_mag_lens_values_);
+	set_zero(_mag_source_values_);
+	set_zero(_delta_Sigma_t_values_);
+	set_zero(_delta_Sigma_x_values_);
 	pair_bin_summary::clear();
 }
 
@@ -76,38 +87,38 @@ void pair_bin::clear()
 
 BRG_UNITS pair_bin::delta_Sigma_t_mean() const
 {
-	return mean(_delta_Sigma_t_values_);
+	return boost::accumulators::mean(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_mean() const
 {
-	return mean(_delta_Sigma_x_values_);
+	return boost::accumulators::mean(_delta_Sigma_x_values_);
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_mean_square() const
 {
-	return mean(square(_delta_Sigma_t_values_));
+	return boost::accumulators::moment<2>(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_mean_square() const
 {
-	return mean(square(_delta_Sigma_x_values_));
+	return boost::accumulators::moment<2>(_delta_Sigma_x_values_);
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_std() const
 {
-	return std(_delta_Sigma_t_values_);
+	return std::sqrt(boost::accumulators::variance(_delta_Sigma_t_values_));
 }
 BRG_UNITS pair_bin::delta_Sigma_x_std() const
 {
-	return std(_delta_Sigma_x_values_);
+	return std::sqrt(boost::accumulators::variance(_delta_Sigma_x_values_));
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_stderr() const
 {
-	return stderr(_delta_Sigma_t_values_);
+	return boost::accumulators::error_of<boost::accumulators::tag::mean>(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_stderr() const
 {
-	return stderr(_delta_Sigma_x_values_);
+	return boost::accumulators::error_of<boost::accumulators::tag::mean>(_delta_Sigma_x_values_);
 }
 
 #endif

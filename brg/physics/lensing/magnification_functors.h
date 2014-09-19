@@ -54,7 +54,7 @@ public:
 #endif
 
 	// Operator()
-	double operator()(double m);
+	double operator()(double m, bool silent=true) const;
 
 }; // class expected_count_functor
 
@@ -78,7 +78,7 @@ public:
 #endif
 
 	// Operator()
-	double operator()(double m);
+	double operator()(double m, bool silent=true) const;
 
 }; // class mu_signal_integration_functor
 
@@ -102,7 +102,7 @@ public:
 #endif
 
 	// Operator()
-	double operator()(double m);
+	double operator()(double m, bool silent=true) const;
 
 }; // class mu_signal_integration_functor
 

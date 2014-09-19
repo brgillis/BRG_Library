@@ -33,8 +33,8 @@ namespace brgastro {
 
 double magnification_alpha(double m)
 {
-	auto ln = [] (double mp)
-			{return std::log(static_cast<long double>(mag_expected_count_functor(1)(mp)));};
+	auto ln = [] (double mp, bool silent=true)
+			{return std::log(static_cast<long double>(mag_expected_count_functor(1)(mp,silent)));};
 	// Area cancels out in calculation
 	return 2.5*differentiate(&ln,m);
 }

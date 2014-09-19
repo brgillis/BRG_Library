@@ -27,6 +27,9 @@
 
 #include "brg/global.h"
 
+#include "brg/math/calculus/integrate.hpp"
+#include "brg/physics/lensing/magnification_alpha.h"
+#include "brg/physics/lensing/magnification_functors.h"
 #include "brg/physics/lensing/pair_bin.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
@@ -116,8 +119,10 @@ double pair_bin_summary::mu_W() const
 	{
 		// Not cached, so calculate and cache it
 
+		mu_weight_integration_functor func(area());
+
 		// TODO correct magnitude limits
-		_mu_W_cached_value_ = integrate_Romberg(&mu_weight_integration_functor(area()),m_min,m_max);
+		_mu_W_cached_value_ = integrate_Romberg(&func,0,25);
 	}
 	return _mu_W_cached_value_;
 
@@ -134,8 +139,10 @@ double pair_bin_summary::mu_hat() const
 		{
 			mu_observed += magnification_alpha(_source_magnitudes_[source_i])-1;
 		}
+
+		mu_signal_integration_functor func(area());
 		// TODO correct magnitude limits
-		const double mu_base = integrate_Romberg(&mu_signal_integration_functor(area()),m_min,m_max);
+		const double mu_base = integrate_Romberg(&func,0,25);
 
 		_mu_hat_cached_value_ = (mu_observed-mu_base)/mu_W();
 	}
