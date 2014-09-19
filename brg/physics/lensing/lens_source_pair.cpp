@@ -71,6 +71,8 @@ void lens_source_pair::store_data() const
 	_m_lens_ = lens_ptr->m();
 	_mag_lens_ = lens_ptr->mag();
 	_mag_source_ = source_ptr->mag();
+	_weight_lens_ = lens_ptr->weight();
+	_weight_source_ = source_ptr->weight();
 
 	// Note minus sign in dra to correct for ra's reverse orientation in the sky
 	BRG_ANGLE dra = -(source_ptr->ra()-lens_ptr->ra())*cos(lens_ptr->dec());
@@ -96,6 +98,9 @@ lens_source_pair::lens_source_pair()
 	_m_lens_(0),
 	_mag_lens_(0),
 	_mag_source_(0),
+	_weight_lens_(1),
+	_weight_source_(1),
+	_weight_pair_(1),
 	_R_proj_(0),
 	_theta_(0),
 	_gamma_t_(0),
@@ -103,7 +108,7 @@ lens_source_pair::lens_source_pair()
 {
 }
 lens_source_pair::lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr,
-		bool make_clones)
+		double init_weight_pair, bool make_clones)
 :	_using_lens_clone_(make_clones),
  	_using_source_clone_(make_clones),
  	_init_lens_ptr_(lens_ptr),
@@ -114,6 +119,9 @@ lens_source_pair::lens_source_pair( const sky_obj* lens_ptr, const source_obj* s
 	_m_lens_(0),
 	_mag_lens_(0),
 	_mag_source_(0),
+	_weight_lens_(1),
+	_weight_source_(1),
+	_weight_pair_(init_weight_pair),
 	_R_proj_(0),
 	_theta_(0),
 	_gamma_t_(0),
@@ -164,6 +172,14 @@ void lens_source_pair::set_source( const source_obj *source_ptr, const bool make
 	_using_source_clone_ = make_clone;
 }
 
+#endif
+
+// Set pair weight
+#if(1)
+void lens_source_pair::set_weight_pair( double new_weight_pair )
+{
+	_weight_pair_ = new_weight_pair;
+}
 #endif
 
 
@@ -220,6 +236,26 @@ double lens_source_pair::mag_source() const
 {
 	_conditional_store_data();
 	return _mag_source_;
+}
+double lens_source_pair::weight_lens() const
+{
+	_conditional_store_data();
+	return _weight_lens_;
+}
+double lens_source_pair::weight_source() const
+{
+	_conditional_store_data();
+	return _weight_source_;
+}
+double lens_source_pair::weight_pair() const
+{
+	_conditional_store_data();
+	return _weight_pair_;
+}
+double lens_source_pair::weight() const
+{
+	_conditional_store_data();
+	return _weight_lens_*_weight_source_*_weight_pair_;
 }
 BRG_DISTANCE lens_source_pair::R_proj() const
 {

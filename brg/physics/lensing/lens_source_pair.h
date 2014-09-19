@@ -59,6 +59,8 @@ private:
 	mutable double _z_lens_, _z_source_;
 	mutable BRG_MASS _m_lens_;
 	mutable double _mag_lens_, _mag_source_;
+	mutable double _weight_lens_, _weight_source_;
+	double _weight_pair_;
 	mutable BRG_DISTANCE _R_proj_;
 	mutable BRG_ANGLE _theta_;
 	mutable double _gamma_t_, _gamma_x_;
@@ -80,7 +82,8 @@ public:
 	// Constructors and destructor
 #if(1)
 	lens_source_pair();
-	lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr, bool make_clones=false);
+	lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr,
+			double init_weight_pair=1, bool make_clones=false);
 	virtual ~lens_source_pair();
 #endif
 
@@ -88,6 +91,11 @@ public:
 #if(1)
 	void set_lens( const sky_obj *lens_ptr, const bool make_clone=false);
 	void set_source( const source_obj *source_ptr, const bool make_clone=false);
+#endif
+
+	// Set pair weight
+#if(1)
+	void set_weight_pair( double new_weight_pair );
 #endif
 
 	// Lens and source access
@@ -108,6 +116,10 @@ public:
 	BRG_ANGLE theta() const;
 	double gamma_t() const;
 	double gamma_x() const;
+	double weight_lens() const;
+	double weight_source() const;
+	double weight_pair() const;
+	double weight() const;
 
 #endif // Access to stored values
 
