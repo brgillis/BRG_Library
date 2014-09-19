@@ -33,11 +33,12 @@
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/count.hpp>
-#include <boost/accumulators/statistics/error_of_mean.hpp>
-#include <boost/accumulators/statistics/mean.hpp>
-#include <boost/accumulators/statistics/moment.hpp>
-#include <boost/accumulators/statistics/variance.hpp>
+#include <boost/accumulators/statistics/weighted_mean.hpp>
+#include <boost/accumulators/statistics/weighted_moment.hpp>
+#include <boost/accumulators/statistics/weighted_variance.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
+#include "brg/math/statistics/effective_count.hpp"
+#include "brg/math/statistics/standard_error_of_weighted_mean.hpp"
 
 #include "brg/global.h"
 
@@ -60,15 +61,18 @@ private:
 	using bin_stat_vec_t = boost::accumulators::accumulator_set<T,
 			boost::accumulators::stats<
 				boost::accumulators::tag::count,
-				boost::accumulators::tag::mean > >;
+				boost::accumulators::tag::weighted_mean >,
+				double >;
 	template <typename T>
 	using stat_vec_t = boost::accumulators::accumulator_set<T,
 			boost::accumulators::stats<
 				boost::accumulators::tag::count,
-				boost::accumulators::tag::mean,
-				boost::accumulators::tag::moment<2>,
-				boost::accumulators::tag::variance,
-				boost::accumulators::tag::error_of<boost::accumulators::tag::mean> > >;
+				boost::accumulators::tag::effective_count,
+				boost::accumulators::tag::weighted_mean,
+				boost::accumulators::tag::weighted_moment<2>,
+				boost::accumulators::tag::weighted_variance,
+				boost::accumulators::tag::standard_error_of_weighted_mean >,
+				double >;
 
 	// Pair data
 #if(1)
@@ -109,6 +113,10 @@ public:
 	size_t count() const
 	{
 		return boost::accumulators::count(_R_values_);
+	}
+	double effective_count() const
+	{
+		return boost::accumulators::effective_count(_delta_Sigma_t_values_);
 	}
 	size_t num_lenses() const
 	{

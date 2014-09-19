@@ -26,11 +26,12 @@
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/count.hpp>
-#include <boost/accumulators/statistics/error_of_mean.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/moment.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
+#include "brg/math/statistics/effective_count.hpp"
+#include "brg/math/statistics/standard_error_of_weighted_mean.hpp"
 
 #include "brg/global.h"
 
@@ -58,13 +59,14 @@ pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF in
 
 void pair_bin::add_pair( const lens_source_pair & new_pair)
 {
-	_R_values_(new_pair.R_proj());
-	_m_values_(new_pair.m_lens());
-	_z_values_(new_pair.z_lens());
-	_mag_lens_values_(new_pair.mag_lens());
-	_mag_source_values_(new_pair.mag_source());
-	_delta_Sigma_t_values_(new_pair.delta_Sigma_t());
-	_delta_Sigma_x_values_(new_pair.delta_Sigma_x());
+	double pair_weight = new_pair.weight();
+	_R_values_(new_pair.R_proj(), boost::accumulators::weight = pair_weight);
+	_m_values_(new_pair.m_lens(), boost::accumulators::weight = pair_weight);
+	_z_values_(new_pair.z_lens(), boost::accumulators::weight = pair_weight);
+	_mag_lens_values_(new_pair.mag_lens(), boost::accumulators::weight = pair_weight);
+	_mag_source_values_(new_pair.mag_source(), boost::accumulators::weight = pair_weight);
+	_delta_Sigma_t_values_(new_pair.delta_Sigma_t(), boost::accumulators::weight = pair_weight);
+	_delta_Sigma_x_values_(new_pair.delta_Sigma_x(), boost::accumulators::weight = pair_weight);
 	_distinct_lens_ids_.insert(new_pair.lens()->index());
 	_uncache_values();
 }
@@ -114,11 +116,11 @@ BRG_UNITS pair_bin::delta_Sigma_x_std() const
 
 BRG_UNITS pair_bin::delta_Sigma_t_stderr() const
 {
-	return boost::accumulators::error_of<boost::accumulators::tag::mean>(_delta_Sigma_t_values_);
+	return boost::accumulators::standard_error_of_weighted_mean(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_stderr() const
 {
-	return boost::accumulators::error_of<boost::accumulators::tag::mean>(_delta_Sigma_x_values_);
+	return boost::accumulators::standard_error_of_weighted_mean(_delta_Sigma_x_values_);
 }
 
 #endif
