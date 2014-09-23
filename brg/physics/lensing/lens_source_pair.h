@@ -119,7 +119,8 @@ public:
 	double weight_lens() const;
 	double weight_source() const;
 	double weight_pair() const;
-	double weight() const;
+	double shear_weight() const;
+	double mag_weight() const;
 
 #endif // Access to stored values
 

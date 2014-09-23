@@ -85,7 +85,7 @@ inline const T1 max( const T1 a, const T2 b )
 template<  class T1, class T2, class T3 >
 inline const T2 bound( const T1 lower_bound, const T2 a, const T3 upper_bound)
 {
-	return min( max( a, lower_bound ) , upper_bound);
+	return brgastro::min( brgastro::max( a, lower_bound ) , upper_bound);
 }
 
 // The below two variants return by reference, in case you

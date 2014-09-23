@@ -59,14 +59,15 @@ pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF in
 
 void pair_bin::add_pair( const lens_source_pair & new_pair)
 {
-	double pair_weight = new_pair.weight();
-	_R_values_(new_pair.R_proj(), boost::accumulators::weight = pair_weight);
-	_m_values_(new_pair.m_lens(), boost::accumulators::weight = pair_weight);
-	_z_values_(new_pair.z_lens(), boost::accumulators::weight = pair_weight);
-	_mag_lens_values_(new_pair.mag_lens(), boost::accumulators::weight = pair_weight);
-	_mag_source_values_(new_pair.mag_source(), boost::accumulators::weight = pair_weight);
-	_delta_Sigma_t_values_(new_pair.delta_Sigma_t(), boost::accumulators::weight = pair_weight);
-	_delta_Sigma_x_values_(new_pair.delta_Sigma_x(), boost::accumulators::weight = pair_weight);
+	double shear_weight = new_pair.shear_weight();
+	double mag_weight = new_pair.mag_weight();
+	_R_values_(new_pair.R_proj(), boost::accumulators::weight = mag_weight);
+	_m_values_(new_pair.m_lens(), boost::accumulators::weight = mag_weight);
+	_z_values_(new_pair.z_lens(), boost::accumulators::weight = mag_weight);
+	_mag_lens_values_(new_pair.mag_lens(), boost::accumulators::weight = mag_weight);
+	_mag_source_values_(new_pair.mag_source(), boost::accumulators::weight = mag_weight);
+	_delta_Sigma_t_values_(new_pair.delta_Sigma_t(), boost::accumulators::weight = shear_weight);
+	_delta_Sigma_x_values_(new_pair.delta_Sigma_x(), boost::accumulators::weight = shear_weight);
 	_distinct_lens_ids_.insert(new_pair.lens()->index());
 	_uncache_values();
 }
@@ -79,6 +80,7 @@ void pair_bin::clear()
 	set_zero(_mag_source_values_);
 	set_zero(_delta_Sigma_t_values_);
 	set_zero(_delta_Sigma_x_values_);
+	set_zero(_distinct_lens_ids_);
 	pair_bin_summary::clear();
 }
 

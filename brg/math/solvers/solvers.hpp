@@ -896,7 +896,8 @@ T solve_MCMC( const f * func, const T init_in_param, const T init_min_in_param,
 	}
 	catch(const std::exception &e)
 	{
-		throw std::runtime_error("Cannot execute solve_MCMC at initial point.");
+		std::cerr << "Cannot execute solve_MCMC at initial point.\n";
+		throw;
 	}
 	best_out_param = out_param;
 	double last_likelihood = std::exp(-annealing*out_param/2);
@@ -1079,7 +1080,8 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 	}
 	catch(const std::exception &e)
 	{
-		throw std::runtime_error("Cannot execute solve_MCMC at initial point.");
+		std::cerr << "Cannot execute solve_MCMC at initial point.\n";
+		throw;
 	}
 	best_out_params = out_params;
 	double last_log_likelihood = brgastro::sum(

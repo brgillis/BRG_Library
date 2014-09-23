@@ -252,10 +252,15 @@ double lens_source_pair::weight_pair() const
 	_conditional_store_data();
 	return _weight_pair_;
 }
-double lens_source_pair::weight() const
+double lens_source_pair::shear_weight() const
 {
 	_conditional_store_data();
 	return _weight_lens_*_weight_source_*_weight_pair_;
+}
+double lens_source_pair::mag_weight() const
+{
+	_conditional_store_data();
+	return _weight_lens_*_weight_pair_;
 }
 BRG_DISTANCE lens_source_pair::R_proj() const
 {

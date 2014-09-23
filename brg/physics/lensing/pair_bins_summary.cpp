@@ -24,6 +24,7 @@
  \**********************************************************************/
 
 #include <algorithm>
+#include <cassert>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -550,28 +551,31 @@ void pair_bins_summary::print_bin_data(std::ostream &out)
 	table_t<double> data;
 	header_t header;
 
-	size_t num_columns = 19;
+	size_t num_columns = 20;
 
-	header.resize(num_columns);
-	header[0] = "R_min";
-	header[1] = "R_max";
-	header[2] = "R_mean";
-	header[3] = "m_min";
-	header[4] = "m_max";
-	header[5] = "m_mean";
-	header[6] = "z_min";
-	header[7] = "z_max";
-	header[8] = "z_mean";
-	header[9] = "mag_min";
-	header[10]= "mag_max";
-	header[11]= "mag_mean";
-	header[12]= "N";
-	header[13]= "dS_t_mean";
-	header[14]= "dS_x_mean";
-	header[15]= "dS_t_stddev";
-	header[16]= "dS_x_stddev";
-	header[17]= "dS_t_stderr";
-	header[18]= "dS_x_stderr";
+	header.reserve(num_columns);
+	header.push_back("R_min");
+	header.push_back("R_max");
+	header.push_back("R_mean");
+	header.push_back("m_min");
+	header.push_back("m_max");
+	header.push_back("m_mean");
+	header.push_back("z_min");
+	header.push_back("z_max");
+	header.push_back("z_mean");
+	header.push_back("mag_min");
+	header.push_back("mag_max");
+	header.push_back("mag_mean");
+	header.push_back("N");
+	header.push_back("N_eff");
+	header.push_back("dS_t_mean");
+	header.push_back("dS_x_mean");
+	header.push_back("dS_t_stddev");
+	header.push_back("dS_x_stddev");
+	header.push_back("dS_t_stderr");
+	header.push_back("dS_x_stderr");
+
+	assert(header.size()==num_columns);
 
 	data.resize(num_columns);
 	for(size_t R_i=0; R_i<_pair_bin_summaries_.size(); ++R_i)
@@ -583,25 +587,28 @@ void pair_bins_summary::print_bin_data(std::ostream &out)
 				for(size_t mag_i=0; mag_i<_pair_bin_summaries_[R_i][m_i][z_i].size(); ++mag_i)
 				{
 					pair_bin_summary & bin = _pair_bin_summaries_[R_i][m_i][z_i][mag_i];
-					data[0].push_back(bin.R_min());
-					data[1].push_back(bin.R_max());
-					data[2].push_back(bin.R_mean());
-					data[3].push_back(bin.m_min());
-					data[4].push_back(bin.m_max());
-					data[5].push_back(bin.m_mean());
-					data[6].push_back(bin.z_min());
-					data[7].push_back(bin.z_max());
-					data[8].push_back(bin.z_mean());
-					data[9].push_back(bin.mag_min());
-					data[10].push_back(bin.mag_max());
-					data[11].push_back(bin.mag_mean());
-					data[12].push_back(bin.count());
-					data[13].push_back(bin.delta_Sigma_t_mean());
-					data[14].push_back(bin.delta_Sigma_x_mean());
-					data[15].push_back(bin.delta_Sigma_t_std());
-					data[16].push_back(bin.delta_Sigma_x_std());
-					data[17].push_back(bin.delta_Sigma_t_stderr());
-					data[18].push_back(bin.delta_Sigma_x_stderr());
+
+					size_t col_i = 0;
+					data[col_i].push_back(bin.R_min());
+					data[++col_i].push_back(bin.R_max());
+					data[++col_i].push_back(bin.R_mean());
+					data[++col_i].push_back(bin.m_min());
+					data[++col_i].push_back(bin.m_max());
+					data[++col_i].push_back(bin.m_mean());
+					data[++col_i].push_back(bin.z_min());
+					data[++col_i].push_back(bin.z_max());
+					data[++col_i].push_back(bin.z_mean());
+					data[++col_i].push_back(bin.mag_min());
+					data[++col_i].push_back(bin.mag_max());
+					data[++col_i].push_back(bin.mag_mean());
+					data[++col_i].push_back(bin.count());
+					data[++col_i].push_back(bin.effective_count());
+					data[++col_i].push_back(bin.delta_Sigma_t_mean());
+					data[++col_i].push_back(bin.delta_Sigma_x_mean());
+					data[++col_i].push_back(bin.delta_Sigma_t_std());
+					data[++col_i].push_back(bin.delta_Sigma_x_std());
+					data[++col_i].push_back(bin.delta_Sigma_t_stderr());
+					data[++col_i].push_back(bin.delta_Sigma_x_stderr());
 				}
 			}
 		}

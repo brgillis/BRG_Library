@@ -512,7 +512,7 @@ const std::vector<T2> max( const T1 & v1, std::vector<T2> v2 )
 #if (1)
 
 template< typename T1, typename T2 >
-const std::vector<T1> min( std::vector<T1> v1, const std::vector<T2> &v2 )
+std::vector<T1> min( std::vector<T1> v1, const std::vector<T2> &v2 )
 {
 
 	assert(v1.size()==v2.size());
@@ -525,7 +525,7 @@ const std::vector<T1> min( std::vector<T1> v1, const std::vector<T2> &v2 )
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> min( std::vector<T1> v1, const T2 &v2 )
+std::vector<T1> min( std::vector<T1> v1, const T2 &v2 )
 {
 
 	for(unsigned int i = 0; i < v1.size(); i++)
@@ -537,7 +537,7 @@ const std::vector<T1> min( std::vector<T1> v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2 >
-const std::vector<T2> min( const T1 & v1, std::vector<T2> v2 )
+std::vector<T2> min( const T1 & v1, std::vector<T2> v2 )
 {
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
@@ -548,6 +548,71 @@ const std::vector<T2> min( const T1 & v1, std::vector<T2> v2 )
 }
 
 #endif // Element-wise min
+
+// Element-wise bound
+#if (1)
+
+template< typename T1, typename T2, typename T3 >
+std::vector<T2> bound( const std::vector<T1> & vlower,
+					   std::vector<T2> v,
+					   const std::vector<T3> & vupper)
+{
+
+	assert(vlower.size()==v.size());
+	assert(vupper.size()==v.size());
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = bound(vlower[i],v[i],vupper[i]);
+	}
+
+	return v;
+}
+
+template< typename T1, typename T2, typename T3 >
+std::vector<T2> bound( T1 vlower,
+					   std::vector<T2> v,
+					   const std::vector<T3> & vupper)
+{
+
+	assert(vupper.size()==v.size());
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = bound(vlower,v[i],vupper[i]);
+	}
+
+	return v;
+}
+
+template< typename T1, typename T2, typename T3 >
+std::vector<T2> bound( const std::vector<T1> & vlower,
+					   std::vector<T2> v,
+					   T3 vupper)
+{
+
+	assert(vlower.size()==v.size());
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = bound(vlower[i],v[i],vupper);
+	}
+
+	return v;
+}
+
+template< typename T1, typename T2, typename T3 >
+std::vector<T2> bound( T1 vlower,
+					   std::vector<T2> v,
+					   T3 vupper)
+{
+
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		v[i] = bound(vlower,v[i],vupper);
+	}
+
+	return v;
+}
+
+#endif // Element-wise bound
 
 // Element-wise negate
 #if (1)

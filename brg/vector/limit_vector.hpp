@@ -108,7 +108,7 @@ size_t get_bin_index(T val, std::vector<T> vec)
 			throw std::runtime_error("Value outside limits of vector in get_bin_index.");
 	for(size_t i=1; i<vec.size(); ++i)
 	{
-		if(vec[i]>val) return i-1;
+		if(vec[i]>=val) return i-1;
 	}
 	throw std::logic_error("Invalid limit vector passed to get_bin_index.");
 }
