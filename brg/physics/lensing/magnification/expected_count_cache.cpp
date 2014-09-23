@@ -53,8 +53,7 @@ const double brgastro::expected_count_cache::_calculate( const double in_param_1
 
 	auto f = [&] (double z, const bool silent)
 		{
-			std::vector<BRG_UNITS> params = expected_count_loader::get(z);
-			return Schechter_like_functor(params)(m);
+			return Schechter_like_functor(expected_count_loader::get(z))(m);
 		};
 
 	return integrate_Romberg(&f,z_min,z_max);

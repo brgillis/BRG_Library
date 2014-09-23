@@ -60,7 +60,7 @@ void brgastro::expected_count_loader::_load()
 			_data_map_ = load_table_map<double>(ss);
 
 			assert(_data_map_.size()==num_columns);
-			assert(_data_map_[0].size()>=2);
+			assert(_data_map_.at("z_mid").size()>=2);
 
 			_loaded_ = true;
 		}
@@ -76,7 +76,7 @@ size_t brgastro::expected_count_loader::_lower_z_index(double z)
 		if(z<_data_map_["z_mid"][i])
 			return i-1;
 	}
-	return _data_map_["z_mid"].size()-1;
+	return _data_map_["z_mid"].size()-2;
 }
 
 std::vector<BRG_UNITS> brgastro::expected_count_loader::get(double z)

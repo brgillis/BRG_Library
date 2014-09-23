@@ -122,10 +122,9 @@ double pair_bin_summary::mu_W() const
 	{
 		// Not cached, so calculate and cache it
 
-		mu_weight_integration_functor func(area());
+		mu_weight_integration_functor func(area(),z_mean());
 
-		// TODO correct magnitude limits
-		_mu_W_cached_value_ = integrate_Romberg(&func,0,25);
+		_mu_W_cached_value_ = integrate_Romberg(&func,15,25);
 	}
 	return _mu_W_cached_value_;
 
@@ -143,9 +142,8 @@ double pair_bin_summary::mu_hat() const
 			mu_observed += magnification_alpha(_source_magnitudes_[source_i])-1;
 		}
 
-		mu_signal_integration_functor func(area());
-		// TODO correct magnitude limits
-		const double mu_base = integrate_Romberg(&func,0,25);
+		mu_signal_integration_functor func(area(),z_mean());
+		const double mu_base = integrate_Romberg(&func,15,25);
 
 		_mu_hat_cached_value_ = (mu_observed-mu_base)/mu_W();
 	}
