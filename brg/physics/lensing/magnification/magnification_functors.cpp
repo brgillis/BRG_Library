@@ -26,8 +26,9 @@
 #include "brg/global.h"
 
 #include "brg/physics/astro.h"
-#include "brg/physics/lensing/magnification_alpha.h"
-#include "brg/physics/lensing/magnification_functors.h"
+#include "brg/physics/lensing/magnification/expected_count_cache.h"
+#include "brg/physics/lensing/magnification/magnification_alpha.h"
+#include "brg/physics/lensing/magnification/magnification_functors.h"
 #include "brg/physics/units/unit_conversions.hpp"
 #include "brg/physics/units/unit_obj.h"
 
@@ -35,19 +36,18 @@ namespace brgastro {
 
 double mag_expected_count_functor::operator() (double m, bool silent) const
 {
-	// TODO Fill-in proper, calibrated value
-	return 1;
+	return expected_count_cache().get(m,_z_mean_);
 }
 
 double mu_signal_integration_functor::operator() (double m, bool silent) const
 {
 	double alpha = magnification_alpha(m);
-	return mag_expected_count_functor(_area_)(m,silent)*(alpha-1)*(alpha-2);
+	return mag_expected_count_functor(_area_,_z_mean_)(m,silent)*(alpha-1)*(alpha-2);
 }
 
 double mu_weight_integration_functor::operator() (double m, bool silent) const
 {
-	return mag_expected_count_functor(_area_)(m,silent)*(magnification_alpha(m)-1);
+	return mag_expected_count_functor(_area_,_z_mean_)(m,silent)*(magnification_alpha(m)-1);
 }
 
 } // namespace brgastro

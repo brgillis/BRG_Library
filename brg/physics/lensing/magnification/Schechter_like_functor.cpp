@@ -1,8 +1,8 @@
 /**********************************************************************\
- @file magnification_alpha.cpp
+ @file Schechter_like_functor.cpp
  ------------------
 
- File containing the implementation of magnification_alpha.
+ TODO <Insert file description here>
 
  **********************************************************************
 
@@ -21,22 +21,31 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-\**********************************************************************/
+ \**********************************************************************/
 
-#include "brg/global.h"
+#include <cmath>
+#include <cstdlib>
 
-#include "brg/math/calculus/differentiate.hpp"
-#include "brg/physics/lensing/magnification_alpha.h"
-#include "brg/physics/lensing/magnification_functors.h"
+#include "Schechter_like_functor.h"
 
 namespace brgastro {
 
-double magnification_alpha(double m)
+double Schechter_like_functor::operator()( const double in_param,
+			const bool silent) const
 {
-	auto ln = [] (double mp, bool silent=true)
-			{return std::log(static_cast<long double>(mag_expected_count_functor(1)(mp,silent)));};
-	// Area cancels out in calculation
-	return 2.5*differentiate(&ln,m);
+	const double mag_jump_limit = 23.;
+
+	const double x = std::pow(10,0.4*(m_star()-in_param));
+	double result = 0.4*std::log(10.)*N_scale()*std::pow(x,alpha()+1)*
+			std::exp(-std::pow(x,mag_lower_lim_sharpness()));
+
+	if(in_param>=mag_jump_limit) result += mag23_jump();
+
+	const double xh = std::pow(10,0.4*(in_param-mag_upper_lim()));
+
+	result *= std::exp(-std::pow(xh,mag_upper_lim_sharpness()));
+
+	return result;
 }
 
 } // namespace brgastro

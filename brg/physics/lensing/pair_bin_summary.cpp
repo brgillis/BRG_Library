@@ -28,8 +28,8 @@
 #include "brg/global.h"
 
 #include "brg/math/calculus/integrate.hpp"
-#include "brg/physics/lensing/magnification_alpha.h"
-#include "brg/physics/lensing/magnification_functors.h"
+#include "brg/physics/lensing/magnification/magnification_alpha.h"
+#include "brg/physics/lensing/magnification/magnification_functors.h"
 #include "brg/physics/lensing/pair_bin.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"

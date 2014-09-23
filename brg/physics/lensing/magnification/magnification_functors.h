@@ -39,13 +39,15 @@ class mag_expected_count_functor
 private:
 
 	BRG_UNITS _area_;
+	double _z_mean_;
 
 public:
 
 	// Constructors and destructor
 #if(1)
-	mag_expected_count_functor(BRG_UNITS init_area=0)
-	:	_area_(init_area)
+	mag_expected_count_functor(BRG_UNITS init_area=0, double init_z=0)
+	:	_area_(init_area),
+	 	_z_mean_(init_z)
 	{
 	}
 	virtual ~mag_expected_count_functor()
@@ -63,13 +65,15 @@ class mu_signal_integration_functor
 private:
 
 	BRG_UNITS _area_;
+	double _z_mean_;
 
 public:
 
 	// Constructors and destructor
 #if(1)
-	mu_signal_integration_functor(BRG_UNITS init_area=0)
-	:	_area_(init_area)
+	mu_signal_integration_functor(CONST_BRG_UNITS_REF init_area=0, double init_z=0)
+	:	_area_(init_area),
+	 	_z_mean_(init_z)
 	{
 	}
 	virtual ~mu_signal_integration_functor()
@@ -87,13 +91,15 @@ class mu_weight_integration_functor
 private:
 
 	BRG_UNITS _area_;
+	double _z_mean_;
 
 public:
 
 	// Constructors and destructor
 #if(1)
-	mu_weight_integration_functor(BRG_UNITS init_area=0)
-	:	_area_(init_area)
+	mu_weight_integration_functor(BRG_UNITS init_area=0, double init_z=0)
+	:	_area_(init_area),
+	 	_z_mean_(init_z)
 	{
 	}
 	virtual ~mu_weight_integration_functor()
