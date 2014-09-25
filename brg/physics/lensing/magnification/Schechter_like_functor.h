@@ -29,6 +29,7 @@
 #define _BRG_SCHECHTER_LIKE_FUNCTOR_H_INCLUDED_
 
 #include <cassert>
+#include <vector>
 
 #include "brg/math/functor/functor.hpp"
 
@@ -96,7 +97,7 @@ public:
 
 	// Function method
 
-	boost::call_traits<double>::value_type operator()( boost::call_traits<double>::param_type in_params,
+	double operator()( const double & in_params,
 			const bool silent = false ) const;
 
 };

@@ -28,15 +28,13 @@
 #ifndef _BRG_FUNCTOR_HPP_INCLUDED_
 #define _BRG_FUNCTOR_HPP_INCLUDED_
 
-#include <vector>
-
-#include <boost/call_traits.hpp>
+#include <utility>
 
 #include "brg/global.h"
 
 namespace brgastro {
 
-template<typename T, typename param_struct=bool> // Defaults to using the minimum size for the param structure
+template<typename T, typename param_struct=char> // Defaults to using the minimum size for the param structure
 class functor
 {
 private:
@@ -58,56 +56,17 @@ public:
 	{
 	}
 
-	virtual void set_params(typename boost::call_traits<param_struct>::param_type new_params)
+	virtual void set_params(param_struct&& new_params)
 	{
-		_params_ = new_params;
+		_params_ = std::forward<param_struct>(new_params);
 	}
 
-	typename boost::call_traits<param_struct>::const_reference params() const
-	{
-		return _params_;
-	}
-
-	virtual typename boost::call_traits<T>::value_type
-		operator()(const typename boost::call_traits<T>::param_type in_param, const bool silent=false) const =0;
-
-};
-
-// Vector specialisation
-template<typename T, typename param_struct>
-class functor<std::vector<T>,param_struct>
-{
-private:
-
-	param_struct _params_;
-
-public:
-
-	functor()
-	{
-	}
-
-	functor(param_struct init_params)
-	: _params_(init_params)
-	{
-	}
-
-	virtual ~functor()
-	{
-	}
-
-	virtual void set_params(typename boost::call_traits<param_struct>::param_type new_params)
-	{
-		_params_ = new_params;
-	}
-
-	typename boost::call_traits<param_struct>::const_reference params() const
+	const param_struct & params() const
 	{
 		return _params_;
 	}
 
-	virtual typename boost::call_traits<std::vector<T>>::value_type
-		operator()(const typename boost::call_traits<std::vector<T>>::param_type in_params, const bool silent=false) const =0;
+	virtual T operator()(const T & in_param, const bool silent=false) const =0;
 
 };
 

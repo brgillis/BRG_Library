@@ -118,6 +118,14 @@ public:
 	{
 		return boost::accumulators::effective_count(_delta_Sigma_t_values_);
 	}
+	double sum_of_weights() const
+	{
+		return boost::accumulators::sum_of_weights(_delta_Sigma_t_values_);
+	}
+	double sum_of_square_weights() const
+	{
+		return boost::accumulators::sum_of_square_weights(_delta_Sigma_t_values_);
+	}
 	size_t num_lenses() const
 	{
 		return _distinct_lens_ids_.size();

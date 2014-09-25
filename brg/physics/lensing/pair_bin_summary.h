@@ -29,12 +29,15 @@
 #ifndef _BRG_PAIR_BIN_SUMMARY_H_INCLUDED_
 #define _BRG_PAIR_BIN_SUMMARY_H_INCLUDED_
 
+#include <utility>
 #include <vector>
 
 #include "brg/global.h"
 
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
+
+// TODO: Fix effective count use in summation (should add sum of weights and sum of square weights)
 
 namespace brgastro {
 
@@ -61,7 +64,8 @@ private:
 #if (1)
 
 	size_t _count_;
-	double _effective_count_;
+	double _sum_of_weights_;
+	double _sum_of_square_weights_;
 	BRG_DISTANCE _R_mean_;
 	BRG_MASS _m_mean_;
 	double _z_mean_;
@@ -104,6 +108,52 @@ public:
 	}
 #endif
 
+	// Setting bin limits
+#if(1)
+
+	template <typename T1, typename T2>
+	void set_R_limits(T1&& R_min, T2&& R_max)
+	{
+		_R_min_ = std::forward<T1>(R_min);
+		_R_max_ = std::forward<T2>(R_max);
+	}
+	template <typename T1, typename T2>
+	void set_m_limits(T1&& m_min, T2&& m_max)
+	{
+		_m_min_ = std::forward<T1>(m_min);
+		_m_max_ = std::forward<T2>(m_max);
+	}
+	template <typename T1, typename T2>
+	void set_z_limits(T1&& z_min, T2&& z_max)
+	{
+		_z_min_ = std::forward<T1>(z_min);
+		_z_max_ = std::forward<T2>(z_max);
+	}
+	template <typename T1, typename T2>
+	void set_mag_limits(T1&& mag_min, T2&& mag_max)
+	{
+		_mag_min_ = std::forward<T1>(mag_min);
+		_mag_max_ = std::forward<T2>(mag_max);
+	}
+
+	template <typename T1, typename T2,
+				typename T3, typename T4,
+				typename T5, typename T6,
+				typename T7, typename T8>
+	void set_limits(T1&& R_min, T2&& R_max,
+			T3&& m_min, T4&& m_max,
+			T5&& z_min, T6&& z_max,
+			T7&& mag_min, T8&& mag_max)
+	{
+		set_R_limits(std::forward<T1>(R_min),std::forward<T2>(R_max));
+		set_m_limits(std::forward<T3>(m_min),std::forward<T4>(m_max));
+		set_z_limits(std::forward<T5>(z_min),std::forward<T6>(z_max));
+		set_mag_limits(std::forward<T7>(mag_min),std::forward<T8>(mag_max));
+	}
+
+
+#endif
+
 	// Adding and clearing data
 #if(1)
 
@@ -111,16 +161,31 @@ public:
 
 #endif
 
+	// General statistics accessors
+#if(1)
+
 	// Count
 	virtual size_t count() const
 	{
 		return _count_;
 	}
-	// Count
+	// Effective count
 	virtual double effective_count() const
 	{
-		return _effective_count_;
+		return square(sum_of_weights())/sum_of_square_weights();
 	}
+	// Sum of weights
+	virtual double sum_of_weights() const
+	{
+		return _sum_of_weights_;
+	}
+	// Sum of square weights
+	virtual double sum_of_square_weights() const
+	{
+		return _sum_of_square_weights_;
+	}
+
+#endif
 
 	// Limits and means accessors
 #if(1)
@@ -214,12 +279,12 @@ public:
 	virtual BRG_UNITS delta_Sigma_t_stderr() const
 	{
 		if(_count_<2) return std::numeric_limits<double>::max();
-		return delta_Sigma_t_std()*std::sqrt(_count_/(_effective_count_*(_count_-1)) );
+		return delta_Sigma_t_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
 	}
 	virtual BRG_UNITS delta_Sigma_x_stderr() const
 	{
 		if(_count_<2) return std::numeric_limits<double>::max();
-		return delta_Sigma_x_std()*std::sqrt(_count_/(_effective_count_*(_count_-1)) );
+		return delta_Sigma_x_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
 	}
 
 #endif // Shear

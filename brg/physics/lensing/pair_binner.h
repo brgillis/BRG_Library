@@ -130,6 +130,7 @@ public:
 
 	void add_pair( const lens_source_pair & new_pair);
 	void clear();
+	void empty();
 	void sort() const;
 
 #endif // Adding and clearing data

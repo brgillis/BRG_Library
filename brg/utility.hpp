@@ -75,22 +75,22 @@ inline void set_zero( float & obj )
 {
 	obj = 0;
 }
-inline void set_zero( std::string obj )
+inline void set_zero( std::string & obj )
 {
 	obj = "";
 }
 template< typename T >
-inline void set_zero( std::vector< T > vec )
+inline void set_zero( std::vector< T > & vec )
 {
 	vec.clear();
 }
 template< typename T >
-inline void set_zero( T *obj )
+inline void set_zero( T * &obj )
 {
 	obj = NULL;
 }
 template< typename obj_type >
-inline void set_zero( obj_type obj )
+inline void set_zero( obj_type & obj )
 {
 	obj = obj_type();
 }

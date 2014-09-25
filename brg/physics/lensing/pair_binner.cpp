@@ -56,7 +56,7 @@ void pair_binner::_sort() const
 	if(_pair_bins_.empty())
 	{
 		make_array4d(_pair_bins_,R_limits().size()-1,m_limits().size()-1,
-				z_limits().size()-1,mag_limits().size()-1);
+				z_limits().size()-1,mag_limits().size()-1,true);
 		for(size_t R_i=0; R_i<R_limits().size()-1;++R_i)
 		{
 			for(size_t m_i=0; m_i<m_limits().size()-1;++m_i)
@@ -65,7 +65,7 @@ void pair_binner::_sort() const
 				{
 					for(size_t mag_i=0; mag_i<mag_limits().size()-1;++mag_i)
 					{
-						_pair_bins_[R_i][m_i][z_i][mag_i] = pair_bin(
+						_pair_bins_[R_i][m_i][z_i][mag_i].set_limits(
 								R_limits()[R_i],R_limits()[R_i+1],
 								m_limits()[m_i],m_limits()[m_i+1],
 								z_limits()[z_i],z_limits()[z_i+1],
@@ -204,9 +204,31 @@ void pair_binner::add_pair( const lens_source_pair & new_pair)
 }
 void pair_binner::clear()
 {
+	_sorting_index_ = 0;
 	_pair_bin_summaries_.clear();
 	_pair_bins_.clear();
 	_pairs_.clear();
+}
+void pair_binner::empty()
+{
+	_sorting_index_ = 0;
+	_pair_bin_summaries_.clear();
+	_pairs_.clear();
+
+	// Empty each bin in turn, but don't clear the structure
+	for(auto R_it=_pair_bins_.begin(); R_it!=_pair_bins_.end(); ++R_it)
+	{
+		for(auto Rm_it=R_it->begin(); Rm_it!=R_it->end(); ++Rm_it)
+		{
+			for(auto Rmz_it=Rm_it->begin(); Rmz_it!=Rm_it->end(); ++Rmz_it)
+			{
+				for(auto Rmzmag_it=Rmz_it->begin(); Rmzmag_it!=Rmz_it->end(); ++Rmzmag_it)
+				{
+					Rmzmag_it->clear();
+				}
+			}
+		}
+	}
 }
 void pair_binner::sort() const
 {

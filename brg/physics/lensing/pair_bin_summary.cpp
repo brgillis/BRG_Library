@@ -52,7 +52,8 @@ pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG
 	_mag_min_(init_mag_min),
 	_mag_max_(init_mag_max),
 	_count_(0),
-	_effective_count_(0),
+	_sum_of_weights_(0),
+	_sum_of_square_weights_(0),
 	_R_mean_(0),
 	_m_mean_(0),
 	_z_mean_(0),
@@ -77,7 +78,8 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 	_mag_min_(bin.mag_min()),
 	_mag_max_(bin.mag_max()),
 	_count_(bin.count()),
-	_effective_count_(bin.effective_count()),
+	_sum_of_weights_(bin.sum_of_weights()),
+	_sum_of_square_weights_(bin.sum_of_square_weights()),
 	_R_mean_(bin.R_mean()),
 	_m_mean_(bin.m_mean()),
 	_z_mean_(bin.z_mean()),
@@ -98,7 +100,8 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 void pair_bin_summary::clear()
 {
 	_count_ = 0;
-	_effective_count_ = 0;
+	_sum_of_weights_ = 0;
+	_sum_of_square_weights_ = 0;
 	_R_mean_ = 0;
 	_m_mean_ = 0;
 	_z_mean_ = 0;
@@ -170,35 +173,62 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 
 	// Check for zero count in this or the other
 	if(other.count()==0) return *this;
+
+	_uncache_values(); // If we get this far, something is changing with this bin
+
 	if(_count_==0)
 	{
+		// Simply copy the other bin summary
 		*this = other;
-		_uncache_values();
 		return *this;
 	}
 
-	double new_effective_count = _effective_count_ + other.effective_count();
+	// Combine the source magnitude lists together
+	_source_magnitudes_.insert( _source_magnitudes_.end(),
+			other.source_magnitudes().begin(), other.source_magnitudes().end() );
 
-	_R_mean_ = ( _R_mean_*effective_count() + other.R_mean()*other.effective_count())/new_effective_count;
-	_m_mean_ = ( _m_mean_*effective_count() + other.m_mean()*other.effective_count())/new_effective_count;
-	_z_mean_ = ( _z_mean_*effective_count() + other.z_mean()*other.effective_count())/new_effective_count;
-	_mag_mean_ = ( _mag_mean_*effective_count() + other.mag_mean()*other.effective_count())/new_effective_count;
-
-	_delta_Sigma_t_mean_ = ( _delta_Sigma_t_mean_*effective_count() + other.delta_Sigma_t_mean()*other.effective_count())
-			/new_effective_count;
-	_delta_Sigma_t_mean_square_ = ( _delta_Sigma_t_mean_square_*effective_count() +
-			other.delta_Sigma_t_mean_square()*other.effective_count())
-			/new_effective_count;
-	_delta_Sigma_x_mean_ = ( _delta_Sigma_x_mean_*effective_count() + other.delta_Sigma_x_mean()*other.effective_count())
-					/new_effective_count;
-	_delta_Sigma_x_mean_square_ = ( _delta_Sigma_x_mean_square_*effective_count() +
-			other.delta_Sigma_x_mean_square()*other.effective_count())
-			/new_effective_count;
-
-	_effective_count_ = new_effective_count;
+	// Add the count and number of distinct lenses
 	_count_ += other.count();
+	_num_lenses_ += other.num_lenses();
 
-	_uncache_values();
+	// Check for zero total weight in this or the other
+	if(other.sum_of_weights()==0)
+	{
+		return *this;
+	}
+	if(_sum_of_weights_==0)
+	{
+		// Simply copy the other bin summary, except for the list of source magnitudes
+		auto tmp_source_magnitudes = std::move(_source_magnitudes_);
+		auto tmp_count = std::move(_count_);
+		auto tmp_num_lenses = std::move(_num_lenses_);
+		*this = other;
+		_source_magnitudes_ = std::move(tmp_source_magnitudes);
+		_count_ = std::move(tmp_count);
+		_num_lenses_ = std::move(tmp_num_lenses);
+		return *this;
+	}
+
+	double new_sum_of_weights = sum_of_weights() + other.sum_of_weights();
+
+	_R_mean_ = ( _R_mean_*sum_of_weights() + other.R_mean()*other.sum_of_weights())/new_sum_of_weights;
+	_m_mean_ = ( _m_mean_*sum_of_weights() + other.m_mean()*other.sum_of_weights())/new_sum_of_weights;
+	_z_mean_ = ( _z_mean_*sum_of_weights() + other.z_mean()*other.sum_of_weights())/new_sum_of_weights;
+	_mag_mean_ = ( _mag_mean_*sum_of_weights() + other.mag_mean()*other.sum_of_weights())/new_sum_of_weights;
+
+	_delta_Sigma_t_mean_ = ( _delta_Sigma_t_mean_*sum_of_weights() + other.delta_Sigma_t_mean()*other.sum_of_weights())
+			/new_sum_of_weights;
+	_delta_Sigma_t_mean_square_ = ( _delta_Sigma_t_mean_square_*sum_of_weights() +
+			other.delta_Sigma_t_mean_square()*other.sum_of_weights())
+			/new_sum_of_weights;
+	_delta_Sigma_x_mean_ = ( _delta_Sigma_x_mean_*sum_of_weights() + other.delta_Sigma_x_mean()*other.sum_of_weights())
+					/new_sum_of_weights;
+	_delta_Sigma_x_mean_square_ = ( _delta_Sigma_x_mean_square_*sum_of_weights() +
+			other.delta_Sigma_x_mean_square()*other.sum_of_weights())
+			/new_sum_of_weights;
+	_sum_of_weights_ = new_sum_of_weights;
+	_sum_of_square_weights_ += other.sum_of_square_weights();
+
 	return *this;
 }
 

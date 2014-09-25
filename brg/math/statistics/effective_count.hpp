@@ -31,6 +31,7 @@
 #include <boost/accumulators/framework/features.hpp>
 #include <boost/accumulators/framework/parameters/sample.hpp>
 #include <boost/accumulators/framework/depends_on.hpp>
+#include <boost/accumulators/statistics/count.hpp>
 #include <boost/accumulators/statistics/sum.hpp>
 
 #include "brg/global.h"
@@ -55,6 +56,8 @@ struct effective_count_accumulator
   template<typename Args>
   result_type result(Args const &args) const
   {
+	  if(count(args[accumulator])<=1) return count(args[accumulator]);
+	  if(sum_of_square_weights(args[accumulator])==0) return 0;
 	  return brgastro::square(sum_of_weights(args[accumulator]))/sum_of_square_weights(args[accumulator]);
   }
 };
@@ -64,7 +67,7 @@ struct effective_count_accumulator
 namespace tag {
 
 struct effective_count
-  : depends_on< sum_of_weights, sum_of_square_weights >
+  : depends_on< count, sum_of_weights, sum_of_square_weights >
 {
 	typedef mpl::true_ is_weight_accumulator;
 	typedef accumulators::impl::effective_count_accumulator< mpl::_1 > impl;
