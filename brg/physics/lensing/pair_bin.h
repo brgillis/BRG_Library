@@ -80,13 +80,19 @@ private:
 	bin_stat_vec_t<BRG_MASS> _m_values_;
 	bin_stat_vec_t<double> _z_values_;
 	bin_stat_vec_t<double> _mag_lens_values_;
-	stat_vec_t<double> _mag_source_values_;
 	stat_vec_t<BRG_UNITS> _delta_Sigma_t_values_;
 	stat_vec_t<BRG_UNITS> _delta_Sigma_x_values_;
 
+	stat_vec_t<double> _mu_obs_values_;
 	std::set<size_t> _distinct_lens_ids_;
 
+	mutable double _mu_hat_cached_value_;
+	mutable double _mu_W_cached_value_;
+
 #endif // Pair data
+
+protected:
+	void _uncache_values();
 
 public:
 
@@ -175,10 +181,6 @@ public:
 	{
 		return _mag_lens_values_;
 	}
-	stat_vec_t<double> mag_source_values()
-	{
-		return _mag_source_values_;
-	}
 	stat_vec_t<BRG_UNITS> delta_Sigma_t_values()
 	{
 		return _delta_Sigma_t_values_;
@@ -186,6 +188,10 @@ public:
 	stat_vec_t<BRG_UNITS> delta_Sigma_x_values()
 	{
 		return _delta_Sigma_x_values_;
+	}
+	stat_vec_t<double> mu_obs_values()
+	{
+		return _mu_obs_values_;
 	}
 
 #endif
@@ -204,6 +210,9 @@ public:
 
 	BRG_UNITS delta_Sigma_t_stderr() const;
 	BRG_UNITS delta_Sigma_x_stderr() const;
+
+	double mu_hat() const;
+	double mu_W() const;
 
 #endif
 };

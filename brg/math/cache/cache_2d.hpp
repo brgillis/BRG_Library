@@ -409,7 +409,8 @@ public:
 		}
 	} // const int set_range()
 
-	void print( std::ostream & out, const bool silent = false ) const
+	template<typename otype>
+	void print( otype & out, const bool silent = false ) const
 	{
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();

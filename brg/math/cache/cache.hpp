@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 #include <string>
 #include <sstream>
 
@@ -131,7 +132,7 @@ private:
 
 			try
 			{
-				open_bin_file_input( in_file, SPCP(name)->_file_name_ );
+				open_file_input( in_file, SPCP(name)->_file_name_ );
 			}
 			catch(const std::exception &e)
 			{
@@ -267,6 +268,7 @@ private:
 			}
 			catch(const std::exception &e)
 			{
+				if(!silent) std::cerr << e.what() << std::endl;
 				bad_result = true;
 			}
 			SPCP(name)->_results_[i] = result;
@@ -392,15 +394,15 @@ public:
 		}
 	} // const int set_precision()
 
-	void print( std::ostream & out, const bool silent = false ) const
+	template<typename otype>
+	void print( otype & out, const bool silent = false ) const
 	{
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
 			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
 			// so we don't get collisions from loading within two different critical sections at once)
-			SPCP(name)->get(SPCP(name)->_min_1_,SPCP(name)->_min_2_,SPCP(name)->_min_3_,
-					SPCP(name)->_min_4_,true);
+			SPCP(name)->get(SPCP(name)->_min_1_,silent);
 		}
 
 		// Fill up header
@@ -453,6 +455,7 @@ public:
 				}
 				catch(const std::exception &e)
 				{
+					if(!silent) std::cerr << e.what() << std::endl;
 					result = -1;
 				}
 			}

@@ -1,9 +1,8 @@
 /**********************************************************************\
- @file functor.hpp
+ @file mag_global_values.h
  ------------------
 
- Abstract base class for a functor. Inherit from this to ensure
- compatibility with all functions in the library.
+ TODO <Insert file description here>
 
  **********************************************************************
 
@@ -25,52 +24,18 @@
 \**********************************************************************/
 
 
-#ifndef _BRG_FUNCTOR_HPP_INCLUDED_
-#define _BRG_FUNCTOR_HPP_INCLUDED_
+// body file: mag_global_values.cpp
 
-#include <utility>
 
-#include "brg/global.h"
+#ifndef _BRG_MAG_GLOBAL_VALUES_H_INCLUDED_
+#define _BRG_MAG_GLOBAL_VALUES_H_INCLUDED_
 
 namespace brgastro {
 
-template<typename T, typename param_struct=char> // Defaults to using the minimum size for the param structure
-class functor
-{
-private:
-
-	param_struct _params_;
-
-public:
-
-	functor()
-	{
-	}
-
-	functor(param_struct init_params)
-	: _params_(init_params)
-	{
-	}
-
-	virtual ~functor()
-	{
-	}
-
-	template<typename other_param_struct>
-	void set_params(other_param_struct&& new_params)
-	{
-		_params_ = std::forward<other_param_struct>(new_params);
-	}
-
-	const param_struct & params() const
-	{
-		return _params_;
-	}
-
-	virtual T operator()(const T & in_param, const bool silent=false) const =0;
-
-};
+const double mag_m_min = 15.;
+const double mag_m_max = 25.;
+const double mag_z_max = 4.0;
 
 } // namespace brgastro
 
-#endif // _BRG_FUNCTOR_HPP_INCLUDED_
+#endif // _BRG_MAG_GLOBAL_VALUES_H_INCLUDED_

@@ -25,29 +25,29 @@
 
 #include "brg/global.h"
 
+#include "brg/math/misc_math.hpp"
 #include "brg/physics/astro.h"
 #include "brg/physics/lensing/magnification/expected_count_cache.h"
 #include "brg/physics/lensing/magnification/magnification_alpha.h"
 #include "brg/physics/lensing/magnification/magnification_functors.h"
-#include "brg/physics/units/unit_conversions.hpp"
-#include "brg/physics/units/unit_obj.h"
 
 namespace brgastro {
 
-double mag_expected_count_functor::operator() (double m, bool silent) const
+BRG_UNITS mag_expected_count_functor::operator() (BRG_UNITS & m, bool silent) const
 {
 	return expected_count_cache().get(m,_z_mean_);
 }
 
-double mu_signal_integration_functor::operator() (double m, bool silent) const
+BRG_UNITS mu_signal_integration_functor::operator() (BRG_UNITS & m, bool silent) const
 {
-	double alpha = magnification_alpha(m);
-	return mag_expected_count_functor(_area_,_z_mean_)(m,silent)*(alpha-1)*(alpha-2);
+	double alpha = magnification_alpha(m,_z_mean_);
+	double count = mag_expected_count_functor(_z_mean_)(m,silent);
+	return count*(alpha-1)*(alpha-2);
 }
 
-double mu_weight_integration_functor::operator() (double m, bool silent) const
+BRG_UNITS mu_weight_integration_functor::operator() (BRG_UNITS & m, bool silent) const
 {
-	return mag_expected_count_functor(_area_,_z_mean_)(m,silent)*(magnification_alpha(m)-1);
+	return mag_expected_count_functor(_z_mean_)(m,silent)*square(magnification_alpha(m,_z_mean_)-1);
 }
 
 } // namespace brgastro

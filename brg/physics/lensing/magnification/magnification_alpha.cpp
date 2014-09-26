@@ -31,12 +31,16 @@
 
 namespace brgastro {
 
-double magnification_alpha(double m)
+double magnification_alpha(double m, double z)
 {
-	auto ln = [] (double mp, bool silent=true)
-			{return std::log(mag_expected_count_functor(1)(mp,silent));};
+	mag_expected_count_functor func(z);
+	if(func(m)<=0) return 1.; // 1 corresponds to a flat profile, so it's appropriate for zero counts
+
+	auto ln = [&] (long double mp, bool silent=true)
+			{return std::log(func(mp,silent));};
 	// Area cancels out in calculation
-	return 2.5*differentiate(&ln,m);
+	auto result = 2.5*differentiate(&ln,m);
+	return result;
 }
 
 } // namespace brgastro

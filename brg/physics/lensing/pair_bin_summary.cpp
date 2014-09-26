@@ -62,8 +62,9 @@ pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG
 	_delta_Sigma_x_mean_(0),
 	_delta_Sigma_t_mean_square_(0),
 	_delta_Sigma_x_mean_square_(0),
-	_mu_hat_cached_value_(std::numeric_limits<double>::infinity()),
-	_mu_W_cached_value_(std::numeric_limits<double>::infinity()),
+	_mu_hat_(0),
+	_mu_W_(0),
+	_total_area_(0),
 	_num_lenses_(0)
 {
 }
@@ -88,8 +89,9 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 	_delta_Sigma_x_mean_(bin.delta_Sigma_x_mean()),
 	_delta_Sigma_t_mean_square_(bin.delta_Sigma_t_mean_square()),
 	_delta_Sigma_x_mean_square_(bin.delta_Sigma_x_mean_square()),
-	_mu_hat_cached_value_(std::numeric_limits<double>::infinity()),
-	_mu_W_cached_value_(std::numeric_limits<double>::infinity()),
+	_mu_hat_(bin.mu_hat()),
+	_mu_W_(bin.mu_W()),
+	_total_area_(bin.area()),
 	_num_lenses_(bin.num_lenses())
 {
 }
@@ -115,46 +117,6 @@ void pair_bin_summary::clear()
 }
 
 #endif // Adding and clearing data
-
-// Magnification calculations
-#if(1)
-
-double pair_bin_summary::mu_W() const
-{
-	if(_mu_W_cached_value_==std::numeric_limits<double>::infinity())
-	{
-		// Not cached, so calculate and cache it
-
-		mu_weight_integration_functor func(area(),z_mean());
-
-		_mu_W_cached_value_ = integrate_Romberg(&func,15,25);
-	}
-	return _mu_W_cached_value_;
-
-}
-
-double pair_bin_summary::mu_hat() const
-{
-	if(_mu_hat_cached_value_==std::numeric_limits<double>::infinity())
-	{
-		// Not cached, so calculate and cache it
-
-		double mu_observed = 0;
-		for(size_t source_i=0;source_i<_source_magnitudes_.size();++source_i)
-		{
-			mu_observed += magnification_alpha(_source_magnitudes_[source_i])-1;
-		}
-
-		mu_signal_integration_functor func(area(),z_mean());
-		const double mu_base = integrate_Romberg(&func,15,25);
-
-		_mu_hat_cached_value_ = (mu_observed-mu_base)/mu_W();
-	}
-	return _mu_hat_cached_value_;
-
-}
-
-#endif
 
 // Combining summaries together
 #if(1)
@@ -183,13 +145,13 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 		return *this;
 	}
 
-	// Combine the source magnitude lists together
-	_source_magnitudes_.insert( _source_magnitudes_.end(),
-			other.source_magnitudes().begin(), other.source_magnitudes().end() );
-
-	// Add the count and number of distinct lenses
+	// Add the count and magnification data
 	_count_ += other.count();
 	_num_lenses_ += other.num_lenses();
+
+	auto new_W = _mu_W_ + other.mu_W();
+	_mu_hat_ = (_mu_hat_*_mu_W_ + other.mu_hat()*other.mu_W())/new_W;
+	_mu_W_ = new_W;
 
 	// Check for zero total weight in this or the other
 	if(other.sum_of_weights()==0)
@@ -199,17 +161,19 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	if(_sum_of_weights_==0)
 	{
 		// Simply copy the other bin summary, except for the list of source magnitudes
-		auto tmp_source_magnitudes = std::move(_source_magnitudes_);
 		auto tmp_count = std::move(_count_);
 		auto tmp_num_lenses = std::move(_num_lenses_);
+		auto tmp_mu_hat = std::move(_mu_hat_);
+		auto tmp_mu_W = std::move(_mu_W_);
 		*this = other;
-		_source_magnitudes_ = std::move(tmp_source_magnitudes);
 		_count_ = std::move(tmp_count);
 		_num_lenses_ = std::move(tmp_num_lenses);
+		_mu_hat_ = std::move(tmp_mu_hat);
+		_mu_W_ = std::move(tmp_mu_W);
 		return *this;
 	}
 
-	double new_sum_of_weights = sum_of_weights() + other.sum_of_weights();
+	auto new_sum_of_weights = sum_of_weights() + other.sum_of_weights();
 
 	_R_mean_ = ( _R_mean_*sum_of_weights() + other.R_mean()*other.sum_of_weights())/new_sum_of_weights;
 	_m_mean_ = ( _m_mean_*sum_of_weights() + other.m_mean()*other.sum_of_weights())/new_sum_of_weights;

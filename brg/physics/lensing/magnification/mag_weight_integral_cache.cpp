@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file expected_count_cache.cpp
+ @file mag_weight_integral_cache.cpp
  ------------------
 
  TODO <Insert file description here>
@@ -28,32 +28,25 @@
 #include "brg/global.h"
 
 #include "brg/math/calculus/integrate.hpp"
-#include "brg/math/safe_math.hpp"
-#include "brg/physics/lensing/magnification/expected_count_loader.h"
 #include "brg/physics/lensing/magnification/mag_global_values.h"
-#include "brg/physics/lensing/magnification/Schechter_like_functor.h"
+#include "brg/physics/lensing/magnification/magnification_functors.h"
 
-#include "expected_count_cache.h"
+#include "mag_weight_integral_cache.h"
 
 // Initialise the cache
-DEFINE_BRG_CACHE_2D_STATIC_VARS( expected_count_cache,
-	brgastro::mag_m_min,brgastro::mag_m_max,0.1,
-	0.25,brgastro::mag_z_max-0.05,0.1);
+DEFINE_BRG_CACHE_STATIC_VARS( mag_weight_integral_cache,
+		0.25,brgastro::mag_z_max-0.05,0.1);
 
-// brgastro::expected_count_cache class methods
+// brgastro::mag_weight_integral_cache class methods
 #if (1)
-const double brgastro::expected_count_cache::_calculate( const double in_param_1, const double in_param_2) const
+const double brgastro::mag_weight_integral_cache::_calculate( const double in_param_1 ) const
 {
-	const double m = std::fabs(in_param_1);
-	const double z_min = std::fabs(in_param_2);
+	mu_weight_integration_functor func(in_param_1);
 
-	// We have to integrate over z from the input value to the max here
-
-	auto f = [&] (double z, const bool silent)
-		{
-			return Schechter_like_functor(expected_count_loader::get(z))(m);
-		};
-
-	return integrate_Romberg(&f,z_min,brgastro::mag_z_max);
+	return integrate_Romberg(&func,brgastro::mag_m_min,brgastro::mag_m_max);
 }
 #endif
+
+namespace brgastro {
+
+} // end namespace brgastro

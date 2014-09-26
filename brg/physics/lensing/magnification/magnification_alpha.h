@@ -35,7 +35,7 @@
 
 namespace brgastro {
 
-double magnification_alpha(double m);
+double magnification_alpha(double m, double z);
 
 } // namespace brgastro
 

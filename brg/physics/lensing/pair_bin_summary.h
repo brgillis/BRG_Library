@@ -37,8 +37,6 @@
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
 
-// TODO: Fix effective count use in summation (should add sum of weights and sum of square weights)
-
 namespace brgastro {
 
 // Forward-declare pair_bin
@@ -74,19 +72,17 @@ private:
 	BRG_UNITS _delta_Sigma_t_mean_, _delta_Sigma_x_mean_;
 	BRG_UNITS _delta_Sigma_t_mean_square_, _delta_Sigma_x_mean_square_;
 
-	mutable double _mu_hat_cached_value_;
-	mutable double _mu_W_cached_value_;
-	std::vector<double> _source_magnitudes_;
+	double _mu_hat_;
+	double _mu_W_;
+	BRG_UNITS _total_area_;
 	size_t _num_lenses_;
 
 #endif
 
 protected:
 
-	void _uncache_values()
+	virtual void _uncache_values()
 	{
-		_mu_hat_cached_value_ = std::numeric_limits<double>::infinity();
-		_mu_W_cached_value_ = std::numeric_limits<double>::infinity();
 	}
 
 public:
@@ -294,21 +290,34 @@ public:
 
 	BRG_UNITS area_per_lens() const
 	{
-		return pi*(square(_R_max_)-square(_R_min_));
+		return area()/num_lenses();
+		return pi*(square(afd(_R_max_,_z_mean_))-square(afd(_R_max_,_z_mean_)));
 	}
-	BRG_UNITS area() const
+	virtual BRG_UNITS area() const
 	{
-		return area_per_lens()*num_lenses();
+		return _total_area_;
 	}
 	virtual size_t num_lenses() const
 	{
 		return _num_lenses_;
 	}
-	double mu_hat() const;
-	double mu_W() const;
-	const std::vector<double> & source_magnitudes() const
+	virtual double mu_hat() const
 	{
-		return _source_magnitudes_;
+		return _mu_hat_;
+	}
+	virtual double mu_W() const
+	{
+		return _mu_W_;
+	}
+	double mu_stderr() const
+	{
+		// TODO Correct this for weighted lenses and pairs used for magnification if needed
+		return 1./std::sqrt(mu_W());
+	}
+	double kappa() const
+	{
+		// TODO Correct if needed for exact formula
+		return 1.-1./mu_hat();
 	}
 
 #endif // Magnification
