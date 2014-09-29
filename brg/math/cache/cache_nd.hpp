@@ -190,7 +190,7 @@ private:
 			// Initialize
 			size_t i = 0;
 			const std::streamsize size = sizeof(SPCP(name)->_results_[0]); // Store the size for speed
-			brgastro::vector<size_t> position(SPCP(name)->_num_dim_,0);
+			brgastro::multi_vector<size_t> position(SPCP(name)->_num_dim_,0);
 
 			while ( ( !in_file.eof() ) && ( i < product(SPCP(name)->_resolutions_) ) && (in_file) )
 			{
@@ -255,8 +255,8 @@ private:
 		SPCP(name)->_resolutions_ = max( (((SPCP(name)->_maxes_-SPCP(name)->_mins_) / safe_d(SPCP(name)->_steps_))+1.), 1.);
 		SPCP(name)->_results_.reshape(SPCP(name)->_resolutions_.v() );
 
-		brgastro::vector<size_t> position(SPCP(name)->_num_dim_,0);
-		brgastro::vector<double> x(SPCP(name)->_num_dim_,0);
+		brgastro::multi_vector<size_t> position(SPCP(name)->_num_dim_,0);
+		brgastro::multi_vector<double> x(SPCP(name)->_num_dim_,0);
 		for ( size_t i = 0; i < SPCP(name)->_results_.size(); i++ )
 		{
 			x = SPCP(name)->_mins_ + SPCP(name)->_steps_*position;
@@ -315,7 +315,7 @@ private:
 		// Initialize
 		size_t i = 0;
 		const std::streamsize size = sizeof(SPCP(name)->_results_[0]);
-		brgastro::vector<size_t> position(SPCP(name)->_num_dim_,0);
+		brgastro::multi_vector<size_t> position(SPCP(name)->_num_dim_,0);
 
 		while ( i < product(SPCP(name)->_resolutions_) )
 		{
@@ -358,7 +358,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	const double _calculate(const brgastro::vector<double> & x) const
+	const double _calculate(const brgastro::multi_vector<double> & x) const
 	{
 		return 0;
 	}
@@ -394,8 +394,8 @@ public:
 		}
 	} // void set_file_name()
 
-	void set_range( const brgastro::vector<double> & new_mins, const brgastro::vector<double> & new_maxes,
-			const brgastro::vector<double> & new_steps, const bool silent = false )
+	void set_range( const brgastro::multi_vector<double> & new_mins, const brgastro::multi_vector<double> & new_maxes,
+			const brgastro::multi_vector<double> & new_steps, const bool silent = false )
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -428,11 +428,11 @@ public:
 		}
 	} // void set_range()
 
-	const BRG_UNITS get( const brgastro::vector<double> & x, const bool silent = false ) const
+	const BRG_UNITS get( const brgastro::multi_vector<double> & x, const bool silent = false ) const
 	{
 
-		brgastro::vector<double> xlo, xhi;
-		brgastro::vector<size_t> x_i; // Lower nearby array points
+		brgastro::multi_vector<double> xlo, xhi;
+		brgastro::multi_vector<size_t> x_i; // Lower nearby array points
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
@@ -479,7 +479,7 @@ public:
 
 		result = 0;
 		double total_weight = 0;
-		brgastro::vector<size_t> position(SPCP(name)->_num_dim_,0);
+		brgastro::multi_vector<size_t> position(SPCP(name)->_num_dim_,0);
 
 		for(size_t j=0; j < num_surrounding_points; j++)
 		{
