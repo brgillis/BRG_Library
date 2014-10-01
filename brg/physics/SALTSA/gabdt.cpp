@@ -30,7 +30,7 @@
 #include "brg/math/calculus/differentiate.hpp"
 #include "brg/physics/density_profile/density_profile.h"
 #include "brg/physics/units/unit_obj.h"
-#include "brg/utility.hpp"
+#include "brg/vector/make_vector.hpp"
 
 #include "gabdt.h"
 
@@ -103,7 +103,7 @@ void brgastro::gabdt::calc_dv( const bool silent ) const
 	std::vector< BRG_UNITS > in_params( num_in_params, 0 ), out_params(
 			num_out_params, 0 );
 	std::vector< std::vector< BRG_UNITS > > Jacobian;
-	make_array2d( _dv_, num_out_params, num_in_params );
+	make_vector_zeroes( _dv_, num_out_params, num_in_params );
 
 	in_params[0] = _x_;
 	in_params[1] = _y_;
@@ -119,9 +119,7 @@ void brgastro::gabdt::calc_dv( const bool silent ) const
 		{
 			std::cerr << "ERROR: Cannot differentiate in gabdt::calc_dv():\n";
 		}
-		for ( size_t i = 0; i < num_out_params; i++ )
-			for ( size_t j = 0; j < num_in_params; j++ )
-				_dv_[i][j] = 0; // To be safe;
+		make_vector_zeroes( _dv_, num_out_params, num_in_params ); // To be safe;
 		_is_cached_ = true;
 		throw;
 	}
@@ -152,14 +150,7 @@ void brgastro::gabdt::calc_dv( const bool silent ) const
 }
 void brgastro::gabdt::override_zero()
 {
-	make_array2d( _dv_, 3, 3 );
-	for ( int x_i = 0; x_i < 3; x_i++ )
-	{
-		for ( int y_i = 0; y_i < 3; y_i++ )
-		{
-			_dv_[x_i][y_i] = 0;
-		}
-	}
+	make_vector_zeroes( _dv_, 3, 3 );
 	_is_cached_ = true;
 }
 const brgastro::density_profile * brgastro::gabdt::host() const
@@ -291,17 +282,8 @@ std::vector< BRG_UNITS > brgastro::gabdt_functor::operator()(
 	double R = dist3d( in_params[0], in_params[1], in_params[2] );
 
 	size_t num_out_params = 3;
-	make_array( out_params, num_out_params );
-	if ( R == 0 )
-	{
-		// Special handling for this case, returning a zero result
-		for ( size_t i = 0; i < num_out_params; i++ )
-		{
-			out_params[i] = 0;
-		}
-
-	}
-	else
+	make_vector_zeroes( out_params, num_out_params );
+	if ( R != 0 )
 	{
 		double accel_mag = host_ptr->accel( R );
 

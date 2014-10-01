@@ -30,7 +30,7 @@
 
 #include "brg/global.h"
 
-#include "brg/utility.hpp"
+#include "brg/vector/make_vector.hpp"
 
 namespace brgastro {
 
@@ -60,15 +60,12 @@ std::vector< std::vector<T> > transpose(const std::vector< std::vector<T> > & v,
 
 	std::vector< std::vector<T> > result;
 
-	make_array2d(result,n_rows,n_cols,true,default_value);
-
-	for(size_t i=0;i<n_cols;++i)
-	{
-		for(size_t j=0;j<n_rows;++j)
+	auto result_function = [&] (size_t i, size_t j)
 		{
-			result[j][i] = v[i][j];
-		}
-	}
+			return v[j][i];
+		};
+
+	make_vector_function(result,result_function,n_rows,n_cols);
 
 	return result;
 }
@@ -83,15 +80,12 @@ std::vector< std::vector<T> > reverse_vertical(const std::vector< std::vector<T>
 
 	std::vector< std::vector<T> > result;
 
-	make_array2d(result,n_cols,n_rows);
-
-	for(size_t i=0;i<n_cols;++i)
-	{
-		for(size_t j=0;j<n_rows;++j)
+	auto result_function = [&] (size_t i, size_t j)
 		{
-			result[i][n_rows-j-1] = v[i][j];
-		}
-	}
+			return v[i][n_rows-j-1];
+		};
+
+	make_vector_function(result,result_function,n_cols,n_rows);
 
 	return result;
 }

@@ -204,7 +204,7 @@ private:
 			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
 			SPCP(name)->_resolution_3_ = (size_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
 			SPCP(name)->_resolution_4_ = (size_t) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
-			make_array4d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
+			make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 					SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ );
 
 			// Read in data
@@ -282,7 +282,7 @@ private:
 		SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
 		SPCP(name)->_resolution_3_ = (size_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
 		SPCP(name)->_resolution_4_ = (size_t) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
-		make_array4d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
+		make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 				SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ );
 
 		// Calculate data

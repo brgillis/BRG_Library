@@ -37,6 +37,7 @@
 #include "brg/physics/units/unit_obj.h"
 #include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
+#include "brg/vector/make_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
 
 #include "pair_binner.h"
@@ -55,25 +56,16 @@ void pair_binner::_sort() const
 	// Check if the pair_bins vector has been generated and is the proper size
 	if(_pair_bins_.empty())
 	{
-		make_array4d(_pair_bins_,R_limits().size()-1,m_limits().size()-1,
-				z_limits().size()-1,mag_limits().size()-1,true);
-		for(size_t R_i=0; R_i<R_limits().size()-1;++R_i)
+		auto bin_limit_func = [&] (size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
 		{
-			for(size_t m_i=0; m_i<m_limits().size()-1;++m_i)
-			{
-				for(size_t z_i=0; z_i<z_limits().size()-1;++z_i)
-				{
-					for(size_t mag_i=0; mag_i<mag_limits().size()-1;++mag_i)
-					{
-						_pair_bins_[R_i][m_i][z_i][mag_i].set_limits(
-								R_limits()[R_i],R_limits()[R_i+1],
-								m_limits()[m_i],m_limits()[m_i+1],
-								z_limits()[z_i],z_limits()[z_i+1],
-								mag_limits()[mag_i],mag_limits()[mag_i+1]);
-					}
-				}
-			}
-		}
+			return pair_bin(
+					R_limits()[R_i],R_limits()[R_i+1],
+					m_limits()[m_i],m_limits()[m_i+1],
+					z_limits()[z_i],z_limits()[z_i+1],
+					mag_limits()[mag_i],mag_limits()[mag_i+1]);
+		};
+		make_vector_function(_pair_bins_,bin_limit_func,R_limits().size()-1,m_limits().size()-1,
+				z_limits().size()-1,mag_limits().size()-1);
 	}
 	else
 	{
@@ -167,21 +159,7 @@ void pair_binner::_sort() const
 	}
 
 	// Update the summaries
-	make_array4d(_pair_bin_summaries_,_pair_bins_);
-	for(size_t R_i=0; R_i<_pair_bin_summaries_.size(); ++R_i)
-	{
-		for(size_t m_i=0; m_i<_pair_bin_summaries_[R_i].size(); ++m_i)
-		{
-			for(size_t z_i=0; z_i<_pair_bin_summaries_[R_i][m_i].size(); ++z_i)
-			{
-				for(size_t mag_i=0; mag_i<_pair_bin_summaries_[R_i][m_i][z_i].size(); ++mag_i)
-				{
-					_pair_bin_summaries_[R_i][m_i][z_i][mag_i] =
-							_pair_bins_[R_i][m_i][z_i][mag_i];
-				}
-			}
-		}
-	}
+	make_vector_coerce<4>(_pair_bin_summaries_,_pair_bins_);
 }
 
 void pair_binner::_resort() const

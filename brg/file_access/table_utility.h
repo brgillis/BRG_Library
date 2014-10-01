@@ -36,7 +36,7 @@
 #include "brg/global.h"
 
 #include "brg/file_access/table_typedefs.hpp"
-#include "brg/utility.hpp"
+#include "brg/vector/make_vector.hpp"
 
 namespace brgastro {
 
@@ -82,7 +82,7 @@ table_map_t<T> make_table_map(
 			// If we have some data, match the size of it in new columns
 			for(size_t i=d_size; i<h_size; ++i)
 			{
-				make_array1d(new_data[i],new_data[0].size());
+				make_vector_default(new_data[i],new_data[0].size());
 			}
 		}
 		data_to_use = &new_data;

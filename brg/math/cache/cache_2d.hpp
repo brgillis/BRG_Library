@@ -41,7 +41,7 @@
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
 #include "brg/physics/units/unit_obj.h"
-#include "brg/utility.hpp"
+#include "brg/vector/make_vector.hpp"
 
 // Macro definitions
 
@@ -178,7 +178,7 @@ private:
 			// Set up data
 			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
 			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-			make_array2d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
+			make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
 
 			// Read in data
 
@@ -241,7 +241,7 @@ private:
 		// Set up data
 		SPCP(name)->_resolution_1_ = (int)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
 		SPCP(name)->_resolution_2_ = (int)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
-		make_array2d( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
+		make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
 
 		// Calculate data
 		bool bad_result = false;

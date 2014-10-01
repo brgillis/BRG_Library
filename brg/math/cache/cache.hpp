@@ -444,7 +444,7 @@ public:
 		if ( !SPCP(name)->_loaded_ )
 		{
 			// Load any caches we depend upon before the critical section
-			_load_cache_dependencies();
+			SPCP(name)->_load_cache_dependencies();
 
 			// Critical section here, since we can't load multiple times simultaneously
 			#pragma omp critical(load_brg_cache)

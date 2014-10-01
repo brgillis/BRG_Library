@@ -33,21 +33,23 @@
 
 namespace brgastro {
 
-BRG_UNITS mag_expected_count_functor::operator() (BRG_UNITS & m, bool silent) const
+BRG_UNITS mag_expected_count_functor::operator() (const BRG_UNITS & m, bool silent) const
 {
 	return expected_count_cache().get(m,_z_mean_);
 }
 
-BRG_UNITS mu_signal_integration_functor::operator() (BRG_UNITS & m, bool silent) const
+BRG_UNITS mu_signal_integration_functor::operator() (const BRG_UNITS & m, bool silent) const
 {
 	double alpha = magnification_alpha(m,_z_mean_);
 	double count = mag_expected_count_functor(_z_mean_)(m,silent);
 	return count*(alpha-1)*(alpha-2);
 }
 
-BRG_UNITS mu_weight_integration_functor::operator() (BRG_UNITS & m, bool silent) const
+BRG_UNITS mu_weight_integration_functor::operator() (const BRG_UNITS & m, bool silent) const
 {
-	return mag_expected_count_functor(_z_mean_)(m,silent)*square(magnification_alpha(m,_z_mean_)-1);
+	double alpha = magnification_alpha(m,_z_mean_);
+	double count = mag_expected_count_functor(_z_mean_)(m,silent);
+	return count*square(alpha-1);
 }
 
 } // namespace brgastro

@@ -35,7 +35,7 @@
 #include "brg/file_access/ascii_table.h"
 #include "brg/physics/lensing/pair_binner.h"
 #include "brg/physics/units/unit_obj.h"
-#include "brg/utility.hpp"
+#include "brg/vector/make_vector.hpp"
 #include "brg/vector/limit_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
 
@@ -257,22 +257,7 @@ pair_bins_summary::pair_bins_summary( const pair_binner & bins)
 	if(_valid_limits_)
 	{
 		bins.sort();
-		make_array4d(_pair_bin_summaries_,bins.pair_bins());
-
-		for(size_t R_i=0; R_i<_pair_bin_summaries_.size(); ++R_i)
-		{
-			for(size_t m_i=0; m_i<_pair_bin_summaries_[R_i].size(); ++m_i)
-			{
-				for(size_t z_i=0; z_i<_pair_bin_summaries_[R_i][m_i].size(); ++z_i)
-				{
-					for(size_t mag_i=0; mag_i<_pair_bin_summaries_[R_i][m_i][z_i].size(); ++mag_i)
-					{
-						_pair_bin_summaries_[R_i][m_i][z_i][mag_i] =
-								bins.pair_bins()[R_i][m_i][z_i][mag_i];
-					}
-				}
-			}
-		}
+		make_vector_coerce<4>(_pair_bin_summaries_,bins.pair_bins());
 	}
 }
 
@@ -574,8 +559,8 @@ void pair_bins_summary::print_bin_data(std::ostream &out)
 	header.push_back("dS_x_stddev");
 	header.push_back("dS_t_stderr");
 	header.push_back("dS_x_stderr");
-	header.push_back("mu");
-	header.push_back("mu_stderr");
+	header.push_back("kappa");
+	header.push_back("kappa_stderr");
 
 	assert(header.size()==num_columns);
 
@@ -611,8 +596,8 @@ void pair_bins_summary::print_bin_data(std::ostream &out)
 					data[++col_i].push_back(bin.delta_Sigma_x_std());
 					data[++col_i].push_back(bin.delta_Sigma_t_stderr());
 					data[++col_i].push_back(bin.delta_Sigma_x_stderr());
-					data[++col_i].push_back(bin.mu_hat());
-					data[++col_i].push_back(1/bin.mu_W());
+					data[++col_i].push_back(bin.kappa());
+					data[++col_i].push_back(bin.kappa_stderr());
 				}
 			}
 		}

@@ -79,6 +79,7 @@ private:
 	bin_stat_vec_t<BRG_DISTANCE> _R_values_;
 	bin_stat_vec_t<BRG_MASS> _m_values_;
 	bin_stat_vec_t<double> _z_values_;
+	bin_stat_vec_t<double> _source_z_values_;
 	bin_stat_vec_t<double> _mag_lens_values_;
 	stat_vec_t<BRG_UNITS> _delta_Sigma_t_values_;
 	stat_vec_t<BRG_UNITS> _delta_Sigma_x_values_;
@@ -155,9 +156,19 @@ public:
 		return boost::accumulators::mean(_z_values_);
 	}
 
+	double source_z_mean() const
+	{
+		return boost::accumulators::mean(_source_z_values_);
+	}
+
 	double mag_mean() const
 	{
 		return boost::accumulators::mean(_mag_lens_values_);
+	}
+
+	BRG_UNITS area() const
+	{
+		return pi*(square(afd(R_max(),z_mean()))-square(afd(R_min(),z_mean())));
 	}
 
 #endif

@@ -36,7 +36,7 @@
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
 #include "brg/physics/units/unit_obj.h"
-#include "brg/utility.hpp"
+#include "brg/vector/make_vector.hpp"
 
 namespace brgastro {
 
@@ -59,11 +59,12 @@ inline T differentiate( const f * func, const T & in_param,
 		const bool silent = false )
 {
 
-	BRG_UNITS d_in_param( 0 );
-	BRG_UNITS base_out_param( 0 );
-	BRG_UNITS test_in_param( 0 );
-	BRG_UNITS test_out_param( 0 );
-	BRG_UNITS small_factor_with_units = SMALL_FACTOR;
+	T d_in_param( 0 );
+	T low_in_param( 0 );
+	T high_in_param( 0 );
+	T low_out_param( 0 );
+	T high_out_param( 0 );
+	T small_factor_with_units = SMALL_FACTOR;
 
 	bool power_flag = false;
 	bool zero_in_flag = false;
@@ -114,9 +115,6 @@ inline T differentiate( const f * func, const T & in_param,
 		}
 	}
 
-	// Get value of function at input parameters
-	base_out_param = ( *func )( in_param, silent );
-
 	bool bad_function_result = false;
 	unsigned int counter = 0;
 
@@ -126,12 +124,14 @@ inline T differentiate( const f * func, const T & in_param,
 		counter++;
 		bad_function_result = false;
 
-		test_in_param = in_param + d_in_param;
+		low_in_param = in_param - d_in_param;
+		high_in_param = in_param + d_in_param;
 
 		// Run the function to get value at test point
 		try
 		{
-			test_out_param = ( *func )( test_in_param, silent );
+			low_out_param = ( *func )( low_in_param, silent );
+			high_out_param = ( *func )( high_in_param, silent );
 		}
 		catch(const std::runtime_error &e)
 		{
@@ -141,9 +141,9 @@ inline T differentiate( const f * func, const T & in_param,
 		}
 
 		// Record this derivative
-		Jacobian = ( test_out_param - base_out_param ) / d_in_param;
+		Jacobian = ( high_out_param - low_out_param ) / (2*d_in_param);
 		if ( power_flag )
-			Jacobian *= power * safe_pow( base_out_param, power - 1 );
+			Jacobian *= power * safe_pow( ( high_out_param + low_out_param )/2, power - 1 );
 		if(isbad(Jacobian))
 		{
 			bad_function_result = true;
@@ -191,8 +191,8 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 	Jacobian.clear();
 
 	// Set up differentials
-	make_array( d_in_params, num_in_params );
-	make_array( test_in_params, num_in_params );
+	make_vector_zeroes( d_in_params, num_in_params );
+	test_in_params = in_params;
 
 	// Check if any in_params are zero. If so, estimate small factor from other in_params
 	for ( size_t i = 0; i < num_in_params; i++ )
@@ -243,7 +243,7 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 	typename std::vector<T>::size_type num_out_params=base_out_params.size();
 
 	// Set up Jacobian
-	make_array2d( Jacobian, num_out_params, num_in_params );
+	make_vector_default( Jacobian, num_out_params, num_in_params );
 
 	// Loop over input and output dimensions to get Jacobian
 

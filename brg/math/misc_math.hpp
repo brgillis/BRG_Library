@@ -35,14 +35,14 @@ namespace brgastro {
 
 // Returns true if val is Not a Number - Personal implementation, to make sure it works for all types
 template< typename T >
-inline const bool isnan( T val )
+inline bool isnan( const T & val )
 {
 	return ( val != val );
 }
 
 // Returns true if val is infinity - ''
 template< typename T >
-inline const bool isinf( T val )
+inline bool isinf( T val )
 {
 	using std::fabs;
 #ifdef _BRG_USE_UNITS_
@@ -53,7 +53,7 @@ inline const bool isinf( T val )
 
 // Returns true if val is NaN or Inf
 template< typename T >
-inline const bool isbad( T val )
+inline bool isbad( const T & val )
 {
 	using std::isnan;
 	using std::isinf; // Use ADL here
@@ -62,7 +62,7 @@ inline const bool isbad( T val )
 
 // Returns true if val is neither NaN nor Inf
 template< typename T >
-inline const bool isgood( T val )
+inline bool isgood( const T & val )
 {
 	return !isbad( val );
 }
@@ -73,17 +73,17 @@ inline const bool isgood( T val )
 // type of number allowed (unit_obj if units are being used,
 // otherwise double).
 template< class T1, class T2 >
-inline const T1 min( const T1 a, const T2 b )
+inline T1 min( T1 a, const T2 & b )
 {
-	return ( a < (T1)b ? a : (T1)b );
+	return ( a < static_cast<T1>(b) ? a :  static_cast<T1>(b) );
 }
 template< class T1, class T2 >
-inline const T1 max( const T1 a, const T2 b )
+inline T1 max( T1 a, const T2 & b )
 {
-	return ( a < (T1)b ? (T1)b : a );
+	return ( a <  static_cast<T1>(b) ?  static_cast<T1>(b) : a );
 }
 template<  class T1, class T2, class T3 >
-inline const T2 bound( const T1 lower_bound, const T2 a, const T3 upper_bound)
+inline T2 bound( const T1 & lower_bound, T2 a, const T3 & upper_bound)
 {
 	return brgastro::min( brgastro::max( a, lower_bound ) , upper_bound);
 }
@@ -105,15 +105,15 @@ inline T & max_ref( T &a, T &b )
 
 // Returns true if a is evenly divisible by b
 template< typename Ta, typename Tb >
-inline const bool divisible( const Ta a, const Tb b )
+inline bool divisible( const Ta & a, const Tb & b )
 {
-	if(b==0) throw std::runtime_error("It's undefined whether or not value is divisible by zero.");
+	if(b==0) throw std::runtime_error("It's undefined whether or not a value is divisible by zero.");
 	return ( a % b == 0 );
 }
 
-// Rounds to nearest integer, favoring even
+// Rounds to nearest integer, favouring even
 template< typename T >
-const int round_int( const T value, const double epsilon=DBL_EPSILON )
+int round_int( T value, const double epsilon=DBL_EPSILON )
 {
 
 	if ( value < 0.0 )
@@ -140,65 +140,65 @@ const int round_int( const T value, const double epsilon=DBL_EPSILON )
 
 // Inline square
 template< typename T >
-const T square(T v1)
+T square(T v1)
 {
-	return v1*v1;
+	return v1*=v1;
 }
 
 // Inline cube
 template< typename T >
-const T cube(T v1)
+T cube(T v1)
 {
-	return v1*v1*v1;
+	return v1*=square(v1);
 }
 
 // Inline quart
 template< typename T >
-const T quart(T v1)
+T quart(T v1)
 {
 	return square(v1)*square(v1);
 }
 
 // Inline inverse
 template< typename T >
-const double inverse(T v1)
+double inverse(const T & v1)
 {
 	return 1./v1;
 }
-inline const long double inverse(long double v1)
+inline long double inverse(const long double & v1)
 {
 	return 1./v1;
 }
 
 // Inline square
 template< typename T >
-const double inv_square(T v1)
+double inv_square(const T & v1)
 {
 	return inverse(square(v1));
 }
-inline const long double inv_square(long double v1)
+inline long double inv_square(const long double & v1)
 {
 	return inverse(square(v1));
 }
 
 // Inline cube
 template< typename T >
-const double inv_cube(T v1)
+double inv_cube(const T & v1)
 {
 	return inverse(cube(v1));
 }
-inline const long double inv_cube(long double v1)
+inline long double inv_cube(const long double & v1)
 {
 	return inverse(cube(v1));
 }
 
 // Inline quart
 template< typename T >
-const double inv_quart(T v1)
+double inv_quart(const T & v1)
 {
 	return inverse(quart(v1));
 }
-inline const long double inv_quart(long double v1)
+inline long double inv_quart(const long double & v1)
 {
 	return inverse(quart(v1));
 }
@@ -210,7 +210,7 @@ inline const long double inv_quart(long double v1)
 // This version is optimized so that it won't check for the p==0 and p<0 cases, and generally
 // shouldn't be called directly
 template< typename T >
-const T _ipow( T v, int p )
+T _ipow( T v, int p )
 {
 	if(p==1) return v;
 	T tmp = _ipow(v,p/2);
@@ -220,7 +220,7 @@ const T _ipow( T v, int p )
 #endif
 
 template< typename T >
-const T ipow( T v, int p )
+T ipow( T v, int p )
 {
 	if(p<0) return 1/_ipow(v,-p);
 	if(p==0) return 1;
@@ -232,7 +232,7 @@ const T ipow( T v, int p )
 
 // Returns 1 if a is positive, -1 if it is negative, and 0 if it is 0, NaN if it is NaN
 template< class T >
-inline const int sign( const T a )
+inline short int sign( const T & a )
 {
 	if ( ( a == 0 ) || ( isnan( a ) ) )
 		return a;
@@ -244,52 +244,53 @@ inline const int sign( const T a )
 
 // Add two or three values in quadrature.
 template < typename T1, typename T2 >
-inline const T1 quad_add( const T1 v1, const T2 v2)
+inline T1 quad_add( const T1 & v1, const T2 & v2)
 {
 	using std::sqrt;
-	return sqrt( v1 * v1 + v2 * v2);
+	return sqrt( square(v1) + square(v2));
 }
 template < typename T1, typename T2, typename T3 >
-inline const T1 quad_add( const T1 v1, const T2 v2,
+inline T1 quad_add( const T1 & v1, const T2 & v2,
 		const T3 v3 )
 {
 	using std::sqrt;
-	return sqrt( v1 * v1 + v2 * v2 + v3 * v3 );
+	return sqrt( square(v1) + square(v2) + square(v3) );
 }
 
 // Subtract one value from another in quadrature
 template < typename T1, typename T2 >
-inline const T1 quad_sub( const T1 v1, const T2 v2 )
+inline T1 quad_sub( const T1 & v1, const T2 v2 )
 {
 	using std::sqrt;
-	return sqrt( v1 * v1 - v2 * v2 );
+	return sqrt( square(v1) - square(v2) );
 }
 
 // Function to calculate the distance between two points in 2-dimensions
 template < typename Tx1, typename Ty1, typename Tx2, typename Ty2 >
-inline const Tx1 dist2d( const Tx1 x1, const Ty1 y1, const Tx2 x2,
+inline Tx1 dist2d( const Tx1 x1, const Ty1 y1, const Tx2 x2,
 		const Ty2 y2 )
 {
 	return quad_add( x2 - x1, y2 - y1 );
 }
 // Function to calculate the distance between a point and (0,0) in 2-dimensions
 template < typename Tx1, typename Ty1 >
-inline const Tx1 dist2d( const Tx1 x1, const Ty1 y1 )
+inline Tx1 dist2d( const Tx1 x1, const Ty1 y1 )
 {
 	return quad_add( x1, y1 );
 }
 
 // Use the law of cosines to calculate hypotenuse length (lc=Law of Cosines)
 template < typename Tx1, typename Ty1, typename Ta1 >
-inline const Tx1 lc_add( const Tx1 x1, const Ty1 y1, const Ta1 a1 )
+inline Tx1 lc_add( const Tx1 x1, const Ty1 y1, const Ta1 a1 )
 {
 	using std::sqrt;
-	return sqrt( x1 * x1 + y1 * y1 - 2 * x1 * y1 * cos( a1 ) );
+	using std::cos;
+	return sqrt( square(x1) + square(y1) - 2 * x1 * y1 * cos( a1 ) );
 }
 
 // 3-D distance between two points
 template < typename Tx1, typename Ty1, typename Tz1, typename Tx2, typename Ty2, typename Tz2 >
-inline const Tx1 dist3d( const Tx1 x1, const Ty1 y1, const Tz1 z1,
+inline Tx1 dist3d( const Tx1 x1, const Ty1 y1, const Tz1 z1,
 		const Tx2 x2, const Ty2 y2, const Tz2 z2 )
 {
 	return quad_add( x2 - x1, y2 - y1, z2 - z1 );
@@ -297,14 +298,14 @@ inline const Tx1 dist3d( const Tx1 x1, const Ty1 y1, const Tz1 z1,
 
 // 3-D distance from (0,0,0)
 template < typename Tx, typename Ty, typename Tz >
-inline const Tx dist3d( const Tx x1, const Ty y1, const Tz z1 )
+inline Tx dist3d( const Tx x1, const Ty y1, const Tz z1 )
 {
 	return quad_add( x1, y1, z1 );
 }
 
 // Distance between two vectors, where the dimensions are weighted by vector c
 template< typename Ta, typename Tb >
-inline const Ta weighted_dist( std::vector< Ta > a,
+inline Ta weighted_dist( std::vector< Ta > a,
 		std::vector< Tb > b )
 {
 	using std::sqrt;
@@ -318,7 +319,7 @@ inline const Ta weighted_dist( std::vector< Ta > a,
 	return result;
 }
 template< typename Ta, typename Tb, typename Tc >
-inline const Ta weighted_dist( std::vector< Ta > a,
+inline Ta weighted_dist( std::vector< Ta > a,
 		std::vector< Tb > b, std::vector< Tc > c )
 {
 	using std::sqrt;
@@ -335,23 +336,70 @@ inline const Ta weighted_dist( std::vector< Ta > a,
 
 // Dot-product of two vectors in 3-D space
 template< typename Tx1, typename Ty1, typename Tz1, typename Tx2, typename Ty2, typename Tz2 >
-inline const Tx1 dot_product( const Tx1 x1, const Ty1 y1,
+inline Tx1 dot_product( const Tx1 x1, const Ty1 y1,
 		const Tz1 z1, const Tx2 x2, const Ty2 y2, const Tz2 z2 )
 {
 	return x1 * x2 + y1 * y2 + z1 * z2;
 }
 template< typename T1, typename T2 >
-inline const double dot_product( const std::vector< T1 > & a,
+inline T1 dot_product( const std::vector< T1 > & a,
 		const std::vector< T2 > & b )
 {
 	assert(a.size()==b.size());
-	double result = 0;
+	T1 result = 0;
 	for ( size_t i = 0; i < a.size(); i++ )
 	{
 		result += a[i] * b[i];
 	}
 	return result;
 }
+
+#if(1) // Error-related
+
+// Gets the error of adding two values in quadrature
+template < typename T1, typename T2 >
+inline T1 quad_add_err( const T1 & v1, const T1 & v1_err, const T2 & v2, const T2 & v2_err)
+{
+	return quad_add(v1*v1_err,v2*v2_err)/quad_add(v1,v2);
+}
+template < typename T1, typename T2, typename T3 >
+inline T1 quad_add_err( const T1 & v1, const T1 & v1_err, const T2 & v2, const T2 & v2_err,
+		const T3 & v3, const T3 & v3_err)
+{
+	return quad_add(v1*v1_err,v2*v2_err,v3*v3_err)/quad_add(v1,v2,v3);
+}
+
+// Gets the error in the square of a value
+template < typename T1 >
+inline T1 square_err( T1 v, T1 v_err )
+{
+	return v*=(v_err*=2);
+}
+
+// Gets the error in the square-root of a value
+template < typename T1 >
+inline T1 sqrt_err( const T1 & v, T1 v_err )
+{
+	using std::sqrt;
+	return v_err/=(2*sqrt(v));
+}
+
+// Gets the error in a power of a value
+template < typename T1 >
+inline T1 pow_err( const T1 & v, T1 v_err, const long double & p  )
+{
+	using std::pow;
+	double f_err = v_err/v;
+	return v_err*=(p*pow(v,p-1.));
+}
+template < typename T1 >
+inline T1 ipow_err( const T1 & v, T1 v_err, int p  )
+{
+	double f_err = v_err/v;
+	return v_err*=(p*ipow(v,p-1));
+}
+
+#endif // Error-related
 
 } // namespace brgastro
 

@@ -67,6 +67,7 @@ private:
 	BRG_DISTANCE _R_mean_;
 	BRG_MASS _m_mean_;
 	double _z_mean_;
+	double _source_z_mean_;
 	double _mag_mean_;
 
 	BRG_UNITS _delta_Sigma_t_mean_, _delta_Sigma_x_mean_;
@@ -224,6 +225,10 @@ public:
 	{
 		return _z_mean_;
 	}
+	virtual double source_z_mean() const
+	{
+		return _source_z_mean_;
+	}
 
 	double mag_min() const
 	{
@@ -242,6 +247,11 @@ public:
 
 	// Summary values
 #if (1)
+
+	double sigma_crit() const
+	{
+		return brgastro::sigma_crit(z_mean(),source_z_mean());
+	}
 
 	// Shear
 #if (1)
@@ -283,6 +293,40 @@ public:
 		return delta_Sigma_x_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
 	}
 
+	double gamma_t_mean() const
+	{
+		return delta_Sigma_t_mean()/sigma_crit();
+	}
+	double gamma_x_mean() const
+	{
+		return delta_Sigma_x_mean()/sigma_crit();
+	}
+	double gamma_mean() const
+	{
+		return std::sqrt(gamma_mean_square());
+	}
+	double gamma_mean_square() const
+	{
+		return square(gamma_t_mean())+square(gamma_x_mean());
+	}
+
+	double gamma_t_stderr() const
+	{
+		return delta_Sigma_t_stderr()/sigma_crit();
+	}
+	double gamma_x_stderr() const
+	{
+		return delta_Sigma_x_stderr()/sigma_crit();
+	}
+	double gamma_stderr() const
+	{
+		return quad_add_err(gamma_t_mean(),gamma_t_stderr(),gamma_x_mean(),gamma_x_stderr());
+	}
+	double gamma_square_stderr() const
+	{
+		return 2*gamma_mean()*gamma_stderr();
+	}
+
 #endif // Shear
 
 	// Magnification
@@ -316,8 +360,11 @@ public:
 	}
 	double kappa() const
 	{
-		// TODO Correct if needed for exact formula
-		return 1.-1./mu_hat();
+		return 1.-std::sqrt(1/mu_hat()+gamma_mean_square());
+	}
+	double kappa_stderr() const
+	{
+		return sqrt_err(1/mu_hat()+gamma_mean_square(),quad_add(mu_stderr(),gamma_square_stderr()));
 	}
 
 #endif // Magnification

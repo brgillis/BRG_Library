@@ -33,7 +33,7 @@
 namespace brgastro {
 
 const double mag_m_min = 15.;
-const double mag_m_max = 25.;
+const double mag_m_max = 24.5;
 const double mag_z_max = 4.0;
 
 } // namespace brgastro

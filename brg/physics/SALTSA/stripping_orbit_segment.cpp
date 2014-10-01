@@ -1575,7 +1575,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 			+ num_extra_host_columns;
 
 	header.resize( num_columns );
-	make_array2d( data, num_columns, num_rows );
+	make_vector_default( data, num_columns, num_rows );
 
 	header[0] = "#";
 	header[1] = "t";

@@ -57,6 +57,7 @@ pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG
 	_R_mean_(0),
 	_m_mean_(0),
 	_z_mean_(0),
+	_source_z_mean_(0),
 	_mag_mean_(0),
 	_delta_Sigma_t_mean_(0),
 	_delta_Sigma_x_mean_(0),
@@ -84,6 +85,7 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 	_R_mean_(bin.R_mean()),
 	_m_mean_(bin.m_mean()),
 	_z_mean_(bin.z_mean()),
+	_source_z_mean_(bin.source_z_mean()),
 	_mag_mean_(bin.mag_mean()),
 	_delta_Sigma_t_mean_(bin.delta_Sigma_t_mean()),
 	_delta_Sigma_x_mean_(bin.delta_Sigma_x_mean()),
@@ -107,6 +109,7 @@ void pair_bin_summary::clear()
 	_R_mean_ = 0;
 	_m_mean_ = 0;
 	_z_mean_ = 0;
+	_source_z_mean_ = 0;
 	_mag_mean_ = 0;
 	_delta_Sigma_t_mean_ = 0;
 	_delta_Sigma_x_mean_ = 0;
@@ -178,6 +181,7 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	_R_mean_ = ( _R_mean_*sum_of_weights() + other.R_mean()*other.sum_of_weights())/new_sum_of_weights;
 	_m_mean_ = ( _m_mean_*sum_of_weights() + other.m_mean()*other.sum_of_weights())/new_sum_of_weights;
 	_z_mean_ = ( _z_mean_*sum_of_weights() + other.z_mean()*other.sum_of_weights())/new_sum_of_weights;
+	_source_z_mean_ = ( _source_z_mean_*sum_of_weights() + other.source_z_mean()*other.sum_of_weights())/new_sum_of_weights;
 	_mag_mean_ = ( _mag_mean_*sum_of_weights() + other.mag_mean()*other.sum_of_weights())/new_sum_of_weights;
 
 	_delta_Sigma_t_mean_ = ( _delta_Sigma_t_mean_*sum_of_weights() + other.delta_Sigma_t_mean()*other.sum_of_weights())

@@ -34,12 +34,20 @@ namespace brgastro {
 double magnification_alpha(double m, double z)
 {
 	mag_expected_count_functor func(z);
-	if(func(m)<=0) return 1.; // 1 corresponds to a flat profile, so it's appropriate for zero counts
+	if(func(m)<=0) return 1.; // 1 corresponds to a flat profile, so this is appropriate for zero counts
 
 	auto ln = [&] (long double mp, bool silent=true)
-			{return std::log(func(mp,silent));};
+			{return std::log(static_cast<long double>(func(static_cast<double>(mp),silent)));};
 	// Area cancels out in calculation
-	auto result = 2.5*differentiate(&ln,m);
+	double result;
+	try
+	{
+		result = 2.5*differentiate(&ln,static_cast<long double>(m));
+	}
+	catch(const std::exception &e)
+	{
+		result = 1.;
+	}
 	return result;
 }
 

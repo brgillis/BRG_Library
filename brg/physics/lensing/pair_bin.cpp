@@ -77,6 +77,7 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 	_R_values_(new_pair.R_proj(), boost::accumulators::weight = mag_weight);
 	_m_values_(new_pair.m_lens(), boost::accumulators::weight = mag_weight);
 	_z_values_(new_pair.z_lens(), boost::accumulators::weight = mag_weight);
+	_source_z_values_(new_pair.z_source(), boost::accumulators::weight = mag_weight);
 	_mag_lens_values_(new_pair.mag_lens(), boost::accumulators::weight = mag_weight);
 	_mu_obs_values_(brgastro::magnification_alpha(new_pair.mag_source(),new_pair.z_lens())-1,
 			boost::accumulators::weight = mag_weight);
@@ -90,6 +91,7 @@ void pair_bin::clear()
 	set_zero(_R_values_);
 	set_zero(_m_values_);
 	set_zero(_z_values_);
+	set_zero(_source_z_values_);
 	set_zero(_mag_lens_values_);
 	set_zero(_mu_obs_values_);
 	set_zero(_delta_Sigma_t_values_);
@@ -164,7 +166,7 @@ double pair_bin::mu_hat() const
 
 		const double mu_base = area()*mag_signal_integral_cache().get(z_mean())/mu_W();
 
-		_mu_hat_cached_value_ = mu_observed-mu_base;
+		_mu_hat_cached_value_ = mu_observed+mu_base;
 	}
 	return _mu_hat_cached_value_;
 
