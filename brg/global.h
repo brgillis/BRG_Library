@@ -73,30 +73,6 @@ const double pi = 3.14159265358979323846;
 #define SMALL_FACTOR 1e-9
 #endif
 
-#ifndef INT_MAX
-#define INT_MAX std::numeric_limits<int>::max()
-#endif
-
-#ifndef INT_MIN
-#define INT_MIN std::numeric_limits<int>::min()
-#endif
-
-#ifndef DBL_MAX
-#define DBL_MAX std::numeric_limits<double>::max()
-#endif
-
-#ifndef DBL_MIN
-#define DBL_MIN std::numeric_limits<double>::min()
-#endif
-
-#ifndef FLT_EPSILON
-#define FLT_EPSILON std::numeric_limits<float>::epsilon()
-#endif
-
-#ifndef DBL_EPSILON
-#define DBL_EPSILON std::numeric_limits<double>::epsilon()
-#endif
-
 #ifndef FLT_ROUNDING_EPSILON
 #define FLT_ROUNDING_EPSILON 10*FLT_EPSILON
 #endif

@@ -32,8 +32,12 @@
 #include <utility>
 #include <vector>
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 #include "brg/global.h"
 
+#include "brg/file_access/table_map.hpp"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
 
@@ -80,6 +84,36 @@ private:
 
 #endif
 
+	// Serialization (to save it to a file)
+#if(1)
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & _R_min_ & _R_max_;
+		ar & _m_min_ & _m_max_;
+		ar & _z_min_ & _z_max_;
+		ar & _mag_min_ & _mag_max_;
+
+		ar & _count_;
+		ar & _sum_of_weights_;
+		ar & _sum_of_square_weights_;
+		ar & _R_mean_;
+		ar & _m_mean_;
+		ar & _z_mean_;
+		ar & _source_z_mean_;
+		ar & _mag_mean_;
+
+		ar & _delta_Sigma_t_mean_ & _delta_Sigma_x_mean_;
+		ar & _delta_Sigma_t_mean_square_ & _delta_Sigma_x_mean_square_;
+
+		ar & _mu_hat_;
+		ar & _mu_W_;
+		ar & _total_area_;
+		ar & _num_lenses_;
+	}
+#endif
+
 protected:
 
 	virtual void _uncache_values()
@@ -95,6 +129,8 @@ public:
 			double init_z_min=0, double init_z_max=0,
 			double init_mag_min=0, double init_mag_max=0 );
 	pair_bin_summary( const pair_bin & bin);
+	pair_bin_summary( std::istream & in );
+	pair_bin_summary( std::string & filename );
 	pair_bin_summary & operator=(const pair_bin & bin)
 	{
 		*this = pair_bin_summary(bin);
@@ -157,6 +193,9 @@ public:
 	virtual void clear();
 
 #endif
+
+	// Fix bad values
+	void fixbad();
 
 	// General statistics accessors
 #if(1)
@@ -381,6 +420,18 @@ public:
 	}
 
 #endif // Combining summaries together
+
+	// Saving/loading data
+#if(1)
+
+	void save(std::ostream &) const;
+	void save(const std::string &) const;
+	void save(std::ostream &);
+	void save(const std::string &);
+	void load(std::istream &);
+	void load(const std::string &);
+
+#endif
 };
 
 } // end namespace brgastro

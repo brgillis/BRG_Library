@@ -473,8 +473,8 @@ void brgastro::stripping_orbit_segment::clear()
 	_test_mass_spline_.clear();
 	_host_parameter_splines_.clear();
 
-	_t_min_natural_value_ = DBL_MAX;
-	_t_max_natural_value_ = ( -DBL_MAX );
+	_t_min_natural_value_ = std::numeric_limits<double>::max();
+	_t_max_natural_value_ = ( -std::numeric_limits<double>::max() );
 	_num_parameters_ = 0;
 	_record_full_data_ = false;
 
@@ -1022,7 +1022,7 @@ void brgastro::stripping_orbit_segment::set_t_max(
 
 void brgastro::stripping_orbit_segment::reset_t_min()
 {
-	_t_min_natural_value_ = DBL_MAX;
+	_t_min_natural_value_ = std::numeric_limits<double>::max();
 	for ( size_t i = 0; i < _x_spline_.size(); i++ )
 	{
 		if ( _x_spline_.sorted_data().at( i ).first < _t_min_natural_value_ )
@@ -1033,7 +1033,7 @@ void brgastro::stripping_orbit_segment::reset_t_min()
 
 void brgastro::stripping_orbit_segment::reset_t_max()
 {
-	_t_max_natural_value_ = ( -DBL_MAX );
+	_t_max_natural_value_ = ( -std::numeric_limits<double>::max() );
 	for ( size_t i = 0; i < _x_spline_.size(); i++ )
 	{
 		if ( _x_spline_.sorted_data().at( i ).first > _t_max_natural_value_ )
@@ -1801,7 +1801,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 					catch ( const std::out_of_range & )
 					{
 						ss.str( "" );
-						ss << DBL_MIN;
+						ss << std::numeric_limits<double>::min();
 						data[num_columns_base + extra_column_counter][i] =
 								ss.str();
 					}
@@ -1832,7 +1832,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 					catch ( const std::out_of_range & )
 					{
 						ss.str( "" );
-						ss << DBL_MIN;
+						ss << std::numeric_limits<double>::min();
 						data[num_columns_base + num_extra_satellite_columns
 								+ extra_column_counter][i] = ss.str();
 					}

@@ -114,8 +114,8 @@ brgastro::interpolator_derivative_weight_functor::interpolator_derivative_weight
 {
 	_sample_scale_ = 0;
 	_sample_max_width_ = 0;
-	_t_max_ = -( 0.99 * DBL_MIN );
-	_t_min_ = DBL_MAX;
+	_t_max_ = -std::numeric_limits<double>::max();
+	_t_min_ = std::numeric_limits<double>::max();
 	_centre_point_ = 0;
 }
 

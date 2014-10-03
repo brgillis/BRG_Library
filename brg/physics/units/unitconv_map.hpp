@@ -1,9 +1,8 @@
 /**********************************************************************\
- @file table_typedefs.hpp
+ @file unitconv_map.hpp
  ------------------
 
- This header file contains typedefs used for handling data tables and
- their headers.
+ A simple typedef of brgastro::unitconv_map.
 
  **********************************************************************
 
@@ -25,26 +24,22 @@
 \**********************************************************************/
 
 
-#ifndef _BRG_TABLE_TYPEDEFS_HPP_INCLUDED_
-#define _BRG_TABLE_TYPEDEFS_HPP_INCLUDED_
+// body file: unitconv_map.cpp
+
+
+#ifndef _BRG_UNITCONV_MAP_HPP_INCLUDED_
+#define _BRG_UNITCONV_MAP_HPP_INCLUDED_
 
 #include <map>
 #include <string>
-#include <vector>
 
 namespace brgastro
 {
 
-// Typedefs
-#if(1)
+typedef std::map<std::string,double> unitconv_map;
 
-typedef std::vector< std::string > header_t;
+} // namespace brgastro
 
-template <typename T>
-using table_t = std::vector< std::vector< T > >;
 
-#endif
 
-}
-
-#endif // _BRG_TABLE_TYPEDEFS_HPP_INCLUDED_
+#endif // _BRG_UNITCONV_MAP_HPP_INCLUDED_

@@ -44,7 +44,7 @@ BRG_UNITS brgastro::solve_rt_grid_functor::operator()(
 
 	if ( r == 0 )
 	{
-		return DBL_MAX;
+		return std::numeric_limits<double>::max();
 	}
 	else
 	{

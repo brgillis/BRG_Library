@@ -175,6 +175,20 @@ void pair_binner::_resort() const
 // Adding and clearing data
 #if(1)
 
+bool pair_binner::binnable( const galaxy & lens ) const
+{
+	if(!valid_limits()) return false;
+	auto m = lens.m();
+	if(m<m_limits().front()) return false;
+	if(m>m_limits().back()) return false;
+	auto z = lens.z();
+	if(z<z_limits().front()) return false;
+	if(z>z_limits().back()) return false;
+	auto mag = lens.mag();
+	if(mag<mag_limits().front()) return false;
+	if(mag>mag_limits().back()) return false;
+	return true;
+}
 void pair_binner::add_pair( const lens_source_pair & new_pair)
 {
 	_pairs_.push_back(new_pair);

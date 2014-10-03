@@ -38,6 +38,7 @@
 
 #include "brg/global.h"
 
+#include "brg/physics/sky_obj/galaxy.h"
 #include "brg/physics/lensing/pair_bin.h"
 #include "brg/physics/lensing/pair_bins_summary.h"
 #include "brg/physics/units/unit_obj.h"
@@ -128,6 +129,7 @@ public:
 	// Adding, sorting, and clearing data
 #if(1)
 
+	bool binnable( const galaxy & lens) const;
 	void add_pair( const lens_source_pair & new_pair);
 	void clear();
 	void empty();

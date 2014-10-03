@@ -365,7 +365,7 @@ T solve_grid( const f * func, const T & init_min_in_params, const T & init_max_i
 		const bool silent = false )
 {
 
-	T d = 0, d_best = DBL_MAX;
+	T d = 0, d_best = std::numeric_limits<double>::max();
 	unsigned int i_best = -1;
 	T init_in_params_step( 0 );
 	T in_params_step( 0 );
@@ -408,7 +408,7 @@ T solve_grid( const f * func, const T & init_min_in_params, const T & init_max_i
 
 	// First step is to search solution space for the best starting point
 	i_best = 0;
-	d_best = DBL_MAX;
+	d_best = std::numeric_limits<double>::max();
 	in_params_step = init_in_params_step;
 	bool starting_point_found = false;
 	for ( unsigned int i = 0; i < num_test_points; i++ )
@@ -484,7 +484,7 @@ T solve_grid( const f * func, const T & init_min_in_params, const T & init_max_i
 		in_params_step *= grid_shortening_factor;
 
 		i_best = 0;
-		d_best = DBL_MAX;
+		d_best = std::numeric_limits<double>::max();
 		for ( unsigned int i = 0; i < num_test_points; i++ )
 		{
 			test_in_params = best_in_params + in_params_step * i - in_params_step;
@@ -529,7 +529,7 @@ std::vector< T > solve_grid( const f * func,
 	vsize_t num_in_params = init_min_in_params.size();
 	vsize_t num_out_params = 0;
 
-	T d = 0, d_best = DBL_MAX;
+	T d = 0, d_best = std::numeric_limits<double>::max();
 	int i_resid = 0, i_temp = 0, i_best = 0;
 	std::vector< T > init_in_params_step( num_in_params, 0 );
 	std::vector< T > in_params_step( num_in_params, 0 );
@@ -601,7 +601,7 @@ std::vector< T > solve_grid( const f * func,
 
 	// First step is to search solution space for the best starting point
 	i_best = 0;
-	d_best = DBL_MAX;
+	d_best = std::numeric_limits<double>::max();
 	in_params_step = init_in_params_step;
 	bool starting_point_found = false;
 	for ( int i = 0; i < num_test_points; i++ )
@@ -645,7 +645,7 @@ std::vector< T > solve_grid( const f * func,
 		for ( vsize_t i = 0; i < in_params_step.size(); i++ )
 			in_params_step[i] /= search_factor;
 		i_best = 0;
-		d_best = DBL_MAX;
+		d_best = std::numeric_limits<double>::max();
 
 		// Recalculate number of test points
 		num_test_points = 1;
@@ -723,7 +723,7 @@ std::vector< T > solve_grid( const f * func,
 		}
 
 		i_best = -1;
-		d_best = DBL_MAX;
+		d_best = std::numeric_limits<double>::max();
 		for ( int i = 0; i < num_test_points; i++ )
 		{
 			// Figure out test_in_params for this point
@@ -1022,11 +1022,11 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 
 	if(min_in_params.size() < max_in_params.size())
 	{
-		min_in_params.resize(max_in_params.size(),-DBL_MAX);
+		min_in_params.resize(max_in_params.size(),-std::numeric_limits<double>::max());
 	}
 	if(max_in_params.size() < min_in_params.size())
 	{
-		max_in_params.resize(min_in_params.size(),DBL_MAX);
+		max_in_params.resize(min_in_params.size(),std::numeric_limits<double>::max());
 	}
 
 	// Check if any of the params likely have max and min mixed up

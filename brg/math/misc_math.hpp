@@ -27,6 +27,7 @@
 #include <cstdlib>
 #include <limits>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 #include "brg/global.h"
@@ -39,6 +40,10 @@ inline bool isnan( const T & val )
 {
 	return ( val != val );
 }
+inline bool isnan( const std::string & val )
+{
+	return false;
+}
 
 // Returns true if val is infinity - ''
 template< typename T >
@@ -50,14 +55,24 @@ inline bool isinf( T val )
 #endif
 	return fabs( val ) > std::numeric_limits<T>::max();
 }
+inline bool isinf( const std::string & val )
+{
+	return false;
+}
 
 // Returns true if val is NaN or Inf
 template< typename T >
 inline bool isbad( const T & val )
 {
 	using std::isnan;
-	using std::isinf; // Use ADL here
+	using std::isinf;
+	using brgastro::isnan;
+	using brgastro::isinf; // Use ADL here
 	return ( isnan( val ) || isinf( val ) );
+}
+inline bool isbad( std::string & val)
+{
+	return false;
 }
 
 // Returns true if val is neither NaN nor Inf
@@ -65,6 +80,29 @@ template< typename T >
 inline bool isgood( const T & val )
 {
 	return !isbad( val );
+}
+
+template< typename T >
+inline void fixbad( T & val )
+{
+	using std::isnan;
+	using std::isinf;
+	if(isnan(val))
+	{
+		val = 0;
+		return;
+	}
+	if(isinf(val))
+	{
+		if(val>0)
+		{
+			val = std::numeric_limits<T>::max();
+		}
+		else
+		{
+			val = std::numeric_limits<T>::lowest();
+		}
+	}
 }
 
 // Min/max: Functions to return the lower/higher of two values.
@@ -113,7 +151,7 @@ inline bool divisible( const Ta & a, const Tb & b )
 
 // Rounds to nearest integer, favouring even
 template< typename T >
-int round_int( T value, const double epsilon=DBL_EPSILON )
+int round_int( T value, const double epsilon=std::numeric_limits<double>::epsilon() )
 {
 
 	if ( value < 0.0 )

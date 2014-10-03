@@ -33,10 +33,15 @@
 #include <string>
 #include <vector>
 
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/serialization/vector.hpp>
+
 #include "brg/global.h"
 
 #include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/units/unit_obj.h"
+#include "brg/physics/units/unitconv_map.hpp"
 
 namespace brgastro {
 
@@ -113,6 +118,23 @@ private:
 
 #endif
 
+	// Serialization (to allow it to be saved)
+#if(1)
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+    	ar & _R_bin_limits_;
+    	ar & _m_bin_limits_;
+    	ar & _z_bin_limits_;
+    	ar & _mag_bin_limits_;
+
+    	ar & _valid_limits_;
+
+    	ar & _pair_bin_summaries_;
+    }
+#endif
+
 #endif
 
 protected:
@@ -149,6 +171,10 @@ public:
 				double mag_min=-std::numeric_limits<double>::infinity(),
 				double mag_max=std::numeric_limits<double>::infinity(),
 				double mag_step=std::numeric_limits<double>::infinity());
+
+	// Load from archive
+	pair_bins_summary( std::istream & in );
+	pair_bins_summary( std::string & filename );
 
 	// Construct from pair_bins
 	pair_bins_summary( const pair_binner & bins);
@@ -239,6 +265,9 @@ public:
 
 #endif // Set/change limits
 
+	// Fix bad values
+	void fixbad();
+
 	// Accessors to limit vectors and valid_limits
 #if(1)
 
@@ -320,19 +349,33 @@ public:
 	// Print data for all bins
 #if (1)
 
-	void print_bin_data(std::ostream &out);
-	void print_bin_data(std::string file_name);
+	void print_bin_data(std::ostream &out,
+			const unitconv_map & u_map = unitconv_map());
+	void print_bin_data(const std::string & file_name,
+			const unitconv_map & u_map = unitconv_map());
 
 #endif
 
 	// Operators to combine data
 #if (1)
 
-	pair_bins_summary & operator+=( const pair_bins_summary & other );
+	pair_bins_summary & operator+=( const pair_bins_summary & other);
 	pair_bins_summary operator+( pair_bins_summary other ) const
 	{
 		return other += *this;
 	}
+
+#endif
+
+	// Saving/loading data
+#if(1)
+
+	void save(std::ostream &) const;
+	void save(const std::string &) const;
+	void save(std::ostream &);
+	void save(const std::string &);
+	void load(std::istream &);
+	void load(const std::string &);
 
 #endif
 

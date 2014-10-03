@@ -111,7 +111,7 @@ BRG_UNITS brgastro::point_mass_profile::dens(
 	double result = 0;
 #endif
 
-	result = ( r == 0 ? DBL_MAX : 0 );
+	result = ( r == 0 ? std::numeric_limits<double>::max() : 0 );
 
 	return result;
 }

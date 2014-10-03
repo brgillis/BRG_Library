@@ -162,7 +162,7 @@ double pair_bin::mu_hat() const
 	{
 		// Not cached, so calculate and cache it
 
-		auto mu_observed = boost::accumulators::weighted_mean(_mu_obs_values_)/mu_W();
+		auto mu_observed = boost::accumulators::weighted_sum(_mu_obs_values_)/mu_W();
 
 		const double mu_base = area()*mag_signal_integral_cache().get(z_mean())/mu_W();
 

@@ -40,6 +40,7 @@
 #include "brg/file_access/table_typedefs.hpp"
 #include "brg/file_access/table_utility.h"
 #include "brg/file_access/trim_comments.hpp"
+#include "brg/math/misc_math.hpp"
 #include "brg/utility.hpp"
 #include "brg/vector/manipulations.hpp"
 
@@ -58,6 +59,13 @@ void print_table( std::ostream & out_stream,
 		header_t header = header_t(),
 		const bool silent = false )
 {
+	// Set up the value we'll print if an entry is bad
+	std::stringstream ss("");
+	ss << std::numeric_limits<double>::max();
+	std::string bad_value = ss.str();
+	ss.clear();
+	ss.str("");
+
 	size_t num_columns = data.size();
 	size_t num_rows = data.at(0).size();
 	std::vector< size_t > width(num_columns,0);
@@ -78,7 +86,7 @@ void print_table( std::ostream & out_stream,
 				{
 					// For the first header element, we'll check if it starts with a
 					// '#'. If it doesn't, we'll add one to it.
-					std::stringstream ss(header[c]);
+					ss.str(header[c]);
 					if ( ss.peek() != (int)( *"#" ) )
 					{
 						add_comment_marker = true;
@@ -96,11 +104,20 @@ void print_table( std::ostream & out_stream,
 		{
 			for ( size_t c = 0; c < num_columns; c++ )
 			{
-				std::stringstream ss("");
-				ss << data[c].at(i);
-				if ( ss.str().length() > width[c] )
+				std::string val_to_use;
+				if(isbad(data[c].at(i)))
 				{
-					width[c] = ss.str().length();
+					val_to_use = bad_value;
+				}
+				else
+				{
+					ss.str("");
+					ss << data[c].at(i);
+					val_to_use = ss.str();
+				}
+				if ( val_to_use.length() > width[c] )
+				{
+					width[c] = val_to_use.length();
 				}
 			} // for( int c = 0; c < num_columns; c++ )
 		} // for( int i = 0; i < num_rows; i++ ) (testing width)
@@ -140,7 +157,18 @@ void print_table( std::ostream & out_stream,
 			}
 			for ( size_t c = 0; c < num_columns; c++ )
 			{
-				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << data[c][i];
+				std::string val_to_use;
+				if(isbad(data[c].at(i)))
+				{
+					val_to_use = bad_value;
+				}
+				else
+				{
+					ss.str("");
+					ss << data[c].at(i);
+					val_to_use = ss.str();
+				}
+				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << val_to_use;
 			}
 			out_stream << std::endl;
 		}

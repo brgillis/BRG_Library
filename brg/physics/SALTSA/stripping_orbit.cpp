@@ -479,8 +479,8 @@ void brgastro::stripping_orbit::clear()
 	_host_parameter_unitconvs_.clear();
 	_host_output_parameters_.clear();
 
-	_t_min_override_value_ = DBL_MAX;
-	_t_max_override_value_ = ( -DBL_MAX );
+	_t_min_override_value_ = std::numeric_limits<double>::max();
+	_t_max_override_value_ = ( -std::numeric_limits<double>::max() );
 	_override_t_min_ = false;
 	_override_t_max_ = false;
 	_record_full_data_ = false;
@@ -666,8 +666,8 @@ void brgastro::stripping_orbit::clear_points()
 	_t_points_.clear();
 	_host_param_t_points_.clear();
 
-	_t_min_natural_value_ = DBL_MAX;
-	_t_max_natural_value_ = ( -DBL_MAX );
+	_t_min_natural_value_ = std::numeric_limits<double>::max();
+	_t_max_natural_value_ = ( -std::numeric_limits<double>::max() );
 
 	_calculated_ = false;
 }
@@ -1365,7 +1365,7 @@ void brgastro::stripping_orbit::set_t_max( CONST_BRG_TIME_REF new_t_max )
 
 void brgastro::stripping_orbit::reset_t_min()
 {
-	_t_min_natural_value_ = DBL_MAX;
+	_t_min_natural_value_ = std::numeric_limits<double>::max();
 	for ( size_t i = 0; i < _x_points_.size(); i++ )
 	{
 		if ( _x_points_.at( i ).first < _t_min_natural_value_ )
@@ -1375,7 +1375,7 @@ void brgastro::stripping_orbit::reset_t_min()
 }
 void brgastro::stripping_orbit::reset_t_max()
 {
-	_t_max_natural_value_ = ( -DBL_MAX );
+	_t_max_natural_value_ = ( -std::numeric_limits<double>::max() );
 	for ( size_t i = 0; i < _x_points_.size(); i++ )
 	{
 		if ( _x_points_.at( i ).first > _t_max_natural_value_ )

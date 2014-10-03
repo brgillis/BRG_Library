@@ -24,10 +24,16 @@
  \**********************************************************************/
 
 #include <cassert>
+#include <fstream>
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include "brg/global.h"
 
+#include "brg/file_access/open_file.hpp"
 #include "brg/math/calculus/integrate.hpp"
+#include "brg/math/misc_math.hpp"
 #include "brg/physics/lensing/magnification/magnification_alpha.h"
 #include "brg/physics/lensing/magnification/magnification_functors.h"
 #include "brg/physics/lensing/pair_bin.h"
@@ -37,7 +43,6 @@
 #include "pair_bin_summary.h"
 
 namespace brgastro {
-
 
 pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF init_R_max,
 		CONST_BRG_MASS_REF init_m_min, CONST_BRG_MASS_REF init_m_max,
@@ -96,6 +101,15 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 	_total_area_(bin.area()),
 	_num_lenses_(bin.num_lenses())
 {
+}
+
+pair_bin_summary::pair_bin_summary( std::istream & in )
+{
+	load(in);
+}
+pair_bin_summary::pair_bin_summary( std::string & filename )
+{
+	load(filename);
 }
 
 // Adding and clearing data
@@ -201,5 +215,74 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 }
 
 #endif // Combining summaries together
+
+// Fix bad values
+void pair_bin_summary::fixbad()
+{
+	brgastro::fixbad(_R_min_);
+	brgastro::fixbad(_R_max_);
+	brgastro::fixbad(_m_min_);
+	brgastro::fixbad(_m_max_);
+	brgastro::fixbad(_z_min_);
+	brgastro::fixbad(_z_max_);
+	brgastro::fixbad(_mag_min_);
+	brgastro::fixbad(_mag_max_);
+	brgastro::fixbad(_count_);
+	brgastro::fixbad(_sum_of_weights_);
+	brgastro::fixbad(_sum_of_square_weights_);
+	brgastro::fixbad(_R_mean_);
+	brgastro::fixbad(_m_mean_);
+	brgastro::fixbad(_z_mean_);
+	brgastro::fixbad(_source_z_mean_);
+	brgastro::fixbad(_mag_mean_);
+	brgastro::fixbad(_delta_Sigma_t_mean_);
+	brgastro::fixbad(_delta_Sigma_x_mean_);
+	brgastro::fixbad(_delta_Sigma_t_mean_square_);
+	brgastro::fixbad(_delta_Sigma_x_mean_square_);
+	brgastro::fixbad(_mu_hat_);
+	brgastro::fixbad(_mu_W_);
+	brgastro::fixbad(_total_area_);
+	brgastro::fixbad(_num_lenses_);
+}
+
+// Saving/loading data
+#if(1)
+
+void pair_bin_summary::save(std::ostream & out) const
+{
+	boost::archive::text_oarchive ar(out);
+	ar << *this;
+}
+void pair_bin_summary::save(const std::string & filename) const
+{
+	std::ofstream out;
+	open_file_output(out,filename);
+	save(out);
+}
+void pair_bin_summary::save(std::ostream & out)
+{
+	fixbad();
+	boost::archive::text_oarchive ar(out);
+	ar << *this;
+}
+void pair_bin_summary::save(const std::string & filename)
+{
+	std::ofstream out;
+	open_file_output(out,filename);
+	save(out);
+}
+void pair_bin_summary::load(std::istream & in)
+{
+	boost::archive::text_iarchive ar(in);
+	ar >> *this;
+}
+void pair_bin_summary::load(const std::string & filename)
+{
+	std::ifstream in;
+	open_file_input(in,filename);
+	load(in);
+}
+
+#endif
 
 } // end namespace brgastro

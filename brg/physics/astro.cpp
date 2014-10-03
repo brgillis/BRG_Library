@@ -189,7 +189,7 @@ double brgastro::integrate_distance( const double z1_init,
 	double z1 = z1_init, z2 = z2_init;
 	double HD; //Hubble distance in billions of lightyears
 	double z, a, a1, a2, adot, h1;
-	double DC = DBL_MAX, DCC = 0, DT = DBL_MAX, DTT = 0, DM;
+	double DC = std::numeric_limits<double>::max(), DCC = 0, DT = std::numeric_limits<double>::max(), DTT = 0, DM;
 	//double age, size;
 	int i;
 	short int sign = 1;

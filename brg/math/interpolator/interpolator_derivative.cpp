@@ -179,8 +179,8 @@ void brgastro::interpolator_derivative::clear_known_points()
 	_known_interpolator_.clear();
 	if(_unknown_t_list_.size()==0)
 	{
-		_t_max_ = ( -DBL_MAX );
-		_t_min_ = DBL_MAX;
+		_t_max_ = ( -std::numeric_limits<double>::max() );
+		_t_min_ = std::numeric_limits<double>::max();
 	}
 	_calculated_ = false;
 }
@@ -190,8 +190,8 @@ void brgastro::interpolator_derivative::clear_unknown_points()
 	_unknown_t_list_.clear();
 	if(_known_interpolator_.size()==0)
 	{
-		_t_max_ = ( -DBL_MAX );
-		_t_min_ = DBL_MAX;
+		_t_max_ = ( -std::numeric_limits<double>::max() );
+		_t_min_ = std::numeric_limits<double>::max();
 	}
 	_calculated_ = false;
 }
@@ -251,8 +251,8 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 	else // We'll have to calculate
 	{
 		// Get t_min and t_max
-		_t_min_ = DBL_MAX;
-		_t_max_ = ( -DBL_MAX );
+		_t_min_ = std::numeric_limits<double>::max();
+		_t_max_ = ( -std::numeric_limits<double>::max() );
 
 		for ( size_t i = 0; i < _known_interpolator_.sorted_data().size(); i++ )
 		{

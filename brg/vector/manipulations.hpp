@@ -34,6 +34,29 @@
 
 namespace brgastro {
 
+template<typename T1>
+void concatenate(T1 & v1, const T1 & v2)
+{
+	v1.reserve(v1.size()+v2.size());
+	v1.insert(v1.end(),v2.begin(),v2.end());
+}
+
+template<typename T1, typename T2>
+void concatenate(T1 & v1, const T2 & v2)
+{
+	v1.reserve(v1.size()+v2.size());
+	for(auto it=v2.begin(); it!=v2.end(); ++it)
+	{
+		v1.push_back(*it);
+	}
+}
+
+template<typename T1>
+void concatenate_map(T1 & v1, const T1 & v2)
+{
+	v1.insert(v2.begin(),v2.end());
+}
+
 template<typename T>
 std::vector< std::vector<T> > pad(const std::vector< std::vector<T> > & v, const T & default_value=T())
 {

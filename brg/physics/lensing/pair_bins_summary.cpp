@@ -30,11 +30,17 @@
 #include <stdexcept>
 #include <vector>
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 #include "brg/global.h"
 
-#include "brg/file_access/ascii_table.h"
+#include "brg/file_access/ascii_table_map.hpp"
+#include "brg/file_access/open_file.hpp"
+#include "brg/math/misc_math.hpp"
 #include "brg/physics/lensing/pair_binner.h"
 #include "brg/physics/units/unit_obj.h"
+#include "brg/physics/units/apply_unitconvs.hpp"
 #include "brg/vector/make_vector.hpp"
 #include "brg/vector/limit_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
@@ -245,6 +251,16 @@ pair_bins_summary::pair_bins_summary(CONST_BRG_DISTANCE_REF R_min,
 	_check_limits();
 }
 
+// Load from archive
+pair_bins_summary::pair_bins_summary( std::istream & in )
+{
+	load(in);
+}
+pair_bins_summary::pair_bins_summary( std::string & filename )
+{
+	load(filename);
+}
+
 // Construct from pair_bins
 pair_bins_summary::pair_bins_summary( const pair_binner & bins)
 :	_R_bin_limits_(bins.R_limits()),
@@ -434,6 +450,23 @@ void pair_bins_summary::clear()
 
 #endif // Adding and clearing data
 
+void pair_bins_summary::fixbad()
+{
+	for(auto & val : _R_bin_limits_)
+		brgastro::fixbad(val);
+	for(auto & val : _m_bin_limits_)
+		brgastro::fixbad(val);
+	for(auto & val : _z_bin_limits_)
+		brgastro::fixbad(val);
+	for(auto & val : _mag_bin_limits_)
+		brgastro::fixbad(val);
+	for(auto & v1 : _pair_bin_summaries_)
+		for(auto & v2 : v1)
+			for(auto & v3 : v2)
+				for(auto & val : v3)
+					val.fixbad();
+}
+
 // Accessing summary data for bins
 #if(1)
 
@@ -530,13 +563,14 @@ BRG_UNITS pair_bins_summary::delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF
 #endif // Accessing summary data for bins
 
 // Print data for all bins
-void pair_bins_summary::print_bin_data(std::ostream &out)
+void pair_bins_summary::print_bin_data(std::ostream &out,
+		const unitconv_map & u_map)
 {
 	// Set up the data and header to be printed
 	table_t<double> data;
 	header_t header;
 
-	size_t num_columns = 22;
+	size_t num_columns = 26;
 
 	header.reserve(num_columns);
 	header.push_back("R_min");
@@ -554,11 +588,15 @@ void pair_bins_summary::print_bin_data(std::ostream &out)
 	header.push_back("N");
 	header.push_back("N_eff");
 	header.push_back("dS_t_mean");
-	header.push_back("dS_x_mean");
 	header.push_back("dS_t_stddev");
-	header.push_back("dS_x_stddev");
 	header.push_back("dS_t_stderr");
+	header.push_back("dS_x_mean");
+	header.push_back("dS_x_stddev");
 	header.push_back("dS_x_stderr");
+	header.push_back("gamma_t_mean");
+	header.push_back("gamma_t_stderr");
+	header.push_back("gamma_x_mean");
+	header.push_back("gamma_x_stderr");
 	header.push_back("kappa");
 	header.push_back("kappa_stderr");
 
@@ -591,11 +629,15 @@ void pair_bins_summary::print_bin_data(std::ostream &out)
 					data[++col_i].push_back(bin.count());
 					data[++col_i].push_back(bin.effective_count());
 					data[++col_i].push_back(bin.delta_Sigma_t_mean());
-					data[++col_i].push_back(bin.delta_Sigma_x_mean());
 					data[++col_i].push_back(bin.delta_Sigma_t_std());
-					data[++col_i].push_back(bin.delta_Sigma_x_std());
 					data[++col_i].push_back(bin.delta_Sigma_t_stderr());
+					data[++col_i].push_back(bin.delta_Sigma_x_mean());
+					data[++col_i].push_back(bin.delta_Sigma_x_std());
 					data[++col_i].push_back(bin.delta_Sigma_x_stderr());
+					data[++col_i].push_back(bin.gamma_t_mean());
+					data[++col_i].push_back(bin.gamma_t_stderr());
+					data[++col_i].push_back(bin.gamma_x_mean());
+					data[++col_i].push_back(bin.gamma_x_stderr());
 					data[++col_i].push_back(bin.kappa());
 					data[++col_i].push_back(bin.kappa_stderr());
 				}
@@ -603,16 +645,19 @@ void pair_bins_summary::print_bin_data(std::ostream &out)
 		}
 	}
 
+	table_map_t<double> table_map = get_table_after_unitconv(make_table_map(data,header),u_map);
+
 	// And now print it out
-	print_table<double>(out,data,header);
+	print_table_map<double>(out,table_map);
 
 }
-void pair_bins_summary::print_bin_data(std::string file_name)
+void pair_bins_summary::print_bin_data(const std::string & file_name,
+		const unitconv_map & u_map)
 {
 	std::ofstream fo;
 	open_file_output(fo,file_name);
 
-	print_bin_data(fo);
+	print_bin_data(fo,u_map);
 }
 
 // Operators to combine data
@@ -647,6 +692,46 @@ pair_bins_summary & pair_bins_summary::operator+=( const pair_bins_summary & oth
 	}
 
 	return *this;
+}
+
+#endif
+
+// Saving/loading data
+#if(1)
+
+void pair_bins_summary::save(std::ostream & out) const
+{
+	boost::archive::text_oarchive ar(out);
+	ar << *this;
+}
+void pair_bins_summary::save(const std::string & filename) const
+{
+	std::ofstream out;
+	open_file_output(out,filename);
+	save(out);
+}
+void pair_bins_summary::save(std::ostream & out)
+{
+	fixbad();
+	boost::archive::text_oarchive ar(out);
+	ar << *this;
+}
+void pair_bins_summary::save(const std::string & filename)
+{
+	std::ofstream out;
+	open_file_output(out,filename);
+	save(out);
+}
+void pair_bins_summary::load(std::istream & in)
+{
+	boost::archive::text_iarchive ar(in);
+	ar >> *this;
+}
+void pair_bins_summary::load(const std::string & filename)
+{
+	std::ifstream in;
+	open_file_input(in,filename);
+	load(in);
 }
 
 #endif
