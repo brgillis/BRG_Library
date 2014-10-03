@@ -58,6 +58,7 @@ private:
 	mutable bool _data_stored_;
 	mutable double _z_lens_, _z_source_;
 	mutable BRG_MASS _m_lens_;
+	mutable size_t _id_lens_;
 	mutable double _mag_lens_, _mag_source_;
 	mutable double _weight_lens_, _weight_source_;
 	double _weight_pair_;
@@ -110,6 +111,7 @@ public:
 	double z_lens() const;
 	double z_source() const;
 	BRG_MASS m_lens() const;
+	size_t id_lens() const;
 	double mag_lens() const;
 	double mag_source() const;
 	BRG_DISTANCE R_proj() const;

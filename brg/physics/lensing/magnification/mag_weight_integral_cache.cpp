@@ -35,7 +35,7 @@
 
 // Initialise the cache
 DEFINE_BRG_CACHE_STATIC_VARS( mag_weight_integral_cache,
-		0.25,brgastro::mag_z_max-0.05,0.1);
+		0.2,brgastro::mag_z_max-0.01,0.01);
 
 // brgastro::mag_weight_integral_cache class methods
 #if (1)

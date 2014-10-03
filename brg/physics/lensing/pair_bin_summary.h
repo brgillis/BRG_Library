@@ -264,6 +264,10 @@ public:
 	{
 		return _z_mean_;
 	}
+	virtual double lens_z_mean() const
+	{
+		return _z_mean_;
+	}
 	virtual double source_z_mean() const
 	{
 		return _source_z_mean_;

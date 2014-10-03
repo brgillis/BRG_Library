@@ -69,6 +69,7 @@ void lens_source_pair::store_data() const
 	_z_lens_ = lens_ptr->z();
 	_z_source_ = source_ptr->z();
 	_m_lens_ = lens_ptr->m();
+	_id_lens_ = lens_ptr->index();
 	_mag_lens_ = lens_ptr->mag();
 	_mag_source_ = source_ptr->mag();
 	_weight_lens_ = lens_ptr->weight();
@@ -96,6 +97,7 @@ lens_source_pair::lens_source_pair()
 	_z_lens_(0),
 	_z_source_(0),
 	_m_lens_(0),
+	_id_lens_(0),
 	_mag_lens_(0),
 	_mag_source_(0),
 	_weight_lens_(1),
@@ -117,6 +119,7 @@ lens_source_pair::lens_source_pair( const sky_obj* lens_ptr, const source_obj* s
 	_z_lens_(0),
 	_z_source_(0),
 	_m_lens_(0),
+	_id_lens_(0),
 	_mag_lens_(0),
 	_mag_source_(0),
 	_weight_lens_(1),
@@ -155,6 +158,7 @@ void lens_source_pair::set_lens( const sky_obj *lens_ptr, const bool make_clone)
 		_init_lens_ptr_ = lens_ptr;
 	}
 	_using_lens_clone_ = make_clone;
+	store_data();
 }
 
 void lens_source_pair::set_source( const source_obj *source_ptr, const bool make_clone)
@@ -170,6 +174,7 @@ void lens_source_pair::set_source( const source_obj *source_ptr, const bool make
 		_init_source_ptr_ = source_ptr;
 	}
 	_using_source_clone_ = make_clone;
+	store_data();
 }
 
 #endif
@@ -226,6 +231,11 @@ BRG_MASS lens_source_pair::m_lens() const
 {
 	_conditional_store_data();
 	return _m_lens_;
+}
+size_t lens_source_pair::id_lens() const
+{
+	_conditional_store_data();
+	return _id_lens_;
 }
 double lens_source_pair::mag_lens() const
 {

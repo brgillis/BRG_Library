@@ -37,8 +37,8 @@
 
 // Initialise the cache
 DEFINE_BRG_CACHE_2D_STATIC_VARS( expected_count_cache,
-	brgastro::mag_m_min,brgastro::mag_m_max,0.1,
-	0.25,brgastro::mag_z_max-0.05,0.1);
+	brgastro::mag_m_min,brgastro::mag_m_max,0.01,
+	0.20,brgastro::mag_z_max-0.01,0.01);
 
 // brgastro::expected_count_cache class methods
 #if (1)

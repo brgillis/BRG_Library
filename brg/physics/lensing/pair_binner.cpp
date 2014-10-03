@@ -158,6 +158,59 @@ void pair_binner::_sort() const
 		pair_Rmzmag.add_pair(_pairs_[_sorting_index_]);
 	}
 
+	// And also add lens ids to each relevant bin
+	for(auto lens : _lens_ids_)
+	{
+		// Check bounds first
+		BRG_MASS m = lens.m;
+		if((m < m_limits().front()) || (m > m_limits().back()))
+			continue;
+		double z = lens.z;
+		if((z < z_limits().front()) || (z > z_limits().back()))
+			continue;
+		double mag = lens.mag;
+		if((mag < mag_limits().front()) || (mag > mag_limits().back()))
+			continue;
+
+		// We'll add each id to every radial bin
+		for(auto & R_bin : _pair_bins_)
+		{
+			auto m_zip_begin = boost::make_zip_iterator(boost::make_tuple(
+					m_limits().begin()+1,R_bin.begin()));
+			auto m_zip_end = boost::make_zip_iterator(boost::make_tuple(
+					m_limits().end(),R_bin.end()));
+
+			auto m_func = &t1first_lt_v2<decltype(*m_zip_begin),BRG_MASS>;
+
+			auto & Rm_vec = std::lower_bound(m_zip_begin,m_zip_end,m,m_func)->get<1>();
+
+
+
+			auto z_zip_begin = boost::make_zip_iterator(boost::make_tuple(
+					z_limits().begin()+1,Rm_vec.begin()));
+			auto z_zip_end = boost::make_zip_iterator(boost::make_tuple(
+					z_limits().end(),Rm_vec.end()));
+
+			auto z_func = &t1first_lt_v2<decltype(*z_zip_begin),double>;
+
+			auto & Rmz_vec = std::lower_bound(z_zip_begin,z_zip_end,z,z_func)->get<1>();
+
+
+
+			auto mag_zip_begin = boost::make_zip_iterator(boost::make_tuple(
+					mag_limits().begin()+1,Rmz_vec.begin()));
+			auto mag_zip_end = boost::make_zip_iterator(boost::make_tuple(
+					mag_limits().end(),Rmz_vec.end()));
+
+			auto mag_func = &t1first_lt_v2<decltype(*mag_zip_begin),double>;
+
+			auto & Rmzmag_bin = std::lower_bound(mag_zip_begin,mag_zip_end,mag,mag_func)->get<1>();
+
+			// At this point, pair_Rmzmag is a reference to the pair bin we want to add this pair to
+			Rmzmag_bin.add_lens(lens.id,lens.z);
+		}
+	}
+
 	// Update the summaries
 	make_vector_coerce<4>(_pair_bin_summaries_,_pair_bins_);
 }
@@ -192,6 +245,14 @@ bool pair_binner::binnable( const galaxy & lens ) const
 void pair_binner::add_pair( const lens_source_pair & new_pair)
 {
 	_pairs_.push_back(new_pair);
+	_lens_ids_.insert(lens_id(new_pair.id_lens(),new_pair.m_lens(),new_pair.z_lens(),new_pair.mag_lens()));
+		// Don't rely on this behavior!
+	_sorted_ = false;
+}
+void pair_binner::add_lens_id( const size_t & new_lens_id, const BRG_MASS & m, const double & z,
+		const double & mag)
+{
+	_lens_ids_.insert(lens_id(new_lens_id,m,z,mag));
 	_sorted_ = false;
 }
 void pair_binner::clear()

@@ -29,8 +29,10 @@
 #ifndef _BRG_PAIR_BINNER_H_INCLUDED_
 #define _BRG_PAIR_BINNER_H_INCLUDED_
 
+#include <functional>
 #include <limits>
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -45,6 +47,30 @@
 
 namespace brgastro {
 
+// lens_id struct
+#if(1)
+struct lens_id
+{
+	size_t id;
+	BRG_MASS m;
+	double z;
+	double mag;
+
+	lens_id(const size_t & id, const BRG_MASS & m, const double & z, const double & mag)
+	: id(id),
+	  m(m),
+	  z(z),
+	  mag(mag)
+	{
+	}
+};
+
+inline bool lens_id_lt(const lens_id & lens1, const lens_id & lens2)
+{
+	return lens1.id<lens2.id;
+}
+#endif
+
 /**
  *
  */
@@ -58,6 +84,7 @@ private:
 #if(1)
 
 	std::vector<lens_source_pair> _pairs_;
+	std::set<lens_id,decltype(&lens_id_lt)> _lens_ids_;
 	mutable size_t _sorting_index_;
 	mutable bool _sorted_;
 
@@ -86,6 +113,7 @@ public:
 				std::vector< double > z_bin_limits=std::vector<double>(),
 				std::vector< double > mag_bin_limits=std::vector<double>())
 	:	pair_bins_summary(R_bin_limits,m_bin_limits,z_bin_limits,mag_bin_limits),
+	 	_lens_ids_(&lens_id_lt),
 	 	_sorting_index_(0),
 	 	_sorted_(false)
 	{
@@ -106,8 +134,9 @@ public:
 				double mag_step=std::numeric_limits<double>::infinity())
 	:	pair_bins_summary(R_min,R_max,R_step,m_min,m_max,m_step,z_min,z_max,z_step,
 			mag_min,mag_max,mag_step),
-	 	_sorting_index_(0),
-	 	_sorted_(false)
+		 	_lens_ids_(&lens_id_lt),
+		 	_sorting_index_(0),
+		 	_sorted_(false)
 	{
 	}
 
@@ -131,6 +160,8 @@ public:
 
 	bool binnable( const galaxy & lens) const;
 	void add_pair( const lens_source_pair & new_pair);
+	void add_lens_id( const size_t & new_lens_id, const BRG_MASS & m, const double & z,
+			const double & mag);
 	void clear();
 	void empty();
 	void sort() const;

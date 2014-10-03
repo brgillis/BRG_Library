@@ -83,14 +83,23 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 			boost::accumulators::weight = mag_weight);
 	_delta_Sigma_t_values_(new_pair.delta_Sigma_t(), boost::accumulators::weight = shear_weight);
 	_delta_Sigma_x_values_(new_pair.delta_Sigma_x(), boost::accumulators::weight = shear_weight);
-	_distinct_lens_ids_.insert(new_pair.lens()->index());
+	add_lens(new_pair.lens()->index(),new_pair.z_lens());
 	_uncache_values();
+}
+void pair_bin::add_lens( const size_t & new_lens_id, const double & z )
+{
+	if(_distinct_lens_ids_.find(new_lens_id)==_distinct_lens_ids_.end())
+	{
+		_distinct_lens_ids_.insert(new_lens_id);
+		_lens_z_values_(z, boost::accumulators::weight = 1);
+	}
 }
 void pair_bin::clear()
 {
 	set_zero(_R_values_);
 	set_zero(_m_values_);
 	set_zero(_z_values_);
+	set_zero(_lens_z_values_);
 	set_zero(_source_z_values_);
 	set_zero(_mag_lens_values_);
 	set_zero(_mu_obs_values_);
@@ -151,7 +160,7 @@ double pair_bin::mu_W() const
 {
 	if(_mu_W_cached_value_==std::numeric_limits<double>::infinity())
 	{
-		_mu_W_cached_value_ = area()*mag_weight_integral_cache().get(z_mean());
+		_mu_W_cached_value_ = area()*mag_weight_integral_cache().get(lens_z_mean());
 	}
 	return _mu_W_cached_value_;
 }
@@ -162,9 +171,9 @@ double pair_bin::mu_hat() const
 	{
 		// Not cached, so calculate and cache it
 
-		auto mu_observed = boost::accumulators::weighted_sum(_mu_obs_values_)/mu_W();
+		const double mu_observed = boost::accumulators::weighted_sum(_mu_obs_values_)/mu_W();
 
-		const double mu_base = area()*mag_signal_integral_cache().get(z_mean())/mu_W();
+		const double mu_base = area()*mag_signal_integral_cache().get(lens_z_mean())/mu_W();
 
 		_mu_hat_cached_value_ = mu_observed+mu_base;
 	}

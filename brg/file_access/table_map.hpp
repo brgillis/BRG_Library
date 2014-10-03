@@ -80,12 +80,16 @@ class table_map_t
 {
 private:
 	typedef std::map<std::string,std::vector<T>,std::function<bool(const std::string&,const std::string&)>> base_type;
+
+	mutable compare_insertion_order<typename base_type::key_type> _comparer_;
+
+	std::function<bool(const typename base_type::key_type &,const typename base_type::key_type &)>
+		_comparer_wrapper_;
+
 	base_type base;
 
 	mutable std::unordered_map<typename base_type::key_type,size_t> _key_map_;
 	mutable size_t _counter_;
-
-	mutable compare_insertion_order<typename base_type::key_type> _comparer_;
 
 	void _update_key_map() const
 	{
@@ -95,35 +99,53 @@ private:
 	{
 		if(_key_map_.count(k)==0) _key_map_[k]=_counter_++;
 	}
+	void _reconnect_base()
+	{
+		base_type new_base([=] (const typename base_type::key_type & key1, const typename base_type::key_type & key2)
+				{
+					return _comparer_(key1,key2);
+				});
+		for( auto & val : base )
+		{
+			new_base.insert(val);
+		}
+		base.swap(new_base);
+	}
 
 public:
 
 	// Overloads of the constructor to set up the key comparison operator properly
 #if(1)
 	table_map_t()
-	: _counter_(0)
+	: _comparer_wrapper_([=] (const typename base_type::key_type & key1, const typename base_type::key_type & key2)
+		{
+			return _comparer_(key1,key2);
+		}),
+		base(_comparer_wrapper_),
+	  _counter_(0)
 	{
-		auto func = [&] (const typename base_type::key_type & key1, const typename base_type::key_type & key2)
-				{return _comparer_(key1,key2);};
-		base = base_type(func,typename base_type::allocator_type());
 		_update_key_map();
 	}
 	explicit table_map_t(const typename base_type::allocator_type& alloc)
-	: _counter_(0)
+	: _comparer_wrapper_([=] (const typename base_type::key_type & key1, const typename base_type::key_type & key2)
+			{
+				return _comparer_(key1,key2);
+			}),
+	   base(_comparer_wrapper_),
+	  _counter_(0)
 	{
-		auto func = [&] (const typename base_type::key_type & key1, const typename base_type::key_type & key2)
-				{return _comparer_(key1,key2);};
-		base = base_type(func,alloc);
 		_update_key_map();
 	}
 	template <class InputIterator>
 	table_map_t (InputIterator first, InputIterator last,
 		const typename base_type::allocator_type& alloc = typename base_type::allocator_type())
-	: _counter_(0)
+	: _comparer_wrapper_([=] (const typename base_type::key_type & key1, const typename base_type::key_type & key2)
+		{
+			return _comparer_(key1,key2);
+		}),
+	  base(_comparer_wrapper_),
+	  _counter_(0)
 	{
-		auto func = [&] (const typename base_type::key_type & key1, const typename base_type::key_type & key2)
-				{return _comparer_(key1,key2);};
-		base = base_type(first,last,func,alloc);
 		_update_key_map();
     }
 #endif
@@ -279,7 +301,11 @@ public:
 		using std::swap;
 		swap(_key_map_,other._key_map_);
 		swap(_counter_,other._counter_);
-		base.swap(other.base);
+		swap(base,other.base);
+		_reconnect_base();
+		_update_key_map();
+		other._update_key_map();
+		other._reconnect_base();
 	}
 
 	void clear()
@@ -358,5 +384,20 @@ public:
 };
 
 } // namespace brgastro
+
+// Overloads of swap
+template<typename T>
+void swap (brgastro::table_map_t<T> & same, brgastro::table_map_t<T> & other)
+{
+	same.swap(other);
+}
+
+namespace std {
+template<typename T>
+void swap(brgastro::table_map_t<T> & same, brgastro::table_map_t<T> & other)
+{
+	same.swap(other);
+}
+}
 
 #endif // _BRG_TABLE_MAP_HPP_INCLUDED_

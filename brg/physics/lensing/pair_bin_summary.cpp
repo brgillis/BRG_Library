@@ -150,14 +150,14 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	assert(_mag_min_==other.mag_min());
 	assert(_mag_max_==other.mag_max());
 
-	// Check for zero count in this or the other
-	if(other.count()==0) return *this;
+	// Check for zero lenses in this or the other
+	if(other.num_lenses()==0) return *this;
 
 	_uncache_values(); // If we get this far, something is changing with this bin
 
-	if(_count_==0)
+	if(_num_lenses_==0)
 	{
-		// Simply copy the other bin summary
+		// Simply copy the other bin summary to this one
 		*this = other;
 		return *this;
 	}
@@ -177,7 +177,7 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	}
 	if(_sum_of_weights_==0)
 	{
-		// Simply copy the other bin summary, except for the list of source magnitudes
+		// Simply copy the other bin summary, except for the magnification data
 		auto tmp_count = std::move(_count_);
 		auto tmp_num_lenses = std::move(_num_lenses_);
 		auto tmp_mu_hat = std::move(_mu_hat_);
