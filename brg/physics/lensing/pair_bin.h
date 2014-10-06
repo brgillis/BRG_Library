@@ -91,6 +91,9 @@ private:
 	mutable double _mu_hat_cached_value_;
 	mutable double _mu_W_cached_value_;
 
+	double _z_buffer_;
+	static constexpr double _z_buffer_default_value_ = 0.1;
+
 #endif // Pair data
 
 protected:
@@ -103,9 +106,22 @@ public:
 	pair_bin( CONST_BRG_DISTANCE_REF init_R_min=0, CONST_BRG_DISTANCE_REF init_R_max=0,
 			CONST_BRG_MASS_REF init_m_min=0, CONST_BRG_MASS_REF init_m_max=0,
 			double init_z_min=0, double init_z_max=0,
-			double init_mag_min=0, double init_mag_max=0 );
+			double init_mag_min=0, double init_mag_max=0,
+			double init_z_buffer=_z_buffer_default_value_);
 	virtual ~pair_bin()
 	{
+	}
+#endif
+
+	// Setting and accessing z_buffer
+#if(1)
+	void set_z_buffer(const double & new_z_buffer)
+	{
+		_z_buffer_ = new_z_buffer;
+	}
+	double z_buffer() const
+	{
+		return _z_buffer_;
 	}
 #endif
 

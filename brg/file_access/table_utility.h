@@ -35,7 +35,6 @@
 
 #include "brg/global.h"
 
-#include "brg/file_access/table_map.hpp"
 #include "brg/file_access/table_typedefs.hpp"
 #include "brg/vector/make_vector.hpp"
 

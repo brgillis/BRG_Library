@@ -217,47 +217,52 @@ const source_obj *lens_source_pair::source() const
 // Access to stored values
 #if(1)
 
-double lens_source_pair::z_lens() const
+const double & lens_source_pair::z_lens() const
 {
 	_conditional_store_data();
 	return _z_lens_;
 }
-double lens_source_pair::z_source() const
+const double & lens_source_pair::z_source() const
 {
 	_conditional_store_data();
 	return _z_source_;
 }
-BRG_MASS lens_source_pair::m_lens() const
+double lens_source_pair::z_diff() const
+{
+	_conditional_store_data();
+	return _z_source_-_z_lens_;
+}
+const BRG_MASS & lens_source_pair::m_lens() const
 {
 	_conditional_store_data();
 	return _m_lens_;
 }
-size_t lens_source_pair::id_lens() const
+const size_t & lens_source_pair::id_lens() const
 {
 	_conditional_store_data();
 	return _id_lens_;
 }
-double lens_source_pair::mag_lens() const
+const double & lens_source_pair::mag_lens() const
 {
 	_conditional_store_data();
 	return _mag_lens_;
 }
-double lens_source_pair::mag_source() const
+const double & lens_source_pair::mag_source() const
 {
 	_conditional_store_data();
 	return _mag_source_;
 }
-double lens_source_pair::weight_lens() const
+const double & lens_source_pair::weight_lens() const
 {
 	_conditional_store_data();
 	return _weight_lens_;
 }
-double lens_source_pair::weight_source() const
+const double & lens_source_pair::weight_source() const
 {
 	_conditional_store_data();
 	return _weight_source_;
 }
-double lens_source_pair::weight_pair() const
+const double & lens_source_pair::weight_pair() const
 {
 	_conditional_store_data();
 	return _weight_pair_;
@@ -272,22 +277,22 @@ double lens_source_pair::mag_weight() const
 	_conditional_store_data();
 	return _weight_lens_*_weight_pair_;
 }
-BRG_DISTANCE lens_source_pair::R_proj() const
+const BRG_DISTANCE & lens_source_pair::R_proj() const
 {
 	_conditional_store_data();
 	return _R_proj_;
 }
-BRG_ANGLE lens_source_pair::theta() const
+const BRG_ANGLE & lens_source_pair::theta() const
 {
 	_conditional_store_data();
 	return _theta_;
 }
-double lens_source_pair::gamma_t() const
+const double & lens_source_pair::gamma_t() const
 {
 	_conditional_store_data();
 	return _gamma_t_;
 }
-double lens_source_pair::gamma_x() const
+const double & lens_source_pair::gamma_x() const
 {
 	_conditional_store_data();
 	return _gamma_x_;

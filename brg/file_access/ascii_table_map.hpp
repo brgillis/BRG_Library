@@ -35,7 +35,6 @@
 
 #include "brg/file_access/ascii_table.h"
 #include "brg/file_access/table_typedefs.hpp"
-#include "brg/file_access/table_map.hpp"
 #include "brg/file_access/table_utility.h"
 
 namespace brgastro {

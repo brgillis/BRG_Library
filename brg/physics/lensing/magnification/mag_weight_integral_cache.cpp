@@ -28,6 +28,7 @@
 #include "brg/global.h"
 
 #include "brg/math/calculus/integrate.hpp"
+#include "brg/physics/lensing/magnification/expected_count_cache.h"
 #include "brg/physics/lensing/magnification/mag_global_values.h"
 #include "brg/physics/lensing/magnification/magnification_functors.h"
 
@@ -45,8 +46,8 @@ const double brgastro::mag_weight_integral_cache::_calculate( const double in_pa
 
 	return integrate_Romberg(&func,brgastro::mag_m_min,brgastro::mag_m_max);
 }
+void brgastro::mag_weight_integral_cache::_load_cache_dependencies() const
+{
+	expected_count_cache().get(0,0);
+}
 #endif
-
-namespace brgastro {
-
-} // end namespace brgastro

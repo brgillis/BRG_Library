@@ -64,6 +64,7 @@ protected:
 
 	// Long-form calculation function.
 	const double _calculate( const double in_param_1 ) const;
+	void _load_cache_dependencies() const;
 
 public:
 	mag_weight_integral_cache()

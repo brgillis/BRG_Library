@@ -80,6 +80,9 @@ private:
 	// The bins, contained in a 4D vector, for one dimension for each parameter
 	mutable std::vector< std::vector< std::vector< std::vector<pair_bin> > > > _pair_bins_;
 
+	double _z_buffer_;
+	static constexpr double _default_z_buffer_ = 0.1;
+
 	// Data to be sorted into bins
 #if(1)
 
@@ -102,7 +105,9 @@ public:
 #if(1)
 	// Default constructor
 	pair_binner()
-	: _sorting_index_(0),
+	: _z_buffer_(_default_z_buffer_),
+	  _lens_ids_(&lens_id_lt),
+	  _sorting_index_(0),
 	  _sorted_(false)
 	{
 	}
@@ -113,6 +118,7 @@ public:
 				std::vector< double > z_bin_limits=std::vector<double>(),
 				std::vector< double > mag_bin_limits=std::vector<double>())
 	:	pair_bins_summary(R_bin_limits,m_bin_limits,z_bin_limits,mag_bin_limits),
+		_z_buffer_(_default_z_buffer_),
 	 	_lens_ids_(&lens_id_lt),
 	 	_sorting_index_(0),
 	 	_sorted_(false)
@@ -134,6 +140,7 @@ public:
 				double mag_step=std::numeric_limits<double>::infinity())
 	:	pair_bins_summary(R_min,R_max,R_step,m_min,m_max,m_step,z_min,z_max,z_step,
 			mag_min,mag_max,mag_step),
+			_z_buffer_(_default_z_buffer_),
 		 	_lens_ids_(&lens_id_lt),
 		 	_sorting_index_(0),
 		 	_sorted_(false)
@@ -153,6 +160,18 @@ public:
 		return _pair_bins_;
 	}
 
+#endif
+
+	// Setting and accessing z_buffer
+#if(1)
+	void set_z_buffer(const double & new_z_buffer)
+	{
+		_z_buffer_ = new_z_buffer;
+	}
+	double z_buffer() const
+	{
+		return _z_buffer_;
+	}
 #endif
 
 	// Adding, sorting, and clearing data

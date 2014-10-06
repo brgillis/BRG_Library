@@ -59,11 +59,13 @@ void pair_bin::_uncache_values()
 pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF init_R_max,
 		CONST_BRG_MASS_REF init_m_min, CONST_BRG_MASS_REF init_m_max,
 		double init_z_min, double init_z_max,
-		double init_mag_min, double init_mag_max )
+		double init_mag_min, double init_mag_max,
+		double init_z_buffer)
 :	pair_bin_summary(init_R_min,init_R_max,init_m_min,init_m_max,
 		init_z_min,init_z_max,init_mag_min,init_mag_max),
 	_mu_hat_cached_value_(std::numeric_limits<double>::infinity()),
-	_mu_W_cached_value_(std::numeric_limits<double>::infinity())
+	_mu_W_cached_value_(std::numeric_limits<double>::infinity()),
+	_z_buffer_(init_z_buffer)
 {
 }
 
@@ -160,7 +162,7 @@ double pair_bin::mu_W() const
 {
 	if(_mu_W_cached_value_==std::numeric_limits<double>::infinity())
 	{
-		_mu_W_cached_value_ = area()*mag_weight_integral_cache().get(lens_z_mean());
+		_mu_W_cached_value_ = area()*mag_weight_integral_cache().get(lens_z_mean()+_z_buffer_);
 	}
 	return _mu_W_cached_value_;
 }
@@ -173,7 +175,7 @@ double pair_bin::mu_hat() const
 
 		const double mu_observed = boost::accumulators::weighted_sum(_mu_obs_values_)/mu_W();
 
-		const double mu_base = area()*mag_signal_integral_cache().get(lens_z_mean())/mu_W();
+		const double mu_base = area()*mag_signal_integral_cache().get(lens_z_mean()+_z_buffer_)/mu_W();
 
 		_mu_hat_cached_value_ = mu_observed+mu_base;
 	}

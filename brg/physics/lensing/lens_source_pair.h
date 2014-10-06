@@ -108,19 +108,20 @@ public:
 	// Access to stored values
 #if(1)
 
-	double z_lens() const;
-	double z_source() const;
-	BRG_MASS m_lens() const;
-	size_t id_lens() const;
-	double mag_lens() const;
-	double mag_source() const;
-	BRG_DISTANCE R_proj() const;
-	BRG_ANGLE theta() const;
-	double gamma_t() const;
-	double gamma_x() const;
-	double weight_lens() const;
-	double weight_source() const;
-	double weight_pair() const;
+	const double & z_lens() const;
+	const double & z_source() const;
+	double z_diff() const;
+	const BRG_MASS & m_lens() const;
+	const size_t & id_lens() const;
+	const double & mag_lens() const;
+	const double & mag_source() const;
+	const BRG_DISTANCE & R_proj() const;
+	const BRG_ANGLE & theta() const;
+	const double & gamma_t() const;
+	const double & gamma_x() const;
+	const double & weight_lens() const;
+	const double & weight_source() const;
+	const double & weight_pair() const;
 	double shear_weight() const;
 	double mag_weight() const;
 

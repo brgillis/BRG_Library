@@ -62,7 +62,8 @@ void pair_binner::_sort() const
 					R_limits()[R_i],R_limits()[R_i+1],
 					m_limits()[m_i],m_limits()[m_i+1],
 					z_limits()[z_i],z_limits()[z_i+1],
-					mag_limits()[mag_i],mag_limits()[mag_i+1]);
+					mag_limits()[mag_i],mag_limits()[mag_i+1],
+					_z_buffer_);
 		};
 		make_vector_function(_pair_bins_,bin_limit_func,R_limits().size()-1,m_limits().size()-1,
 				z_limits().size()-1,mag_limits().size()-1);
@@ -109,6 +110,9 @@ void pair_binner::_sort() const
 		double mag = _pairs_[_sorting_index_].mag_lens();
 		if((mag < mag_limits().front()) || (mag > mag_limits().back()))
 			continue;
+
+		// Check lens-source z separation against buffer
+		if(_pairs_[_sorting_index_].z_diff()<_z_buffer_) continue;
 
 		// Find specific position by using a zip iterator to go over limits vectors
 		// and the pair bins vector at the same time

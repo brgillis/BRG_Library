@@ -39,7 +39,7 @@
 #include "brg/file_access/ascii_table.h"
 #include "brg/file_access/open_file.hpp"
 #include "brg/physics/units/unit_obj.h"
-#include "brg/vector/vector.hpp"
+#include "brg/vector/multi_vector.hpp"
 #include "brg/vector/elementwise_functions.hpp"
 
 // Macro definitions
@@ -52,9 +52,9 @@
 #define SPP(name) static_cast<name*>(this)
 
 #define DECLARE_BRG_CACHE_ND_STATIC_VARS()		       \
-	static brgastro::vector<double> _mins_, _maxes_, _steps_;      \
-	static brgastro::vector<size_t> _resolutions_;           \
-	static brgastro::vector<double> _results_;                     \
+	static brgastro::multi_vector<double> _mins_, _maxes_, _steps_;      \
+	static brgastro::multi_vector<size_t> _resolutions_;           \
+	static brgastro::multi_vector<double> _results_;                     \
 											                       \
 	static std::string _file_name_;                                \
 	static unsigned int _version_number_;                          \
