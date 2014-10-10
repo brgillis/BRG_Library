@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file expected_count_cache.cpp
+ @file expected_count_derivative_cache.cpp
  ------------------
 
  TODO <Insert file description here>
@@ -30,20 +30,20 @@
 #include "brg/physics/lensing/magnification/expected_count_loader.h"
 #include "brg/physics/lensing/magnification/mag_global_values.h"
 
-#include "expected_count_cache.h"
+#include "expected_count_derivative_cache.h"
 
 // Initialise the cache
-DEFINE_BRG_CACHE_2D_STATIC_VARS( expected_count_cache,
+DEFINE_BRG_CACHE_2D_STATIC_VARS( expected_count_derivative_cache,
 		brgastro::mag_m_min,brgastro::mag_m_max,0.01,
 		brgastro::mag_z_min,brgastro::mag_z_max-0.01,0.01);
 
-// brgastro::expected_count_cache class methods
+// brgastro::expected_count_derivative_cache class methods
 #if (1)
-const double brgastro::expected_count_cache::_calculate( const double in_param_1, const double in_param_2) const
+const double brgastro::expected_count_derivative_cache::_calculate( const double in_param_1, const double in_param_2) const
 {
 	const double m = std::fabs(in_param_1);
 	const long double z_min = std::fabs(in_param_2);
 
-	return expected_count_loader::get_count(m,z_min);
+	return expected_count_loader::get_derivative(m,z_min);
 }
 #endif
