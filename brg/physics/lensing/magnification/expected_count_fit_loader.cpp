@@ -43,8 +43,6 @@
 #if (1)
 bool brgastro::expected_count_fit_loader::_loaded_(false);
 brgastro::table_map_t<double> brgastro::expected_count_fit_loader::_data_map_;
-const char * brgastro::expected_count_fit_loader::_class_source_name_ = "expected_count_loader.cpp";
-const char * brgastro::expected_count_fit_loader::_data_file_name_ = "count_fitting_results";
 #endif
 
 const double num_columns=8;

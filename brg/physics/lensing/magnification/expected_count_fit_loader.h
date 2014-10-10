@@ -45,9 +45,6 @@ class expected_count_fit_loader {
 	static bool _loaded_;
 	static brgastro::table_map_t<double> _data_map_;
 
-	static const char * _class_source_name_;
-	static const char * _data_file_name_;
-
 	static void _load();
 	static size_t _lower_z_index(double z);
 public:

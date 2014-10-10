@@ -33,11 +33,12 @@
 #include "brg/global.h"
 
 #include "brg/math/misc_math.hpp"
+#include "brg/vector/summary_functions.hpp"
 
 namespace brgastro {
 
 template<typename T>
-std::vector<T> make_limit_vector(T min, T max, T step)
+std::vector<T> make_limit_vector(const T & min, const T & max, const T & step)
 {
 	assert(max>min);
 	assert(step>0);
@@ -63,7 +64,7 @@ std::vector<T> make_limit_vector(T min, T max, T step)
 }
 
 template<typename T>
-std::vector<T> make_log_limit_vector(T min, T max, size_t num_bins)
+std::vector<T> make_log_limit_vector(const T & min, const T & max, const size_t & num_bins)
 {
 	assert(max>min);
 	assert(min>0);
@@ -94,23 +95,79 @@ std::vector<T> make_log_limit_vector(T min, T max, size_t num_bins)
 }
 
 template<typename T>
-size_t checked_get_bin_index(T val, std::vector<T> vec)
+bool above_limits(const T & val, const std::vector<T> & vec)
+{
+	assert(is_monotonically_increasing(vec));
+	return val>vec.back();
+}
+
+template<typename T>
+bool checked_above_limits(const T & val, const std::vector<T> & vec)
+{
+	if(!is_monotonically_increasing(vec))
+		throw std::logic_error("Invalid limit vector passed to above_limits.");
+	return above_limits(val,vec);
+}
+
+template<typename T>
+bool under_limits(const T & val, const std::vector<T> & vec)
+{
+	assert(is_monotonically_increasing(vec));
+	return val<vec.front();
+}
+
+template<typename T>
+bool checked_under_limits(const T & val, const std::vector<T> & vec)
+{
+	if(!is_monotonically_increasing(vec))
+		throw std::logic_error("Invalid limit vector passed to under_limits.");
+	return under_limits(val,vec);
+}
+
+template<typename T>
+bool outside_limits(const T & val, const std::vector<T> & vec)
+{
+	return (above_limits(val,vec) or under_limits(val,vec));
+}
+
+template<typename T>
+bool checked_outside_limits(const T & val, const std::vector<T> & vec)
+{
+	return (checked_above_limits(val,vec) or checked_under_limits(val,vec));
+}
+
+template<typename T>
+bool inside_limits(const T & val, const std::vector<T> & vec)
+{
+	return !outside_limits(val,vec);
+}
+
+template<typename T>
+bool checked_inside_limits(const T & val, const std::vector<T> & vec)
+{
+	return !checked_outside_limits(val,vec);
+}
+
+template<typename T>
+size_t checked_get_bin_index(const T & val, const std::vector<T> & vec)
 {
 	if(!is_monotonically_increasing(vec))
 		throw std::logic_error("Invalid limit vector passed to checked_get_bin_index.");
+	if(outside_limits(val,vec))
+		throw std::runtime_error("Value outside limits of vector in checked_get_bin_index.");
 	return get_bin_index(val,vec);
 }
 
 template<typename T>
-size_t get_bin_index(T val, std::vector<T> vec)
+size_t get_bin_index(const T & val, const std::vector<T> & vec)
 {
-	if((val<vec.front())||(val>vec.back()))
-			throw std::runtime_error("Value outside limits of vector in get_bin_index.");
+	assert(is_monotonically_increasing(vec));
 	for(size_t i=1; i<vec.size(); ++i)
 	{
 		if(vec[i]>=val) return i-1;
 	}
-	throw std::logic_error("Invalid limit vector passed to get_bin_index.");
+	if(above_limits(val,vec)) return vec.size()-2;
+	return 0;
 }
 
 } // namespace brgastro
