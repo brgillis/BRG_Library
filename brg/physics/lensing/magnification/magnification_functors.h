@@ -54,7 +54,7 @@ public:
 #endif
 
 	// Operator()
-	BRG_UNITS operator()(const BRG_UNITS & m, bool silent=true) const;
+	BRG_UNITS operator()(const long double & m, bool silent=true) const;
 
 }; // class expected_count_functor
 
@@ -78,7 +78,7 @@ public:
 #endif
 
 	// Operator()
-	BRG_UNITS operator()(const BRG_UNITS & m, bool silent=true) const;
+	BRG_UNITS operator()(const long double & m, bool silent=true) const;
 
 }; // class mu_signal_integration_functor
 
@@ -102,7 +102,7 @@ public:
 #endif
 
 	// Operator()
-	BRG_UNITS operator()(const BRG_UNITS & m, bool silent=true) const;
+	BRG_UNITS operator()(const long double & m, bool silent=true) const;
 
 }; // class mu_signal_integration_functor
 

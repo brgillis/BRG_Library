@@ -37,23 +37,23 @@
 
 // Initialise the cache
 DEFINE_BRG_CACHE_2D_STATIC_VARS( expected_count_cache,
-	brgastro::mag_m_min,brgastro::mag_m_max,0.01,
-	0.2,brgastro::mag_z_max-0.1,0.1);
+		brgastro::mag_m_min,brgastro::mag_m_max,0.01,
+		brgastro::mag_z_min,brgastro::mag_z_max-0.01,0.01);
 
 // brgastro::expected_count_cache class methods
 #if (1)
 const double brgastro::expected_count_cache::_calculate( const double in_param_1, const double in_param_2) const
 {
 	const double m = std::fabs(in_param_1);
-	const double z_min = std::fabs(in_param_2);
+	const long double z_min = std::fabs(in_param_2);
 
 	// We have to integrate over z from the input value to the max here
 
-	auto f = [&] (double z, const bool silent)
+	auto f = [&] (long double z, const bool silent)
 		{
 			return Schechter_like_functor(expected_count_loader::get(z))(m);
 		};
 
-	return integrate_Romberg(&f,z_min,brgastro::mag_z_max);
+	return max(integrate_Romberg(&f,z_min,static_cast<long double>(brgastro::mag_z_max)),0);
 }
 #endif

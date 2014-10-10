@@ -135,7 +135,7 @@ public:
 	}
 	const mapped_type& at (const key_type& k) const
 	{
-		return _val_vector_.at(_key_map_.at(k));
+		return _val_vector_.at(_key_map_.at(k)).second;
 	}
 
 	typename base_type::iterator find (const key_type& k)
@@ -221,7 +221,10 @@ public:
 	}
 	typename base_type::size_type erase (const key_type& k)
 	{
-		auto result=_val_vector_.erase(k);
+		if(_key_map_.count(k)==0) return _val_vector_.size();
+
+		_val_vector_.erase(static_cast<typename base_type::iterator>(&_val_vector_[_key_map_.at(k)]));
+		auto result=_val_vector_.size();
 		_rebuild_key_map();
 		return result;
 	}

@@ -38,7 +38,7 @@ namespace brgastro {
 /**
  *
  */
-class Schechter_like_functor: public brgastro::functor<double,std::vector<BRG_UNITS>> {
+class Schechter_like_functor: public brgastro::functor<long double,std::vector<long double>> {
 private:
 	const size_t _num_params_ = 7;
 
@@ -46,7 +46,7 @@ public:
 	Schechter_like_functor()
 	{
 	}
-	Schechter_like_functor(const std::vector<BRG_UNITS> & init_params )
+	Schechter_like_functor(const std::vector<long double> & init_params )
 	: functor(init_params)
 	{
 	}
@@ -57,37 +57,37 @@ public:
 	// Params accessors
 #if (1)
 
-	CONST_BRG_UNITS_REF N_scale() const
+	long double N_scale() const
 	{
 		assert(params().size()==_num_params_);
 		return params()[0];
 	}
-	CONST_BRG_UNITS_REF m_star() const
+	long double m_star() const
 	{
 		assert(params().size()==_num_params_);
 		return params()[1];
 	}
-	CONST_BRG_UNITS_REF alpha() const
+	long double alpha() const
 	{
 		assert(params().size()==_num_params_);
 		return params()[2];
 	}
-	CONST_BRG_UNITS_REF mag_lower_lim_sharpness() const
+	long double mag_lower_lim_sharpness() const
 	{
 		assert(params().size()==_num_params_);
 		return params()[3];
 	}
-	CONST_BRG_UNITS_REF mag23_jump() const
+	long double mag23_jump() const
 	{
 		assert(params().size()==_num_params_);
 		return params()[4];
 	}
-	CONST_BRG_UNITS_REF mag_upper_lim() const
+	long double mag_upper_lim() const
 	{
 		assert(params().size()==_num_params_);
 		return params()[5];
 	}
-	CONST_BRG_UNITS_REF mag_upper_lim_sharpness() const
+	long double mag_upper_lim_sharpness() const
 	{
 		assert(params().size()==_num_params_);
 		return params()[6];
@@ -97,7 +97,7 @@ public:
 
 	// Function method
 
-	double operator()( const double & in_params,
+	long double operator()( const long double & in_params,
 			const bool silent = false ) const;
 
 };

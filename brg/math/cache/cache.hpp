@@ -255,13 +255,13 @@ private:
 		SPCP(name)->_results_.resize(SPCP(name)->_resolution_1_ );
 
 		// Calculate data
-		double x = SPCP(name)->_min_1_;
 		bool bad_result = false;
 
 		#pragma omp parallel for
 		for ( size_t i = 0; i < SPCP(name)->_resolution_1_; i++ )
 		{
 			double result = 0;
+			double x = SPCP(name)->_min_1_ + i*SPCP(name)->_step_1_;
 			try
 			{
 				result = SPCP(name)->_calculate(x);
@@ -272,7 +272,6 @@ private:
 				bad_result = true;
 			}
 			SPCP(name)->_results_[i] = result;
-			x += SPCP(name)->_step_1_;
 		}
 
 		if(bad_result) throw std::runtime_error("One or more calculations failed in generating cache " + SPCP(name)->_name_base());

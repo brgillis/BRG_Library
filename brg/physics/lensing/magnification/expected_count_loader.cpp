@@ -79,18 +79,18 @@ size_t brgastro::expected_count_loader::_lower_z_index(double z)
 	return _data_map_["z_mid"].size()-2;
 }
 
-std::vector<BRG_UNITS> brgastro::expected_count_loader::get(double z)
+std::vector<long double> brgastro::expected_count_loader::get(long double z)
 {
 	if(!_loaded_) _load();
 
 	const size_t zi = _lower_z_index(z);
 
-	const double zlo = _data_map_["z_mid"][zi];
-	const double zhi = _data_map_["z_mid"][zi+1];
+	const long double zlo = _data_map_["z_mid"][zi];
+	const long double zhi = _data_map_["z_mid"][zi+1];
 
-	const double weight = zhi-zlo;
+	const long double weight = zhi-zlo;
 
-	std::vector<BRG_UNITS> r_lo, r_hi;
+	std::vector<long double> r_lo, r_hi;
 
 #ifdef _BRG_USE_UNITS_
 	r_lo.push_back(unit_obj(_data_map_["N_scale"].at(zi)*(zhi-z),0,0,0,0,-2));

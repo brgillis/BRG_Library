@@ -499,7 +499,7 @@ public:
 			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
 			// so we don't get collisions from loading within two different critical sections at once)
 			SPCP(name)->get(SPCP(name)->_min_1_,SPCP(name)->_min_2_,SPCP(name)->_min_3_,
-					SPCP(name)->_min_4_,true);
+					SPCP(name)->_min_4_,silent);
 		}
 
 		// Fill up header

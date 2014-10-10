@@ -56,7 +56,7 @@ namespace brgastro {
 template< typename f, typename T >
 inline T differentiate( const f * func, const T & in_param,
 		const int order = 1, const double power = 1,
-		const bool silent = false )
+		const bool silent = false, const T & factor=SMALL_FACTOR )
 {
 
 	T d_in_param( 0 );
@@ -64,7 +64,7 @@ inline T differentiate( const f * func, const T & in_param,
 	T high_in_param( 0 );
 	T low_out_param( 0 );
 	T high_out_param( 0 );
-	T small_factor_with_units = SMALL_FACTOR;
+	T small_factor_with_units(factor);
 
 	bool power_flag = false;
 	bool zero_in_flag = false;
@@ -88,7 +88,7 @@ inline T differentiate( const f * func, const T & in_param,
 	}
 	else     // if(in_params==0)
 	{
-		small_factor_with_units = in_param * SMALL_FACTOR;
+		small_factor_with_units = in_param * factor;
 		d_in_param = small_factor_with_units;
 	} // else
 
@@ -99,7 +99,7 @@ inline T differentiate( const f * func, const T & in_param,
 #ifdef _BRG_USE_UNITS_
 			d_in_param.set(SMALL_FACTOR,in_param.get_unit_powers());
 #else
-			d_in_param = SMALL_FACTOR;
+			d_in_param = factor;
 #endif
 		}
 		else

@@ -52,7 +52,7 @@ class expected_count_loader {
 	static size_t _lower_z_index(double z);
 public:
 
-	static std::vector<BRG_UNITS> get(double z);
+	static std::vector<long double> get(long double z);
 	static void unload();
 };
 

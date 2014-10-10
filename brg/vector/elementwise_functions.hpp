@@ -709,6 +709,23 @@ const std::vector<T> exp( std::vector<T> v )
 
 #endif // Element-wise exponential
 
+// Element-wise log
+#if (1)
+
+template< typename T >
+const std::vector<T> log( std::vector<T> v )
+{
+	using std::log;
+	using brgastro::log;
+
+	for(unsigned int i = 0; i < v.size(); i++)
+		v[i] = log(v[i]);
+
+	return v;
+}
+
+#endif // Element-wise log
+
 // Element-wise square
 #if (1)
 

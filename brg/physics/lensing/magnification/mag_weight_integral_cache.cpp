@@ -44,7 +44,7 @@ const double brgastro::mag_weight_integral_cache::_calculate( const double in_pa
 {
 	mu_weight_integration_functor func(in_param_1);
 
-	return integrate_Romberg(&func,brgastro::mag_m_min,brgastro::mag_m_max);
+	return integrate_Romberg<decltype(func),long double>(&func,brgastro::mag_m_min,brgastro::mag_m_max);
 }
 void brgastro::mag_weight_integral_cache::_load_cache_dependencies() const
 {
