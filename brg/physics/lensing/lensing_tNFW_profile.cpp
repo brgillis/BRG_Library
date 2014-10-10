@@ -83,8 +83,8 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_dens( CONST_BRG_DISTANCE_R
 	else if ( x > 1. )
 		fx = acos( 1. / x ) / std::sqrt( xx - 1. );
 	else
-		fx = -log( 1. / x - std::sqrt( 1. / ( xx ) - 1. ) ) / std::sqrt( 1. - xx );
-	lx = log( x / ( sqrt_tautaupxx + tau_use ) );
+		fx = -std::log( 1. / x - std::sqrt( 1. / ( xx ) - 1. ) ) / std::sqrt( 1. - xx );
+	lx = std::log( x / ( sqrt_tautaupxx + tau_use ) );
 	if ( x == 1 )
 		result =
 				( rs() * d_c * rho_c_t_4pi ) * tautau
@@ -130,9 +130,9 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_enc_dens( CONST_BRG_DISTAN
 	else if ( x > 1. )
 		fx = acos( 1. / x ) / std::sqrt( xx - 1. );
 	else
-		fx = -log( 1 / x - std::sqrt( 1 / ( xx ) - 1 ) ) / std::sqrt( 1 - xx );
-	lx = log( x / ( sqrt_tautaupxx + tau_use ) );
-	double log_tau = log(tau_use);
+		fx = -std::log( 1 / x - std::sqrt( 1 / ( xx ) - 1 ) ) / std::sqrt( 1 - xx );
+	lx = std::log( x / ( sqrt_tautaupxx + tau_use ) );
+	double log_tau = std::log(tau_use);
 
 	result = ( rs() * d_c * rho_c_t_4pi ) * tautau
 					/ ( pi * xx * tautaup1 * tautaup1 )

@@ -25,6 +25,7 @@
 #ifndef _BRG_TNFW_PROFILE_H_
 #define _BRG_TNFW_PROFILE_H_
 
+#include <cmath>
 #include <cstdlib>
 #include <vector>
 
@@ -74,7 +75,7 @@ protected:
 	double _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
 	{
 		return ( 200. / 3. ) * cube( _c_ )
-				/ ( log( 1 + _c_ ) - _c_ / ( 1 + _c_ ) );
+				/ ( std::log( 1 + _c_ ) - _c_ / ( 1 + _c_ ) );
 	}
 
 	// Functions relating to tNFW profiles
@@ -89,11 +90,11 @@ protected:
 	double _mftau( const double tau, const double conc ) const // Mtot/Mvir from tau
 	{
 		if(tau<=0) return 0;
-		double M0oM200 = 1 / ( log( 1 + conc ) - conc / ( 1 + conc ) );
+		double M0oM200 = 1 / ( std::log( 1 + conc ) - conc / ( 1 + conc ) );
 		double tautau = tau*tau;
 		double result =
 				M0oM200 * tautau / square( tautau + 1 )
-						* ( ( tautau - 1 ) * log( tau ) + tau * pi
+						* ( ( tautau - 1 ) * std::log( tau ) + tau * pi
 								- ( tautau + 1 ) );
 		return result;
 	}

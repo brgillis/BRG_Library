@@ -25,6 +25,7 @@
 
  \**********************************************************************/
 
+#include <brg/physics/lensing/magnification/expected_count_fit_loader.h>
 #include <cassert>
 #include <iostream>
 #include <sstream>
@@ -37,19 +38,18 @@
 #include "brg/physics/lensing/magnification/count_fitting_results.hpp"
 #include "brg/vector/elementwise_functions.hpp"
 
-#include "expected_count_loader.h"
 
 // Initialisation of static vars
 #if (1)
-bool brgastro::expected_count_loader::_loaded_(false);
-brgastro::table_map_t<double> brgastro::expected_count_loader::_data_map_;
-const char * brgastro::expected_count_loader::_class_source_name_ = "expected_count_loader.cpp";
-const char * brgastro::expected_count_loader::_data_file_name_ = "count_fitting_results";
+bool brgastro::expected_count_fit_loader::_loaded_(false);
+brgastro::table_map_t<double> brgastro::expected_count_fit_loader::_data_map_;
+const char * brgastro::expected_count_fit_loader::_class_source_name_ = "expected_count_loader.cpp";
+const char * brgastro::expected_count_fit_loader::_data_file_name_ = "count_fitting_results";
 #endif
 
 const double num_columns=8;
 
-void brgastro::expected_count_loader::_load()
+void brgastro::expected_count_fit_loader::_load()
 {
 #pragma omp critical(brg_load_expected_count_loader)
 	{
@@ -67,7 +67,7 @@ void brgastro::expected_count_loader::_load()
 	}
 
 }
-size_t brgastro::expected_count_loader::_lower_z_index(double z)
+size_t brgastro::expected_count_fit_loader::_lower_z_index(double z)
 {
 	assert(_data_map_.at("z_mid").size()>=2);
 
@@ -79,7 +79,7 @@ size_t brgastro::expected_count_loader::_lower_z_index(double z)
 	return _data_map_["z_mid"].size()-2;
 }
 
-std::vector<long double> brgastro::expected_count_loader::get(long double z)
+std::vector<long double> brgastro::expected_count_fit_loader::get(long double z)
 {
 	if(!_loaded_) _load();
 
@@ -127,7 +127,7 @@ std::vector<long double> brgastro::expected_count_loader::get(long double z)
 	return divide(add(r_lo,r_hi),weight);
 }
 
-void brgastro::expected_count_loader::unload()
+void brgastro::expected_count_fit_loader::unload()
 {
 	_data_map_.clear();
 	_loaded_ = false;

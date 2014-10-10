@@ -25,8 +25,8 @@
  \**********************************************************************/
 
 // body file: expected_count_loader.cpp
-#ifndef _BRG_EXPECTED_COUNT_LOADER_H_INCLUDED_
-#define _BRG_EXPECTED_COUNT_LOADER_H_INCLUDED_
+#ifndef _BRG_EXPECTED_COUNT_FIT_LOADER_H_INCLUDED_
+#define _BRG_EXPECTED_COUNT_FIT_LOADER_H_INCLUDED_
 
 #include <cassert>
 #include <string>
@@ -41,7 +41,7 @@ namespace brgastro {
 /**
  *
  */
-class expected_count_loader {
+class expected_count_fit_loader {
 	static bool _loaded_;
 	static brgastro::table_map_t<double> _data_map_;
 
@@ -58,4 +58,4 @@ public:
 
 } // end namespace brgastro
 
-#endif // _BRG_EXPECTED_COUNT_LOADER_H_INCLUDED_
+#endif // _BRG_EXPECTED_COUNT_FIT_LOADER_H_INCLUDED_

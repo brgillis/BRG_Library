@@ -29,7 +29,7 @@
 
 #include "brg/math/calculus/integrate.hpp"
 #include "brg/math/safe_math.hpp"
-#include "brg/physics/lensing/magnification/expected_count_loader.h"
+#include "brg/physics/lensing/magnification/expected_count_fit_loader.h"
 #include "brg/physics/lensing/magnification/mag_global_values.h"
 #include "brg/physics/lensing/magnification/Schechter_like_functor.h"
 
@@ -51,7 +51,7 @@ const double brgastro::expected_count_cache::_calculate( const double in_param_1
 
 	auto f = [&] (long double z, const bool silent)
 		{
-			return Schechter_like_functor(expected_count_loader::get(z))(m);
+			return Schechter_like_functor(expected_count_fit_loader::get(z))(m);
 		};
 
 	return max(integrate_Romberg(&f,z_min,static_cast<long double>(brgastro::mag_z_max)),0);
