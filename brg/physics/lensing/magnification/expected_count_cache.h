@@ -65,6 +65,7 @@ protected:
 
 	// Long-form calculation function.
 	const double _calculate( const double in_param_1, const double in_param_2 ) const;
+	void _load_cache_dependencies() const;
 
 public:
 	expected_count_cache()

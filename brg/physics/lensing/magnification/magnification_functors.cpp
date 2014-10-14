@@ -41,14 +41,14 @@ BRG_UNITS mag_expected_count_functor::operator() (const long double & m, bool si
 BRG_UNITS mu_signal_integration_functor::operator() (const long double & m, bool silent) const
 {
 	long double alpha = magnification_alpha(m,_z_mean_);
-	long double count = mag_expected_count_functor(_z_mean_)(m,silent);
+	long double count = expected_count_cache().get(m,_z_mean_);
 	return count*(alpha-1)*(alpha-2);
 }
 
 BRG_UNITS mu_weight_integration_functor::operator() (const long double & m, bool silent) const
 {
 	long double alpha = magnification_alpha(m,_z_mean_);
-	long double count = mag_expected_count_functor(_z_mean_)(m,silent);
+	long double count = expected_count_cache().get(m,_z_mean_);
 	return count*square(alpha-1);
 }
 

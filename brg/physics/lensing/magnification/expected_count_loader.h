@@ -46,7 +46,8 @@ class expected_count_loader {
 
 	static void _load();
 	static double _get_interp(const double & mag, const double & z,
-			const std::vector<std::vector<double>> & table);
+			const std::vector<std::vector<double>> & table,
+			const double & def=0);
 public:
 
 	// Setting parameters for where the data is stored

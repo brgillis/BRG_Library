@@ -378,7 +378,6 @@ public:
 	BRG_UNITS area_per_lens() const
 	{
 		return area()/num_lenses();
-		return pi*(square(afd(_R_max_,_z_mean_))-square(afd(_R_max_,_z_mean_)));
 	}
 	virtual BRG_UNITS area() const
 	{

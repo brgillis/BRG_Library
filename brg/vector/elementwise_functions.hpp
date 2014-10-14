@@ -374,8 +374,9 @@ const std::vector<T1> pow( std::vector<T1> v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2 >
-const std::vector<T1> pow( const T1 & v1, std::vector<T2> v2 )
+const std::vector<T2> pow( const T1 & v1, std::vector<T2> v2 )
 {
+	using std::pow;
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
 		v2[i] = pow(v1, v2[i]);

@@ -59,65 +59,79 @@ void expected_count_loader::_load()
 {
 	if(_loaded_) return;
 
-	// Resize arrays as necessary
-	size_t num_z_bins = _z_limits_.size()-1;
-
-	_mag_limits_.resize(num_z_bins);
-	_smoothed_count_.resize(num_z_bins);
-	_smoothed_count_derivative_.resize(num_z_bins);
-
-	// Loop over z, loading in all files
-	for(size_t z_i=0; z_i<num_z_bins; ++z_i)
+#pragma omp critical(brg_expected_count_loader_load)
 	{
-		const unsigned short z100(brgastro::round_int(100*_z_limits_[z_i]));
-		const std::string filename(_filename_base_ + boost::lexical_cast<std::string>(z100)
-				+ _filename_tail_);
 
-		std::vector<double> count;
+	if(!_loaded_)
+	{
 
-		try
+		// Resize arrays as necessary
+		size_t num_z_bins = _z_limits_.size()-1;
+
+		_mag_limits_.resize(num_z_bins);
+		_smoothed_count_.resize(num_z_bins);
+		_smoothed_count_derivative_.resize(num_z_bins);
+
+		// Loop over z, loading in all files
+		for(size_t z_i=0; z_i<num_z_bins; ++z_i)
 		{
-			auto table_map = brgastro::load_table_map<double>(filename);
-			_mag_limits_[z_i] = table_map.at("mag_bin_lower");
-			count = table_map.at("count");
-			_smoothed_count_[z_i] = table_map.at("smoothed_count");
-			_smoothed_count_derivative_[z_i] = table_map.at("smoothed_derivative");
+			const unsigned short z100(brgastro::round_int(100*_z_limits_[z_i]));
+			const std::string filename(_filename_base_ + boost::lexical_cast<std::string>(z100)
+					+ _filename_tail_);
 
-			// Add a final value to the _mag_limits_ vector
-			_mag_limits_[z_i].push_back(2*_mag_limits_[z_i].back()-
-					_mag_limits_[z_i].at(_mag_limits_[z_i].size()-2));
-		}
-		catch(const std::runtime_error &e)
-		{
-			std::cerr << "ERROR: Cannot load data for expected_count_loader. Check that the filename\n"
-					<< "base and root match the data (including path), and the z limits are set up to match.\n"
-					<< "Original exception:" << e.what();
-			throw;
-		}
+			std::vector<double> count;
 
-		// Correct spurious smoothed count values in this vector
-		for(size_t m_i=0; m_i<_smoothed_count_.size(); ++m_i)
-		{
-			if((count[m_i]==0)&&(_smoothed_count_[z_i][m_i]==brgastro::mag_min_count))
+			try
 			{
-				_smoothed_count_[z_i][m_i] = 0;
-			}
-		}
-	} // Loop over z, loading in all files
+				auto table_map = brgastro::load_table_map<double>(filename);
+				_mag_limits_[z_i] = table_map.at("mag_bin_lower");
+				count = table_map.at("count");
+				_smoothed_count_[z_i] = table_map.at("smoothed_count");
+				_smoothed_count_derivative_[z_i] = table_map.at("smoothed_alpha");
 
-	_loaded_ = true;
+				// Add a final value to the _mag_limits_ vector
+				_mag_limits_[z_i].push_back(2*_mag_limits_[z_i].back()-
+						_mag_limits_[z_i].at(_mag_limits_[z_i].size()-2));
+			}
+			catch(const std::runtime_error &e)
+			{
+				std::cerr << "ERROR: Cannot load data for expected_count_loader. Check that the filename\n"
+						<< "base and root match the data (including path), and the z limits are set up to match.\n"
+						<< "Original exception:" << e.what();
+				throw;
+			}
+
+			// Normalize by magnitude bin size
+			double bin_size = _mag_limits_[z_i].at(1)-_mag_limits_[z_i].at(0);
+			_smoothed_count_[z_i] = brgastro::divide(_smoothed_count_[z_i],bin_size);
+
+			// Correct spurious smoothed count values in this vector
+			for(size_t m_i=0; m_i<_smoothed_count_.size(); ++m_i)
+			{
+				if((count[m_i]==0)&&(_smoothed_count_[z_i][m_i]==brgastro::mag_min_count))
+				{
+					_smoothed_count_[z_i][m_i] = 0;
+				}
+			}
+		} // Loop over z, loading in all files
+
+		_loaded_ = true;
+
+	}
+
+	}
 } // void expected_count_loader::_load()
 
 
 double expected_count_loader::_get_interp(const double & mag, const double & z,
-		const std::vector<std::vector<double>> & table)
+		const std::vector<std::vector<double>> & table, const double & def)
 {
 	// Load if necessary
 	_load();
 
 	size_t z_i = brgastro::get_bin_index(z,_z_limits_);
 
-	if(z_i==_z_limits_.size()) --z_i;
+	if(z_i==_z_limits_.size()-1) --z_i;
 	const double & z_lo = _z_limits_[z_i];
 	const double & z_hi = _z_limits_[z_i+1];
 
@@ -127,8 +141,9 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 	// Get the interpolated value at both the lower redshift and the higher
 
 	// At the lower redshift first
+	if(brgastro::under_limits(mag,_mag_limits_[z_i])) return def;
 	size_t mag_lo_i = brgastro::get_bin_index(mag,_mag_limits_[z_i]);
-	if(mag_lo_i==_mag_limits_[z_i].size()) --mag_lo_i;
+	if(mag_lo_i==_mag_limits_[z_i].size()-1) --mag_lo_i;
 
 	const double & mag_lo_lo = _mag_limits_[z_i][mag_lo_i];
 	const double & mag_lo_hi = _mag_limits_[z_i][mag_lo_i+1];
@@ -141,8 +156,9 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 	const double lo_result = temp_result / tot_weight;
 
 	// At the higher redshift now
+	if(brgastro::under_limits(mag,_mag_limits_[z_i+1])) return def;
 	size_t mag_hi_i = brgastro::get_bin_index(mag,_mag_limits_[z_i+1]);
-	if(mag_hi_i==_mag_limits_[z_i+1].size()) --mag_hi_i;
+	if(mag_hi_i==_mag_limits_[z_i+1].size()-1) --mag_hi_i;
 
 	const double & mag_hi_lo = _mag_limits_[z_i+1][mag_hi_i];
 	const double & mag_hi_hi = _mag_limits_[z_i+1][mag_hi_i+1];
@@ -206,11 +222,11 @@ void expected_count_loader::set_filename_tail(std::string && new_filename_tail)
 
 double expected_count_loader::get_count(const double & mag, const double & z)
 {
-	return _get_interp(mag,z,_smoothed_count_);
+	return _get_interp(mag,z,_smoothed_count_,0.);
 }
 double expected_count_loader::get_derivative(const double & mag, const double & z)
 {
-	return _get_interp(mag,z,_smoothed_count_derivative_);
+	return _get_interp(mag,z,_smoothed_count_derivative_,1.);
 }
 
 #endif // Access data

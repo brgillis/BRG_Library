@@ -30,13 +30,19 @@
 #ifndef _BRG_MAG_GLOBAL_VALUES_H_INCLUDED_
 #define _BRG_MAG_GLOBAL_VALUES_H_INCLUDED_
 
+#include "brg/math/misc_math.hpp"
+#include "brg/physics/units/unit_conversions.hpp"
+
 namespace brgastro {
 
-const double mag_m_min = 15.;
-const double mag_m_max = 24.5;
-const double mag_z_min = 0.2;
-const double mag_z_max = 2.0;
-const double mag_min_count = 0.1;
+constexpr double mag_m_min = 15.;
+constexpr double mag_m_max = 24.5;
+constexpr double mag_z_min = 0.2;
+constexpr double mag_z_max = 2.0;
+
+constexpr double mag_min_count = 0.1;
+
+constexpr double survey_area = 130.98*unitconv::degtorad*unitconv::degtorad;
 
 } // namespace brgastro
 

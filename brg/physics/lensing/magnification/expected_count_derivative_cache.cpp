@@ -46,4 +46,8 @@ const double brgastro::expected_count_derivative_cache::_calculate( const double
 
 	return expected_count_loader::get_derivative(m,z_min);
 }
+void brgastro::expected_count_derivative_cache::_load_cache_dependencies() const
+{
+	expected_count_loader::get_derivative(0,0);
+}
 #endif

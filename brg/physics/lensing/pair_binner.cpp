@@ -163,16 +163,16 @@ void pair_binner::_sort() const
 	}
 
 	// And also add lens ids to each relevant bin
-	for(auto lens : _lens_ids_)
+	for(const auto & lens : _lens_ids_)
 	{
 		// Check bounds first
-		BRG_MASS m = lens.m;
+		const BRG_MASS & m = lens.m;
 		if((m < m_limits().front()) || (m > m_limits().back()))
 			continue;
-		double z = lens.z;
+		const double & z = lens.z;
 		if((z < z_limits().front()) || (z > z_limits().back()))
 			continue;
-		double mag = lens.mag;
+		const double & mag = lens.mag;
 		if((mag < mag_limits().front()) || (mag > mag_limits().back()))
 			continue;
 
@@ -265,12 +265,14 @@ void pair_binner::clear()
 	_pair_bin_summaries_.clear();
 	_pair_bins_.clear();
 	_pairs_.clear();
+	_lens_ids_.clear();
 }
 void pair_binner::empty()
 {
 	_sorting_index_ = 0;
 	_pair_bin_summaries_.clear();
 	_pairs_.clear();
+	_lens_ids_.clear();
 
 	// Empty each bin in turn, but don't clear the structure
 	for(auto R_it=_pair_bins_.begin(); R_it!=_pair_bins_.end(); ++R_it)
