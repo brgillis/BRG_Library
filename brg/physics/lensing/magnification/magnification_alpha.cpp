@@ -34,6 +34,8 @@ namespace brgastro {
 
 double magnification_alpha(const double & m, const double & z)
 {
+	return 2;
+
 	if(expected_count_cache().get(m,z)<=0) return 1.; // 1 corresponds to a flat profile, so this is appropriate for zero counts
 
 	return expected_count_derivative_cache().get(m,z);

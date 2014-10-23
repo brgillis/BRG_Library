@@ -149,7 +149,7 @@ const T stderr(const T &v)
 template<typename T>
 bool is_monotonically_increasing(const std::vector<T> &v)
 {
-	if(v.size()<=1) return false;
+	if(v.size()<2) return false;
 	T last_value = v[0];
 	for(size_t i=1; i<v.size(); ++i)
 	{
@@ -173,7 +173,7 @@ bool is_monotonically_increasing(T v)
 template<typename T>
 bool is_monotonically_decreasing(const std::vector<T> &v)
 {
-	if(v.size()<=1) return false;
+	if(v.size()<2) return false;
 	T last_value = v[0];
 	for(size_t i=1; i<v.size(); ++i)
 	{

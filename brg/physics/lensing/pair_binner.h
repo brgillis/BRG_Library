@@ -56,11 +56,25 @@ struct lens_id
 	double z;
 	double mag;
 
-	lens_id(const size_t & id, const BRG_MASS & m, const double & z, const double & mag)
+	// Data on the unmasked fraction of annuli
+#if(1)
+
+	std::vector<BRG_DISTANCE> unmasked_frac_bin_limits;
+	std::vector<double> unmasked_fracs;
+
+	double unmasked_frac(const BRG_DISTANCE & R_proj) const;
+
+#endif
+
+	lens_id(const size_t & id, const BRG_MASS & m, const double & z, const double & mag,
+			const std::vector<BRG_DISTANCE> & unmasked_frac_bin_limits,
+			const std::vector<double> & unmasked_fracs)
 	: id(id),
 	  m(m),
 	  z(z),
-	  mag(mag)
+	  mag(mag),
+	  unmasked_frac_bin_limits(unmasked_frac_bin_limits),
+	  unmasked_fracs(unmasked_fracs)
 	{
 	}
 };
@@ -90,6 +104,14 @@ private:
 	std::set<lens_id,decltype(&lens_id_lt)> _lens_ids_;
 	mutable size_t _sorting_index_;
 	mutable bool _sorted_;
+
+#endif
+
+	// Data on the unmasked fraction of annuli
+#if(1)
+
+	std::vector<BRG_DISTANCE> _unmasked_frac_bin_limits_;
+	std::vector<double> _unmasked_fracs_;
 
 #endif
 
@@ -181,6 +203,8 @@ public:
 	void add_pair( const lens_source_pair & new_pair);
 	void add_lens_id( const size_t & new_lens_id, const BRG_MASS & m, const double & z,
 			const double & mag);
+	void set_unmasked_fractions( const std::vector<double> & bin_limits,
+			const std::vector<double> & unmasked_fractions);
 	void clear();
 	void empty();
 	void sort() const;

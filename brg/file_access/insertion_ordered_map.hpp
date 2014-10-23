@@ -310,6 +310,40 @@ public:
     }
 #endif
 
+    // New methods
+#if(1)
+
+    /**
+     * Changes a key to another, without altering its mapped data or position.
+     *
+     * @param init_key
+     * @param new_key
+     * @return char - 0 if successful
+     *                1 if init_key doesn't exist in map
+     *                2 if new_key already exists in map
+     */
+    char change_key(const key_type & init_key, const key_type & new_key)
+    {
+    	// Get the position of the value we're going to be altering
+    	auto it = _key_map_.find(init_key);
+
+    	if(it==_key_map_.end()) return 1;
+    	if(_key_map_.count(new_key)>0) return 2;
+
+    	size_t pos = it->second;
+
+    	// Alter the value in the vector
+    	_val_vector_[pos].first = new_key;
+
+    	// Alter the value in the key map by erasing old entry and adding new
+    	_key_map_.erase(it);
+    	_key_map_[new_key] = pos;
+
+    	return 0;
+    }
+
+#endif
+
 };
 
 } // namespace brgastro

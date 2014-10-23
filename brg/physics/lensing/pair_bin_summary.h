@@ -234,6 +234,10 @@ public:
 	{
 		return _R_max_;
 	}
+	BRG_DISTANCE R_mid() const
+	{
+		return (_R_max_+_R_min_)/2.;
+	}
 	virtual BRG_DISTANCE R_mean() const
 	{
 		return _R_mean_;
@@ -247,6 +251,10 @@ public:
 	{
 		return _m_max_;
 	}
+	BRG_MASS m_mid() const
+	{
+		return (_m_max_+_m_min_)/2.;
+	}
 	virtual BRG_MASS m_mean() const
 	{
 		return _m_mean_;
@@ -259,6 +267,10 @@ public:
 	double z_max() const
 	{
 		return _z_max_;
+	}
+	double z_mid() const
+	{
+		return (_z_max_+_z_min_)/2.;
 	}
 	virtual double z_mean() const
 	{
@@ -280,6 +292,10 @@ public:
 	double mag_max() const
 	{
 		return _mag_max_;
+	}
+	double mag_mid() const
+	{
+		return (_mag_max_+_mag_min_)/2.;
 	}
 	virtual double mag_mean() const
 	{

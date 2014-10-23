@@ -39,6 +39,7 @@
 #include "brg/math/calculus/integrate.hpp"
 #include "brg/physics/lensing/lens_source_pair.h"
 #include "brg/physics/lensing/pair_bin_summary.h"
+#include "brg/physics/lensing/magnification/mag_global_values.h"
 #include "brg/physics/lensing/magnification/magnification_alpha.h"
 #include "brg/physics/lensing/magnification/magnification_functors.h"
 #include "brg/physics/lensing/magnification/mag_signal_integral_cache.h"
@@ -76,24 +77,35 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 {
 	double shear_weight = new_pair.shear_weight();
 	double mag_weight = new_pair.mag_weight();
+
+	// General info
 	_R_values_(new_pair.R_proj(), boost::accumulators::weight = mag_weight);
 	_m_values_(new_pair.m_lens(), boost::accumulators::weight = mag_weight);
 	_z_values_(new_pair.z_lens(), boost::accumulators::weight = mag_weight);
-	_source_z_values_(new_pair.z_source(), boost::accumulators::weight = mag_weight);
-	_mag_lens_values_(new_pair.mag_lens(), boost::accumulators::weight = mag_weight);
-	_mu_obs_values_(brgastro::magnification_alpha(new_pair.mag_source(),new_pair.z_lens())-1,
-			boost::accumulators::weight = mag_weight);
+
+	// Shear info
 	_delta_Sigma_t_values_(new_pair.delta_Sigma_t(), boost::accumulators::weight = shear_weight);
 	_delta_Sigma_x_values_(new_pair.delta_Sigma_x(), boost::accumulators::weight = shear_weight);
-	add_lens(new_pair.lens()->index(),new_pair.z_lens());
-	_uncache_values();
+
+	// Magnification info
+	auto & mag_source = new_pair.mag_source();
+	if((mag_source>=mag_m_min)&&(mag_source<=mag_m_max))
+	{
+		_source_z_values_(new_pair.z_source(), boost::accumulators::weight = mag_weight);
+		_mag_lens_values_(new_pair.mag_lens(), boost::accumulators::weight = mag_weight);
+		_mu_obs_values_(brgastro::magnification_alpha(new_pair.mag_source(),new_pair.z_lens())-1,
+				boost::accumulators::weight = mag_weight);
+		_uncache_values();
+	}
 }
-void pair_bin::add_lens( const size_t & new_lens_id, const double & z )
+void pair_bin::add_lens( const size_t & new_lens_id, const double & z, const double & unmasked_frac )
 {
 	if(_distinct_lens_ids_.find(new_lens_id)==_distinct_lens_ids_.end())
 	{
 		_distinct_lens_ids_.insert(new_lens_id);
 		_lens_z_values_(z, boost::accumulators::weight = 1);
+		_lens_unmasked_fracs_(unmasked_frac, boost::accumulators::weight = 1);
+		_uncache_values();
 	}
 }
 void pair_bin::clear()

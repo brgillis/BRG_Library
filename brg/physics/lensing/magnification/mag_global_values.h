@@ -37,12 +37,12 @@ namespace brgastro {
 
 constexpr double mag_m_min = 15.;
 constexpr double mag_m_max = 24.5;
+constexpr double mag_m_step = 0.1;
 constexpr double mag_z_min = 0.2;
 constexpr double mag_z_max = 2.0;
+constexpr double mag_z_step = 0.02;
 
 constexpr double mag_min_count = 0.1;
-
-constexpr double survey_area = 130.98*unitconv::degtorad*unitconv::degtorad;
 
 } // namespace brgastro
 

@@ -28,127 +28,127 @@ namespace brgastro{ namespace unitconv {
 
 // Distance
 // Default unit: meter (m)
-const double mtom = 1;
-const double mtomm = 1e3;
-const double mmtom = 1 / mtomm;
-const double mtocm = 1e2;
-const double cmtom = 1 / mtocm;
-const double mtoum = 1e6;
-const double umtom = 1 / mtoum;
-const double mtonm = 1e9;
-const double nmtom = 1 / mtonm;
-const double mtoangstrom = 1e10;
-const double angstromtom = 1 / mtoangstrom;
-const double mtokm = 1e-3;
-const double kmtom = 1 / mtokm;
-const double ltyrtom = 9460730472580800;
-const double mtoltyr = 1 / ltyrtom;
-const double AUtom = 149597870700;
-const double mtoAU = 1 / AUtom;
-const double pctom = AUtom * 648000 / pi;
-const double mtopc = 1 / pctom;
-const double kpctom = 1000 * pctom;
-const double mtokpc = 1 / kpctom;
-const double Mpctom = 1000000 * pctom;
-const double mtoMpc = 1 / Mpctom;
-const double mitom = 1609.344;
-const double mtomi = 1 / mitom;
-const double Mmitom = 1e6 * mitom;
-const double mtoMmi = 1 / Mmitom;
-const double fttom = 0.3048;
-const double mtoft = 1 / fttom;
-const double intom = .0254;
-const double mtoin = 1 / intom;
-const double ydtom = 0.9144;
-const double mtoyd = 1 / ydtom;
+constexpr double mtom = 1;
+constexpr double mtomm = 1e3;
+constexpr double mmtom = 1 / mtomm;
+constexpr double mtocm = 1e2;
+constexpr double cmtom = 1 / mtocm;
+constexpr double mtoum = 1e6;
+constexpr double umtom = 1 / mtoum;
+constexpr double mtonm = 1e9;
+constexpr double nmtom = 1 / mtonm;
+constexpr double mtoangstrom = 1e10;
+constexpr double angstromtom = 1 / mtoangstrom;
+constexpr double mtokm = 1e-3;
+constexpr double kmtom = 1 / mtokm;
+constexpr double ltyrtom = 9460730472580800;
+constexpr double mtoltyr = 1 / ltyrtom;
+constexpr double AUtom = 149597870700;
+constexpr double mtoAU = 1 / AUtom;
+constexpr double pctom = AUtom * 648000 / pi;
+constexpr double mtopc = 1 / pctom;
+constexpr double kpctom = 1000 * pctom;
+constexpr double mtokpc = 1 / kpctom;
+constexpr double Mpctom = 1000000 * pctom;
+constexpr double mtoMpc = 1 / Mpctom;
+constexpr double mitom = 1609.344;
+constexpr double mtomi = 1 / mitom;
+constexpr double Mmitom = 1e6 * mitom;
+constexpr double mtoMmi = 1 / Mmitom;
+constexpr double fttom = 0.3048;
+constexpr double mtoft = 1 / fttom;
+constexpr double intom = .0254;
+constexpr double mtoin = 1 / intom;
+constexpr double ydtom = 0.9144;
+constexpr double mtoyd = 1 / ydtom;
 
 // Time
 // Default unit: second (s)
-const double stos = 1;
-const double stocs = 1e2;
-const double cstos = 1 / stocs;
-const double stoms = 1e3;
-const double mstos = 1 / stoms;
-const double stous = 1e6;
-const double ustos = 1 / stous;
-const double stons = 1e9;
-const double nstos = 1 / stons;
-const double mintos = 60;
-const double stomin = 1 / mintos;
-const double hrtos = mintos * 60;
-const double stohr = 1 / hrtos;
-const double daytos = hrtos * 24;
-const double stoday = 1 / daytos;
-const double weektos = daytos * 7;
-const double stoweek = 1 / weektos;
-const double yrtos = daytos * 365.24219; // Approximate tropical year
-const double stoyr = 1 / yrtos; // Approximate
-const double monthtos = yrtos / 12; // Mean month length for tropical year
-const double stomonth = 1 / monthtos; // Approximate
-const double kyrtos = yrtos * 1e3; // Approximate
-const double stokyr = 1 / kyrtos; // Approximate
-const double Myrtos = yrtos * 1e6; // Approximate
-const double stoMyr = 1 / Myrtos; // Approximate
-const double Gyrtos = yrtos * 1e9; // Approximate
-const double stoGyr = 1 / Gyrtos; // Approximate
+constexpr double stos = 1;
+constexpr double stocs = 1e2;
+constexpr double cstos = 1 / stocs;
+constexpr double stoms = 1e3;
+constexpr double mstos = 1 / stoms;
+constexpr double stous = 1e6;
+constexpr double ustos = 1 / stous;
+constexpr double stons = 1e9;
+constexpr double nstos = 1 / stons;
+constexpr double mintos = 60;
+constexpr double stomin = 1 / mintos;
+constexpr double hrtos = mintos * 60;
+constexpr double stohr = 1 / hrtos;
+constexpr double daytos = hrtos * 24;
+constexpr double stoday = 1 / daytos;
+constexpr double weektos = daytos * 7;
+constexpr double stoweek = 1 / weektos;
+constexpr double yrtos = daytos * 365.24219; // Approximate tropical year
+constexpr double stoyr = 1 / yrtos; // Approximate
+constexpr double monthtos = yrtos / 12; // Mean month length for tropical year
+constexpr double stomonth = 1 / monthtos; // Approximate
+constexpr double kyrtos = yrtos * 1e3; // Approximate
+constexpr double stokyr = 1 / kyrtos; // Approximate
+constexpr double Myrtos = yrtos * 1e6; // Approximate
+constexpr double stoMyr = 1 / Myrtos; // Approximate
+constexpr double Gyrtos = yrtos * 1e9; // Approximate
+constexpr double stoGyr = 1 / Gyrtos; // Approximate
 
 // Velocity
 // Default units: meters per second (mps)
-const double mpstomps = 1;
-const double mpstokmps = 1e-3;
-const double kmpstomps = 1 / mpstokmps;
-const double ctomps = 299792458;
-const double mpstoc = 1 / ctomps;
-const double mpstomiphr = mtomi / stohr;
-const double miphr = 1 / mpstomiphr;
+constexpr double mpstomps = 1;
+constexpr double mpstokmps = 1e-3;
+constexpr double kmpstomps = 1 / mpstokmps;
+constexpr double ctomps = 299792458;
+constexpr double mpstoc = 1 / ctomps;
+constexpr double mpstomiphr = mtomi / stohr;
+constexpr double miphr = 1 / mpstomiphr;
 
 // Mass
 // Default unit: kilogram (kg)
-const double kgtokg = 1;
-const double kgtogm = 1e3;
-const double gmtokg = 1 / kgtogm;
-const double Mearthtokg = 5.9736e24; // Approximate
-const double kgtoMearth = 1 / Mearthtokg; // Approximate
-const double Msuntokg = 1.9891e30; // Approximate
-const double kgtoMsun = 1 / Msuntokg; // Approximate
-const double kgtottMsun = kgtoMsun * 1e-10; // Approximate
-const double ttMsuntokg = 1 / kgtottMsun; // Approximate
+constexpr double kgtokg = 1;
+constexpr double kgtogm = 1e3;
+constexpr double gmtokg = 1 / kgtogm;
+constexpr double Mearthtokg = 5.9736e24; // Approximate
+constexpr double kgtoMearth = 1 / Mearthtokg; // Approximate
+constexpr double Msuntokg = 1.9891e30; // Approximate
+constexpr double kgtoMsun = 1 / Msuntokg; // Approximate
+constexpr double kgtottMsun = kgtoMsun * 1e-10; // Approximate
+constexpr double ttMsuntokg = 1 / kgtottMsun; // Approximate
 
 // Temperature
 // Default unit: Kelvin (K)
-const double KtoK = 1;
-const double KtodegF = 1.8;
-const double degCtoK = KtoK;
-const double KtodegC = 1 / degCtoK;
-const double degFtoK = 1 / KtodegF;
-const double degCtodegF = KtodegF;
-const double degFtodegC = degFtoK;
-const double KtodegR = KtodegF;
-const double degRtoK = degFtoK;
-const double degCtodegR = KtodegF;
-const double degRtodegC = degFtoK;
+constexpr double KtoK = 1;
+constexpr double KtodegF = 1.8;
+constexpr double degCtoK = KtoK;
+constexpr double KtodegC = 1 / degCtoK;
+constexpr double degFtoK = 1 / KtodegF;
+constexpr double degCtodegF = KtodegF;
+constexpr double degFtodegC = degFtoK;
+constexpr double KtodegR = KtodegF;
+constexpr double degRtoK = degFtoK;
+constexpr double degCtodegR = KtodegF;
+constexpr double degRtodegC = degFtoK;
 
 // Angle
 // Default unit: radian (rad)
-const double radtorad = 1;
-const double degtorad = pi / 180;
-const double radtodeg = 1 / degtorad;
-const double amintodeg = 60;
-const double degtoamin = 1 / amintodeg;
-const double amintoasec = 60;
-const double asectoamin = 1 / amintoasec;
-const double asectodeg = asectoamin * amintodeg;
-const double degtoasec = 1 / asectodeg;
-const double amintorad = amintodeg * degtorad;
-const double radtoamin = 1 / amintorad;
-const double asectorad = asectodeg * degtorad;
-const double radtoasec = 1 / asectorad;
+constexpr double radtorad = 1;
+constexpr double degtorad = pi / 180;
+constexpr double radtodeg = 1 / degtorad;
+constexpr double degtoamin = 60;
+constexpr double amintodeg = 1 / degtoamin;
+constexpr double amintoasec = 60;
+constexpr double asectoamin = 1 / amintoasec;
+constexpr double asectodeg = asectoamin * amintodeg;
+constexpr double degtoasec = 1 / asectodeg;
+constexpr double amintorad = amintodeg * degtorad;
+constexpr double radtoamin = 1 / amintorad;
+constexpr double asectorad = asectodeg * degtorad;
+constexpr double radtoasec = 1 / asectorad;
 
 // Charge
 // Default unit: Coulomb (C)
-const double CtoC = 1;
-const double Ctoesu = 6.241509324e18; // Approximate
-const double esutoC = 1 / Ctoesu;
+constexpr double CtoC = 1;
+constexpr double Ctoesu = 6.241509324e18; // Approximate
+constexpr double esutoC = 1 / Ctoesu;
 
 } } // namespace brgastro::unitconv
 

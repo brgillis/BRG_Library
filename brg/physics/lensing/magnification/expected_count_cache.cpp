@@ -44,7 +44,7 @@ const double brgastro::expected_count_cache::_calculate( const double in_param_1
 	const double m = std::fabs(in_param_1);
 	const long double z_min = std::fabs(in_param_2);
 
-	return expected_count_loader::get_count(m,z_min)/brgastro::survey_area;
+	return expected_count_loader::get_count(m,z_min);
 }
 void brgastro::expected_count_cache::_load_cache_dependencies() const
 {

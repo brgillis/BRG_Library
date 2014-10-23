@@ -44,6 +44,14 @@
 
 namespace brgastro {
 
+double lens_id::unmasked_frac(const BRG_DISTANCE & R_proj) const
+{
+	if((unmasked_fracs.size()==0)||(unmasked_fracs.size()+1!=unmasked_frac_bin_limits.size()))
+		return 1.;
+
+	return brgastro::interpolate_bins(R_proj,unmasked_frac_bin_limits,unmasked_fracs);
+}
+
 	// Private methods
 #if(1)
 
@@ -211,7 +219,7 @@ void pair_binner::_sort() const
 			auto & Rmzmag_bin = std::lower_bound(mag_zip_begin,mag_zip_end,mag,mag_func)->get<1>();
 
 			// At this point, pair_Rmzmag is a reference to the pair bin we want to add this pair to
-			Rmzmag_bin.add_lens(lens.id,lens.z);
+			Rmzmag_bin.add_lens(lens.id,lens.z,lens.unmasked_frac(Rmzmag_bin.R_mid()));
 		}
 	}
 
@@ -249,15 +257,22 @@ bool pair_binner::binnable( const galaxy & lens ) const
 void pair_binner::add_pair( const lens_source_pair & new_pair)
 {
 	_pairs_.push_back(new_pair);
-	_lens_ids_.insert(lens_id(new_pair.id_lens(),new_pair.m_lens(),new_pair.z_lens(),new_pair.mag_lens()));
-		// Don't rely on this behavior!
 	_sorted_ = false;
 }
 void pair_binner::add_lens_id( const size_t & new_lens_id, const BRG_MASS & m, const double & z,
 		const double & mag)
 {
-	_lens_ids_.insert(lens_id(new_lens_id,m,z,mag));
+	_lens_ids_.insert(lens_id(new_lens_id,m,z,mag,_unmasked_frac_bin_limits_,_unmasked_fracs_));
 	_sorted_ = false;
+}
+void pair_binner::set_unmasked_fractions( const std::vector<double> & bin_limits,
+		const std::vector<double> & unmasked_fractions)
+{
+	// Sort at this point, so any lenses already added get the right unmasked fraction
+	_sort();
+
+	_unmasked_frac_bin_limits_ = bin_limits;
+	_unmasked_fracs_ = unmasked_fractions;
 }
 void pair_binner::clear()
 {

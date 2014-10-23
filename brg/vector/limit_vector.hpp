@@ -170,6 +170,71 @@ size_t get_bin_index(const T & val, const std::vector<T> & vec)
 	return 0;
 }
 
+template<typename T1, typename T2>
+T2 interpolate_bins(const T2 & val, const std::vector<T1> & lim_vec, const std::vector<T2> & val_vec)
+{
+	assert(val_vec.size()>1);
+	assert(lim_vec.size()==val_vec.size()+1);
+	assert(is_monotonically_increasing(lim_vec));
+	assert(lim_vec.size()>2);
+
+	size_t bin_i=lim_vec.size()-3;
+
+	for(size_t i=0; i<lim_vec.size()-2; ++i)
+	{
+		if((lim_vec[i]+lim_vec[i+1])/2>=val)
+		{
+			if(i==0)
+				bin_i=0;
+			else
+				bin_i=i-1;
+			break;
+		}
+	}
+
+	T1 xlo = (lim_vec[bin_i]+lim_vec[bin_i+1])/2;
+	T1 xhi = (lim_vec[bin_i+1]+lim_vec[bin_i+2])/2;
+	const T2 & ylo = val_vec[bin_i];
+	const T2 & yhi = val_vec[bin_i+1];
+
+	return ylo + (yhi-ylo)/(xhi-xlo) * (val-xlo);
+}
+
+template<typename T1>
+std::vector<T1> get_bin_mids_from_limits(std::vector<T1> vec)
+{
+	assert(is_monotonically_increasing(vec));
+
+	for(size_t i=0; i<vec.size()-1; ++i)
+	{
+		vec[i] += (vec[i+1]-vec[i])/2;
+	}
+
+	vec.pop_back();
+	return vec;
+}
+
+template<typename T1>
+std::vector<T1> get_bin_limits_from_mids(std::vector<T1> vec)
+{
+	assert(is_monotonically_increasing(vec));
+
+	size_t i;
+
+	for(i=0; i<vec.size()-1; ++i)
+	{
+		vec[i] -= (vec[i+1]-vec[i])/2;
+	}
+
+	// Special handling for the final element
+	T1 d_last = (vec[i]-vec[i-1])/3;
+	vec.push_back(vec[i]+d_last);
+	vec[i]-=d_last;
+
+	return vec;
+}
+
+
 } // namespace brgastro
 
 

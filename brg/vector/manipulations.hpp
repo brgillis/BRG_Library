@@ -78,14 +78,33 @@ std::vector< std::vector<T> > transpose(const std::vector< std::vector<T> > & v,
 {
 	size_t n_cols = v.size();
 	size_t n_rows = 0;
+
+	size_t num_col_lengths=0;
+
 	for(size_t i=0; i<v.size(); ++i)
-		if(v[i].size() > n_rows) n_rows = v[i].size();
+	{
+		if(v[i].size() != n_rows)
+		{
+			++num_col_lengths;
+			if(v[i].size() > n_rows)
+				n_rows = v[i].size();
+		}
+	}
+
+	std::vector< std::vector<T> > cv;
+	const std::vector< std::vector<T> > *pv = &v;
+
+	if(num_col_lengths>1)
+	{
+		cv = pad(v,default_value);
+		pv = &cv;
+	}
 
 	std::vector< std::vector<T> > result;
 
 	auto result_function = [&] (size_t i, size_t j)
 		{
-			return v[j][i];
+			return (*pv).at(j).at(i);
 		};
 
 	make_vector_function(result,result_function,n_rows,n_cols);

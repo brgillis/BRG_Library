@@ -80,6 +80,7 @@ private:
 	bin_stat_vec_t<BRG_MASS> _m_values_;
 	bin_stat_vec_t<double> _z_values_;
 	bin_stat_vec_t<double> _lens_z_values_;
+	bin_stat_vec_t<double> _lens_unmasked_fracs_;
 	bin_stat_vec_t<double> _source_z_values_;
 	bin_stat_vec_t<double> _mag_lens_values_;
 	stat_vec_t<BRG_UNITS> _delta_Sigma_t_values_;
@@ -129,7 +130,7 @@ public:
 #if(1)
 
 	void add_pair( const lens_source_pair & new_pair);
-	void add_lens( const size_t & lens_id, const double & lens_z);
+	void add_lens( const size_t & lens_id, const double & lens_z, const double & unmasked_frac=1);
 	void clear();
 
 #endif
@@ -161,37 +162,44 @@ public:
 
 	BRG_DISTANCE R_mean() const
 	{
-		return boost::accumulators::mean(_R_values_);
+		return boost::accumulators::weighted_mean(_R_values_);
 	}
 
 	BRG_MASS m_mean() const
 	{
-		return boost::accumulators::mean(_m_values_);
+		return boost::accumulators::weighted_mean(_m_values_);
 	}
 
 	double z_mean() const
 	{
-		return boost::accumulators::mean(_z_values_);
+		return boost::accumulators::weighted_mean(_z_values_);
 	}
 
 	double lens_z_mean() const
 	{
-		return boost::accumulators::mean(_lens_z_values_);
+		return boost::accumulators::weighted_mean(_lens_z_values_);
 	}
 
 	double source_z_mean() const
 	{
-		return boost::accumulators::mean(_source_z_values_);
+		return boost::accumulators::weighted_mean(_source_z_values_);
 	}
 
 	double mag_mean() const
 	{
-		return boost::accumulators::mean(_mag_lens_values_);
+		return boost::accumulators::weighted_mean(_mag_lens_values_);
+	}
+
+	double unmasked_frac() const
+	{
+		double result = boost::accumulators::weighted_mean(_lens_unmasked_fracs_);
+		if(isgood(result)) return result;
+		return 0;
 	}
 
 	BRG_UNITS area() const
 	{
-		return num_lenses()*pi*(square(afd(R_max(),lens_z_mean()))-square(afd(R_min(),lens_z_mean())));
+		return unmasked_frac()*num_lenses()*pi*(square(afd(R_max(),lens_z_mean()))-square(afd(R_min(),lens_z_mean())));
 	}
 
 #endif

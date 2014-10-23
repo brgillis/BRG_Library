@@ -45,7 +45,8 @@ namespace brgastro {
 #if (1)
 bool expected_count_loader::_loaded_(false);
 
-std::vector<double> expected_count_loader::_z_limits_(brgastro::make_limit_vector<double>(0.2,4.0,0.02));
+std::vector<double> expected_count_loader::_z_limits_(brgastro::make_limit_vector<double>(mag_z_min,
+		mag_z_max,mag_z_step));
 std::vector<std::vector<double>> expected_count_loader::_mag_limits_;
 std::vector<std::vector<double>> expected_count_loader::_smoothed_count_;
 std::vector<std::vector<double>> expected_count_loader::_smoothed_count_derivative_;
@@ -131,7 +132,7 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 
 	size_t z_i = brgastro::get_bin_index(z,_z_limits_);
 
-	if(z_i==_z_limits_.size()-1) --z_i;
+	if(z_i==_z_limits_.size()-2) --z_i;
 	const double & z_lo = _z_limits_[z_i];
 	const double & z_hi = _z_limits_[z_i+1];
 
@@ -141,34 +142,27 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 	// Get the interpolated value at both the lower redshift and the higher
 
 	// At the lower redshift first
-	if(brgastro::under_limits(mag,_mag_limits_[z_i])) return def;
-	size_t mag_lo_i = brgastro::get_bin_index(mag,_mag_limits_[z_i]);
-	if(mag_lo_i==_mag_limits_[z_i].size()-1) --mag_lo_i;
-
-	const double & mag_lo_lo = _mag_limits_[z_i][mag_lo_i];
-	const double & mag_lo_hi = _mag_limits_[z_i][mag_lo_i+1];
-
-	tot_weight = mag_lo_hi-mag_lo_lo;
-
-	temp_result = 0;
-	temp_result += table[z_i][mag_lo_i] * (mag_lo_hi-mag);
-	temp_result += table[z_i][mag_lo_i+1] * (mag-mag_lo_lo);
-	const double lo_result = temp_result / tot_weight;
+	double lo_result;
+	if(brgastro::outside_limits(mag,_mag_limits_[z_i]))
+	{
+		lo_result = def;
+	}
+	else
+	{
+		lo_result = interpolate_bins(mag,_mag_limits_[z_i],table[z_i]);
+	}
 
 	// At the higher redshift now
-	if(brgastro::under_limits(mag,_mag_limits_[z_i+1])) return def;
-	size_t mag_hi_i = brgastro::get_bin_index(mag,_mag_limits_[z_i+1]);
-	if(mag_hi_i==_mag_limits_[z_i+1].size()-1) --mag_hi_i;
+	double hi_result;
 
-	const double & mag_hi_lo = _mag_limits_[z_i+1][mag_hi_i];
-	const double & mag_hi_hi = _mag_limits_[z_i+1][mag_hi_i+1];
-
-	tot_weight = mag_hi_hi-mag_hi_lo;
-
-	temp_result = 0;
-	temp_result += table[z_i+1][mag_hi_i] * (mag_hi_hi-mag);
-	temp_result += table[z_i+1][mag_hi_i+1] * (mag-mag_hi_lo);
-	const double hi_result = temp_result / tot_weight;
+	if(brgastro::outside_limits(mag,_mag_limits_[z_i+1]))
+	{
+		hi_result = def;
+	}
+	else
+	{
+		hi_result = interpolate_bins(mag,_mag_limits_[z_i+1],table[z_i+1]);
+	}
 
 	// And now interpolate between these results
 
