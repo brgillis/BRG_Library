@@ -146,17 +146,40 @@ const T stderr(const T &v)
 // Monotonically increasing
 #if(1)
 
+template<typename InputIterator>
+bool is_monotonically_increasing(const InputIterator &first, const InputIterator &last)
+{
+	typedef decltype(*first) T;
+
+	// Check if container is empty
+	if(first==last) return false;
+
+	T last_value = *first;
+	InputIterator it=first;
+
+	// Test the first step, to make sure the container is large enough
+	++it;
+	if(it==last)
+	{
+		// If we're here, the container only has one element
+		return false;
+	}
+	if(*it<=last_value) return false;
+	last_value = *it;
+
+	// Now do remainder of steps
+	for(++it; it!=last; ++it)
+	{
+		if(*it<=last_value) return false;
+		last_value = *it;
+	}
+	return true;
+}
+
 template<typename T>
 bool is_monotonically_increasing(const std::vector<T> &v)
 {
-	if(v.size()<2) return false;
-	T last_value = v[0];
-	for(size_t i=1; i<v.size(); ++i)
-	{
-		if(v[i]<=last_value) return false;
-		last_value = v[i];
-	}
-	return true;
+	return is_monotonically_increasing(v.begin(),v.end());
 }
 
 template<typename T>
@@ -170,17 +193,40 @@ bool is_monotonically_increasing(T v)
 // Monotonically decreasing
 #if(1)
 
+template<typename InputIterator>
+bool is_monotonically_decreasing(const InputIterator &first, const InputIterator &last)
+{
+	typedef decltype(*first) T;
+
+	// Check if container is empty
+	if(first==last) return false;
+
+	T last_value = *first;
+	InputIterator it=first;
+
+	// Test the first step, to make sure the container is large enough
+	++it;
+	if(it==last)
+	{
+		// If we're here, the container only has one element
+		return false;
+	}
+	if(*it>=last_value) return false;
+	last_value = *it;
+
+	// Now do remainder of steps
+	for(++it; it!=last; ++it)
+	{
+		if(*it>=last_value) return false;
+		last_value = *it;
+	}
+	return true;
+}
+
 template<typename T>
 bool is_monotonically_decreasing(const std::vector<T> &v)
 {
-	if(v.size()<2) return false;
-	T last_value = v[0];
-	for(size_t i=1; i<v.size(); ++i)
-	{
-		if(v[i]>=last_value) return false;
-		last_value = v[i];
-	}
-	return true;
+	return is_monotonically_decreasing(v.begin(),v.end());
 }
 
 template<typename T>
