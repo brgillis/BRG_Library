@@ -10,8 +10,10 @@
 
 #include <cassert>
 #include <limits>
+#include <utility>
 #include <vector>
 
+#include "brg/vector/limit_vector_operations.hpp"
 #include "brg/vector/summary_functions.hpp"
 
 namespace brgastro {
@@ -51,6 +53,8 @@ private:
 
 		type = limit_type::GENERAL;
 
+		base.reserve(2);
+
 		base.push_back(std::numeric_limits<T>::lowest());
 		base.push_back(std::numeric_limits<T>::max());
 	} // void _init()
@@ -72,13 +76,6 @@ private:
 
 public:
 
-	/// Clear function - leaves it in initial state
-	void clear()
-	{
-		base.clear();
-		_init();
-	}
-
 	// Constructors
 #if(1)
 
@@ -90,6 +87,21 @@ public:
 	}
 
 	/// Construct as linear or log format
+	limit_vector(const limit_type & init_type, const T & min, const T & max, const size_t & num_bins,
+			const allocator_type& alloc = allocator_type())
+	{
+		if(init_type==limit_type::LOG)
+		{
+			type = init_type;
+			base = make_log_limit_vector<T>(min,max,bins);
+		}
+		else
+		{
+			type = limit_type::LINEAR;
+			base = make_linear_limit_vector<T>(min,max,bins);
+		}
+		base.shrink_to_fit();
+	}
 
 	/// Range constructor
 	template <class InputIterator>
@@ -99,6 +111,7 @@ public:
 	  type(limit_type::GENERAL)
 	{
 		_check_if_valid_construction();
+		base.shrink_to_fit();
 	}
 
 	/// Copy constructor
@@ -133,6 +146,7 @@ public:
 	  type(limit_type::GENERAL)
 	{
 		_check_if_valid_construction();
+		base.shrink_to_fit();
 	}
 	/// Coerce from vector and set allocator
 	template<typename To, typename Ao>
@@ -141,6 +155,7 @@ public:
 	  type(limit_type::GENERAL)
 	{
 		_check_if_valid_construction();
+		base.shrink_to_fit();
 	}
 
 	/// Move constructor
@@ -184,9 +199,252 @@ public:
 	/// Virtual destructor
 	virtual ~limit_vector() {}
 
+	// Assignment
+#if(1)
+	/// Copy assignment
+	limit_vector<T,A> & operator=(limit_vector<T,A> other)
+	{
+		swap(other);
+		return *this;
+	}
+
+	/// Copy from vector
+	limit_vector<T,A> & operator=(std::vector<T,A> new_base)
+	{
+		_check_if_valid_setting(new_base);
+
+		using std::swap;
+		swap(base,test_base);
+
+		type = limit_type::GENERAL;
+
+		return *this;
+	}
+
+	/// Coerce copy from container
+	template <typename ContainerType>
+	limit_vector<T,A> & operator=(const ContainerType & other)
+	{
+		return *this = std::vector<T,A>(other.begin(),other.end());
+	}
+
+	/// Move assignment
+	limit_vector<T,A> & operator=(limit_vector<T,A> && other)
+	{
+		swap(other);
+		return *this;
+	}
+
+	/// Move from vector
+	limit_vector<T,A> & operator=(std::vector<T,A> && new_base)
+	{
+		_check_if_valid_setting(new_base);
+
+		using std::swap;
+		swap(base,test_base);
+
+		type = limit_type::GENERAL;
+
+		return *this;
+	}
+
+	/// Assign from initializer_list
+	limit_vector<T,A> & operator= (const initializer_list<value_type> & il)
+	{
+		return *this = std::vector<T,A>(il);
+	}
+#endif
+
+	// Iterator methods
+#if(1)
+	/// begin (only const version allowed)
+	const_iterator begin() const noexcept
+	{
+		return base.begin();
+	}
+	/// end (only const version allowed)
+	const_iterator end() const noexcept
+	{
+		return base.end();
+	}
+	/// rbegin (only const version allowed)
+	const_iterator rbegin() const noexcept
+	{
+		return base.rbegin();
+	}
+	/// rend (only const version allowed)
+	const_iterator rend() const noexcept
+	{
+		return base.rend();
+	}
+	/// cbegin
+	const_iterator cbegin() const noexcept
+	{
+		return base.cbegin();
+	}
+	/// cend
+	const_iterator cend() const noexcept
+	{
+		return base.cend();
+	}
+	/// crbegin
+	const_iterator crbegin() const noexcept
+	{
+		return base.crbegin();
+	}
+	/// crend
+	const_iterator crend() const noexcept
+	{
+		return base.crend();
+	}
+
+#endif // Iterator methods
+
+	// Capacity methods
+#if(1)
+
+	/// Get size of the base vector
+	size_type size() const noexcept
+	{
+		return base.size();
+	}
+
+	/// Get number of bins
+	size_type num_bins() const noexcept
+	{
+		return base.size()-1;
+	}
+
+	/// Get max size of the base vector
+	size_type max_size() const noexcept
+	{
+		return base.max_size();
+	}
+
+	/// Get capacity of the base vector
+	size_type capacity() const noexcept
+	{
+		return base.capacity();
+	}
+
+	/// Empty test - will always be false (included here for compatibility)
+	bool empty() const noexcept
+	{
+		return false;
+	}
+
+	/// Request a change in capacity of the base vector
+	void reserve(const size_type & n)
+	{
+		base.reserve(n);
+	}
+
+	/// Reduce base capacity to fit its size
+	void shrink_to_fit() const
+	{
+		base.shrink_to_fit();
+	}
+
+#endif // Capacity methods
+
+	// Element access
+#if(1)
+
+	/// Element access (const only)
+	const_reference operator[] (const size_type & n) const
+	{
+		return base[n];
+	}
+
+	/// Range-checked element access (const only)
+	const_reference at( const size_type & n ) const
+	{
+		return base.at(n);
+	}
+
+	/// Access first element (const only)
+	const_reference front() const
+	{
+		return base.front();
+	}
+
+	/// Access last element (const only)
+	const_reference back() const
+	{
+		return base.back();
+	}
+
+	/// Access data (const only)
+	const value_type* data() const noexcept
+	{
+		return base.data();
+	}
+
+#endif // Element access
+
+	// Modifiers
+#if(1)
+
+	/// Swap with another limit_vector
+	void swap(limit_vector<T,A> & other)
+	{
+		using std::swap;
+		swap(base,other.base);
+		swap(type,other.type);
+	}
+
+	/// Clear function - leaves it in initial state
+	void clear()
+	{
+		base.clear();
+		_init();
+	}
+
+#endif // Modifiers
+
+	// Limit_vector-specific functions
+#if(1)
+
+	/// Returns minimum limit
+	const_reference min() const noexcept
+	{
+		return base.front();
+	}
+	/// Returns maximum limit
+	const_reference max() const noexcept
+	{
+		return base.back();
+	}
+
+	/// TODO Finish this
+
+
+#endif
 
 };
 
 } /* namespace brgastro */
+
+// Non-member function overloads for limit_vector
+#if(1)
+
+template <typename T, typename A = std::allocator<T>>
+void swap(brgastro::limit_vector<T,A> & same, brgastro::limit_vector<T,A> & other)
+{
+	same.swap(other);
+}
+
+namespace std
+{
+
+template <typename T, typename A = std::allocator<T>>
+void swap(brgastro::limit_vector<T,A> & same, brgastro::limit_vector<T,A> & other)
+{
+	same.swap(other);
+}
+
+}
+
+#endif // Non-member function overloads for limit_vector
 
 #endif /* _BRG_VECTOR_LIMIT_VECTOR_HPP_ */
