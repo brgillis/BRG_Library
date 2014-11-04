@@ -33,6 +33,8 @@
 
 #include "brg/global.h"
 
+#include "brg/vector/limit_vector.hpp"
+
 namespace brgastro {
 
 /**
@@ -40,8 +42,9 @@ namespace brgastro {
  */
 class expected_count_loader {
 	static bool _loaded_;
-	static std::vector<double> _z_limits_;
-	static std::vector<std::vector<double>> _mag_limits_, _smoothed_count_, _smoothed_count_derivative_;
+	static brgastro::limit_vector<double> _z_limits_;
+	static std::vector<brgastro::limit_vector<double>> _mag_limits_;
+	static std::vector<std::vector<double>>_smoothed_count_, _smoothed_count_derivative_;
 	static std::string _filename_base_, _filename_tail_;
 
 	static void _load();

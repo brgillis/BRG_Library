@@ -46,10 +46,14 @@ namespace brgastro {
 
 double lens_id::unmasked_frac(const BRG_DISTANCE & R_proj) const
 {
-	if((unmasked_fracs.size()==0)||(unmasked_fracs.size()+1!=unmasked_frac_bin_limits.size()))
-		return 1.;
-
-	return brgastro::interpolate_bins(R_proj,unmasked_frac_bin_limits,unmasked_fracs);
+	try
+	{
+		return unmasked_frac_bin_limits.interpolate_bins(R_proj,unmasked_fracs);
+	}
+	catch(const std::logic_error &e)
+	{
+		return 1;
+	}
 }
 
 	// Private methods
@@ -356,20 +360,20 @@ BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONS
 		double z, double mag)
 {
 	_sort();
-	size_t R_i = get_bin_index(R,R_limits());
-	size_t m_i = get_bin_index(m,m_limits());
-	size_t z_i = get_bin_index(z,z_limits());
-	size_t mag_i = get_bin_index(mag,mag_limits());
+	size_t R_i = R_limits().get_bin_index(R);
+	size_t m_i = m_limits().get_bin_index(m);
+	size_t z_i = z_limits().get_bin_index(z);
+	size_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 		double z, double mag)
 {
 	_sort();
-	size_t R_i = get_bin_index(R,R_limits());
-	size_t m_i = get_bin_index(m,m_limits());
-	size_t z_i = get_bin_index(z,z_limits());
-	size_t mag_i = get_bin_index(mag,mag_limits());
+	size_t R_i = R_limits().get_bin_index(R);
+	size_t m_i = m_limits().get_bin_index(m);
+	size_t z_i = z_limits().get_bin_index(z);
+	size_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
 }
 
@@ -377,20 +381,20 @@ BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST
 		double z, double mag)
 {
 	_sort();
-	size_t R_i = get_bin_index(R,R_limits());
-	size_t m_i = get_bin_index(m,m_limits());
-	size_t z_i = get_bin_index(z,z_limits());
-	size_t mag_i = get_bin_index(mag,mag_limits());
+	size_t R_i = R_limits().get_bin_index(R);
+	size_t m_i = m_limits().get_bin_index(m);
+	size_t z_i = z_limits().get_bin_index(z);
+	size_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 		double z, double mag)
 {
 	_sort();
-	size_t R_i = get_bin_index(R,R_limits());
-	size_t m_i = get_bin_index(m,m_limits());
-	size_t z_i = get_bin_index(z,z_limits());
-	size_t mag_i = get_bin_index(mag,mag_limits());
+	size_t R_i = R_limits().get_bin_index(R);
+	size_t m_i = m_limits().get_bin_index(m);
+	size_t z_i = z_limits().get_bin_index(z);
+	size_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
 }
 
@@ -398,20 +402,20 @@ BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CO
 		double z, double mag)
 {
 	_sort();
-	size_t R_i = get_bin_index(R,R_limits());
-	size_t m_i = get_bin_index(m,m_limits());
-	size_t z_i = get_bin_index(z,z_limits());
-	size_t mag_i = get_bin_index(mag,mag_limits());
+	size_t R_i = R_limits().get_bin_index(R);
+	size_t m_i = m_limits().get_bin_index(m);
+	size_t z_i = z_limits().get_bin_index(z);
+	size_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 		double z, double mag)
 {
 	_sort();
-	size_t R_i = get_bin_index(R,R_limits());
-	size_t m_i = get_bin_index(m,m_limits());
-	size_t z_i = get_bin_index(z,z_limits());
-	size_t mag_i = get_bin_index(mag,mag_limits());
+	size_t R_i = R_limits().get_bin_index(R);
+	size_t m_i = m_limits().get_bin_index(m);
+	size_t z_i = z_limits().get_bin_index(z);
+	size_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_stderr();
 }
 #endif // Access by index

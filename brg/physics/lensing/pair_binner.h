@@ -59,7 +59,7 @@ struct lens_id
 	// Data on the unmasked fraction of annuli
 #if(1)
 
-	std::vector<BRG_DISTANCE> unmasked_frac_bin_limits;
+	brgastro::limit_vector<BRG_DISTANCE> unmasked_frac_bin_limits;
 	std::vector<double> unmasked_fracs;
 
 	double unmasked_frac(const BRG_DISTANCE & R_proj) const;
@@ -135,10 +135,10 @@ public:
 	}
 
 	// Set limits by vectors
-	pair_binner(std::vector< BRG_DISTANCE > R_bin_limits,
-				std::vector< BRG_MASS > m_bin_limits=std::vector<double>(),
-				std::vector< double > z_bin_limits=std::vector<double>(),
-				std::vector< double > mag_bin_limits=std::vector<double>())
+	pair_binner(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
+			brgastro::limit_vector< BRG_MASS > m_bin_limits=brgastro::limit_vector<double>(),
+			brgastro::limit_vector< double > z_bin_limits=brgastro::limit_vector<double>(),
+			brgastro::limit_vector< double > mag_bin_limits=brgastro::limit_vector<double>())
 	:	pair_bins_summary(R_bin_limits,m_bin_limits,z_bin_limits,mag_bin_limits),
 		_z_buffer_(_default_z_buffer_),
 	 	_lens_ids_(&lens_id_lt),

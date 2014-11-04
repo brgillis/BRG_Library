@@ -45,9 +45,9 @@ namespace brgastro {
 #if (1)
 bool expected_count_loader::_loaded_(false);
 
-std::vector<double> expected_count_loader::_z_limits_(brgastro::make_limit_vector<double>(mag_z_min,
-		mag_z_max,mag_z_step));
-std::vector<std::vector<double>> expected_count_loader::_mag_limits_;
+brgastro::limit_vector<double> expected_count_loader::_z_limits_(
+		brgastro::limit_vector<double>::limit_type::LINEAR,mag_z_min,mag_z_max,(mag_z_max-mag_z_min)/mag_z_step);
+std::vector<brgastro::limit_vector<double>> expected_count_loader::_mag_limits_;
 std::vector<std::vector<double>> expected_count_loader::_smoothed_count_;
 std::vector<std::vector<double>> expected_count_loader::_smoothed_count_derivative_;
 
@@ -87,14 +87,15 @@ void expected_count_loader::_load()
 			try
 			{
 				auto table_map = brgastro::load_table_map<double>(filename);
-				_mag_limits_[z_i] = table_map.at("mag_bin_lower");
+				std::vector<double> temp_mag_limits = table_map.at("mag_bin_lower");
 				count = table_map.at("count");
 				_smoothed_count_[z_i] = table_map.at("smoothed_count");
 				_smoothed_count_derivative_[z_i] = table_map.at("smoothed_alpha");
 
 				// Add a final value to the _mag_limits_ vector
-				_mag_limits_[z_i].push_back(2*_mag_limits_[z_i].back()-
+				temp_mag_limits.push_back(2*_mag_limits_[z_i].back()-
 						_mag_limits_[z_i].at(_mag_limits_[z_i].size()-2));
+				_mag_limits_[z_i] = temp_mag_limits;
 			}
 			catch(const std::runtime_error &e)
 			{
@@ -132,7 +133,7 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 	// Load if necessary
 	_load();
 
-	size_t z_i = brgastro::get_bin_index(z,_z_limits_);
+	size_t z_i = _z_limits_.get_bin_index(z);
 
 	if(z_i==_z_limits_.size()-2) --z_i;
 	const double & z_lo = _z_limits_[z_i];
@@ -145,25 +146,25 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 
 	// At the lower redshift first
 	double lo_result;
-	if(brgastro::outside_limits(mag,_mag_limits_[z_i]))
+	if(_mag_limits_[z_i].outside_limits(mag))
 	{
 		lo_result = def;
 	}
 	else
 	{
-		lo_result = interpolate_bins(mag,_mag_limits_[z_i],table[z_i]);
+		lo_result = _mag_limits_[z_i].interpolate_bins(mag,table[z_i]);
 	}
 
 	// At the higher redshift now
 	double hi_result;
 
-	if(brgastro::outside_limits(mag,_mag_limits_[z_i+1]))
+	if(_mag_limits_[z_i+1].outside_limits(mag))
 	{
 		hi_result = def;
 	}
 	else
 	{
-		hi_result = interpolate_bins(mag,_mag_limits_[z_i+1],table[z_i+1]);
+		hi_result = _mag_limits_[z_i+1].interpolate_bins(mag,table[z_i+1]);
 	}
 
 	// And now interpolate between these results

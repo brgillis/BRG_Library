@@ -32,124 +32,107 @@
 
 #include "brg/global.h"
 
-#include "brg/math/misc_math.hpp"
+#include "brg/vector/limit_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
 
 namespace brgastro {
 
-template<typename T>
-std::vector<T> make_limit_vector(const T & min, const T & max, const T & step)
-{
-	assert(max>min);
-	assert(step>0);
-
-	std::vector<T> result(1,min);
-
-	if(!isinf(step))
-	{
-		if( isinf(min) || isinf(max) )
-			throw std::logic_error("Cannot generate limit vector with finite step and infinite limits.");
-
-		size_t num_bins = (size_t)std::ceil((max-min)/step);
-
-		for(size_t limit_num=1; limit_num<num_bins; ++limit_num)
-		{
-			// Recalculate at each step to minimize round-off error
-			result.push_back( min + step*limit_num );
-		}
-	}
-	result.push_back(max);
-
-	return result;
-}
-
-template<typename T>
-std::vector<T> make_log_limit_vector(const T & min, const T & max, const size_t & num_bins)
-{
-	assert(max>min);
-	assert(min>0);
-	assert(num_bins>0);
-
-	std::vector<T> result(1,min);
-
-	double log_step = std::pow((double)max/(double)min,1./(num_bins));
-
-	if( isinf(max) )
-	{
-		if(num_bins>1)
-			throw std::logic_error("Cannot generate limit vector with finite step and infinite limits.");
-		result.push_back(max);
-		return result;
-	}
-
-	for(size_t limit_num=1; limit_num<num_bins; ++limit_num)
-	{
-		// Recalculate at each step to minimize round-off error
-		result.push_back( min * brgastro::ipow(log_step,limit_num) );
-	}
-
-	result.push_back(max);
-
-
-	return result;
-}
-
-template<typename T>
-bool above_limits(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+bool above_limits(const T & val, const std::vector<T,A> & vec)
 {
 	assert(is_monotonically_increasing(vec));
 	return val>vec.back();
 }
+template<typename T, typename A=std::allocator<T>>
+bool above_limits(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.above_limits(val);
+}
 
-template<typename T>
-bool checked_above_limits(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+bool checked_above_limits(const T & val, const std::vector<T,A> & vec)
 {
 	if(!is_monotonically_increasing(vec))
 		throw std::logic_error("Invalid limit vector passed to above_limits.");
 	return above_limits(val,vec);
 }
+template<typename T, typename A=std::allocator<T>>
+bool checked_above_limits(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.above_limits(val);
+}
 
-template<typename T>
-bool under_limits(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+bool under_limits(const T & val, const std::vector<T,A> & vec)
 {
 	assert(is_monotonically_increasing(vec));
 	return val<vec.front();
 }
+template<typename T, typename A=std::allocator<T>>
+bool under_limits(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.under_limits(val);
+}
 
-template<typename T>
-bool checked_under_limits(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+bool checked_under_limits(const T & val, const std::vector<T,A> & vec)
 {
 	if(!is_monotonically_increasing(vec))
 		throw std::logic_error("Invalid limit vector passed to under_limits.");
 	return under_limits(val,vec);
 }
+template<typename T, typename A=std::allocator<T>>
+bool checked_under_limits(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.under_limits(val);
+}
 
-template<typename T>
-bool outside_limits(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+bool outside_limits(const T & val, const std::vector<T,A> & vec)
 {
 	return (above_limits(val,vec) or under_limits(val,vec));
 }
+template<typename T, typename A=std::allocator<T>>
+bool outside_limits(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.outside_limits(val);
+}
 
-template<typename T>
-bool checked_outside_limits(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+bool checked_outside_limits(const T & val, const std::vector<T,A> & vec)
 {
 	return (checked_above_limits(val,vec) or checked_under_limits(val,vec));
 }
+template<typename T, typename A=std::allocator<T>>
+bool checked_outside_limits(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.outside_limits(val);
+}
 
-template<typename T>
-bool inside_limits(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+bool inside_limits(const T & val, const std::vector<T,A> & vec)
 {
 	return !outside_limits(val,vec);
 }
+template<typename T, typename A=std::allocator<T>>
+bool inside_limits(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.inside_limits(val);
+}
 
-template<typename T>
-bool checked_inside_limits(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+bool checked_inside_limits(const T & val, const std::vector<T,A> & vec)
 {
 	return !checked_outside_limits(val,vec);
 }
+template<typename T, typename A=std::allocator<T>>
+bool checked_inside_limits(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.inside_limits(val);
+}
 
-template<typename T>
-size_t checked_get_bin_index(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+size_t checked_get_bin_index(const T & val, const std::vector<T,A> & vec)
 {
 	if(!is_monotonically_increasing(vec))
 		throw std::logic_error("Invalid limit vector passed to checked_get_bin_index.");
@@ -157,9 +140,33 @@ size_t checked_get_bin_index(const T & val, const std::vector<T> & vec)
 		throw std::runtime_error("Value outside limits of vector in checked_get_bin_index.");
 	return get_bin_index(val,vec);
 }
+template<typename T, typename A=std::allocator<T>>
+size_t checked_get_bin_index(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	if(vec.outside_limits(val))
+		throw std::runtime_error("Value outside limits of vector in checked_get_bin_index.");
+	 vec.get_bin_index(val);
+}
 
-template<typename T>
-size_t get_bin_index(const T & val, const std::vector<T> & vec)
+template<typename T, typename A=std::allocator<T>>
+size_t get_bin_index(const T & val, const std::vector<T,A> & vec)
+{
+	assert(is_monotonically_increasing(vec));
+	for(size_t i=1; i<vec.size(); ++i)
+	{
+		if(vec[i]>=val) return i-1;
+	}
+	if(above_limits(val,vec)) return vec.size()+1;
+	return vec.size();
+}
+template<typename T, typename A=std::allocator<T>>
+size_t get_bin_index(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.get_bin_index(val);
+}
+
+template<typename T, typename A=std::allocator<T>>
+size_t get_bin_index_no_overflow(const T & val, const std::vector<T,A> & vec)
 {
 	assert(is_monotonically_increasing(vec));
 	for(size_t i=1; i<vec.size(); ++i)
@@ -169,9 +176,14 @@ size_t get_bin_index(const T & val, const std::vector<T> & vec)
 	if(above_limits(val,vec)) return vec.size()-2;
 	return 0;
 }
+template<typename T, typename A=std::allocator<T>>
+size_t get_bin_index_no_overflow(const T & val, const brgastro::limit_vector<T,A> & vec)
+{
+	return vec.get_bin_index_no_overflow(val);
+}
 
-template<typename T1, typename T2>
-T2 interpolate_bins(const T2 & val, const std::vector<T1> & lim_vec, const std::vector<T2> & val_vec)
+template<typename T1, typename A1=std::allocator<T1>, typename T2=T1, typename A2=std::allocator<T2>>
+T2 interpolate_bins(const T2 & val, const std::vector<T1,A1> & lim_vec, const std::vector<T2,A2> & val_vec)
 {
 	assert(val_vec.size()>1);
 	assert(lim_vec.size()==val_vec.size()+1);
@@ -199,9 +211,14 @@ T2 interpolate_bins(const T2 & val, const std::vector<T1> & lim_vec, const std::
 
 	return ylo + (yhi-ylo)/(xhi-xlo) * (val-xlo);
 }
+template<typename T1, typename A1=std::allocator<T1>, typename T2=T1, typename A2=std::allocator<T2>>
+T2 interpolate_bins(const T2 & val, const brgastro::limit_vector<T1,A1> & lim_vec, const std::vector<T2,A2> & val_vec)
+{
+	return lim_vec.interpolate_bins(val,val_vec);
+}
 
-template<typename T1>
-std::vector<T1> get_bin_mids_from_limits(std::vector<T1> vec)
+template<typename T1, typename A1=std::allocator<T1>>
+std::vector<T1,A1> get_bin_mids_from_limits(std::vector<T1,A1> vec)
 {
 	assert(is_monotonically_increasing(vec));
 
@@ -213,9 +230,14 @@ std::vector<T1> get_bin_mids_from_limits(std::vector<T1> vec)
 	vec.pop_back();
 	return vec;
 }
+template<typename T1, typename A1=std::allocator<T1>>
+std::vector<T1,A1> get_bin_mids_from_limits(const brgastro::limit_vector<T1,A1> & vec)
+{
+	return vec.get_bin_mids();
+}
 
-template<typename T1>
-std::vector<T1> get_bin_limits_from_mids(std::vector<T1> vec)
+template<typename T1, typename A1=std::allocator<T1>>
+std::vector<T1,A1> get_bin_limits_from_mids(std::vector<T1,A1> vec)
 {
 	assert(is_monotonically_increasing(vec));
 
@@ -232,6 +254,24 @@ std::vector<T1> get_bin_limits_from_mids(std::vector<T1> vec)
 	vec[i]-=d_last;
 
 	return vec;
+}
+template<typename T1, typename A1=std::allocator<T1>>
+brgastro::limit_vector<T1,A1> make_limit_vector_from_mids(std::vector<T1,A1> vec)
+{
+	if(!is_monotonically_increasing(vec))
+		throw std::logic_error("Cannot make limit vector from mids vector which isn't monotonically increasing.\n");
+	brgastro::limit_vector<T1,A1> result;
+
+	result.reconstruct_from_bin_mids(vec);
+}
+template<typename T1, typename A1=std::allocator<T1>>
+brgastro::limit_vector<T1,A1> make_limit_vector_from_mids(std::vector<T1,A1> && vec)
+{
+	if(!is_monotonically_increasing(vec))
+		throw std::logic_error("Cannot make limit vector from mids vector which isn't monotonically increasing.\n");
+	brgastro::limit_vector<T1,A1> result;
+
+	result.reconstruct_from_bin_mids(std::move(vec));
 }
 
 
