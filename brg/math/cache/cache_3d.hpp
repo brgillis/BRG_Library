@@ -111,7 +111,9 @@ private:
 		// so we check whether we need to both once outside it and once inside it.
 		if(SPCP(name)->_initialised_) return;
 
+		#ifdef _OPENMP
 		#pragma omp critical(init_brg_cache_3d)
+		#endif
 		if(!SPCP(name)->_initialised_)
 		{
 			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
@@ -526,7 +528,10 @@ public:
 			_load_cache_dependencies();
 
 			// Critical section here, since we can't load multiple times simultaneously
+
+			#ifdef _OPENMP
 			#pragma omp critical(load_brg_cache_3d)
+			#endif
 			{
 				try
 				{

@@ -49,7 +49,9 @@ const double num_columns=8;
 
 void brgastro::expected_count_fit_loader::_load()
 {
-#pragma omp critical(brg_load_expected_count_loader)
+	#ifdef _OPENMP
+	#pragma omp critical(brg_load_expected_count_loader)
+	#endif
 	{
 		if(!_loaded_)
 		{

@@ -149,12 +149,11 @@ const T stderr(const T &v)
 template<typename InputIterator>
 bool is_monotonically_increasing(const InputIterator &first, const InputIterator &last)
 {
-	typedef decltype(*first) T;
 
 	// Check if container is empty
 	if(first==last) return false;
 
-	T last_value = *first;
+	auto last_value = *first;
 	InputIterator it=first;
 
 	// Test the first step, to make sure the container is large enough

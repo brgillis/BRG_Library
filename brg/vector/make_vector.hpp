@@ -366,28 +366,28 @@ void make_vector_function( container & vec, const func_type & func, const other_
 
 #endif // Make a vector from a function
 
-// Coerce from another vector
+// Coerce from another container
 #if(1)
 
 template<unsigned short d, typename container, typename other_container>
-struct vector_coercer
+struct container_coercer
 {
-	vector_coercer(container & vec, const other_container & other_vec)
+	container_coercer(container & vec, const other_container & other_vec)
 	{
 		vec.resize(other_vec.size());
 		auto o_it = other_vec.begin();
 
 		for(auto it=vec.begin(); it!=vec.end(); ++it, ++o_it)
 		{
-			vector_coercer<d-1,decltype(*it),decltype(*o_it)>(*it,*o_it);
+			container_coercer<d-1,decltype(*it),decltype(*o_it)>(*it,*o_it);
 		}
 	}
 };
 
 template<typename container, typename other_container>
-struct vector_coercer<0,container,other_container>
+struct container_coercer<0,container,other_container>
 {
-	vector_coercer(container & vec, const other_container & other_vec)
+	container_coercer(container & vec, const other_container & other_vec)
 	{
 		vec = other_vec;
 	}
@@ -397,7 +397,7 @@ struct vector_coercer<0,container,other_container>
 template<unsigned short d, typename container, typename other_container>
 void make_vector_coerce(container & vec, const other_container & other_vec)
 {
-	vector_coercer<d,container,other_container>(vec,other_vec);
+	container_coercer<d,container,other_container>(vec,other_vec);
 }
 
 #endif

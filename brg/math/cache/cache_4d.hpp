@@ -121,7 +121,9 @@ private:
 		// so we check whether we need to both once outside it and once inside it.
 		if(SPCP(name)->_initialised_) return;
 
+		#ifdef _OPENMP
 		#pragma omp critical(init_brg_cache_4d)
+		#endif
 		if(!SPCP(name)->_initialised_)
 		{
 			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
@@ -287,7 +289,10 @@ private:
 
 		// Calculate data
 		bool bad_result = false;
+
+		#ifdef _OPENMP
 		#pragma omp parallel for
+		#endif
 		for ( size_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
 		{
 			double x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
@@ -575,7 +580,9 @@ public:
 			_load_cache_dependencies();
 
 			// Critical section here, since we can't load multiple times simultaneously
+			#ifdef _OPENMP
 			#pragma omp critical(load_brg_cache_4d)
+			#endif
 			{
 				try
 				{

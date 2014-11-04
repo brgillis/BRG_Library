@@ -88,9 +88,9 @@ inline int call_program_noexcept(const char *program_name)
 }
 
 template<typename... Args>
-void call_program(const char *program_name, Args... args)
+void call_program(const char *program_name, unsigned num_retries, Args... args)
 {
-	int result=call_program_noexcept(program_name,args...);
+	int result=call_program_noexcept(program_name,num_retries,args...);
 	if(result>0)
 		throw std::runtime_error("Child in call_program returned error status "
 			+ boost::lexical_cast<std::string>(result) + "\n.");
@@ -99,6 +99,18 @@ void call_program(const char *program_name, Args... args)
 	return;
 }
 
+inline std::string exec(const char* cmd) {
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) return "ERROR";
+    char buffer[128];
+    std::string result = "";
+    while(!feof(pipe)) {
+    	if(fgets(buffer, 128, pipe) != NULL)
+    		result += buffer;
+    }
+    pclose(pipe);
+    return result;
+}
 
 
 } // end namespace brgastro

@@ -47,7 +47,9 @@ std::vector< std::vector<double> > brgastro::shifting_loader::_data_;
 
 void brgastro::shifting_loader::_load()
 {
-#pragma omp critical(brg_load_shifting_loader)
+	#ifdef _OPENMP
+	#pragma omp critical(brg_load_shifting_loader)
+	#endif
 	{
 		if(!_loaded_)
 		{

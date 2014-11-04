@@ -60,7 +60,9 @@ void expected_count_loader::_load()
 {
 	if(_loaded_) return;
 
-#pragma omp critical(brg_expected_count_loader_load)
+	#ifdef _OPENMP
+	#pragma omp critical(brg_expected_count_loader_load)
+	#endif
 	{
 
 	if(!_loaded_)
