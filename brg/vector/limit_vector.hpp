@@ -44,43 +44,43 @@ public:
 	typedef typename std::vector<T,A>::size_type size_type;
 
 	// Enum to describe type of limit vector this is
-	enum class limit_type {GENERAL, LINEAR, LOG};
+	enum class type {GENERAL, LINEAR, LOG};
 
 private:
 	/// The base vector storing the data
-	std::vector<T,A> base;
+	std::vector<T,A> _base_;
 
 	/// What type of limit vector this is (linear, log, or general)
-	limit_type type;
+	type _type_;
 
 	/// Stored step size (to improve speed at the cost of a bit of memory)
-	T step;
+	T _step_;
 
 	/// Stored log of minimum value (to improve speed at the cost of a bit of memory)
-	double lmin;
+	double _lmin_;
 
 	// Private functions
 #if(1)
 	/// Init function - sets limits to cover full numeric range. Must not be called when base is not empty
 	void _init()
 	{
-		assert(base.empty());
+		assert(_base_.empty());
 
-		type = limit_type::GENERAL;
+		_type_ = type::GENERAL;
 
-		base.reserve(2);
+		_base_.reserve(2);
 
-		base.push_back(std::numeric_limits<T>::lowest());
-		base.push_back(std::numeric_limits<T>::max());
+		_base_.push_back(std::numeric_limits<T>::lowest());
+		_base_.push_back(std::numeric_limits<T>::max());
 
-		step = 1;
-		lmin = 0;
+		_step_ = 1;
+		_lmin_ = 0;
 	} // void _init()
 
 	/// Check if is valid, and throw if it isn't
 	void _check_if_valid_construction()
 	{
-		if(!is_monotonically_increasing(base))
+		if(!is_monotonically_increasing(_base_))
 			throw std::runtime_error("Limit vector cannot be constructed from vector which isn't monotonic increasing.\n");
 	}
 
@@ -99,13 +99,13 @@ public:
 
 	/// Default constructor
 	explicit limit_vector(const allocator_type& alloc = allocator_type())
-	: base(alloc)
+	: _base_(alloc)
 	{
 		_init();
 	}
 
 	/// Construct as linear or log format
-	limit_vector(const limit_type & init_type, const T & min, const T & max, const size_type & num_bins,
+	limit_vector(const type & init_type, const T & min, const T & max, const size_type & num_bins,
 			const allocator_type& alloc = allocator_type())
 	{
 		reconstruct(init_type,min,max,num_bins,alloc);
@@ -115,13 +115,13 @@ public:
 	template <class InputIterator>
 	limit_vector(InputIterator first, InputIterator last,
 			const allocator_type& alloc = allocator_type())
-	: base(first,last,alloc),
-	  type(limit_type::GENERAL),
-	  step(1),
-	  lmin(0)
+	: _base_(first,last,alloc),
+	  _type_(type::GENERAL),
+	  _step_(1),
+	  _lmin_(0)
 	{
 		_check_if_valid_construction();
-		base.shrink_to_fit();
+		_base_.shrink_to_fit();
 	}
 
 	/// Copy constructor
@@ -129,28 +129,28 @@ public:
 
 	/// Copy and set allocator
 	limit_vector(const limit_vector<T,A> & other, const allocator_type & alloc)
-	: base(other.base, alloc),
-	  type(other.type),
-	  step(other.step),
-	  lmin(other.lmin)
+	: _base_(other._base_, alloc),
+	  _type_(other._type_),
+	  _step_(other._step_),
+	  _lmin_(other._lmin_)
 	{
 	}
 
 	/// Construct from vector
 	explicit limit_vector(const std::vector<T,A> & other)
-	: base(other),
-	  type(limit_type::GENERAL),
-	  step(1),
-	  lmin(0)
+	: _base_(other),
+	  _type_(type::GENERAL),
+	  _step_(1),
+	  _lmin_(0)
 	{
 		_check_if_valid_construction();
 	}
 	/// Construct from vector and set allocator
 	limit_vector(const std::vector<T,A> & other, const allocator_type & alloc)
-	: base(other, alloc),
-	  type(limit_type::GENERAL),
-	  step(1),
-	  lmin(0)
+	: _base_(other, alloc),
+	  _type_(type::GENERAL),
+	  _step_(1),
+	  _lmin_(0)
 	{
 		_check_if_valid_construction();
 	}
@@ -158,24 +158,24 @@ public:
 	/// Coerce from vector
 	template<typename To, typename Ao>
 	explicit limit_vector(const std::vector<To,Ao> & other)
-	: base(other.begin(),other.end(),other.get_allocator()),
-	  type(limit_type::GENERAL),
-	  step(1),
-	  lmin(0)
+	: _base_(other.begin(),other.end(),other.get_allocator()),
+	  _type_(type::GENERAL),
+	  _step_(1),
+	  _lmin_(0)
 	{
 		_check_if_valid_construction();
-		base.shrink_to_fit();
+		_base_.shrink_to_fit();
 	}
 	/// Coerce from vector and set allocator
 	template<typename To, typename Ao>
 	limit_vector(const std::vector<To,Ao> & other, const allocator_type& alloc)
-	: base(other.begin(),other.end(),alloc),
-	  type(limit_type::GENERAL),
-	  step(1),
-	  lmin(0)
+	: _base_(other.begin(),other.end(),alloc),
+	  _type_(type::GENERAL),
+	  _step_(1),
+	  _lmin_(0)
 	{
 		_check_if_valid_construction();
-		base.shrink_to_fit();
+		_base_.shrink_to_fit();
 	}
 
 	/// Move constructor
@@ -183,24 +183,24 @@ public:
 
 	/// Move and set allocator
 	limit_vector(limit_vector<T,A> && other, const allocator_type& alloc)
-	: base(other.base, alloc),
-	  type(other.type),
-	  step(other.step),
-	  lmin(other.lmin)
+	: _base_(other._base_, alloc),
+	  _type_(other._type_),
+	  _step_(other._step_),
+	  _lmin_(other._lmin_)
 	{
 	}
 
 	/// Move from vector
 	explicit limit_vector(std::vector<T,A> && other)
-	: base(other.get_allocator()),
-	  type(limit_type::GENERAL),
-	  step(1),
-	  lmin(0)
+	: _base_(other.get_allocator()),
+	  _type_(type::GENERAL),
+	  _step_(1),
+	  _lmin_(0)
 	{
 		if(is_monotonically_increasing(other))
 		{
 			using std::swap;
-			swap(base,other);
+			swap(_base_,other);
 		}
 		else
 		{
@@ -210,15 +210,15 @@ public:
 
 	/// Move from vector and set allocator
 	limit_vector(std::vector<T,A> && other, const allocator_type& alloc)
-	: base(alloc),
-	  type(limit_type::GENERAL),
-	  step(1),
-	  lmin(0)
+	: _base_(alloc),
+	  _type_(type::GENERAL),
+	  _step_(1),
+	  _lmin_(0)
 	{
 		if(is_monotonically_increasing(other))
 		{
 			using std::swap;
-			swap(base,other);
+			swap(_base_,other);
 		}
 		else
 		{
@@ -230,10 +230,10 @@ public:
 	/// Construct from initializer list
 	explicit limit_vector(const std::initializer_list<value_type> & il,
 	       const allocator_type& alloc = allocator_type())
-	: base(il,alloc),
-	  type(limit_type::GENERAL),
-	  step(1),
-	  lmin(0)
+	: _base_(il,alloc),
+	  _type_(type::GENERAL),
+	  _step_(1),
+	  _lmin_(0)
 	{
 		_check_if_valid_construction();
 	}
@@ -246,32 +246,32 @@ public:
 	// Reconstruction
 #if(1)
 	/// Reconstruct as linear or log format
-	void reconstruct(const limit_type & init_type, const T & min, const T & max,
+	void reconstruct(const type & init_type, const T & min, const T & max,
 			const size_type & num_bins, const allocator_type& alloc = allocator_type())
 	{
 		if(num_bins<1)
 			throw std::logic_error("Limit vector cannot be constructed with zero bins.\n");
 
-		if(init_type==limit_type::LOG)
+		if(init_type==type::LOG)
 		{
-			type = init_type;
-			base = make_log_limit_vector_base<T,A>(min,max,num_bins);
+			_type_ = init_type;
+			_base_ = make_log_limit_vector_base<T,A>(min,max,num_bins);
 
 			using std::pow;
-			step = pow(max/min,1./num_bins);
+			_step_ = pow(max/min,1./num_bins);
 
 			using std::log;
-			lmin = log(min);
+			_lmin_ = log(min);
 		}
 		else
 		{
-			type = limit_type::LINEAR;
-			base = make_linear_limit_vector_base<T,A>(min,max,num_bins);
+			_type_ = type::LINEAR;
+			_base_ = make_linear_limit_vector_base<T,A>(min,max,num_bins);
 
-			step = (max-min)/num_bins;
-			lmin = 0;
+			_step_ = (max-min)/num_bins;
+			_lmin_ = 0;
 		}
-		base.shrink_to_fit();
+		_base_.shrink_to_fit();
 	}
 
 	/// Reconstruct from a vector of the bin middles. Since some information is lost here,
@@ -294,7 +294,7 @@ public:
 		vec.push_back(vec[i]+d_last);
 		vec[i]-=d_last;
 
-		base = std::move(vec);
+		_base_ = std::move(vec);
 	}
 	/// Reconstruct from a vector of the bin middles (move version). Since some information is lost here,
 	/// the method has to take some guesses.
@@ -316,7 +316,7 @@ public:
 		vec.push_back(vec[i]+d_last);
 		vec[i]-=d_last;
 
-		base = std::move(vec);
+		_base_ = std::move(vec);
 	}
 #endif
 
@@ -334,8 +334,8 @@ public:
 	{
 		_check_if_valid_setting(new_base);
 
-		base = new_base;
-		type = limit_type::GENERAL;
+		_base_ = new_base;
+		_type_ = type::GENERAL;
 
 		return *this;
 	}
@@ -360,9 +360,9 @@ public:
 		_check_if_valid_setting(new_base);
 
 		using std::swap;
-		swap(base,new_base);
+		swap(_base_,new_base);
 
-		type = limit_type::GENERAL;
+		_type_ = type::GENERAL;
 
 		return *this;
 	}
@@ -379,42 +379,42 @@ public:
 	/// begin (only const version allowed)
 	const_iterator begin() const noexcept
 	{
-		return base.begin();
+		return _base_.begin();
 	}
 	/// end (only const version allowed)
 	const_iterator end() const noexcept
 	{
-		return base.end();
+		return _base_.end();
 	}
 	/// rbegin (only const version allowed)
 	const_iterator rbegin() const noexcept
 	{
-		return base.rbegin();
+		return _base_.rbegin();
 	}
 	/// rend (only const version allowed)
 	const_iterator rend() const noexcept
 	{
-		return base.rend();
+		return _base_.rend();
 	}
 	/// cbegin
 	const_iterator cbegin() const noexcept
 	{
-		return base.cbegin();
+		return _base_.cbegin();
 	}
 	/// cend
 	const_iterator cend() const noexcept
 	{
-		return base.cend();
+		return _base_.cend();
 	}
 	/// crbegin
 	const_iterator crbegin() const noexcept
 	{
-		return base.crbegin();
+		return _base_.crbegin();
 	}
 	/// crend
 	const_iterator crend() const noexcept
 	{
-		return base.crend();
+		return _base_.crend();
 	}
 
 #endif // Iterator methods
@@ -425,25 +425,25 @@ public:
 	/// Get size of the base vector
 	size_type size() const noexcept
 	{
-		return base.size();
+		return _base_.size();
 	}
 
 	/// Get number of bins
 	size_type num_bins() const noexcept
 	{
-		return base.size()-1;
+		return _base_.size()-1;
 	}
 
 	/// Get max size of the base vector
 	size_type max_size() const noexcept
 	{
-		return base.max_size();
+		return _base_.max_size();
 	}
 
 	/// Get capacity of the base vector
 	size_type capacity() const noexcept
 	{
-		return base.capacity();
+		return _base_.capacity();
 	}
 
 	/// Empty test - will always be false (included here for compatibility)
@@ -455,13 +455,13 @@ public:
 	/// Request a change in capacity of the base vector
 	void reserve(const size_type & n)
 	{
-		base.reserve(n);
+		_base_.reserve(n);
 	}
 
 	/// Reduce base capacity to fit its size
 	void shrink_to_fit() const
 	{
-		base.shrink_to_fit();
+		_base_.shrink_to_fit();
 	}
 
 #endif // Capacity methods
@@ -472,31 +472,31 @@ public:
 	/// Element access (const only)
 	const_reference operator[] (const size_type & n) const
 	{
-		return base[n];
+		return _base_[n];
 	}
 
 	/// Range-checked element access (const only)
 	const_reference at( const size_type & n ) const
 	{
-		return base.at(n);
+		return _base_.at(n);
 	}
 
 	/// Access first element (const only)
 	const_reference front() const
 	{
-		return base.front();
+		return _base_.front();
 	}
 
 	/// Access last element (const only)
 	const_reference back() const
 	{
-		return base.back();
+		return _base_.back();
 	}
 
 	/// Access data (const only)
 	const value_type* data() const noexcept
 	{
-		return base.data();
+		return _base_.data();
 	}
 
 #endif // Element access
@@ -508,20 +508,20 @@ public:
 	void swap(limit_vector<T,A> & other)
 	{
 		using std::swap;
-		swap(base,other.base);
-		swap(type,other.type);
+		swap(_base_,other._base_);
+		swap(_type_,other._type_);
 	}
 
 	/// Clear function - leaves it in initial state
 	void clear()
 	{
-		base.clear();
+		_base_.clear();
 		_init();
 	}
 
 	void fixbad()
 	{
-		for(auto & val : base)
+		for(auto & val : _base_)
 			brgastro::fixbad(val);
 	}
 #endif // Modifiers
@@ -532,12 +532,12 @@ public:
 	/// Returns minimum limit
 	const_reference min() const noexcept
 	{
-		return base.front();
+		return _base_.front();
 	}
 	/// Returns maximum limit
 	const_reference max() const noexcept
 	{
-		return base.back();
+		return _base_.back();
 	}
 
 	/// Returns true if val is equal to or greater than the maximum limit of this vector
@@ -573,9 +573,9 @@ public:
 		if(under_limits(val)) return num_bins();
 		if(above_limits(val)) return num_bins()+1;
 
-		switch(type)
+		switch(_type_)
 		{
-		case limit_type::LINEAR:
+		case type::LINEAR:
 
 			{
 				T step = (max()-min())/num_bins();
@@ -585,7 +585,7 @@ public:
 
 			break;
 
-		case limit_type::LOG:
+		case type::LOG:
 
 			{
 				using std::log;
@@ -605,7 +605,7 @@ public:
 
 			for(size_t i=1; i<size(); ++i)
 			{
-				if(base[i]>=val) return i-1;
+				if(_base_[i]>=val) return i-1;
 			}
 
 			assert(false); // If we reach this path, there's an error
@@ -626,7 +626,7 @@ public:
 
 		for(size_t i=0; i<size()-2; ++i)
 		{
-			if((base[i]+base[i+1])/2>=val)
+			if((_base_[i]+_base_[i+1])/2>=val)
 			{
 				if(i==0)
 					bin_i=0;
@@ -636,8 +636,8 @@ public:
 			}
 		}
 
-		T xlo = (base[bin_i]+base[bin_i+1])/2;
-		T xhi = (base[bin_i+1]+base[bin_i+2])/2;
+		T xlo = (_base_[bin_i]+_base_[bin_i+1])/2;
+		T xhi = (_base_[bin_i+1]+_base_[bin_i+2])/2;
 		const T2 & ylo = val_vec[bin_i];
 		const T2 & yhi = val_vec[bin_i+1];
 
@@ -646,7 +646,7 @@ public:
 
 	std::vector<T,A> get_bin_mids() const
 	{
-		std::vector<T,A> result(base);
+		std::vector<T,A> result(_base_);
 		for(size_t i=0; i<num_bins(); ++i)
 		{
 			result[i] += (result[i+1]-result[i])/2;
@@ -664,7 +664,7 @@ public:
 	/// Cast to vector
 	operator std::vector<T,A>() const
 	{
-		return base;
+		return _base_;
 	}
 
 	/// Coerce to vector
@@ -672,7 +672,7 @@ public:
 	std::vector<To,Ao> to_vector() const
 	{
 		std::vector<To,Ao> result;
-		make_vector_coerce<1>(result,base);
+		make_vector_coerce<1>(result,_base_);
 		return result;
 	}
 
@@ -681,7 +681,7 @@ public:
 	std::valarray<To> to_valarray() const
 	{
 		std::vector<To> result;
-		make_vector_coerce<1>(result,base);
+		make_vector_coerce<1>(result,_base_);
 		return result;
 	}
 
@@ -692,7 +692,7 @@ public:
 
 	bool operator==(const brgastro::limit_vector<T,A> & other) const
 	{
-		return base==other.base;
+		return _base_==other._base_;
 	}
 
 #endif
@@ -703,10 +703,10 @@ public:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
-    	ar & base;
-    	ar & type;
-    	ar & step;
-    	ar & lmin;
+    	ar & _base_;
+    	ar & _type_;
+    	ar & _step_;
+    	ar & _lmin_;
     }
 #endif
 };
