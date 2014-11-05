@@ -393,12 +393,21 @@ struct container_coercer<0,container,other_container>
 	}
 };
 
-
 template<unsigned short d, typename container, typename other_container>
 void make_vector_coerce(container & vec, const other_container & other_vec)
 {
 	container_coercer<d,container,other_container>(vec,other_vec);
 }
+
+template<typename value_type, typename other_container, unsigned short d=1>
+void coerce_to_vector(const other_container & other_vec)
+{
+	std::vector<value_type> result;
+	container_coercer<d,std::vector<value_type>,other_container>(result,other_vec);
+	return result;
+}
+
+
 
 #endif
 

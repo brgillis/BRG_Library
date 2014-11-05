@@ -103,6 +103,9 @@ public:
 	std::valarray<double> calculate_weighted(const std::function<double(double)> &
 			weight_function = [] (const double & theta) {return 1.;});
 	std::valarray<double> calculate();
+	std::valarray<double> calculate_dipole(const double & offset=0);
+	std::valarray<double> calculate_quadrupole(const double & offset=0);
+	std::valarray<double> calculate_octopole(const double & offset=0);
 };
 
 } // end namespace brgastro

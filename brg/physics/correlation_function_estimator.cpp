@@ -82,6 +82,19 @@ std::valarray<double> correlation_function_estimator::calculate_weighted(
 
 		return;
 	};
+	auto increment_bin_unweighted = [&] (std::valarray<double> & array, const std::pair<double,double> & p1,
+			const std::pair<double,double> & p2)
+	{
+		double r = calc_r(p1,p2);
+
+		if(_r_bin_limits_.outside_limits(r)) return;
+
+		size_t i = _r_bin_limits_.get_bin_index(r);
+
+		array[i] += 1;
+
+		return;
+	};
 
 	// Loop over all combinations
 	for(const auto & p1 : _D1_pos_list_)
@@ -92,14 +105,14 @@ std::valarray<double> correlation_function_estimator::calculate_weighted(
 		}
 		for(const auto & p2 : _R2_pos_list_)
 		{
-			increment_bin(D1R2_counts,p1,p2);
+			increment_bin_unweighted(D1R2_counts,p1,p2);
 		}
 	}
 	for(const auto & p1 : _R1_pos_list_)
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			increment_bin(R1D2_counts,p1,p2);
+			increment_bin_unweighted(R1D2_counts,p1,p2);
 		}
 		for(const auto & p2 : _R2_pos_list_)
 		{
@@ -108,7 +121,7 @@ std::valarray<double> correlation_function_estimator::calculate_weighted(
 	}
 
 	// And calculate the correlation function
-	std::valarray<double> result = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts) - 1;
+	std::valarray<double> result = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts);
 	return result;
 }
 std::valarray<double> correlation_function_estimator::calculate()
@@ -169,6 +182,31 @@ std::valarray<double> correlation_function_estimator::calculate()
 	// And calculate the correlation function
 	std::valarray<double> result = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts) - 1;
 	return result;
+}
+
+std::valarray<double> correlation_function_estimator::calculate_dipole(const double & offset=0)
+{
+	auto weight_function = [&offset] (const double & theta)
+	{
+		return std::sin(theta + 2*pi*offset);
+	};
+	return calculate_weighted(weight_function);
+}
+std::valarray<double> correlation_function_estimator::calculate_quadrupole(const double & offset=0)
+{
+	auto weight_function = [&offset] (const double & theta)
+	{
+		return std::sin((theta + 2*pi*offset)/2);
+	};
+	return calculate_weighted(weight_function);
+}
+std::valarray<double> correlation_function_estimator::calculate_octopole(const double & offset=0)
+{
+	auto weight_function = [&offset] (const double & theta)
+	{
+		return std::sin((theta + 2*pi*offset)/4);
+	};
+	return calculate_weighted(weight_function);
 }
 
 } // end namespace brgastro
