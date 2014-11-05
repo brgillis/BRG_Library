@@ -56,42 +56,26 @@ std::valarray<double> correlation_function_estimator::calculate_weighted(
 	std::valarray<double> R1D2_counts(_r_bin_limits_.num_bins());
 	std::valarray<double> R1R2_counts(_r_bin_limits_.num_bins());
 
-	// Set up a function to calculate the distance between two positions
-	auto calc_r = [] (const std::pair<double,double> & p1, const std::pair<double,double> & p2)
-	{
-		return brgastro::dist2d(p1.first,p1.second,p2.first,p2.second);
-	};
-	// Set up a function to calculate the angle between two positions
-	auto calc_theta = [] (const std::pair<double,double> & p1, const std::pair<double,double> & p2)
-	{
-		return std::atan2(p2.second-p1.second,p2.first-p1.first);
-	};
+	const double & max_r = _r_bin_limits_.max();
+
 	// Set up a function to add to the correct bin of a valarray
 	auto increment_bin = [&] (std::valarray<double> & array, const std::pair<double,double> & p1,
 			const std::pair<double,double> & p2)
 	{
-		double r = calc_r(p1,p2);
+		double dx = p1.first-p2.first;
+		if(std::fabs(dx)>max_r) return;
+		double dy = p1.second-p2.second;
+		if(std::fabs(dy)>max_r) return;
+
+		double r = brgastro::quad_add(dx,dy);
 
 		if(_r_bin_limits_.outside_limits(r)) return;
 
-		double theta = calc_theta(p1,p2);
+		double theta = std::atan2(dy,dx);
 
 		size_t i = _r_bin_limits_.get_bin_index(r);
 
 		array[i] += weight_function(theta);
-
-		return;
-	};
-	auto increment_bin_unweighted = [&] (std::valarray<double> & array, const std::pair<double,double> & p1,
-			const std::pair<double,double> & p2)
-	{
-		double r = calc_r(p1,p2);
-
-		if(_r_bin_limits_.outside_limits(r)) return;
-
-		size_t i = _r_bin_limits_.get_bin_index(r);
-
-		array[i] += 1;
 
 		return;
 	};
@@ -105,14 +89,14 @@ std::valarray<double> correlation_function_estimator::calculate_weighted(
 		}
 		for(const auto & p2 : _R2_pos_list_)
 		{
-			increment_bin_unweighted(D1R2_counts,p1,p2);
+			increment_bin(D1R2_counts,p1,p2);
 		}
 	}
 	for(const auto & p1 : _R1_pos_list_)
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			increment_bin_unweighted(R1D2_counts,p1,p2);
+			increment_bin(R1D2_counts,p1,p2);
 		}
 		for(const auto & p2 : _R2_pos_list_)
 		{
@@ -121,7 +105,7 @@ std::valarray<double> correlation_function_estimator::calculate_weighted(
 	}
 
 	// And calculate the correlation function
-	std::valarray<double> result = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts);
+	std::valarray<double> result = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts)-1;
 	return result;
 }
 std::valarray<double> correlation_function_estimator::calculate()
@@ -129,22 +113,26 @@ std::valarray<double> correlation_function_estimator::calculate()
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
 
+	if(_unweighted_cached_value_.size()>0) return _unweighted_cached_value_;
+
 	// We'll calculate four valarrays here, for the combinations of data and random lists
 	std::valarray<double> D1D2_counts(_r_bin_limits_.num_bins());
 	std::valarray<double> D1R2_counts(_r_bin_limits_.num_bins());
 	std::valarray<double> R1D2_counts(_r_bin_limits_.num_bins());
 	std::valarray<double> R1R2_counts(_r_bin_limits_.num_bins());
 
-	// Set up a function to calculate the distance between two positions
-	auto calc_r = [] (const std::pair<double,double> & p1, const std::pair<double,double> & p2)
-	{
-		return brgastro::dist2d(p1.first,p1.second,p2.first,p2.second);
-	};
+	const double & max_r = _r_bin_limits_.max();
+
 	// Set up a function to add to the correct bin of a valarray
 	auto increment_bin = [&] (std::valarray<double> & array, const std::pair<double,double> & p1,
 			const std::pair<double,double> & p2)
 	{
-		double r = calc_r(p1,p2);
+		double dx = std::fabs(p1.first-p2.first);
+		if(dx>max_r) return;
+		double dy = std::fabs(p1.second-p2.second);
+		if(dy>max_r) return;
+
+		double r = brgastro::quad_add(dx,dy);
 
 		if(_r_bin_limits_.outside_limits(r)) return;
 
@@ -180,33 +168,33 @@ std::valarray<double> correlation_function_estimator::calculate()
 	}
 
 	// And calculate the correlation function
-	std::valarray<double> result = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts) - 1;
-	return result;
+	_unweighted_cached_value_ = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts) - 1;
+	return _unweighted_cached_value_;
 }
 
-std::valarray<double> correlation_function_estimator::calculate_dipole(const double & offset=0)
+std::valarray<double> correlation_function_estimator::calculate_dipole(const double & offset)
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
-		return std::sin(theta + 2*pi*offset);
+		return 1+std::sin(theta + 2*pi*offset);
 	};
-	return calculate_weighted(weight_function);
+	return calculate_weighted(weight_function)-calculate();
 }
-std::valarray<double> correlation_function_estimator::calculate_quadrupole(const double & offset=0)
+std::valarray<double> correlation_function_estimator::calculate_quadrupole(const double & offset)
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
-		return std::sin((theta + 2*pi*offset)/2);
+		return 1+std::sin((theta + 2*pi*offset)/2);
 	};
-	return calculate_weighted(weight_function);
+	return calculate_weighted(weight_function)-calculate();
 }
-std::valarray<double> correlation_function_estimator::calculate_octopole(const double & offset=0)
+std::valarray<double> correlation_function_estimator::calculate_octopole(const double & offset)
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
-		return std::sin((theta + 2*pi*offset)/4);
+		return 1+std::sin((theta + 2*pi*offset)/4);
 	};
-	return calculate_weighted(weight_function);
+	return calculate_weighted(weight_function)-calculate();
 }
 
 } // end namespace brgastro

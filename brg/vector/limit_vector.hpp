@@ -258,10 +258,11 @@ public:
 			_base_ = make_log_limit_vector_base<T,A>(min,max,num_bins);
 
 			using std::pow;
-			_step_ = pow(max/min,1./num_bins);
-
 			using std::log;
 			_lmin_ = log(min);
+
+			_step_ = (log(max)-_lmin_)/num_bins;
+
 		}
 		else
 		{
@@ -589,13 +590,8 @@ public:
 
 			{
 				using std::log;
-				double lmax = log(static_cast<double>(max()));
-				double lmin = log(static_cast<double>(min()));
-				double lval = log(static_cast<double>(val));
-
-				double lstep = (lmax-lmin)/num_bins();
-
-				return static_cast<size_type>((lval-lmin)/lstep);
+				T lval = log(val);
+				return static_cast<size_type>((lval-_lmin_)/_step_);
 
 			}
 

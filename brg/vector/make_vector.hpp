@@ -27,6 +27,7 @@
 #ifndef _BRG_MAKE_VECTOR_HPP_INCLUDED_
 #define _BRG_MAKE_VECTOR_HPP_INCLUDED_
 
+#include <iterator>
 #include <type_traits>
 #include <vector>
 
@@ -375,7 +376,7 @@ struct container_coercer
 	container_coercer(container & vec, const other_container & other_vec)
 	{
 		vec.resize(other_vec.size());
-		auto o_it = other_vec.begin();
+		auto o_it = begin(other_vec);
 
 		for(auto it=vec.begin(); it!=vec.end(); ++it, ++o_it)
 		{
@@ -400,7 +401,7 @@ void make_vector_coerce(container & vec, const other_container & other_vec)
 }
 
 template<typename value_type, typename other_container, unsigned short d=1>
-void coerce_to_vector(const other_container & other_vec)
+std::vector<value_type> coerce_to_vector(const other_container & other_vec)
 {
 	std::vector<value_type> result;
 	container_coercer<d,std::vector<value_type>,other_container>(result,other_vec);

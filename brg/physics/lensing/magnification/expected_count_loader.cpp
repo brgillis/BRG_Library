@@ -46,7 +46,7 @@ namespace brgastro {
 bool expected_count_loader::_loaded_(false);
 
 brgastro::limit_vector<double> expected_count_loader::_z_limits_(
-		brgastro::limit_vector<double>::limit_type::LINEAR,mag_z_min,mag_z_max,(mag_z_max-mag_z_min)/mag_z_step);
+		brgastro::limit_vector<double>::type::LINEAR,mag_z_min,mag_z_max,(mag_z_max-mag_z_min)/mag_z_step);
 std::vector<brgastro::limit_vector<double>> expected_count_loader::_mag_limits_;
 std::vector<std::vector<double>> expected_count_loader::_smoothed_count_;
 std::vector<std::vector<double>> expected_count_loader::_smoothed_count_derivative_;

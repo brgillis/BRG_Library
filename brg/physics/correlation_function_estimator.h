@@ -28,7 +28,9 @@
 #define _BRG_PHYSICS_CORRELATION_FUNCTION_ESTIMATOR_H_INCLUDED_
 
 #include <functional>
+#include <limits>
 #include <utility>
+#include <valarray>
 #include <vector>
 
 #include "brg/global.h"
@@ -48,6 +50,8 @@ private:
 	position_list _D1_pos_list_, _D2_pos_list_, _R1_pos_list_, _R2_pos_list_;
 
 	brgastro::limit_vector<double> _r_bin_limits_;
+
+	std::valarray<double> _unweighted_cached_value_;
 
 	bool _set_up();
 
@@ -99,13 +103,31 @@ public:
 	{
 	}
 
-	// Calculation function
+	// Methods to set position lists
+	// TODO fill in
+
+	// Calculation methods
+#if(1)
+	/// Standard calculation function, using Hamilton estimator
+	std::valarray<double> calculate();
+
+	/// Weighted calculation function, using a Hamilton-like estimator. This assumes the weight
+	/// function passed here has an expected value of zero.
 	std::valarray<double> calculate_weighted(const std::function<double(double)> &
 			weight_function = [] (const double & theta) {return 1.;});
-	std::valarray<double> calculate();
+
+	/// Calculation function for dipole correlation function with a given offset. The offset should
+	/// vary from [0,1) or [-0.5,0.5) for unique results.
 	std::valarray<double> calculate_dipole(const double & offset=0);
+
+	/// Calculation function for quadrupole correlation function with a given offset. The offset should
+	/// vary from [0,1) or [-0.5,0.5) for unique results.
 	std::valarray<double> calculate_quadrupole(const double & offset=0);
+
+	/// Calculation function for octopole correlation function with a given offset. The offset should
+	/// vary from [0,1) or [-0.5,0.5) for unique results.
 	std::valarray<double> calculate_octopole(const double & offset=0);
+#endif
 };
 
 } // end namespace brgastro
