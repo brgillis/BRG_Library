@@ -33,6 +33,7 @@
 
 #include "brg/global.h"
 
+#include "brg/container/coerce.hpp"
 #include "brg/utility.hpp"
 
 namespace brgastro
@@ -371,44 +372,10 @@ void make_vector_function( container & vec, const func_type & func, const other_
 #if(1)
 
 template<unsigned short d, typename container, typename other_container>
-struct container_coercer
-{
-	container_coercer(container & vec, const other_container & other_vec)
-	{
-		vec.resize(other_vec.size());
-		auto o_it = begin(other_vec);
-
-		for(auto it=vec.begin(); it!=vec.end(); ++it, ++o_it)
-		{
-			container_coercer<d-1,decltype(*it),decltype(*o_it)>(*it,*o_it);
-		}
-	}
-};
-
-template<typename container, typename other_container>
-struct container_coercer<0,container,other_container>
-{
-	container_coercer(container & vec, const other_container & other_vec)
-	{
-		vec = other_vec;
-	}
-};
-
-template<unsigned short d, typename container, typename other_container>
 void make_vector_coerce(container & vec, const other_container & other_vec)
 {
-	container_coercer<d,container,other_container>(vec,other_vec);
+	assignment_coercer<d,container,other_container>(vec,other_vec);
 }
-
-template<typename value_type, typename other_container, unsigned short d=1>
-std::vector<value_type> coerce_to_vector(const other_container & other_vec)
-{
-	std::vector<value_type> result;
-	container_coercer<d,std::vector<value_type>,other_container>(result,other_vec);
-	return result;
-}
-
-
 
 #endif
 

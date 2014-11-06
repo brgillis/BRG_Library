@@ -28,7 +28,6 @@
 #ifndef _BRG_PAIR_BIN_H_INCLUDED_
 #define _BRG_PAIR_BIN_H_INCLUDED_
 
-#include <set>
 #include <vector>
 
 #include <boost/accumulators/accumulators.hpp>
@@ -37,6 +36,8 @@
 #include <boost/accumulators/statistics/weighted_moment.hpp>
 #include <boost/accumulators/statistics/weighted_variance.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
+#include <boost/container/flat_set.hpp>
+
 #include "brg/math/statistics/effective_count.hpp"
 #include "brg/math/statistics/standard_error_of_weighted_mean.hpp"
 
@@ -87,7 +88,7 @@ private:
 	stat_vec_t<BRG_UNITS> _delta_Sigma_x_values_;
 
 	stat_vec_t<double> _mu_obs_values_;
-	std::set<size_t> _distinct_lens_ids_;
+	boost::container::flat_set<size_t> _distinct_lens_ids_;
 
 	mutable double _mu_hat_cached_value_;
 	mutable double _mu_W_cached_value_;
