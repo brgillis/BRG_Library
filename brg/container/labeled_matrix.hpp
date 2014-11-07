@@ -61,7 +61,8 @@ private:
 
 	// Private typedefs
 	typedef typename std::unordered_map<key_type,size_type> map_type;
-	typedef typename brgastro::table_map_t<data_table_type,key_type> buffer_type;
+	typedef typename Eigen::Matrix<value_type,Eigen::Dynamic,1> buffer_column_type;
+	typedef typename brgastro::insertion_ordered_map<key_type,buffer_column_type> buffer_type;
 
 	mutable data_table_type _data_table_;
 	mutable map_type _key_map_;
@@ -197,11 +198,11 @@ public:
 	{
 		return data_table().col(index);
 	}
-	column_type & col_at_key(const key_type & key)
+	column_type & at(const key_type & key)
 	{
 		return data_table().col(_key_map_.at(key));
 	}
-	const_column_type & col_at_key(const key_type & key) const
+	const_column_type & at(const key_type & key) const
 	{
 		return data_table().col(_key_map_.at(key));
 	}
@@ -218,6 +219,40 @@ public:
 		return const_row_reference_type(_key_map_,data_table().row(index));
 	}
 #endif
+
+	// Size information
+#if(1)
+	size_type rows()
+	{
+		return _data_table_.rows();
+	}
+	size_type cols()
+	{
+		return _data_table_.cols();
+	}
+	size_type size()
+	{
+		return _data_table_.size();
+	}
+#endif
+
+	// Key information
+#if(1)
+    typename size_type count (const key_type & k) const
+    {
+		return _key_map_.count(k);
+    }
+#endif
+
+    // Inserting new columns
+#if(1)
+    template< typename new_column_type >
+    void insert(new_column_type && new_column)
+    {
+    	_buffer_.insert(std::forward<new_column_type>(new_column));
+    }
+#endif
+
 };
 
 }

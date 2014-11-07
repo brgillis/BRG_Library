@@ -59,13 +59,14 @@ private:
 	base_type _val_vector_;
 	map_type _key_map_;
 
-	void _insert(const value_type & val)
+	template< typename new_val_type >
+	void _insert(new_val_type && val)
 	{
 		// This function is only called if we already know we need it, so we
 		// don't check if the key already exists here
-		_key_map_[val.first] = _val_vector_.size(); // One we add the value to the vector, this will
+		_key_map_[val.first] = _val_vector_.size(); // Once we add the value to the vector, this will
 													// point to the new element
-		_val_vector_.push_back(val);
+		_val_vector_.push_back(std::forward<new_val_type>(val));
 	}
 
 	void _build_key_map()
@@ -99,7 +100,7 @@ public:
 		const typename base_type::allocator_type& alloc = typename base_type::allocator_type())
 	: _val_vector_(first,last,alloc)
 	{
-		_rebuild_key_map();
+		_build_key_map();
     }
 #endif
 
@@ -124,9 +125,9 @@ public:
 	{
 		swap(other);
 	}
-	insertion_ordered_map & operator=(const insertion_ordered_map & other)
+	insertion_ordered_map & operator=(insertion_ordered_map other)
 	{
-		swap(insertion_ordered_map(other));
+		swap(other);
 		return *this;
 	}
 	insertion_ordered_map & operator=(insertion_ordered_map&& other)
@@ -202,11 +203,12 @@ public:
 		return _val_vector_[_key_map_[key]].second;
 	}
 
-	std::pair<typename base_type::iterator,bool> insert(const value_type& val)
+    template< typename new_val_type >
+	std::pair<typename base_type::iterator,bool> insert(new_val_type && val)
 	{
 		if(_key_map_.count(val.first)==0)
 		{
-			_insert(val);
+			_insert(std::forward<new_val_type>(val));
 			return std::make_pair(static_cast<typename base_type::iterator>(&_val_vector_[_key_map_[val.first]]),
 					true);
 		}
@@ -333,7 +335,8 @@ public:
      *                1 if init_key doesn't exist in map
      *                2 if new_key already exists in map
      */
-    char change_key(const key_type & init_key, const key_type & new_key)
+    template< typename new_key_type >
+    char change_key(const key_type & init_key, new_key_type && new_key)
     {
     	// Get the position of the value we're going to be altering
     	auto it = _key_map_.find(init_key);
@@ -343,12 +346,12 @@ public:
 
     	size_t pos = it->second;
 
-    	// Alter the value in the vector
-    	_val_vector_[pos].first = new_key;
-
     	// Alter the value in the key map by erasing old entry and adding new
     	_key_map_.erase(it);
     	_key_map_[new_key] = pos;
+
+    	// Alter the value in the vector
+    	_val_vector_[pos].first = std::forward<new_key_type>(new_key);
 
     	return 0;
     }
