@@ -32,7 +32,7 @@
 #include <string>
 #include <vector>
 
-#include "brg/file_access/insertion_ordered_map.hpp"
+#include "brg/container/insertion_ordered_map.hpp"
 
 namespace brgastro
 {
@@ -45,8 +45,8 @@ typedef std::vector< std::string > header_t;
 template <typename T>
 using table_t = std::vector< std::vector< T > >;
 
-template <typename T>
-using table_map_t = brgastro::insertion_ordered_map<std::string,std::vector<T>>;
+template <typename T, typename key_type=std::string>
+using table_map_t = brgastro::insertion_ordered_map<key_type,std::vector<T>>;
 
 #endif
 

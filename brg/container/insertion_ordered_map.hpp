@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file table_map.hpp
+ @file insertion_ordered_map.hpp
  ------------------
 
  TODO <Insert file description here>
@@ -24,9 +24,6 @@
 \**********************************************************************/
 
 
-// body file: table_map.cpp
-
-
 #ifndef _BRG_INSERTION_ORDERED_MAP_HPP_INCLUDED_
 #define _BRG_INSERTION_ORDERED_MAP_HPP_INCLUDED_
 
@@ -40,15 +37,29 @@ namespace brgastro {
 template<typename key_type, typename mapped_type>
 class insertion_ordered_map
 {
-private:
-	typedef std::pair<key_type,mapped_type> val_type;
-	typedef std::vector<val_type> base_type;
+public:
+	// Public typedefs
+	typedef std::pair<key_type,mapped_type> value_type;
+	typedef std::vector<value_type> base_type;
 	typedef std::unordered_map<key_type,size_t> map_type;
+
+	typedef base_type::allocator_type allocator_type;
+	typedef base_type::reference reference;
+	typedef base_type::const_reference const_reference;
+	typedef base_type::pointer pointer;
+	typedef base_type::const_pointer const_pointer;
+	typedef base_type::iterator iterator;
+	typedef base_type::const_iterator const_iterator;
+	typedef base_type::reverse_iterator reverse_iterator;
+	typedef base_type::const_reverse_iterator const_reverse_iterator;
+	typedef base_type::difference_type difference_type;
+	typedef base_type::size_type size_type;
+private:
 
 	base_type _val_vector_;
 	map_type _key_map_;
 
-	void _insert(const val_type & val)
+	void _insert(const value_type & val)
 	{
 		// This function is only called if we already know we need it, so we
 		// don't check if the key already exists here
@@ -191,7 +202,7 @@ public:
 		return _val_vector_[_key_map_[key]].second;
 	}
 
-	std::pair<typename base_type::iterator,bool> insert(const val_type& val)
+	std::pair<typename base_type::iterator,bool> insert(const value_type& val)
 	{
 		if(_key_map_.count(val.first)==0)
 		{
@@ -209,7 +220,7 @@ public:
 	template <class... Args>
 	std::pair<typename base_type::iterator,bool> emplace (Args&&... args)
 	{
-		val_type val(args...);
+		value_type val(args...);
 		key_type & key = val.first;
 		return insert(val);
 	}

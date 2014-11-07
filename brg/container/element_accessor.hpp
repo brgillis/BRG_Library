@@ -26,6 +26,8 @@
 #ifndef _BRG_CONTAINER_ELEMENT_ACCESSOR_HPP_INCLUDED_
 #define _BRG_CONTAINER_ELEMENT_ACCESSOR_HPP_INCLUDED_
 
+namespace brgastro {
+
 template<typename ContainerType>
 class element_accessor
 {
@@ -233,16 +235,6 @@ public:
 
 #endif // Element access
 
-	// Modifiers
-#if(1)
-
-	void fixbad()
-	{
-		for(auto & val : _reference_)
-			brgastro::fixbad(val);
-	}
-#endif // Modifiers
-
 	// Casting
 #if(1)
 
@@ -256,6 +248,6 @@ public:
 
 };
 
-
+}
 
 #endif // _BRG_CONTAINER_ELEMENT_ACCESSOR_HPP_INCLUDED_
