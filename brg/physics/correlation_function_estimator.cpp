@@ -30,6 +30,7 @@
 #include "brg/global.h"
 
 #include "brg/math/misc_math.hpp"
+#include "brg/math/safe_math.hpp"
 #include "brg/vector/limit_vector.hpp"
 
 #include "correlation_function_estimator.h"
@@ -105,7 +106,8 @@ std::valarray<double> correlation_function_estimator::calculate_weighted(
 	}
 
 	// And calculate the correlation function
-	std::valarray<double> result = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts)-1;
+	std::valarray<double> result = (D1D2_counts*R1R2_counts)/
+			brgastro::safe_d(static_cast< std::valarray<double> >(D1R2_counts*R1D2_counts))-1;
 	return result;
 }
 std::valarray<double> correlation_function_estimator::calculate()
@@ -168,7 +170,9 @@ std::valarray<double> correlation_function_estimator::calculate()
 	}
 
 	// And calculate the correlation function
-	_unweighted_cached_value_ = (D1D2_counts*R1R2_counts)/(D1R2_counts*R1D2_counts) - 1;
+	_unweighted_cached_value_.resize(_r_bin_limits_.num_bins());
+	_unweighted_cached_value_ = (D1D2_counts*R1R2_counts)/
+			brgastro::safe_d(static_cast< std::valarray<double> >(D1R2_counts*R1D2_counts)) - 1;
 	return _unweighted_cached_value_;
 }
 

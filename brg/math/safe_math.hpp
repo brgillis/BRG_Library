@@ -27,6 +27,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include <type_traits>
+#include <valarray>
 
 #include "brg/global.h"
 
@@ -37,7 +39,7 @@ namespace brgastro {
 // if the argument is invalid (eg. taking square-root of a negative
 // number).
 template< class T >
-const T safe_sqrt( const T a )
+const T safe_sqrt( const T & a )
 {
 
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
@@ -72,7 +74,7 @@ inline const double safe_sqrt( const int a ) // Special case for integers due to
 	return sqrt( res );
 }
 template< class Ta, class Tx >
-inline const Ta safe_pow( const Ta a, const Tx x )
+inline const Ta safe_pow( const Ta & a, const Tx & x )
 {
 	Ta res;
 	double ipart;
@@ -96,7 +98,7 @@ inline const Ta safe_pow( const Ta a, const Tx x )
 
 // Subtract one value from another in quadrature
 template < typename T1, typename T2 >
-inline const T1 safe_quad_sub( const T1 v1, const T2 v2 )
+inline const T1 safe_quad_sub( const T1 & v1, const T2 & v2 )
 {
 	return safe_sqrt( v1 * v1 - v2 * v2 );
 }
@@ -104,7 +106,7 @@ inline const T1 safe_quad_sub( const T1 v1, const T2 v2 )
 // Safe_d is used a bit differently: Put it around the denominator to make
 // sure you don't hit a divide-by-zero error.
 template< class T >
-const T safe_d( const T a )
+const T safe_d( const T & a )
 {
 
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
@@ -127,6 +129,54 @@ const T safe_d( const T a )
 	if(min_d == 0) return 1; // In case of integers
 
 	return min_d;
+
+}
+
+// Valarray specialization
+template< class T >
+std::valarray<T> safe_d( std::valarray<T> array )
+{
+	for( auto & a : array)
+	{
+
+		#ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
+		if( (a == 0) || isbad(a) )
+		{
+			std::cerr << "WARNING: safe_d() prevented error from zero input or bad input.\n";
+		}
+		#endif
+
+		#ifdef _BRG_USE_UNITS_
+		T min_d = a; // So it'll have the right units
+		#else
+		T min_d;
+		#endif
+
+		if(std::is_integral<T>::value)
+			min_d = 1;
+		else
+			min_d = MIN_DIVISOR;
+
+		if ( isnan( a ) )
+		{
+			a = min_d;
+			continue;
+		}
+		if ( isinf( a ) )
+		{
+			a = 1. / min_d;
+			continue;
+		}
+
+		if (std::fabs(a)<min_d)
+		{
+			a = min_d;
+			continue;
+		}
+
+	}
+
+	return array;
 
 }
 
