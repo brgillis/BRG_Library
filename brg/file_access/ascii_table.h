@@ -36,8 +36,8 @@
 
 #include "brg/global.h"
 
+#include "brg/container/table_typedefs.hpp"
 #include "brg/file_access/open_file.hpp"
-#include "brg/file_access/table_typedefs.hpp"
 #include "brg/file_access/table_utility.h"
 #include "brg/file_access/trim_comments.hpp"
 #include "brg/math/misc_math.hpp"

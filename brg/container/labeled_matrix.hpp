@@ -45,7 +45,8 @@ public:
 
 	// Public typedefs
 	typedef typename Eigen::Matrix<data_type,Eigen::Dynamic,Eigen::Dynamic> data_type;
-	typedef data_type::Index size_type;
+	//typedef data_type::Index size_type;
+	typedef size_t size_type;
 	typedef data_type::ColXpr column_type;
 	typedef data_type::ConstColXpr const_column_type;
 

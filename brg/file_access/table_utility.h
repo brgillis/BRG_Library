@@ -35,7 +35,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_access/table_typedefs.hpp"
+#include "brg/container/table_typedefs.hpp"
 #include "brg/vector/make_vector.hpp"
 
 namespace brgastro {

@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file table_utility.cpp
+ @file labeled_matrix_row.hpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,51 +23,13 @@
 
 \**********************************************************************/
 
-#include <sstream>
-#include <string>
-#include <vector>
+// body file: labeled_matrix_row.cpp
 
-#include "brg/global.h"
+#ifndef _BRG_CONTAINER_LABELED_MATRIX_ROW_HPP_INCLUDED_
+#define _BRG_CONTAINER_LABELED_MATRIX_ROW_HPP_INCLUDED_
 
-#include "brg/container/table_typedefs.hpp"
 
-#include "table_utility.h"
 
-namespace brgastro {
 
-std::vector< std::string > split_on_whitespace( const std::string & sentence )
-{
-	std::vector< std::string > result;
-	std::istringstream sentence_data_stream(sentence);
 
-	std::string word;
-	while (sentence_data_stream >> word)
-	{
-		result.push_back(word);
-	}
-
-	return result;
-}
-header_t convert_to_header( const std::string & line )
-{
-	header_t result;
-	std::istringstream line_data_stream(line);
-
-	std::string word;
-
-	// Get rid of first word if it's the comment indicator
-	if ( line_data_stream.peek() == (int)( *"#" ) )
-	{
-		line_data_stream >> word;
-	}
-
-	while (line_data_stream >> word)
-	{
-
-		result.push_back(word);
-	}
-
-	return result;
-}
-
-}
+#endif // _BRG_CONTAINER_LABELED_MATRIX_ROW_HPP_INCLUDED_

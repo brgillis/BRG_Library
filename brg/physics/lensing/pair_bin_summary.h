@@ -37,7 +37,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_access/table_typedefs.hpp"
+#include "brg/container/table_typedefs.hpp"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
 

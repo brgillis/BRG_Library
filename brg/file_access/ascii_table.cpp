@@ -35,7 +35,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_access/table_typedefs.hpp"
+#include "brg/container/table_typedefs.hpp"
 #include "brg/file_access/trim_comments.hpp"
 #include "brg/vector/manipulations.hpp"
 
