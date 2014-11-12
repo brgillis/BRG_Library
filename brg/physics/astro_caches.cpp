@@ -39,7 +39,7 @@
 #if (1)
 
 // Initialisation for brgastro::dfa_cache
-DEFINE_BRG_CACHE_STATIC_VARS( dfa_cache, 0, 5, 0.01 );
+DEFINE_BRG_CACHE_STATIC_VARS( dfa_cache, 0, 5, 0.001 );
 
 // Initialisation for brgastro::add_cache
 DEFINE_BRG_CACHE_2D_STATIC_VARS( add_cache, 0, 5, 0.01,

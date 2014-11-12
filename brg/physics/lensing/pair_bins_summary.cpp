@@ -529,7 +529,7 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 	table_t<double> data;
 	header_t header;
 
-	size_t num_columns = 26;
+	size_t num_columns = 28;
 
 	header.reserve(num_columns);
 	header.push_back("R_min");
@@ -556,6 +556,8 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 	header.push_back("gamma_t_stderr");
 	header.push_back("gamma_x_mean");
 	header.push_back("gamma_x_stderr");
+	header.push_back("mu");
+	header.push_back("mu_stderr");
 	header.push_back("kappa");
 	header.push_back("kappa_stderr");
 
@@ -603,6 +605,8 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					data[++col_i].push_back(bin.gamma_t_stderr());
 					data[++col_i].push_back(bin.gamma_x_mean());
 					data[++col_i].push_back(bin.gamma_x_stderr());
+					data[++col_i].push_back(bin.mu_hat());
+					data[++col_i].push_back(bin.mu_stderr());
 					data[++col_i].push_back(bin.kappa());
 					data[++col_i].push_back(bin.kappa_stderr());
 				}

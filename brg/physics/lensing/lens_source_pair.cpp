@@ -79,7 +79,7 @@ void lens_source_pair::store_data() const
 	BRG_ANGLE dra = -(source_ptr->ra()-lens_ptr->ra())*cos(lens_ptr->dec());
 	BRG_ANGLE ddec = source_ptr->dec()-lens_ptr->dec();
 
-	_R_proj_ = dfa(dist2d(dra,ddec),_z_lens_);
+	_R_proj_ = dfa(skydist2d(lens_ptr,source_ptr),_z_lens_);
 	_theta_ = atan2(ddec,dra);
 
 	_calc_gamma(source_ptr->gamma_1(),source_ptr->gamma_2());

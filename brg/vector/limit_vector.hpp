@@ -104,6 +104,13 @@ public:
 		_init();
 	}
 
+	/// Construct as linear format
+	limit_vector(const T & min, const T & max, const size_type & num_bins,
+			const allocator_type& alloc = allocator_type())
+	{
+		reconstruct(type::LINEAR,min,max,num_bins,alloc);
+	}
+
 	/// Construct as linear or log format
 	limit_vector(const type & init_type, const T & min, const T & max, const size_type & num_bins,
 			const allocator_type& alloc = allocator_type())
@@ -579,9 +586,7 @@ public:
 		case type::LINEAR:
 
 			{
-				T step = (max()-min())/num_bins();
-
-				return static_cast<size_type>((val-min())/step);
+				return static_cast<size_type>((val-min())/_step_);
 			}
 
 			break;

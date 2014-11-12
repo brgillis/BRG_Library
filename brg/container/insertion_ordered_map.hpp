@@ -125,9 +125,9 @@ public:
 	{
 		swap(other);
 	}
-	insertion_ordered_map & operator=(insertion_ordered_map other)
+	insertion_ordered_map & operator=(const insertion_ordered_map & other)
 	{
-		swap(other);
+		swap(insertion_ordered_map(other));
 		return *this;
 	}
 	insertion_ordered_map & operator=(insertion_ordered_map&& other)

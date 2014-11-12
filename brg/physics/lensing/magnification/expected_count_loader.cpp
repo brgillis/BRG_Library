@@ -93,8 +93,8 @@ void expected_count_loader::_load()
 				_smoothed_count_derivative_[z_i] = table_map.at("smoothed_alpha");
 
 				// Add a final value to the _mag_limits_ vector
-				temp_mag_limits.push_back(2*_mag_limits_[z_i].back()-
-						_mag_limits_[z_i].at(_mag_limits_[z_i].size()-2));
+				temp_mag_limits.push_back(2*temp_mag_limits.back()-
+						temp_mag_limits.at(temp_mag_limits.size()-2));
 				_mag_limits_[z_i] = temp_mag_limits;
 			}
 			catch(const std::runtime_error &e)
@@ -109,14 +109,6 @@ void expected_count_loader::_load()
 			double bin_size = _mag_limits_[z_i].at(1)-_mag_limits_[z_i].at(0);
 			_smoothed_count_[z_i] = brgastro::divide(_smoothed_count_[z_i],bin_size);
 
-			// Correct spurious smoothed count values in this vector
-			for(size_t m_i=0; m_i<_smoothed_count_.size(); ++m_i)
-			{
-				if((count[m_i]==0)&&(_smoothed_count_[z_i][m_i]==brgastro::mag_min_count))
-				{
-					_smoothed_count_[z_i][m_i] = 0;
-				}
-			}
 		} // Loop over z, loading in all files
 
 		_loaded_ = true;
@@ -135,7 +127,7 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 
 	size_t z_i = _z_limits_.get_bin_index(z);
 
-	if(z_i==_z_limits_.size()-2) --z_i;
+	if(z_i>=_z_limits_.size()-2) z_i=_z_limits_.size()-3;
 	const double & z_lo = _z_limits_[z_i];
 	const double & z_hi = _z_limits_[z_i+1];
 
@@ -146,26 +138,11 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 
 	// At the lower redshift first
 	double lo_result;
-	if(_mag_limits_[z_i].outside_limits(mag))
-	{
-		lo_result = def;
-	}
-	else
-	{
-		lo_result = _mag_limits_[z_i].interpolate_bins(mag,table[z_i]);
-	}
+	lo_result = _mag_limits_[z_i].interpolate_bins(mag,table[z_i]);
 
 	// At the higher redshift now
 	double hi_result;
-
-	if(_mag_limits_[z_i+1].outside_limits(mag))
-	{
-		hi_result = def;
-	}
-	else
-	{
-		hi_result = _mag_limits_[z_i+1].interpolate_bins(mag,table[z_i+1]);
-	}
+	hi_result = _mag_limits_[z_i+1].interpolate_bins(mag,table[z_i+1]);
 
 	// And now interpolate between these results
 
