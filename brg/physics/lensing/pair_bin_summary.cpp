@@ -150,12 +150,12 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	assert(_mag_min_==other.mag_min());
 	assert(_mag_max_==other.mag_max());
 
-	// Check for zero lenses in this or the other
-	if(other.num_lenses()==0) return *this;
+	// Check for zero area in this or the other
+	if(other.area()==0) return *this;
 
 	_uncache_values(); // If we get this far, something is changing with this bin
 
-	if(_num_lenses_==0)
+	if(area()==0)
 	{
 		// Simply copy the other bin summary to this one
 		*this = other;

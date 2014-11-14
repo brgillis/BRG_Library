@@ -307,9 +307,14 @@ public:
 	// Summary values
 #if (1)
 
-	double sigma_crit() const
+	BRG_UNITS sigma_crit() const
 	{
-		return brgastro::sigma_crit(z_mean(),source_z_mean());
+		#ifdef _BRG_USE_UNITS_
+		BRG_UNITS result(brgastro::sigma_crit(z_mean(),source_z_mean()),-2,0,1,0,0,0);
+		#else
+		BRG_UNITS result = brgastro::sigma_crit(z_mean(),source_z_mean());
+		#endif
+		return result;
 	}
 
 	// Shear
@@ -344,12 +349,16 @@ public:
 	virtual BRG_UNITS delta_Sigma_t_stderr() const
 	{
 		if(_count_<2) return std::numeric_limits<double>::max();
-		return delta_Sigma_t_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
+		BRG_UNITS result = delta_Sigma_t_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
+		if(isgood(result)) return result;
+		return 0;
 	}
 	virtual BRG_UNITS delta_Sigma_x_stderr() const
 	{
 		if(_count_<2) return std::numeric_limits<double>::max();
-		return delta_Sigma_x_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
+		BRG_UNITS result = delta_Sigma_x_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
+		if(isgood(result)) return result;
+		return 0;
 	}
 
 	double gamma_t_mean() const

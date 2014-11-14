@@ -40,6 +40,7 @@
 
 #include "brg/math/statistics/effective_count.hpp"
 #include "brg/math/statistics/standard_error_of_weighted_mean.hpp"
+#include "brg/math/statistics/statistic_extractors.hpp"
 
 #include "brg/global.h"
 
@@ -139,19 +140,19 @@ public:
 	// Count
 	size_t count() const
 	{
-		return boost::accumulators::count(_R_values_);
+		return extract_count(_R_values_);
 	}
 	double effective_count() const
 	{
-		return boost::accumulators::effective_count(_delta_Sigma_t_values_);
+		return safe_extract_effective_count(_delta_Sigma_t_values_);
 	}
 	double sum_of_weights() const
 	{
-		return boost::accumulators::sum_of_weights(_delta_Sigma_t_values_);
+		return extract_sum_of_weights(_delta_Sigma_t_values_);
 	}
 	double sum_of_square_weights() const
 	{
-		return boost::accumulators::sum_of_square_weights(_delta_Sigma_t_values_);
+		return extract_sum_of_square_weights(_delta_Sigma_t_values_);
 	}
 	size_t num_lenses() const
 	{
@@ -163,39 +164,37 @@ public:
 
 	BRG_DISTANCE R_mean() const
 	{
-		return boost::accumulators::weighted_mean(_R_values_);
+		return safe_extract_weighted_mean(_R_values_);
 	}
 
 	BRG_MASS m_mean() const
 	{
-		return boost::accumulators::weighted_mean(_m_values_);
+		return safe_extract_weighted_mean(_m_values_);
 	}
 
 	double z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_z_values_);
+		return safe_extract_weighted_mean(_z_values_);
 	}
 
 	double lens_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_lens_z_values_);
+		return safe_extract_weighted_mean(_lens_z_values_);
 	}
 
 	double source_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_source_z_values_);
+		return safe_extract_weighted_mean(_source_z_values_);
 	}
 
 	double mag_mean() const
 	{
-		return boost::accumulators::weighted_mean(_mag_lens_values_);
+		return safe_extract_weighted_mean(_mag_lens_values_);
 	}
 
 	double unmasked_frac() const
 	{
-		double result = boost::accumulators::weighted_mean(_lens_unmasked_fracs_);
-		if(isgood(result)) return result;
-		return 0;
+		return safe_extract_weighted_mean(_lens_unmasked_fracs_);
 	}
 
 	BRG_UNITS area() const

@@ -35,12 +35,12 @@
 
 namespace brgastro {
 
-constexpr double mag_m_min = 15.;
-constexpr double mag_m_max = 24.5;
+constexpr double mag_m_min = 14.5;
+constexpr double mag_m_max = 24.7;
 constexpr double mag_m_step = 0.1;
 
 constexpr double mag_z_min = 0.2;
-constexpr double mag_z_max = 2.0;
+constexpr double mag_z_max = 4.0;
 constexpr double mag_z_step = 0.02;
 
 constexpr double mag_lens_T_min = 2.0;
