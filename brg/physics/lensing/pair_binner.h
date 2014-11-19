@@ -229,19 +229,19 @@ public:
 	// Access by position
 #if(1)
 	BRG_UNITS delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag);
+										   const double & z, const double & mag);
 	BRG_UNITS delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag);
+										   const double & z, const double & mag);
 
 	BRG_UNITS delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag);
+										   const double & z, const double & mag);
 	BRG_UNITS delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag);
+										   const double & z, const double & mag);
 
 	BRG_UNITS delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag);
+										   const double & z, const double & mag);
 	BRG_UNITS delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag);
+										   const double & z, const double & mag);
 #endif // Access by index
 
 #endif // Accessing summary data for bins

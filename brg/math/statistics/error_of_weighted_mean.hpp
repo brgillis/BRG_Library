@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file standard_error_of_weighted_mean.hpp
+ @file error_of_weighted_mean.hpp
  ------------------
 
  TODO <Insert file description here>
@@ -24,8 +24,8 @@
 \**********************************************************************/
 
 
-#ifndef _BRG_STANDARD_ERROR_OF_WEIGHTED_MEAN_HPP_INCLUDED_
-#define _BRG_STANDARD_ERROR_OF_WEIGHTED_MEAN_HPP_INCLUDED_
+#ifndef _BRG_ERROR_OF_WEIGHTED_MEAN_HPP_INCLUDED_
+#define _BRG_ERROR_OF_WEIGHTED_MEAN_HPP_INCLUDED_
 
 #include <limits>
 
@@ -46,12 +46,12 @@ namespace boost { namespace accumulators {
 namespace impl {
 
 template<typename Sample>
-struct standard_error_of_weighted_mean_accumulator
+struct error_of_weighted_mean_accumulator
 : accumulator_base
 {
   typedef double result_type;
 
-  standard_error_of_weighted_mean_accumulator(dont_care)
+  error_of_weighted_mean_accumulator(dont_care)
   {
   }
 
@@ -68,19 +68,19 @@ struct standard_error_of_weighted_mean_accumulator
 
 namespace tag {
 
-struct standard_error_of_weighted_mean
+struct error_of_weighted_mean
   : depends_on< weighted_variance, effective_count, count >
 {
 	typedef mpl::true_ is_weight_accumulator;
-	typedef accumulators::impl::standard_error_of_weighted_mean_accumulator< mpl::_1 > impl;
+	typedef accumulators::impl::error_of_weighted_mean_accumulator< mpl::_1 > impl;
 };
 
 } // namespace tag
 
 namespace extract {
-extractor< tag::standard_error_of_weighted_mean > const standard_error_of_weighted_mean = {};
+extractor< tag::error_of_weighted_mean > const error_of_weighted_mean = {};
 } // namespace extract
-using extract::standard_error_of_weighted_mean;
+using extract::error_of_weighted_mean;
 
 }} // End all namespaces
 

@@ -25,6 +25,7 @@
 
 // Global compiler directives
 // Alter these by switching between #define and #undef
+#if(1)
 
 //#define _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_ // Warns if a function like "safe_d" prevents an error
 // This may be expected or not an issue in some cases though,
@@ -38,7 +39,7 @@
 #endif
 
 #ifndef NDEBUG
-//#define _BRG_USE_UNITS_ // Will use "number-with-units" class for applicable values in code
+#undef _BRG_USE_UNITS_ // Will use "number-with-units" class for applicable values in code
 // This slows things down a bit, but can be useful in debugging. Comment/uncomment or define
 // at command line to decide whether or not to use this
 #endif // #ifndef NDEBUG
@@ -53,7 +54,10 @@
 // -Any value in the procedure is not a type with units (eg. it's an int or double)
 // -The variable being set is initially unitless
 
-// Set up global parameters
+#endif // global compiler directives
+
+// Magic values
+#if(1)
 
 #ifndef MAX_STACK_DEPTH
 #define MAX_STACK_DEPTH 100
@@ -89,6 +93,11 @@ const double pi = 3.14159265358979323846;
 #define ROMBERG_N_MAX 20
 #endif
 
+#endif // Magic values
+
+// Conditional defines
+#if(1)
+
 #ifdef _BRG_USE_UNITS_
 #define BRG_UNITS brgastro::unit_obj
 #define BRG_DISTANCE brgastro::unit_distance
@@ -114,13 +123,13 @@ const double pi = 3.14159265358979323846;
 #define BRG_CHARGE double
 #define BRG_VELOCITY double
 
-#define CONST_BRG_UNITS_REF const double
-#define CONST_BRG_DISTANCE_REF const double
-#define CONST_BRG_TIME_REF const double
-#define CONST_BRG_MASS_REF const double
-#define CONST_BRG_ANGLE_REF const double
-#define CONST_BRG_CHARGE_REF const double
-#define CONST_BRG_VELOCITY_REF const double
+#define CONST_BRG_UNITS_REF const double &
+#define CONST_BRG_DISTANCE_REF const double &
+#define CONST_BRG_TIME_REF const double &
+#define CONST_BRG_MASS_REF const double &
+#define CONST_BRG_ANGLE_REF const double &
+#define CONST_BRG_CHARGE_REF const double &
+#define CONST_BRG_VELOCITY_REF const double &
 #endif // #ifdef _BRG_USE_UNITS_
 
 #ifdef _BRG_USE_CPP_11_STD_
@@ -139,8 +148,10 @@ const double pi = 3.14159265358979323846;
 #endif // _BRG_USE_CPP_11_STD_
 #endif // #ifndef NULL
 
+#endif // Conditional defines
+
 // Error code values
-#ifndef _BRG_ERR_CODES_DEFINED_
+#if(1)
 #define _BRG_ERR_CODES_DEFINED_
 #define LOWER_LEVEL_ERROR       10
 #define UNSPECIFIED_ERROR        1
@@ -151,6 +162,6 @@ const double pi = 3.14159265358979323846;
 #define MEMORY_ERROR             6
 #define FILE_ACCESS_ERROR        7
 #define INFINITE_LOOP_ERROR      8
-#endif // #ifndef _BRG_ERR_CODES_DEFINED_
+#endif // Error code values
 
-#endif
+#endif // _BRG_GLOBAL_H_INCLUDED_

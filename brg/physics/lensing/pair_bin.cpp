@@ -43,12 +43,12 @@
 #include "brg/physics/lensing/magnification/mag_signal_integral_cache.h"
 #include "brg/physics/lensing/magnification/mag_weight_integral_cache.h"
 #include "brg/math/statistics/effective_count.hpp"
-#include "brg/math/statistics/standard_error_of_weighted_mean.hpp"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/utility.hpp"
 
 #include "pair_bin.h"
-#include "../../math/statistics/statistic_extractors.hpp"
+
+#include "../../math/statistics/error_of_weighted_mean.hpp"
 
 namespace brgastro {
 
@@ -131,40 +131,47 @@ void pair_bin::clear()
 // Calculations on stored values
 #if (1)
 
+BRG_UNITS pair_bin::area() const
+{
+	BRG_UNITS result = unmasked_frac()*num_lenses()*pi*(square(afd(R_max(),lens_z_mean()))-square(afd(R_min(),lens_z_mean())));
+	brgastro::fixbad(result);
+	return result;
+}
+
 BRG_UNITS pair_bin::delta_Sigma_t_mean() const
 {
-	return safe_extract_mean(_delta_Sigma_t_values_);
+	return boost::accumulators::mean(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_mean() const
 {
-	return safe_extract_mean(_delta_Sigma_x_values_);
+	return boost::accumulators::mean(_delta_Sigma_x_values_);
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_mean_square() const
 {
-	return safe_extract_moment<2>(_delta_Sigma_t_values_);
+	return boost::accumulators::moment<2>(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_mean_square() const
 {
-	return safe_extract_moment<2>(_delta_Sigma_x_values_);
+	return boost::accumulators::moment<2>(_delta_Sigma_x_values_);
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_std() const
 {
-	return std::sqrt(safe_extract_variance(_delta_Sigma_t_values_));
+	return std::sqrt(boost::accumulators::variance(_delta_Sigma_t_values_));
 }
 BRG_UNITS pair_bin::delta_Sigma_x_std() const
 {
-	return std::sqrt(safe_extract_variance(_delta_Sigma_x_values_));
+	return std::sqrt(boost::accumulators::variance(_delta_Sigma_x_values_));
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_stderr() const
 {
-	return safe_extract_error_of_weighted_mean(_delta_Sigma_t_values_);
+	return boost::accumulators::error_of_weighted_mean(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_stderr() const
 {
-	return safe_extract_error_of_weighted_mean(_delta_Sigma_x_values_);
+	return boost::accumulators::error_of_weighted_mean(_delta_Sigma_x_values_);
 }
 
 #endif

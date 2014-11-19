@@ -41,14 +41,15 @@ public:
 
 	// Constructors and destructors
 #if(1)
-	source_galaxy( CONST_BRG_ANGLE_REF init_ra = 0, CONST_BRG_ANGLE_REF init_dec = 0, double init_z = 0,
-			double init_gamma_1 = 0, double init_gamma_2 = 0, double init_kappa = 0,
-			CONST_BRG_MASS_REF init_mstar=0, double init_mag=0)
+	source_galaxy( CONST_BRG_ANGLE_REF init_ra = 0, CONST_BRG_ANGLE_REF init_dec = 0, const double & init_z = 0,
+			const double & init_gamma_1 = 0, const double & init_gamma_2 = 0, const double & init_kappa = 0,
+			CONST_BRG_MASS_REF init_mstar = 0, const double & init_mag = 0, const double & init_weight = 1)
 	: sky_obj(init_ra,init_dec,init_z),
 	  source_obj(init_ra, init_dec, init_z,
 	  			init_gamma_1, init_gamma_2, init_kappa),
 	  galaxy(init_ra,init_dec,init_z,0,0,0,init_mstar,init_mag)
 	{
+		set_weight(init_weight);
 	}
 	virtual ~source_galaxy() {
 		// TODO Auto-generated destructor stub

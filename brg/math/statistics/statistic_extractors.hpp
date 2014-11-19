@@ -37,7 +37,7 @@
 #include <boost/accumulators/statistics/weighted_variance.hpp>
 
 #include "brg/math/statistics/effective_count.hpp"
-#include "brg/math/statistics/standard_error_of_weighted_mean.hpp"
+#include "brg/math/statistics/error_of_weighted_mean.hpp"
 #include "brg/math/statistics/sum_of_square_weights.hpp"
 
 namespace brgastro {
@@ -167,16 +167,16 @@ decltype(boost::accumulators::error_of<boost::accumulators::tag::mean>(std::forw
 #if(1)
 template<typename Ti>
 auto extract_error_of_weighted_mean(Ti && acc) ->
-	decltype(boost::accumulators::standard_error_of_weighted_mean(std::forward<Ti>(acc)))
+	decltype(boost::accumulators::error_of_weighted_mean(std::forward<Ti>(acc)))
 {
-	return boost::accumulators::standard_error_of_weighted_mean(std::forward<Ti>(acc));
+	return boost::accumulators::error_of_weighted_mean(std::forward<Ti>(acc));
 }
 
 template<typename Ti>
 auto safe_extract_error_of_weighted_mean(Ti && acc) ->
-	decltype(boost::accumulators::standard_error_of_weighted_mean(std::forward<Ti>(acc)))
+	decltype(boost::accumulators::error_of_weighted_mean(std::forward<Ti>(acc)))
 {
-	auto result = boost::accumulators::standard_error_of_weighted_mean(std::forward<Ti>(acc));
+	auto result = boost::accumulators::error_of_weighted_mean(std::forward<Ti>(acc));
 	if(isbad(result)) result = 0;
 	return result;
 }

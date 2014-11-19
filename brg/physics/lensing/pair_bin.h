@@ -39,8 +39,6 @@
 #include <boost/container/flat_set.hpp>
 
 #include "brg/math/statistics/effective_count.hpp"
-#include "brg/math/statistics/standard_error_of_weighted_mean.hpp"
-#include "brg/math/statistics/statistic_extractors.hpp"
 
 #include "brg/global.h"
 
@@ -48,8 +46,7 @@
 #include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
-
-namespace b_acc = boost::accumulators;
+#include "../../math/statistics/error_of_weighted_mean.hpp"
 
 namespace brgastro {
 
@@ -73,7 +70,7 @@ private:
 				boost::accumulators::tag::weighted_mean,
 				boost::accumulators::tag::weighted_moment<2>,
 				boost::accumulators::tag::weighted_variance,
-				boost::accumulators::tag::standard_error_of_weighted_mean >,
+				boost::accumulators::tag::error_of_weighted_mean >,
 				double >;
 
 	// Pair data
@@ -138,68 +135,65 @@ public:
 #endif
 
 	// Count
+#if(1)
 	size_t count() const
 	{
-		return extract_count(_R_values_);
+		return boost::accumulators::count(_R_values_);
 	}
 	double effective_count() const
 	{
-		return safe_extract_effective_count(_delta_Sigma_t_values_);
+		return boost::accumulators::effective_count(_delta_Sigma_t_values_);
 	}
 	double sum_of_weights() const
 	{
-		return extract_sum_of_weights(_delta_Sigma_t_values_);
+		return boost::accumulators::sum_of_weights(_delta_Sigma_t_values_);
 	}
 	double sum_of_square_weights() const
 	{
-		return extract_sum_of_square_weights(_delta_Sigma_t_values_);
+		return boost::accumulators::sum_of_square_weights(_delta_Sigma_t_values_);
 	}
 	size_t num_lenses() const
 	{
 		return _distinct_lens_ids_.size();
 	}
+#endif
 
 	// Limits and means accessors
 #if(1)
 
 	BRG_DISTANCE R_mean() const
 	{
-		return safe_extract_weighted_mean(_R_values_);
+		return boost::accumulators::weighted_mean(_R_values_);
 	}
 
 	BRG_MASS m_mean() const
 	{
-		return safe_extract_weighted_mean(_m_values_);
+		return boost::accumulators::weighted_mean(_m_values_);
 	}
 
 	double z_mean() const
 	{
-		return safe_extract_weighted_mean(_z_values_);
+		return boost::accumulators::weighted_mean(_z_values_);
 	}
 
 	double lens_z_mean() const
 	{
-		return safe_extract_weighted_mean(_lens_z_values_);
+		return boost::accumulators::weighted_mean(_lens_z_values_);
 	}
 
 	double source_z_mean() const
 	{
-		return safe_extract_weighted_mean(_source_z_values_);
+		return boost::accumulators::weighted_mean(_source_z_values_);
 	}
 
 	double mag_mean() const
 	{
-		return safe_extract_weighted_mean(_mag_lens_values_);
+		return boost::accumulators::weighted_mean(_mag_lens_values_);
 	}
 
 	double unmasked_frac() const
 	{
-		return safe_extract_weighted_mean(_lens_unmasked_fracs_);
-	}
-
-	BRG_UNITS area() const
-	{
-		return unmasked_frac()*num_lenses()*pi*(square(afd(R_max(),lens_z_mean()))-square(afd(R_min(),lens_z_mean())));
+		return boost::accumulators::weighted_mean(_lens_unmasked_fracs_);
 	}
 
 #endif
@@ -240,6 +234,8 @@ public:
 
 	// Calculations on stored values
 #if (1)
+
+	BRG_UNITS area() const;
 
 	BRG_UNITS delta_Sigma_t_mean() const;
 	BRG_UNITS delta_Sigma_x_mean() const;

@@ -247,15 +247,9 @@ void pair_binner::_resort() const
 bool pair_binner::binnable( const galaxy & lens ) const
 {
 	if(!valid_limits()) return false;
-	auto m = lens.m();
-	if(m<m_limits().front()) return false;
-	if(m>m_limits().back()) return false;
-	auto z = lens.z();
-	if(z<z_limits().front()) return false;
-	if(z>z_limits().back()) return false;
-	auto mag = lens.mag();
-	if(mag<mag_limits().front()) return false;
-	if(mag>mag_limits().back()) return false;
+	if(m_limits().outside_limits(lens.m())) return false;
+	if(z_limits().outside_limits(lens.z())) return false;
+	if(mag_limits().outside_limits(lens.mag())) return false;
 	return true;
 }
 void pair_binner::add_pair( const lens_source_pair & new_pair)
@@ -357,7 +351,7 @@ BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(size_t R_i, size_t m_i, size
 // Access by position
 #if(1)
 BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag)
+												  const double & z, const double & mag)
 {
 	_sort();
 	size_t R_i = R_limits().get_bin_index(R);
@@ -367,7 +361,7 @@ BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONS
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag)
+												  const double & z, const double & mag)
 {
 	_sort();
 	size_t R_i = R_limits().get_bin_index(R);
@@ -378,7 +372,7 @@ BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONS
 }
 
 BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag)
+												 const double & z, const double & mag)
 {
 	_sort();
 	size_t R_i = R_limits().get_bin_index(R);
@@ -388,7 +382,7 @@ BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag)
+												 const double & z, const double & mag)
 {
 	_sort();
 	size_t R_i = R_limits().get_bin_index(R);
@@ -399,7 +393,7 @@ BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST
 }
 
 BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag)
+													const double & z, const double & mag)
 {
 	_sort();
 	size_t R_i = R_limits().get_bin_index(R);
@@ -409,7 +403,7 @@ BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CO
 	return _pair_bins_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag)
+													const double & z, const double & mag)
 {
 	_sort();
 	size_t R_i = R_limits().get_bin_index(R);

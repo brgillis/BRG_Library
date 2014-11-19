@@ -46,8 +46,8 @@ namespace brgastro {
 
 pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF init_R_max,
 		CONST_BRG_MASS_REF init_m_min, CONST_BRG_MASS_REF init_m_max,
-		double init_z_min, double init_z_max,
-		double init_mag_min, double init_mag_max )
+		const double & init_z_min, const double & init_z_max,
+		const double & init_mag_min, const double & init_mag_max )
 :	_R_min_(init_R_min),
 	_R_max_(init_R_max),
 	_m_min_(init_m_min),
@@ -282,6 +282,116 @@ void pair_bin_summary::load(const std::string & filename)
 	open_file_input(in,filename);
 	load(in);
 }
+
+#endif
+
+
+
+// Summary values
+#if (1)
+
+BRG_UNITS pair_bin_summary::sigma_crit() const
+{
+	#ifdef _BRG_USE_UNITS_
+	BRG_UNITS result(brgastro::sigma_crit(z_mean(),source_z_mean()),-2,0,1,0,0,0);
+	#else
+	BRG_UNITS result = brgastro::sigma_crit(z_mean(),source_z_mean());
+	#endif
+	return result;
+}
+
+// Shear
+#if (1)
+
+BRG_UNITS pair_bin_summary::delta_Sigma_t_std() const
+{
+	return std::sqrt( _delta_Sigma_t_mean_square_ - square(_delta_Sigma_t_mean_) );
+}
+BRG_UNITS pair_bin_summary::delta_Sigma_x_std() const
+{
+	return std::sqrt( _delta_Sigma_x_mean_square_ - square(_delta_Sigma_x_mean_) );
+}
+
+BRG_UNITS pair_bin_summary::delta_Sigma_t_stderr() const
+{
+	if(_count_<2) return std::numeric_limits<double>::max();
+	BRG_UNITS result = delta_Sigma_t_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
+	if(isgood(result)) return result;
+	return 0;
+}
+BRG_UNITS pair_bin_summary::delta_Sigma_x_stderr() const
+{
+	if(_count_<2) return std::numeric_limits<double>::max();
+	BRG_UNITS result = delta_Sigma_x_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
+	if(isgood(result)) return result;
+	return 0;
+}
+
+double pair_bin_summary::gamma_t_mean() const
+{
+	return delta_Sigma_t_mean()/sigma_crit();
+}
+double pair_bin_summary::gamma_x_mean() const
+{
+	return delta_Sigma_x_mean()/sigma_crit();
+}
+double pair_bin_summary::gamma_mean() const
+{
+	return std::sqrt(gamma_mean_square());
+}
+double pair_bin_summary::gamma_mean_square() const
+{
+	return square(gamma_t_mean())+square(gamma_x_mean());
+
+}
+
+double pair_bin_summary::gamma_t_stderr() const
+{
+	return delta_Sigma_t_stderr()/sigma_crit();
+}
+double pair_bin_summary::gamma_x_stderr() const
+{
+	return delta_Sigma_x_stderr()/sigma_crit();
+}
+double pair_bin_summary::gamma_stderr() const
+{
+	return quad_add_err(gamma_t_mean(),gamma_t_stderr(),gamma_x_mean(),gamma_x_stderr());
+}
+double pair_bin_summary::gamma_square_stderr() const
+{
+	return 2*gamma_mean()*gamma_stderr();
+}
+
+#endif // Shear
+
+// Magnification
+#if (1)
+
+BRG_UNITS pair_bin_summary::area_per_lens() const
+{
+	return area()/num_lenses();
+}
+double pair_bin_summary::mu_stderr() const
+{
+	// TODO Correct this for weighted lenses and pairs used for magnification if needed
+	return 1./std::sqrt(mu_W());
+}
+double pair_bin_summary::kappa() const
+{
+	double gms = gamma_mean_square();
+	brgastro::fixbad(gms);
+	return 1.-std::sqrt(1/mu_hat()+gms);
+}
+double pair_bin_summary::kappa_stderr() const
+{
+	double gms = gamma_mean_square();
+	double gserr = gamma_square_stderr();
+	brgastro::fixbad(gms);
+	brgastro::fixbad(gserr);
+	return sqrt_err(1/mu_hat()+gamma_mean_square(),quad_add(mu_stderr(),gamma_square_stderr()));
+}
+
+#endif // Magnification
 
 #endif
 

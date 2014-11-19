@@ -126,8 +126,8 @@ public:
 #if(1)
 	pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min=0, CONST_BRG_DISTANCE_REF init_R_max=0,
 			CONST_BRG_MASS_REF init_m_min=0, CONST_BRG_MASS_REF init_m_max=0,
-			double init_z_min=0, double init_z_max=0,
-			double init_mag_min=0, double init_mag_max=0 );
+			const double & init_z_min=0, const double & init_z_max=0,
+			const double & init_mag_min=0, const double & init_mag_max=0 );
 	pair_bin_summary( const pair_bin & bin);
 	pair_bin_summary( std::istream & in );
 	pair_bin_summary( std::string & filename );
@@ -307,103 +307,38 @@ public:
 	// Summary values
 #if (1)
 
-	BRG_UNITS sigma_crit() const
-	{
-		#ifdef _BRG_USE_UNITS_
-		BRG_UNITS result(brgastro::sigma_crit(z_mean(),source_z_mean()),-2,0,1,0,0,0);
-		#else
-		BRG_UNITS result = brgastro::sigma_crit(z_mean(),source_z_mean());
-		#endif
-		return result;
-	}
+	BRG_UNITS sigma_crit() const;
 
 	// Shear
 #if (1)
-	virtual BRG_UNITS delta_Sigma_t_mean() const
-	{
-		return _delta_Sigma_t_mean_;
-	}
-	virtual BRG_UNITS delta_Sigma_x_mean() const
-	{
-		return _delta_Sigma_x_mean_;
-	}
+	virtual BRG_UNITS delta_Sigma_t_mean() const;
+	virtual BRG_UNITS delta_Sigma_x_mean() const;
 
-	virtual BRG_UNITS delta_Sigma_t_mean_square() const
-	{
-		return _delta_Sigma_t_mean_square_;
-	}
-	virtual BRG_UNITS delta_Sigma_x_mean_square() const
-	{
-		return _delta_Sigma_x_mean_square_;
-	}
+	virtual BRG_UNITS delta_Sigma_t_mean_square() const;
+	virtual BRG_UNITS delta_Sigma_x_mean_square() const;
 
-	virtual BRG_UNITS delta_Sigma_t_std() const
-	{
-		return std::sqrt( _delta_Sigma_t_mean_square_ - square(_delta_Sigma_t_mean_) );
-	}
-	virtual BRG_UNITS delta_Sigma_x_std() const
-	{
-		return std::sqrt( _delta_Sigma_x_mean_square_ - square(_delta_Sigma_x_mean_) );
-	}
+	virtual BRG_UNITS delta_Sigma_t_std() const;
+	virtual BRG_UNITS delta_Sigma_x_std() const;
 
-	virtual BRG_UNITS delta_Sigma_t_stderr() const
-	{
-		if(_count_<2) return std::numeric_limits<double>::max();
-		BRG_UNITS result = delta_Sigma_t_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
-		if(isgood(result)) return result;
-		return 0;
-	}
-	virtual BRG_UNITS delta_Sigma_x_stderr() const
-	{
-		if(_count_<2) return std::numeric_limits<double>::max();
-		BRG_UNITS result = delta_Sigma_x_std()*std::sqrt(_count_/(effective_count()*(_count_-1)) );
-		if(isgood(result)) return result;
-		return 0;
-	}
+	virtual BRG_UNITS delta_Sigma_t_stderr() const;
+	virtual BRG_UNITS delta_Sigma_x_stderr() const;
 
-	double gamma_t_mean() const
-	{
-		return delta_Sigma_t_mean()/sigma_crit();
-	}
-	double gamma_x_mean() const
-	{
-		return delta_Sigma_x_mean()/sigma_crit();
-	}
-	double gamma_mean() const
-	{
-		return std::sqrt(gamma_mean_square());
-	}
-	double gamma_mean_square() const
-	{
-		return square(gamma_t_mean())+square(gamma_x_mean());
-	}
+	double gamma_t_mean() const;
+	double gamma_x_mean() const;
+	double gamma_mean() const;
+	double gamma_mean_square() const;
 
-	double gamma_t_stderr() const
-	{
-		return delta_Sigma_t_stderr()/sigma_crit();
-	}
-	double gamma_x_stderr() const
-	{
-		return delta_Sigma_x_stderr()/sigma_crit();
-	}
-	double gamma_stderr() const
-	{
-		return quad_add_err(gamma_t_mean(),gamma_t_stderr(),gamma_x_mean(),gamma_x_stderr());
-	}
-	double gamma_square_stderr() const
-	{
-		return 2*gamma_mean()*gamma_stderr();
-	}
+	double gamma_t_stderr() const;
+	double gamma_x_stderr() const;
+	double gamma_stderr() const;
+	double gamma_square_stderr() const;
 
 #endif // Shear
 
 	// Magnification
 #if (1)
 
-	BRG_UNITS area_per_lens() const
-	{
-		return area()/num_lenses();
-	}
+	BRG_UNITS area_per_lens() const;
 	virtual BRG_UNITS area() const
 	{
 		return _total_area_;
@@ -420,19 +355,9 @@ public:
 	{
 		return _mu_W_;
 	}
-	double mu_stderr() const
-	{
-		// TODO Correct this for weighted lenses and pairs used for magnification if needed
-		return 1./std::sqrt(mu_W());
-	}
-	double kappa() const
-	{
-		return 1.-std::sqrt(1/mu_hat()+gamma_mean_square());
-	}
-	double kappa_stderr() const
-	{
-		return sqrt_err(1/mu_hat()+gamma_mean_square(),quad_add(mu_stderr(),gamma_square_stderr()));
-	}
+	double mu_stderr() const;
+	double kappa() const;
+	double kappa_stderr() const;
 
 #endif // Magnification
 
