@@ -60,9 +60,9 @@ void pair_bin::_uncache_values()
 
 pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF init_R_max,
 		CONST_BRG_MASS_REF init_m_min, CONST_BRG_MASS_REF init_m_max,
-		double init_z_min, double init_z_max,
-		double init_mag_min, double init_mag_max,
-		double init_z_buffer)
+		const double & init_z_min, const double & init_z_max,
+		const double & init_mag_min, const double & init_mag_max,
+		const double & init_z_buffer)
 :	pair_bin_summary(init_R_min,init_R_max,init_m_min,init_m_max,
 		init_z_min,init_z_max,init_mag_min,init_mag_max),
 	_mu_hat_cached_value_(std::numeric_limits<double>::infinity()),
@@ -76,53 +76,76 @@ pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF in
 
 void pair_bin::add_pair( const lens_source_pair & new_pair)
 {
-	double shear_weight = new_pair.shear_weight();
-	double mag_weight = new_pair.mag_weight();
+	const double & shear_weight = new_pair.shear_weight();
+	const double & mag_weight = new_pair.mag_weight();
 
-	// General info
-	_R_values_(new_pair.R_proj(), boost::accumulators::weight = mag_weight);
-	_m_values_(new_pair.m_lens(), boost::accumulators::weight = mag_weight);
-	_z_values_(new_pair.z_lens(), boost::accumulators::weight = mag_weight);
-
-	// Shear info
-	_delta_Sigma_t_values_(new_pair.delta_Sigma_t(), boost::accumulators::weight = shear_weight);
-	_delta_Sigma_x_values_(new_pair.delta_Sigma_x(), boost::accumulators::weight = shear_weight);
-
-	// Magnification info
-	auto & mag_source = new_pair.mag_source();
-	if((mag_source>=mag_m_min)&&(mag_source<=mag_m_max))
+	// Shear first
+	if(shear_weight>0)
 	{
-		_source_z_values_(new_pair.z_source(), boost::accumulators::weight = mag_weight);
-		_mag_lens_values_(new_pair.mag_lens(), boost::accumulators::weight = mag_weight);
+		// General info
+		_shear_lens_R_values_(new_pair.R_proj(), boost::accumulators::weight = shear_weight);
+		_shear_lens_m_values_(new_pair.m_lens(), boost::accumulators::weight = shear_weight);
+		_shear_lens_mag_values_(new_pair.mag_lens(), boost::accumulators::weight = shear_weight);
+		_shear_lens_z_values_(new_pair.z_lens(), boost::accumulators::weight = shear_weight);
+		_shear_source_z_values_(new_pair.z_source(), boost::accumulators::weight = shear_weight);
+
+		// Shear info
+		_delta_Sigma_t_values_(new_pair.delta_Sigma_t(), boost::accumulators::weight = shear_weight);
+		_delta_Sigma_x_values_(new_pair.delta_Sigma_x(), boost::accumulators::weight = shear_weight);
+	}
+
+	// Now magnification
+	const auto & mag_source = new_pair.mag_source();
+	const auto & z_source = new_pair.z_source();
+	if((mag_weight>0) && (mag_source>=mag_m_min) && (mag_source<=mag_m_max) &&
+		(z_source>=mag_z_min) && (mag_source<=mag_z_max) )
+	{
+		// General info
+		_magf_lens_R_values_(new_pair.R_proj(), boost::accumulators::weight = 1);
+		_magf_source_z_values_(new_pair.z_source(), boost::accumulators::weight = mag_weight);
+
+		// Magnification info
 		_mu_obs_values_(brgastro::magnification_alpha(new_pair.mag_source(),new_pair.z_lens()+_z_buffer_)-1,
 				boost::accumulators::weight = mag_weight);
 		_uncache_values();
 	}
 }
-void pair_bin::add_lens( const size_t & new_lens_id, const double & z, const double & unmasked_frac )
+void pair_bin::add_lens( const lens_id & lens )
 {
-	if(_distinct_lens_ids_.find(new_lens_id)==_distinct_lens_ids_.end())
+	if(_distinct_lens_ids_.find(lens.id)==_distinct_lens_ids_.end())
 	{
-		_distinct_lens_ids_.insert(new_lens_id);
-		_lens_z_values_(z, boost::accumulators::weight = 1);
-		_lens_unmasked_fracs_(unmasked_frac, boost::accumulators::weight = 1);
+		_distinct_lens_ids_.insert(lens.id);
+		_magf_lens_m_values_(lens.m, boost::accumulators::weight = lens.weight);
+		_magf_lens_mag_values_(lens.mag, boost::accumulators::weight = lens.weight);
+		_magf_lens_z_values_(lens.z, boost::accumulators::weight = lens.weight);
+		_magf_unmasked_fracs_(lens.unmasked_frac(R_mid()), boost::accumulators::weight = lens.weight);
 		_uncache_values();
 	}
 }
 void pair_bin::clear()
 {
-	set_zero(_R_values_);
-	set_zero(_m_values_);
-	set_zero(_z_values_);
-	set_zero(_lens_z_values_);
-	set_zero(_source_z_values_);
-	set_zero(_mag_lens_values_);
+	set_zero(_magf_lens_R_values_);
+	set_zero(_shear_lens_R_values_);
+	set_zero(_magf_lens_m_values_);
+	set_zero(_shear_lens_m_values_);
+	set_zero(_magf_lens_z_values_);
+	set_zero(_shear_lens_z_values_);
+	set_zero(_magf_lens_mag_values_);
+	set_zero(_shear_lens_mag_values_);
+
+	set_zero(_magf_source_z_values_);
+	set_zero(_shear_source_z_values_);
+
+	set_zero(_magf_unmasked_fracs_);
 	set_zero(_mu_obs_values_);
+
 	set_zero(_delta_Sigma_t_values_);
 	set_zero(_delta_Sigma_x_values_);
+
 	set_zero(_distinct_lens_ids_);
-	set_zero(_lens_unmasked_fracs_);
+
 	_uncache_values();
+
 	pair_bin_summary::clear();
 }
 
@@ -133,7 +156,8 @@ void pair_bin::clear()
 
 BRG_UNITS pair_bin::area() const
 {
-	BRG_UNITS result = unmasked_frac()*num_lenses()*pi*(square(afd(R_max(),lens_z_mean()))-square(afd(R_min(),lens_z_mean())));
+	BRG_UNITS result = unmasked_frac()*magf_num_lenses()*pi*
+		(square(afd(R_max(),magf_lens_z_mean()))-square(afd(R_min(),magf_lens_z_mean())));
 	brgastro::fixbad(result);
 	return result;
 }

@@ -223,7 +223,7 @@ void pair_binner::_sort() const
 			auto & Rmzmag_bin = std::lower_bound(mag_zip_begin,mag_zip_end,mag,mag_func)->get<1>();
 
 			// At this point, pair_Rmzmag is a reference to the pair bin we want to add this pair to
-			Rmzmag_bin.add_lens(lens.id,lens.z,lens.unmasked_frac(Rmzmag_bin.R_mid()));
+			Rmzmag_bin.add_lens(lens);
 		}
 	}
 
@@ -258,9 +258,9 @@ void pair_binner::add_pair( const lens_source_pair & new_pair)
 	_sorted_ = false;
 }
 void pair_binner::add_lens_id( const size_t & new_lens_id, const BRG_MASS & m, const double & z,
-		const double & mag)
+		const double & mag, const double & weight)
 {
-	_lens_ids_.insert(lens_id(new_lens_id,m,z,mag,_unmasked_frac_bin_limits_,_unmasked_fracs_));
+	_lens_ids_.insert(lens_id(new_lens_id,m,z,mag,_unmasked_frac_bin_limits_,_unmasked_fracs_, weight));
 	_sorted_ = false;
 }
 void pair_binner::set_unmasked_fractions( const std::vector<double> & bin_limits,

@@ -47,43 +47,10 @@
 
 namespace brgastro {
 
-// lens_id struct
-#if(1)
-struct lens_id
-{
-	size_t id;
-	BRG_MASS m;
-	double z;
-	double mag;
-
-	// Data on the unmasked fraction of annuli
-#if(1)
-
-	brgastro::limit_vector<BRG_DISTANCE> unmasked_frac_bin_limits;
-	std::vector<double> unmasked_fracs;
-
-	double unmasked_frac(const BRG_DISTANCE & R_proj) const;
-
-#endif
-
-	lens_id(const size_t & id, const BRG_MASS & m, const double & z, const double & mag,
-			const std::vector<BRG_DISTANCE> & unmasked_frac_bin_limits,
-			const std::vector<double> & unmasked_fracs)
-	: id(id),
-	  m(m),
-	  z(z),
-	  mag(mag),
-	  unmasked_frac_bin_limits(unmasked_frac_bin_limits),
-	  unmasked_fracs(unmasked_fracs)
-	{
-	}
-};
-
 inline bool lens_id_lt(const lens_id & lens1, const lens_id & lens2)
 {
 	return lens1.id<lens2.id;
 }
-#endif
 
 /**
  *
@@ -202,7 +169,7 @@ public:
 	bool binnable( const galaxy & lens) const;
 	void add_pair( const lens_source_pair & new_pair);
 	void add_lens_id( const size_t & new_lens_id, const BRG_MASS & m, const double & z,
-			const double & mag);
+			const double & mag, const double & weight=1);
 	void set_unmasked_fractions( const std::vector<double> & bin_limits,
 			const std::vector<double> & unmasked_fractions);
 	void clear();

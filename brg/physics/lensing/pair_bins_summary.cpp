@@ -575,8 +575,8 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					pair_bin_summary & bin = _pair_bin_summaries_[R_i][m_i][z_i][mag_i];
 
 					// Check if this bin is good
-					if(bin.effective_count()>=std::numeric_limits<double>::max()) continue;
-					if(isbad(bin.effective_count())) continue;
+					if(bin.shear_effective_pair_count()>=std::numeric_limits<double>::max()) continue;
+					if(isbad(bin.shear_effective_pair_count())) continue;
 					// It's possible we'll get bins with no shear information like this, but this
 					// prunes out at least those without any info
 
@@ -593,8 +593,8 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					data[++col_i].push_back(bin.mag_min());
 					data[++col_i].push_back(bin.mag_max());
 					data[++col_i].push_back(bin.mag_mean());
-					data[++col_i].push_back(bin.count());
-					data[++col_i].push_back(bin.effective_count());
+					data[++col_i].push_back(bin.shear_pair_count());
+					data[++col_i].push_back(bin.shear_effective_pair_count());
 					data[++col_i].push_back(bin.delta_Sigma_t_mean());
 					data[++col_i].push_back(bin.delta_Sigma_t_std());
 					data[++col_i].push_back(bin.delta_Sigma_t_stderr());

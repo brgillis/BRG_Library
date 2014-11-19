@@ -45,10 +45,47 @@
 #include "brg/physics/lensing/lens_source_pair.h"
 #include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/units/unit_obj.h"
+#include "brg/vector/limit_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
 #include "../../math/statistics/error_of_weighted_mean.hpp"
 
 namespace brgastro {
+
+// lens_id struct
+#if(1)
+struct lens_id
+{
+	size_t id;
+	BRG_MASS m;
+	double z;
+	double mag;
+	double weight;
+
+	// Data on the unmasked fraction of annuli
+#if(1)
+
+	brgastro::limit_vector<BRG_DISTANCE> unmasked_frac_bin_limits;
+	std::vector<double> unmasked_fracs;
+
+	double unmasked_frac(const BRG_DISTANCE & R_proj) const;
+
+#endif
+
+	lens_id(const size_t & id, const BRG_MASS & m, const double & z, const double & mag,
+			const std::vector<BRG_DISTANCE> & unmasked_frac_bin_limits,
+			const std::vector<double> & unmasked_fracs,
+			const double & weight=1)
+	: id(id),
+	  m(m),
+	  z(z),
+	  mag(mag),
+	  weight(weight),
+	  unmasked_frac_bin_limits(unmasked_frac_bin_limits),
+	  unmasked_fracs(unmasked_fracs)
+	{
+	}
+};
+#endif
 
 /**
  *
@@ -75,17 +112,24 @@ private:
 
 	// Pair data
 #if(1)
-	bin_stat_vec_t<BRG_DISTANCE> _R_values_;
-	bin_stat_vec_t<BRG_MASS> _m_values_;
-	bin_stat_vec_t<double> _z_values_;
-	bin_stat_vec_t<double> _lens_z_values_;
-	bin_stat_vec_t<double> _lens_unmasked_fracs_;
-	bin_stat_vec_t<double> _source_z_values_;
-	bin_stat_vec_t<double> _mag_lens_values_;
+	bin_stat_vec_t<BRG_DISTANCE> _magf_lens_R_values_;
+	bin_stat_vec_t<BRG_DISTANCE> _shear_lens_R_values_;
+	bin_stat_vec_t<BRG_MASS> _magf_lens_m_values_;
+	bin_stat_vec_t<BRG_MASS> _shear_lens_m_values_;
+	bin_stat_vec_t<double> _magf_lens_z_values_;
+	bin_stat_vec_t<double> _shear_lens_z_values_;
+	bin_stat_vec_t<double> _magf_lens_mag_values_;
+	bin_stat_vec_t<double> _shear_lens_mag_values_;
+
+	bin_stat_vec_t<double> _magf_source_z_values_;
+	bin_stat_vec_t<double> _shear_source_z_values_;
+
+	bin_stat_vec_t<double> _magf_unmasked_fracs_;
+	bin_stat_vec_t<double> _mu_obs_values_;
+
 	stat_vec_t<BRG_UNITS> _delta_Sigma_t_values_;
 	stat_vec_t<BRG_UNITS> _delta_Sigma_x_values_;
 
-	stat_vec_t<double> _mu_obs_values_;
 	boost::container::flat_set<size_t> _distinct_lens_ids_;
 
 	mutable double _mu_hat_cached_value_;
@@ -105,9 +149,9 @@ public:
 #if(1)
 	pair_bin( CONST_BRG_DISTANCE_REF init_R_min=0, CONST_BRG_DISTANCE_REF init_R_max=0,
 			CONST_BRG_MASS_REF init_m_min=0, CONST_BRG_MASS_REF init_m_max=0,
-			double init_z_min=0, double init_z_max=0,
-			double init_mag_min=0, double init_mag_max=0,
-			double init_z_buffer=_z_buffer_default_value_);
+			const double & init_z_min=0, const double & init_z_max=0,
+			const double & init_mag_min=0, const double & init_mag_max=0,
+			const double & init_z_buffer=_z_buffer_default_value_);
 	virtual ~pair_bin()
 	{
 	}
@@ -129,7 +173,7 @@ public:
 #if(1)
 
 	void add_pair( const lens_source_pair & new_pair);
-	void add_lens( const size_t & lens_id, const double & lens_z, const double & unmasked_frac=1);
+	void add_lens( const lens_id & lens );
 	void clear();
 
 #endif
@@ -138,21 +182,45 @@ public:
 #if(1)
 	size_t count() const
 	{
-		return boost::accumulators::count(_R_values_);
+		return shear_count();
+	}
+	size_t shear_count() const
+	{
+		return boost::accumulators::count(_shear_lens_R_values_);
+	}
+	size_t magf_count() const
+	{
+		return boost::accumulators::count(_magf_lens_R_values_);
 	}
 	double effective_count() const
+	{
+		return shear_effective_count();
+	}
+	double shear_effective_count() const
 	{
 		return boost::accumulators::effective_count(_delta_Sigma_t_values_);
 	}
 	double sum_of_weights() const
 	{
+		return shear_sum_of_weights();
+	}
+	double shear_sum_of_weights() const
+	{
 		return boost::accumulators::sum_of_weights(_delta_Sigma_t_values_);
 	}
 	double sum_of_square_weights() const
 	{
+		return shear_sum_of_square_weights();
+	}
+	double shear_sum_of_square_weights() const
+	{
 		return boost::accumulators::sum_of_square_weights(_delta_Sigma_t_values_);
 	}
 	size_t num_lenses() const
+	{
+		return magf_num_lenses();
+	}
+	size_t magf_num_lenses() const
 	{
 		return _distinct_lens_ids_.size();
 	}
@@ -161,73 +229,74 @@ public:
 	// Limits and means accessors
 #if(1)
 
-	BRG_DISTANCE R_mean() const
+	BRG_DISTANCE R_lens_mean() const
 	{
-		return boost::accumulators::weighted_mean(_R_values_);
+		return shear_lens_R_mean();
+	}
+	BRG_DISTANCE shear_lens_R_mean() const
+	{
+		return boost::accumulators::weighted_mean(_shear_lens_R_values_);
+	}
+	BRG_DISTANCE magf_lens_R_mean() const
+	{
+		return boost::accumulators::weighted_mean(_magf_lens_R_values_);
 	}
 
-	BRG_MASS m_mean() const
+	BRG_MASS m_lens_mean() const
 	{
-		return boost::accumulators::weighted_mean(_m_values_);
+		return shear_lens_m_mean();
 	}
-
-	double z_mean() const
+	BRG_MASS shear_lens_m_mean() const
 	{
-		return boost::accumulators::weighted_mean(_z_values_);
+		return boost::accumulators::weighted_mean(_shear_lens_m_values_);
+	}
+	BRG_MASS magf_lens_m_mean() const
+	{
+		return boost::accumulators::weighted_mean(_magf_lens_m_values_);
 	}
 
 	double lens_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_lens_z_values_);
+		return shear_lens_z_mean();
+	}
+	double shear_lens_z_mean() const
+	{
+		return boost::accumulators::weighted_mean(_shear_lens_z_values_);
+	}
+	double magf_lens_z_mean() const
+	{
+		return boost::accumulators::weighted_mean(_magf_lens_z_values_);
+	}
+
+	double lens_mag_mean() const
+	{
+		return shear_lens_mag_mean();
+	}
+	double shear_lens_mag_mean() const
+	{
+		return boost::accumulators::weighted_mean(_shear_lens_mag_values_);
+	}
+	double magf_lens_mag_mean() const
+	{
+		return boost::accumulators::weighted_mean(_magf_lens_mag_values_);
 	}
 
 	double source_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_source_z_values_);
+		return shear_source_z_mean();
 	}
-
-	double mag_mean() const
+	double shear_source_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_mag_lens_values_);
+		return boost::accumulators::weighted_mean(_shear_source_z_values_);
+	}
+	double magf_source_z_mean() const
+	{
+		return boost::accumulators::weighted_mean(_magf_source_z_values_);
 	}
 
 	double unmasked_frac() const
 	{
-		return boost::accumulators::weighted_mean(_lens_unmasked_fracs_);
-	}
-
-#endif
-
-	// Accessors to pair values
-#if (1)
-
-	bin_stat_vec_t<BRG_DISTANCE> R_values()
-	{
-		return _R_values_;
-	}
-	bin_stat_vec_t<BRG_MASS> m_values()
-	{
-		return _m_values_;
-	}
-	bin_stat_vec_t<double> z_values()
-	{
-		return _z_values_;
-	}
-	bin_stat_vec_t<double> mag_lens_values()
-	{
-		return _mag_lens_values_;
-	}
-	stat_vec_t<BRG_UNITS> delta_Sigma_t_values()
-	{
-		return _delta_Sigma_t_values_;
-	}
-	stat_vec_t<BRG_UNITS> delta_Sigma_x_values()
-	{
-		return _delta_Sigma_x_values_;
-	}
-	stat_vec_t<double> mu_obs_values()
-	{
-		return _mu_obs_values_;
+		return boost::accumulators::weighted_mean(_magf_unmasked_fracs_);
 	}
 
 #endif
