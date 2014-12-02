@@ -39,6 +39,7 @@
 #include <boost/container/flat_set.hpp>
 
 #include "brg/math/statistics/effective_count.hpp"
+#include "brg/math/statistics/statistic_extractors.hpp"
 
 #include "brg/global.h"
 
@@ -112,8 +113,9 @@ private:
 
 	// Pair data
 #if(1)
-	bin_stat_vec_t<BRG_DISTANCE> _magf_lens_R_values_;
-	bin_stat_vec_t<BRG_DISTANCE> _shear_lens_R_values_;
+	bin_stat_vec_t<BRG_DISTANCE> _magf_R_values_;
+	bin_stat_vec_t<BRG_DISTANCE> _shear_R_values_;
+
 	bin_stat_vec_t<BRG_MASS> _magf_lens_m_values_;
 	bin_stat_vec_t<BRG_MASS> _shear_lens_m_values_;
 	bin_stat_vec_t<double> _magf_lens_z_values_;
@@ -186,11 +188,11 @@ public:
 	}
 	size_t shear_count() const
 	{
-		return boost::accumulators::count(_shear_lens_R_values_);
+		return extract_count(_shear_R_values_);
 	}
 	size_t magf_count() const
 	{
-		return boost::accumulators::count(_magf_lens_R_values_);
+		return extract_count(_magf_R_values_);
 	}
 	double effective_count() const
 	{
@@ -198,7 +200,7 @@ public:
 	}
 	double shear_effective_count() const
 	{
-		return boost::accumulators::effective_count(_delta_Sigma_t_values_);
+		return safe_extract_effective_count(_delta_Sigma_t_values_);
 	}
 	double sum_of_weights() const
 	{
@@ -206,7 +208,7 @@ public:
 	}
 	double shear_sum_of_weights() const
 	{
-		return boost::accumulators::sum_of_weights(_delta_Sigma_t_values_);
+		return safe_extract_sum_of_weights(_delta_Sigma_t_values_);
 	}
 	double sum_of_square_weights() const
 	{
@@ -214,7 +216,7 @@ public:
 	}
 	double shear_sum_of_square_weights() const
 	{
-		return boost::accumulators::sum_of_square_weights(_delta_Sigma_t_values_);
+		return safe_extract_sum_of_square_weights(_delta_Sigma_t_values_);
 	}
 	size_t num_lenses() const
 	{
@@ -229,17 +231,17 @@ public:
 	// Limits and means accessors
 #if(1)
 
-	BRG_DISTANCE R_lens_mean() const
+	BRG_DISTANCE R_mean() const
 	{
-		return shear_lens_R_mean();
+		return shear_R_mean();
 	}
-	BRG_DISTANCE shear_lens_R_mean() const
+	BRG_DISTANCE shear_R_mean() const
 	{
-		return boost::accumulators::weighted_mean(_shear_lens_R_values_);
+		return safe_extract_weighted_mean(_shear_R_values_);
 	}
-	BRG_DISTANCE magf_lens_R_mean() const
+	BRG_DISTANCE magf_R_mean() const
 	{
-		return boost::accumulators::weighted_mean(_magf_lens_R_values_);
+		return safe_extract_weighted_mean(_magf_R_values_);
 	}
 
 	BRG_MASS m_lens_mean() const
@@ -248,11 +250,11 @@ public:
 	}
 	BRG_MASS shear_lens_m_mean() const
 	{
-		return boost::accumulators::weighted_mean(_shear_lens_m_values_);
+		return safe_extract_weighted_mean(_shear_lens_m_values_);
 	}
 	BRG_MASS magf_lens_m_mean() const
 	{
-		return boost::accumulators::weighted_mean(_magf_lens_m_values_);
+		return safe_extract_weighted_mean(_magf_lens_m_values_);
 	}
 
 	double lens_z_mean() const
@@ -261,11 +263,11 @@ public:
 	}
 	double shear_lens_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_shear_lens_z_values_);
+		return safe_extract_weighted_mean(_shear_lens_z_values_);
 	}
 	double magf_lens_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_magf_lens_z_values_);
+		return safe_extract_weighted_mean(_magf_lens_z_values_);
 	}
 
 	double lens_mag_mean() const
@@ -274,11 +276,11 @@ public:
 	}
 	double shear_lens_mag_mean() const
 	{
-		return boost::accumulators::weighted_mean(_shear_lens_mag_values_);
+		return safe_extract_weighted_mean(_shear_lens_mag_values_);
 	}
 	double magf_lens_mag_mean() const
 	{
-		return boost::accumulators::weighted_mean(_magf_lens_mag_values_);
+		return safe_extract_weighted_mean(_magf_lens_mag_values_);
 	}
 
 	double source_z_mean() const
@@ -287,16 +289,16 @@ public:
 	}
 	double shear_source_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_shear_source_z_values_);
+		return safe_extract_weighted_mean(_shear_source_z_values_);
 	}
 	double magf_source_z_mean() const
 	{
-		return boost::accumulators::weighted_mean(_magf_source_z_values_);
+		return safe_extract_weighted_mean(_magf_source_z_values_);
 	}
 
 	double unmasked_frac() const
 	{
-		return boost::accumulators::weighted_mean(_magf_unmasked_fracs_);
+		return safe_extract_weighted_mean(_magf_unmasked_fracs_);
 	}
 
 #endif

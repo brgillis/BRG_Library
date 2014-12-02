@@ -348,7 +348,7 @@ public:
 
     	// Alter the value in the key map by erasing old entry and adding new
     	_key_map_.erase(it);
-    	_key_map_[new_key] = pos;
+    	_key_map_[std::forward<new_key_type>(new_key)] = pos;
 
     	// Alter the value in the vector
     	_val_vector_[pos].first = std::forward<new_key_type>(new_key);

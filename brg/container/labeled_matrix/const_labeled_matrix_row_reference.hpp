@@ -67,6 +67,14 @@ public:
 	{
 	}
 
+	/// Construct from non-const labeled matrix row reference
+	const_labeled_matrix_row_reference(const labeled_matrix_row_reference<data_type,key_type> & other )
+	: _key_map_(other._key_map_),
+	  _row_(other._row_)
+	{
+	}
+
+
 	/// Virtual destructor
 	virtual ~const_labeled_matrix_row_reference() {}
 

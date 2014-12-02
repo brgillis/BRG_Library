@@ -35,6 +35,7 @@
 #include "brg/global.h"
 
 #include "brg/math/calculus/integrate.hpp"
+#include "brg/math/statistics/statistic_extractors.hpp"
 #include "brg/physics/lensing/lens_source_pair.h"
 #include "brg/physics/lensing/pair_bin_summary.h"
 #include "brg/physics/lensing/magnification/mag_global_values.h"
@@ -83,7 +84,8 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 	if(shear_weight>0)
 	{
 		// General info
-		_shear_lens_R_values_(new_pair.R_proj(), boost::accumulators::weight = shear_weight);
+		_shear_R_values_(new_pair.R_proj(), boost::accumulators::weight = shear_weight);
+
 		_shear_lens_m_values_(new_pair.m_lens(), boost::accumulators::weight = shear_weight);
 		_shear_lens_mag_values_(new_pair.mag_lens(), boost::accumulators::weight = shear_weight);
 		_shear_lens_z_values_(new_pair.z_lens(), boost::accumulators::weight = shear_weight);
@@ -98,10 +100,10 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 	const auto & mag_source = new_pair.mag_source();
 	const auto & z_source = new_pair.z_source();
 	if((mag_weight>0) && (mag_source>=mag_m_min) && (mag_source<=mag_m_max) &&
-		(z_source>=mag_z_min) && (mag_source<=mag_z_max) )
+		(z_source>=mag_z_min) && (z_source<=mag_z_max) )
 	{
 		// General info
-		_magf_lens_R_values_(new_pair.R_proj(), boost::accumulators::weight = 1);
+		_magf_R_values_(new_pair.R_proj(), boost::accumulators::weight = 1);
 		_magf_source_z_values_(new_pair.z_source(), boost::accumulators::weight = mag_weight);
 
 		// Magnification info
@@ -124,8 +126,8 @@ void pair_bin::add_lens( const lens_id & lens )
 }
 void pair_bin::clear()
 {
-	set_zero(_magf_lens_R_values_);
-	set_zero(_shear_lens_R_values_);
+	set_zero(_magf_R_values_);
+	set_zero(_shear_R_values_);
 	set_zero(_magf_lens_m_values_);
 	set_zero(_shear_lens_m_values_);
 	set_zero(_magf_lens_z_values_);
@@ -164,38 +166,38 @@ BRG_UNITS pair_bin::area() const
 
 BRG_UNITS pair_bin::delta_Sigma_t_mean() const
 {
-	return boost::accumulators::mean(_delta_Sigma_t_values_);
+	return safe_extract_mean(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_mean() const
 {
-	return boost::accumulators::mean(_delta_Sigma_x_values_);
+	return safe_extract_mean(_delta_Sigma_x_values_);
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_mean_square() const
 {
-	return boost::accumulators::moment<2>(_delta_Sigma_t_values_);
+	return safe_extract_moment<2>(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_mean_square() const
 {
-	return boost::accumulators::moment<2>(_delta_Sigma_x_values_);
+	return safe_extract_moment<2>(_delta_Sigma_x_values_);
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_std() const
 {
-	return std::sqrt(boost::accumulators::variance(_delta_Sigma_t_values_));
+	return std::sqrt(safe_extract_variance(_delta_Sigma_t_values_));
 }
 BRG_UNITS pair_bin::delta_Sigma_x_std() const
 {
-	return std::sqrt(boost::accumulators::variance(_delta_Sigma_x_values_));
+	return std::sqrt(safe_extract_variance(_delta_Sigma_x_values_));
 }
 
 BRG_UNITS pair_bin::delta_Sigma_t_stderr() const
 {
-	return boost::accumulators::error_of_weighted_mean(_delta_Sigma_t_values_);
+	return safe_extract_error_of_weighted_mean(_delta_Sigma_t_values_);
 }
 BRG_UNITS pair_bin::delta_Sigma_x_stderr() const
 {
-	return boost::accumulators::error_of_weighted_mean(_delta_Sigma_x_values_);
+	return safe_extract_error_of_weighted_mean(_delta_Sigma_x_values_);
 }
 
 #endif
@@ -207,7 +209,7 @@ double pair_bin::mu_W() const
 {
 	if(_mu_W_cached_value_==std::numeric_limits<double>::infinity())
 	{
-		_mu_W_cached_value_ = area()*mag_weight_integral_cache().get(lens_z_mean()+_z_buffer_);
+		_mu_W_cached_value_ = area()*mag_weight_integral_cache().get(magf_lens_z_mean()+_z_buffer_);
 	}
 	return _mu_W_cached_value_;
 }
@@ -218,11 +220,13 @@ double pair_bin::mu_hat() const
 	{
 		// Not cached, so calculate and cache it
 
-		const double mu_observed = boost::accumulators::weighted_sum(_mu_obs_values_)/mu_W();
+		const double mu_observed = extract_weighted_sum(_mu_obs_values_)/mu_W();
 
-		const double mu_base = area()*mag_signal_integral_cache().get(lens_z_mean()+_z_buffer_)/mu_W();
+		const double mu_base = area()*mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_)/mu_W();
 
 		_mu_hat_cached_value_ = mu_observed+mu_base;
+
+		brgastro::fixbad(_mu_hat_cached_value_);
 	}
 	return _mu_hat_cached_value_;
 

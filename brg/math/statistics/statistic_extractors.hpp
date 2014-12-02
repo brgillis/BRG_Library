@@ -110,6 +110,40 @@ auto safe_extract_sum_of_square_weights(Ti && acc) -> decltype(boost::accumulato
 }
 #endif // sum of square weights
 
+// sum
+#if(1)
+template<typename Ti>
+auto extract_sum(Ti && acc) -> decltype(boost::accumulators::sum(std::forward<Ti>(acc)))
+{
+	return boost::accumulators::sum(std::forward<Ti>(acc));
+}
+
+template<typename Ti>
+auto safe_extract_sum(Ti && acc) -> decltype(boost::accumulators::sum(std::forward<Ti>(acc)))
+{
+	auto result = boost::accumulators::sum(std::forward<Ti>(acc));
+	if(isbad(result)) result = 0;
+	return result;
+}
+#endif // sum
+
+// weighted sum
+#if(1)
+template<typename Ti>
+auto extract_weighted_sum(Ti && acc) -> decltype(boost::accumulators::weighted_sum(std::forward<Ti>(acc)))
+{
+	return boost::accumulators::weighted_sum(std::forward<Ti>(acc));
+}
+
+template<typename Ti>
+auto safe_extract_weighted_sum(Ti && acc) -> decltype(boost::accumulators::weighted_sum(std::forward<Ti>(acc)))
+{
+	auto result = boost::accumulators::weighted_sum(std::forward<Ti>(acc));
+	if(isbad(result)) result = 0;
+	return result;
+}
+#endif // weighted sum
+
 // mean
 #if(1)
 template<typename Ti>

@@ -38,6 +38,7 @@
 #include "brg/global.h"
 
 #include "brg/container/table_typedefs.hpp"
+#include "brg/physics/lensing/lensing_tNFW_profile.h"
 #include "brg/physics/units/unit_obj.h"
 #include "brg/vector/summary_functions.hpp"
 
@@ -141,6 +142,9 @@ private:
 	double _magf_gamma_x_stderr() const;
 	double _magf_gamma_stderr() const;
 	double _magf_gamma_square_stderr() const;
+
+	lensing_tNFW_profile _shear_model_profile(const double & MLratio = 50.) const;
+	lensing_tNFW_profile _magf_model_profile(const double & MLratio = 50.) const;
 
 protected:
 
@@ -281,7 +285,7 @@ public:
 	}
 	virtual BRG_DISTANCE magf_R_mean() const
 	{
-		return _shear_R_mean_;
+		return _magf_R_mean_;
 	}
 
 	CONST_BRG_MASS_REF m_min() const
@@ -383,11 +387,23 @@ public:
 
 	// Shear
 #if (1)
-	virtual BRG_UNITS delta_Sigma_t_mean() const;
-	virtual BRG_UNITS delta_Sigma_x_mean() const;
+	virtual BRG_UNITS delta_Sigma_t_mean() const
+	{
+		return _delta_Sigma_t_mean_;
+	}
+	virtual BRG_UNITS delta_Sigma_x_mean() const
+	{
+		return _delta_Sigma_x_mean_;
+	}
 
-	virtual BRG_UNITS delta_Sigma_t_mean_square() const;
-	virtual BRG_UNITS delta_Sigma_x_mean_square() const;
+	virtual BRG_UNITS delta_Sigma_t_mean_square() const
+	{
+		return _delta_Sigma_t_mean_square_;
+	}
+	virtual BRG_UNITS delta_Sigma_x_mean_square() const
+	{
+		return _delta_Sigma_x_mean_square_;
+	}
 
 	virtual BRG_UNITS delta_Sigma_t_std() const;
 	virtual BRG_UNITS delta_Sigma_x_std() const;
@@ -404,6 +420,9 @@ public:
 	double gamma_x_stderr() const;
 	double gamma_stderr() const;
 	double gamma_square_stderr() const;
+
+	BRG_UNITS model_delta_Sigma_t(const double & MLratio = 50.) const;
+	double model_gamma_t(const double & MLratio = 50.) const;
 
 #endif // Shear
 
@@ -430,6 +449,13 @@ public:
 	double mu_stderr() const;
 	double kappa() const;
 	double kappa_stderr() const;
+
+	BRG_UNITS Sigma() const;
+	BRG_UNITS Sigma_stderr() const;
+
+	double model_mu(const double & MLratio = 50.) const;
+	double model_kappa(const double & MLratio = 50.) const;
+	BRG_UNITS model_Sigma(const double & MLratio = 50.) const;
 
 #endif // Magnification
 

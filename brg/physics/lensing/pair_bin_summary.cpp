@@ -82,6 +82,16 @@ double pair_bin_summary::_magf_gamma_square_stderr() const
 	return 2*gamma_mean()*gamma_stderr();
 }
 
+lensing_tNFW_profile pair_bin_summary::_shear_model_profile(const double & MLratio) const
+{
+	return lensing_tNFW_profile(MLratio*shear_m_mean(),shear_z_mean());
+}
+
+lensing_tNFW_profile pair_bin_summary::_magf_model_profile(const double & MLratio) const
+{
+	return lensing_tNFW_profile(MLratio*magf_m_mean(),magf_z_mean());
+}
+
 #endif
 
 pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF init_R_max,
@@ -244,48 +254,108 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 
 	_uncache_values(); // If we get this far, something is changing with this bin
 
-	// Add the magnification data
-	_magf_pair_count_ += other.magf_pair_count();
-	_magf_lens_count_ += other.magf_num_lenses();
+	// If the other's magnification data isn't empty
+	if(!other_magf_zero)
+	{
 
-	auto new_mu_W = _mu_W_ + other.mu_W();
+		// If this is empty, simply copy everything
+		if(this_magf_zero)
+		{
+			// Add the magnification data
+			_magf_pair_count_ = other.magf_pair_count();
+			_magf_lens_count_ = other.magf_num_lenses();
+			_area_ = other.area();
 
-	_magf_R_mean_ = (_magf_R_mean_*_mu_W_ + other.magf_R_mean()*other.mu_W())/new_mu_W;
+			_magf_R_mean_ = other.magf_R_mean();
 
-	_magf_lens_m_mean_ = (_magf_lens_m_mean_*_mu_W_ + other.magf_m_mean()*other.mu_W())/new_mu_W;
-	_magf_lens_z_mean_ = (_magf_lens_z_mean_*_mu_W_ + other.magf_z_mean()*other.mu_W())/new_mu_W;
-	_magf_lens_mag_mean_ = (_magf_lens_mag_mean_*_mu_W_ + other.magf_mag_mean()*other.mu_W())/new_mu_W;
+			_magf_lens_m_mean_ = other.magf_m_mean();
+			_magf_lens_z_mean_ = other.magf_z_mean();
+			_magf_lens_mag_mean_ = other.magf_mag_mean();
 
-	_magf_source_z_mean_ = (_magf_source_z_mean_*_mu_W_ + other.magf_source_z_mean()*other.mu_W())/new_mu_W;
+			_magf_source_z_mean_ = other.magf_source_z_mean();
 
-	_mu_hat_ = (_mu_hat_*_mu_W_ + other.mu_hat()*other.mu_W())/new_mu_W;
-	_area_ = (_area_*_mu_W_ + other.area()*other.mu_W())/new_mu_W;
+			_mu_hat_ = other.mu_hat();
 
-	_mu_W_ = new_mu_W;
+			_mu_W_ = other.mu_W();
+		}
+		else
+		{
+			// Add the magnification data
+			_magf_pair_count_ += other.magf_pair_count();
+			_magf_lens_count_ += other.magf_num_lenses();
+			_area_ += other.area();
+
+			brgastro::fixbad(_mu_W_);
+			const auto o_mu_W = other.mu_W();
+
+			const auto new_mu_W = _mu_W_ + o_mu_W;
+
+			_magf_R_mean_ = (magf_R_mean()*_mu_W_ + other.magf_R_mean()*o_mu_W)/new_mu_W;
+
+			_magf_lens_m_mean_ = (magf_m_mean()*_mu_W_ + other.magf_m_mean()*o_mu_W)/new_mu_W;
+			_magf_lens_z_mean_ = (magf_z_mean()*_mu_W_ + other.magf_z_mean()*o_mu_W)/new_mu_W;
+			_magf_lens_mag_mean_ = (magf_mag_mean()*_mu_W_ + other.magf_mag_mean()*o_mu_W)/new_mu_W;
+
+			_magf_source_z_mean_ = (magf_source_z_mean()*_mu_W_ + other.magf_source_z_mean()*o_mu_W)/new_mu_W;
+
+			_mu_hat_ = (mu_hat()*_mu_W_ + other.mu_hat()*o_mu_W)/new_mu_W;
+
+			_mu_W_ = new_mu_W;
+		}
+	}
 
 	// Add the shear data
-	_shear_pair_count_ += other.magf_pair_count();
 
-	auto new_sum_of_weights = shear_sum_of_weights() + other.shear_sum_of_weights();
+	// If the other's shear data isn't empty
+	if(!other_shear_zero)
+	{
 
-	_shear_R_mean_ = ( _shear_R_mean_*shear_sum_of_weights() + other.shear_R_mean()*other.shear_sum_of_weights())/new_sum_of_weights;
-	_shear_lens_m_mean_ = ( _shear_lens_m_mean_*shear_sum_of_weights() + other.shear_m_mean()*other.shear_sum_of_weights())/new_sum_of_weights;
-	_shear_lens_z_mean_ = ( _shear_lens_z_mean_*shear_sum_of_weights() + other.shear_z_mean()*other.shear_sum_of_weights())/new_sum_of_weights;
-	_shear_lens_mag_mean_ = ( _shear_lens_mag_mean_*shear_sum_of_weights() + other.mag_mean()*other.shear_sum_of_weights())/new_sum_of_weights;
-	_shear_source_z_mean_ = ( _shear_source_z_mean_*shear_sum_of_weights() + other.source_z_mean()*other.shear_sum_of_weights())/new_sum_of_weights;
+		// If this is empty, simply copy everything
+		if(this_shear_zero)
+		{
+			_shear_pair_count_ = other.shear_pair_count();
 
-	_delta_Sigma_t_mean_ = ( _delta_Sigma_t_mean_*shear_sum_of_weights() + other.delta_Sigma_t_mean()*other.shear_sum_of_weights())
-			/new_sum_of_weights;
-	_delta_Sigma_t_mean_square_ = ( _delta_Sigma_t_mean_square_*shear_sum_of_weights() +
-			other.delta_Sigma_t_mean_square()*other.shear_sum_of_weights())
-			/new_sum_of_weights;
-	_delta_Sigma_x_mean_ = ( _delta_Sigma_x_mean_*shear_sum_of_weights() + other.delta_Sigma_x_mean()*other.shear_sum_of_weights())
+			_shear_R_mean_ = other.shear_R_mean();
+			_shear_lens_m_mean_ = other.shear_m_mean();
+			_shear_lens_z_mean_ = other.shear_z_mean();
+			_shear_lens_mag_mean_ = other.mag_mean();
+			_shear_source_z_mean_ = other.source_z_mean();
+
+			_delta_Sigma_t_mean_ = other.delta_Sigma_t_mean();
+			_delta_Sigma_t_mean_square_ = other.delta_Sigma_t_mean_square();
+			_delta_Sigma_x_mean_ = other.delta_Sigma_x_mean();
+			_delta_Sigma_x_mean_square_ = other.delta_Sigma_x_mean_square();
+			_shear_sum_of_weights_ = other.shear_sum_of_weights();
+			_shear_sum_of_square_weights_ = other.shear_sum_of_square_weights();
+		}
+		else
+		{
+			_shear_pair_count_ += other.shear_pair_count();
+
+			const auto o_shear_sum_of_weights = other.shear_sum_of_weights();
+
+			const auto new_sum_of_weights = _shear_sum_of_weights_ + o_shear_sum_of_weights;
+
+			_shear_R_mean_ = ( shear_R_mean()*_shear_sum_of_weights_ + other.shear_R_mean()*o_shear_sum_of_weights)/new_sum_of_weights;
+			_shear_lens_m_mean_ = ( shear_m_mean()*_shear_sum_of_weights_ + other.shear_m_mean()*o_shear_sum_of_weights)/new_sum_of_weights;
+			_shear_lens_z_mean_ = ( shear_z_mean()*_shear_sum_of_weights_ + other.shear_z_mean()*o_shear_sum_of_weights)/new_sum_of_weights;
+			_shear_lens_mag_mean_ = ( shear_mag_mean()*_shear_sum_of_weights_ + other.mag_mean()*o_shear_sum_of_weights)/new_sum_of_weights;
+			_shear_source_z_mean_ = ( shear_source_z_mean()*_shear_sum_of_weights_ + other.source_z_mean()*o_shear_sum_of_weights)/new_sum_of_weights;
+
+			_delta_Sigma_t_mean_ = ( delta_Sigma_t_mean()*_shear_sum_of_weights_ + other.delta_Sigma_t_mean()*o_shear_sum_of_weights)
 					/new_sum_of_weights;
-	_delta_Sigma_x_mean_square_ = ( _delta_Sigma_x_mean_square_*shear_sum_of_weights() +
-			other.delta_Sigma_x_mean_square()*other.shear_sum_of_weights())
-			/new_sum_of_weights;
-	_shear_sum_of_weights_ = new_sum_of_weights;
-	_shear_sum_of_square_weights_ += other.shear_sum_of_square_weights();
+			_delta_Sigma_t_mean_square_ = ( delta_Sigma_t_mean_square()*shear_sum_of_weights() +
+					other.delta_Sigma_t_mean_square()*o_shear_sum_of_weights)
+					/new_sum_of_weights;
+			_delta_Sigma_x_mean_ = ( delta_Sigma_x_mean()*shear_sum_of_weights() + other.delta_Sigma_x_mean()*o_shear_sum_of_weights)
+							/new_sum_of_weights;
+			_delta_Sigma_x_mean_square_ = ( delta_Sigma_x_mean_square()*shear_sum_of_weights() +
+					other.delta_Sigma_x_mean_square()*o_shear_sum_of_weights)
+					/new_sum_of_weights;
+			_shear_sum_of_weights_ = new_sum_of_weights;
+			_shear_sum_of_square_weights_ += other.shear_sum_of_square_weights();
+		}
+	}
 
 	return *this;
 }
@@ -303,9 +373,6 @@ void pair_bin_summary::fixbad()
 	brgastro::fixbad(_z_max_);
 	brgastro::fixbad(_mag_min_);
 	brgastro::fixbad(_mag_max_);
-
-	brgastro::fixbad(_shear_pair_count_);
-	brgastro::fixbad(_magf_pair_count_);
 
 	brgastro::fixbad(_shear_R_mean_);
 	brgastro::fixbad(_magf_R_mean_);
@@ -331,7 +398,6 @@ void pair_bin_summary::fixbad()
 	brgastro::fixbad(_mu_hat_);
 	brgastro::fixbad(_mu_W_);
 	brgastro::fixbad(_area_);
-	brgastro::fixbad(_magf_lens_count_);
 }
 
 // Saving/loading data
@@ -461,6 +527,17 @@ double pair_bin_summary::gamma_square_stderr() const
 	return 2*gamma_mean()*gamma_stderr();
 }
 
+BRG_UNITS pair_bin_summary::model_delta_Sigma_t(const double & MLratio) const
+{
+	BRG_UNITS result = _shear_model_profile(MLratio).WLsig(shear_R_mean());
+	return result;
+}
+double pair_bin_summary::model_gamma_t(const double & MLratio) const
+{
+	double result = model_delta_Sigma_t(MLratio)/shear_sigma_crit();
+	return result;
+}
+
 #endif // Shear
 
 // Magnification
@@ -488,6 +565,33 @@ double pair_bin_summary::kappa_stderr() const
 	brgastro::fixbad(gms);
 	brgastro::fixbad(gserr);
 	return sqrt_err(1/mu_hat()+gms,quad_add(mu_stderr(),gserr));
+}
+
+BRG_UNITS pair_bin_summary::Sigma() const
+{
+	BRG_UNITS result = kappa() * magf_sigma_crit();
+	return result;
+}
+BRG_UNITS pair_bin_summary::Sigma_stderr() const
+{
+	BRG_UNITS result = kappa_stderr() * magf_sigma_crit();
+	return result;
+}
+
+double pair_bin_summary::model_mu(const double & MLratio) const
+{
+	double result = 1./(square(1-model_kappa(MLratio))+square(model_gamma_t(MLratio)));
+	return result;
+}
+double pair_bin_summary::model_kappa(const double & MLratio) const
+{
+	double result = model_Sigma(MLratio)/magf_sigma_crit();
+	return result;
+}
+BRG_UNITS pair_bin_summary::model_Sigma(const double & MLratio) const
+{
+	BRG_UNITS result = _magf_model_profile(MLratio).proj_dens(magf_R_mean());
+	return result;
 }
 
 #endif // Magnification

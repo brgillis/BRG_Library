@@ -529,39 +529,66 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 	table_t<double> data;
 	header_t header;
 
-	size_t num_columns = 28;
-
-	header.reserve(num_columns);
 	header.push_back("R_min");
 	header.push_back("R_max");
-	header.push_back("R_mean");
 	header.push_back("m_min");
 	header.push_back("m_max");
-	header.push_back("m_mean");
 	header.push_back("z_min");
 	header.push_back("z_max");
-	header.push_back("z_mean");
 	header.push_back("mag_min");
 	header.push_back("mag_max");
-	header.push_back("mag_mean");
-	header.push_back("N");
-	header.push_back("N_eff");
+
+	header.push_back("shear_R_mean");
+	header.push_back("shear_lens_m_mean");
+	header.push_back("shear_lens_z_mean");
+	header.push_back("shear_lens_mag_mean");
+
+	header.push_back("shear_source_z_mean");
+
+	header.push_back("shear_N_pair");
+	header.push_back("shear_N_pair_eff");
+
+	header.push_back("shear_Sigma_crit");
+
 	header.push_back("dS_t_mean");
 	header.push_back("dS_t_stddev");
 	header.push_back("dS_t_stderr");
 	header.push_back("dS_x_mean");
 	header.push_back("dS_x_stddev");
 	header.push_back("dS_x_stderr");
+
 	header.push_back("gamma_t_mean");
 	header.push_back("gamma_t_stderr");
 	header.push_back("gamma_x_mean");
 	header.push_back("gamma_x_stderr");
+
+	header.push_back("model_dS_t");
+	header.push_back("model_gamma_t");
+
+	header.push_back("magf_R_mean");
+	header.push_back("magf_lens_m_mean");
+	header.push_back("magf_lens_z_mean");
+	header.push_back("magf_lens_mag_mean");
+
+	header.push_back("magf_source_z_mean");
+
+	header.push_back("magf_N_lens");
+	header.push_back("magf_area");
+
+	header.push_back("magf_Sigma_crit");
+
 	header.push_back("mu");
 	header.push_back("mu_stderr");
 	header.push_back("kappa");
 	header.push_back("kappa_stderr");
+	header.push_back("Sigma");
+	header.push_back("Sigma_stderr");
 
-	assert(header.size()==num_columns);
+	header.push_back("model_mu");
+	header.push_back("model_kappa");
+	header.push_back("model_Sigma");
+
+	size_t num_columns = header.size();
 
 	data.resize(num_columns);
 	for(size_t R_i=0; R_i<_pair_bin_summaries_.size(); ++R_i)
@@ -583,36 +610,68 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					size_t col_i = 0;
 					data[col_i].push_back(bin.R_min());
 					data[++col_i].push_back(bin.R_max());
-					data[++col_i].push_back(bin.R_mean());
 					data[++col_i].push_back(bin.m_min());
 					data[++col_i].push_back(bin.m_max());
-					data[++col_i].push_back(bin.m_mean());
 					data[++col_i].push_back(bin.z_min());
 					data[++col_i].push_back(bin.z_max());
-					data[++col_i].push_back(bin.z_mean());
 					data[++col_i].push_back(bin.mag_min());
 					data[++col_i].push_back(bin.mag_max());
-					data[++col_i].push_back(bin.mag_mean());
+
+					data[++col_i].push_back(bin.shear_R_mean());
+					data[++col_i].push_back(bin.shear_m_mean());
+					data[++col_i].push_back(bin.shear_z_mean());
+					data[++col_i].push_back(bin.shear_mag_mean());
+
+					data[++col_i].push_back(bin.shear_source_z_mean());
+
 					data[++col_i].push_back(bin.shear_pair_count());
 					data[++col_i].push_back(bin.shear_effective_pair_count());
+
+					data[++col_i].push_back(bin.magf_sigma_crit());
+
 					data[++col_i].push_back(bin.delta_Sigma_t_mean());
 					data[++col_i].push_back(bin.delta_Sigma_t_std());
 					data[++col_i].push_back(bin.delta_Sigma_t_stderr());
 					data[++col_i].push_back(bin.delta_Sigma_x_mean());
 					data[++col_i].push_back(bin.delta_Sigma_x_std());
 					data[++col_i].push_back(bin.delta_Sigma_x_stderr());
+
 					data[++col_i].push_back(bin.gamma_t_mean());
 					data[++col_i].push_back(bin.gamma_t_stderr());
 					data[++col_i].push_back(bin.gamma_x_mean());
 					data[++col_i].push_back(bin.gamma_x_stderr());
+
+					data[++col_i].push_back(bin.model_delta_Sigma_t());
+					data[++col_i].push_back(bin.model_gamma_t());
+
+					data[++col_i].push_back(bin.magf_R_mean());
+					data[++col_i].push_back(bin.magf_m_mean());
+					data[++col_i].push_back(bin.magf_z_mean());
+					data[++col_i].push_back(bin.magf_mag_mean());
+
+					data[++col_i].push_back(bin.magf_source_z_mean());
+
+					data[++col_i].push_back(bin.magf_num_lenses());
+					data[++col_i].push_back(bin.area());
+
+					data[++col_i].push_back(bin.shear_sigma_crit());
+
 					data[++col_i].push_back(bin.mu_hat());
 					data[++col_i].push_back(bin.mu_stderr());
 					data[++col_i].push_back(bin.kappa());
 					data[++col_i].push_back(bin.kappa_stderr());
+					data[++col_i].push_back(bin.Sigma());
+					data[++col_i].push_back(bin.Sigma_stderr());
+
+					data[++col_i].push_back(bin.model_mu());
+					data[++col_i].push_back(bin.model_kappa());
+					data[++col_i].push_back(bin.model_Sigma());
 				}
 			}
 		}
 	}
+
+	assert(data.back().size()==data.front().size()); // Check we didn't miss a column to add to the table
 
 	table_map_t<double> table_map = get_table_after_unitconv(make_table_map(data,header),u_map);
 

@@ -33,10 +33,13 @@
 
 #include <Eigen/Array>
 
-#include "brg/container/const_labeled_matrix_row_reference.hpp"
 #include "brg/container/insertion_ordered_map.hpp"
-#include "brg/container/labeled_matrix_row_reference.hpp"
 #include "brg/container/table_typedefs.hpp"
+
+#include "brg/container/labeled_matrix/const_labeled_matrix_row_reference.hpp"
+#include "brg/container/labeled_matrix/labeled_matrix_row_reference.hpp"
+
+#include "brg/container/labeled_matrix/labeled_matrix_row_iterator.hpp"
 
 namespace brgastro {
 
@@ -47,6 +50,7 @@ public:
 
 	// Public typedefs
 	typedef typename Eigen::Matrix<value_type,Eigen::Dynamic,Eigen::Dynamic> data_table_type;
+	typedef typename Eigen::Matrix<const value_type,Eigen::Dynamic,Eigen::Dynamic> const_data_table_type;
 	typedef value_type value_type;
 	//typedef data_type::Index size_type;
 	typedef size_t size_type;
@@ -56,6 +60,11 @@ public:
 	typedef typename labeled_matrix_row_reference<data_table_type,key_type> row_reference_type;
 	typedef typename data_table_type::ConstRowXpr const_row_type;
 	typedef typename const_labeled_matrix_row_reference<data_table_type,key_type> const_row_reference_type;
+
+	typedef typename labeled_matrix_row_iterator<labeled_matrix<value_type,key_type>,
+		row_type,row_reference_type> iterator;
+	typedef typename labeled_matrix_row_iterator<labeled_matrix<value_type,key_type>,
+		const_row_type,const_row_reference_type> const_iterator;
 
 private:
 
@@ -146,6 +155,13 @@ private:
 
 	}
 
+	// Data access after adding in buffer
+	data_table_type & _data_table() const
+	{
+		_add_buffer_to_data_table();
+		return _data_table_;
+	}
+
 public:
 
 	// Constructors
@@ -170,20 +186,9 @@ public:
 
 	// Data access
 #if(1)
-	data_table_type & data_table()
-	{
-		if(!_buffer_.empty())
-		{
-			_add_buffer_to_data_table();
-		}
-		return _data_table_;
-	}
 	const data_table_type & data_table() const
 	{
-		if(!_buffer_.empty())
-		{
-			_add_buffer_to_data_table();
-		}
+		_add_buffer_to_data_table();
 		return _data_table_;
 	}
 #endif
@@ -192,19 +197,44 @@ public:
 #if(1)
 	column_type & col(const size_type & index)
 	{
-		return data_table().col(index);
+		return _data_table().col(index);
 	}
 	const_column_type & col(const size_type & index) const
 	{
-		return data_table().col(index);
+		return _data_table().col(index);
 	}
 	column_type & at(const key_type & key)
 	{
-		return data_table().col(_key_map_.at(key));
+		return _data_table().col(_key_map_.at(key));
 	}
 	const_column_type & at(const key_type & key) const
 	{
-		return data_table().col(_key_map_.at(key));
+		return _data_table().col(_key_map_.at(key));
+	}
+#endif
+
+    // Column insertion
+#if(1)
+    template< typename new_column_type >
+    void insert(new_column_type && new_column)
+    {
+    	_buffer_.insert(std::forward<new_column_type>(new_column));
+    }
+#endif
+
+    // Column access/insertion
+#if(1)
+    template< typename new_key_type >
+	column_type & operator[](new_key_type && key)
+	{
+    	// Check if the key is new
+    	if(count(key)==0)
+    	{
+    		// The key is new, so insert a column for it
+    		insert(std::make_pair(key,buffer_column_type(_data_table_.rows())));
+    	}
+    	// Return a reference to this key's column
+		return _data_table().col(_key_map_.at(std::forward<new_key_type>(key)));
 	}
 #endif
 
@@ -212,45 +242,96 @@ public:
 #if(1)
 	row_reference_type & row(const size_type & index)
 	{
-		return row_reference_type(_key_map_,data_table().row(index));
+		return row_reference_type(_key_map_,_data_table().row(index));
 	}
 	const_row_reference_type & row(const size_type & index) const
 	{
-		return const_row_reference_type(_key_map_,data_table().row(index));
+		return const_row_reference_type(_key_map_,_data_table().row(index));
 	}
 #endif
 
 	// Size information
 #if(1)
-	size_type rows()
+	const size_type & rows() const
 	{
-		return _data_table_.rows();
+		return _data_table().rows();
 	}
-	size_type cols()
+	const size_type & cols() const
 	{
-		return _data_table_.cols();
+		return _data_table().cols();
 	}
-	size_type size()
+	const size_type & size() const
 	{
-		return _data_table_.size();
+		return _data_table().size();
 	}
 #endif
 
 	// Key information
 #if(1)
-    typename size_type count (const key_type & k) const
+	char count (const key_type & k) const
     {
+    	_add_buffer_to_data_table();
 		return _key_map_.count(k);
     }
 #endif
 
-    // Inserting new columns
+    // Key control
 #if(1)
-    template< typename new_column_type >
-    void insert(new_column_type && new_column)
+
+    /**
+     * Changes a key to another, without altering its mapped data or position.
+     *
+     * @param init_key
+     * @param new_key
+     * @return char - 0 if successful
+     *                1 if init_key doesn't exist in map
+     *                2 if new_key already exists in map
+     */
+    template< typename new_key_type >
+    char change_key(const key_type & init_key, new_key_type && new_key)
     {
-    	_buffer_.insert(std::forward<new_column_type>(new_column));
+    	// Add in the buffer so the key map is fully set up
+		_add_buffer_to_data_table();
+
+    	// Get the position of the value we're going to be altering
+    	auto it = _key_map_.find(init_key);
+
+    	if(it==_key_map_.end()) return 1;
+    	if(_key_map_.count(new_key)>0) return 2;
+
+    	size_t pos = it->second;
+
+    	// Alter the value in the key map by erasing old entry and adding new
+    	_key_map_.erase(it);
+    	_key_map_[std::forward<new_key_type>(new_key)] = pos;
+
+    	return 0;
     }
+
+#endif
+
+    // Advanced operations
+#if(1)
+
+    // Apply unit conversions
+    template< typename unitconvs >
+    void apply_unitconvs( const unitconvs & u_map )
+    {
+    	_add_buffer_to_data_table();
+    	for(auto u_it=u_map.begin(); u_it!=u_map.end(); ++u_it)
+    	{
+    		auto d_it = _key_map_.find(u_it->first);
+    		// Check if this value is actually in the data table
+    		if(d_it!=_key_map_.end())
+    		{
+    			// It's in the table, so multiply its associated vector by the inverse unit conversion
+    			double factor = 1./(u_it->second);
+    			if(isbad(factor)) factor = 1; // To catch user mistakes
+    			col(d_it->second) *= factor;
+    		}
+    	}
+    }
+
 #endif
 
 };
