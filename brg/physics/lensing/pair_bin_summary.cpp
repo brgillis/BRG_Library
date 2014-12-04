@@ -236,8 +236,8 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	assert(_mag_max_==other.mag_max());
 
 	// Check whether this or the other is empty in shear or magnification data
-	const bool this_magf_zero = (area()==0);
-	const bool other_magf_zero = (other.area()==0);
+	const bool this_magf_zero = ((area()==0)&&(magf_num_lenses()==0));
+	const bool other_magf_zero = ((other.area()==0)&&(other.magf_num_lenses()==0));
 	const bool this_shear_zero = (shear_sum_of_weights()==0);
 	const bool other_shear_zero = (other.shear_sum_of_weights()==0);
 
@@ -281,22 +281,26 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 		else
 		{
 			// Add the magnification data
-			_magf_pair_count_ += other.magf_pair_count();
 			_magf_lens_count_ += other.magf_num_lenses();
 			_area_ += other.area();
 
+			const auto new_pair_count = magf_pair_count() + other.magf_pair_count();
+
+			if(new_pair_count > 0)
+			{
+				_magf_R_mean_ = (magf_R_mean()*magf_pair_count() + other.magf_R_mean()*other.magf_pair_count())/new_pair_count;
+				_magf_source_z_mean_ = (magf_source_z_mean()*magf_pair_count() + other.magf_source_z_mean()*other.magf_pair_count())/new_pair_count;
+			}
+
+			_magf_pair_count_ = new_pair_count;
+
 			brgastro::fixbad(_mu_W_);
 			const auto o_mu_W = other.mu_W();
-
 			const auto new_mu_W = _mu_W_ + o_mu_W;
-
-			_magf_R_mean_ = (magf_R_mean()*_mu_W_ + other.magf_R_mean()*o_mu_W)/new_mu_W;
 
 			_magf_lens_m_mean_ = (magf_m_mean()*_mu_W_ + other.magf_m_mean()*o_mu_W)/new_mu_W;
 			_magf_lens_z_mean_ = (magf_z_mean()*_mu_W_ + other.magf_z_mean()*o_mu_W)/new_mu_W;
 			_magf_lens_mag_mean_ = (magf_mag_mean()*_mu_W_ + other.magf_mag_mean()*o_mu_W)/new_mu_W;
-
-			_magf_source_z_mean_ = (magf_source_z_mean()*_mu_W_ + other.magf_source_z_mean()*o_mu_W)/new_mu_W;
 
 			_mu_hat_ = (mu_hat()*_mu_W_ + other.mu_hat()*o_mu_W)/new_mu_W;
 

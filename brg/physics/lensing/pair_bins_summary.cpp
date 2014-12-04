@@ -627,7 +627,7 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					data[++col_i].push_back(bin.shear_pair_count());
 					data[++col_i].push_back(bin.shear_effective_pair_count());
 
-					data[++col_i].push_back(bin.magf_sigma_crit());
+					data[++col_i].push_back(bin.shear_sigma_crit());
 
 					data[++col_i].push_back(bin.delta_Sigma_t_mean());
 					data[++col_i].push_back(bin.delta_Sigma_t_std());
@@ -654,7 +654,7 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					data[++col_i].push_back(bin.magf_num_lenses());
 					data[++col_i].push_back(bin.area());
 
-					data[++col_i].push_back(bin.shear_sigma_crit());
+					data[++col_i].push_back(bin.magf_sigma_crit());
 
 					data[++col_i].push_back(bin.mu_hat());
 					data[++col_i].push_back(bin.mu_stderr());

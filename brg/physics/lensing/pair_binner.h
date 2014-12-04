@@ -47,10 +47,13 @@
 
 namespace brgastro {
 
-inline bool lens_id_lt(const lens_id & lens1, const lens_id & lens2)
+struct lens_id_lt
 {
-	return lens1.id<lens2.id;
-}
+	bool operator()(const lens_id & lens1, const lens_id & lens2) const
+	{
+		return lens1.id<lens2.id;
+	}
+};
 
 /**
  *
@@ -68,7 +71,7 @@ private:
 #if(1)
 
 	std::vector<lens_source_pair> _pairs_;
-	std::set<lens_id,decltype(&lens_id_lt)> _lens_ids_;
+	boost::container::flat_set<lens_id,lens_id_lt> _lens_ids_;
 	mutable size_t _sorting_index_;
 	mutable bool _sorted_;
 
@@ -95,7 +98,6 @@ public:
 	// Default constructor
 	pair_binner()
 	: _z_buffer_(_default_z_buffer_),
-	  _lens_ids_(&lens_id_lt),
 	  _sorting_index_(0),
 	  _sorted_(false)
 	{
@@ -108,7 +110,6 @@ public:
 			brgastro::limit_vector< double > mag_bin_limits=brgastro::limit_vector<double>())
 	:	pair_bins_summary(R_bin_limits,m_bin_limits,z_bin_limits,mag_bin_limits),
 		_z_buffer_(_default_z_buffer_),
-	 	_lens_ids_(&lens_id_lt),
 	 	_sorting_index_(0),
 	 	_sorted_(false)
 	{
@@ -130,7 +131,6 @@ public:
 	:	pair_bins_summary(R_min,R_max,R_step,m_min,m_max,m_step,z_min,z_max,z_step,
 			mag_min,mag_max,mag_step),
 			_z_buffer_(_default_z_buffer_),
-		 	_lens_ids_(&lens_id_lt),
 		 	_sorting_index_(0),
 		 	_sorted_(false)
 	{

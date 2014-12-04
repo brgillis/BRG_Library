@@ -44,7 +44,7 @@ public:
 	typedef typename std::vector<T,A>::size_type size_type;
 
 	// Enum to describe type of limit vector this is
-	enum class type {GENERAL, LINEAR, LOG};
+	enum class type {GENERAL, LINEAR, LOG}; // TODO Add DISJOINT type and support for it
 
 private:
 	/// The base vector storing the data

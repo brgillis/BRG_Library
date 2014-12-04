@@ -103,7 +103,7 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 		(z_source>=mag_z_min) && (z_source<=mag_z_max) )
 	{
 		// General info
-		_magf_R_values_(new_pair.R_proj(), boost::accumulators::weight = 1);
+		_magf_R_values_(new_pair.R_proj(), boost::accumulators::weight = mag_weight);
 		_magf_source_z_values_(new_pair.z_source(), boost::accumulators::weight = mag_weight);
 
 		// Magnification info
