@@ -44,7 +44,7 @@ public:
 	typedef typename std::vector<T,A>::size_type size_type;
 
 	// Enum to describe type of limit vector this is
-	enum class type {GENERAL, LINEAR, LOG}; // TODO Add DISJOINT type and support for it
+	enum class type {GENERAL, LINEAR, LOG, DISJOINT}; // TODO Add DISJOINT type and support for it
 
 private:
 	/// The base vector storing the data
@@ -89,6 +89,20 @@ private:
 	{
 		if(!is_monotonically_increasing(other))
 			throw std::runtime_error("Limit vector cannot be set to vector which isn't monotonic increasing.\n");
+	}
+
+	/// Check if is valid, and throw if it isn't
+	void _check_if_valid_disjoint_setting(const std::vector<T,A> & other)
+	{
+		if((!is_monotonically_increasing(other)) || (other.size() % 2 != 0))
+			throw std::runtime_error("Limit vector cannot be made disjoint from vector which isn't monotonic increasing with even size.\n");
+	}
+
+	/// Check if the base is even size (which is necessary for it to be a valid disjoint limit vector)
+	void _check_if_even_size()
+	{
+		if(_base_.size() % 2 != 0)
+			throw std::runtime_error("Limit vector with odd size cannot be made disjoint.\n");
 	}
 #endif // Private functions
 
@@ -164,23 +178,37 @@ public:
 
 	/// Coerce from vector
 	template<typename To, typename Ao>
-	explicit limit_vector(const std::vector<To,Ao> & other)
+	explicit limit_vector(const std::vector<To,Ao> & other, const type & init_type=type::GENERAL)
 	: _base_(other.begin(),other.end(),other.get_allocator()),
-	  _type_(type::GENERAL),
+	  _type_(init_type),
 	  _step_(1),
 	  _lmin_(0)
 	{
+		// If Linear or log type was passed, switch it to general, since we can't trust it'll be safe
+		if(_type_==type::LINEAR) _type_ = type::GENERAL;
+		if(_type_==type::LOG) _type_ = type::GENERAL;
+
+		// If Disjoint type was passed, check that it's even size
+		if(_type_==type::DISJOINT) _check_if_even_size();
+
 		_check_if_valid_construction();
 		_base_.shrink_to_fit();
 	}
 	/// Coerce from vector and set allocator
 	template<typename To, typename Ao>
-	limit_vector(const std::vector<To,Ao> & other, const allocator_type& alloc)
+	limit_vector(const std::vector<To,Ao> & other, const allocator_type& alloc, const type & init_type=type::GENERAL)
 	: _base_(other.begin(),other.end(),alloc),
-	  _type_(type::GENERAL),
+	  _type_(init_type),
 	  _step_(1),
 	  _lmin_(0)
 	{
+		// If Linear or log type was passed, switch it to general, since we can't trust it'll be safe
+		if(_type_==type::LINEAR) _type_ = type::GENERAL;
+		if(_type_==type::LOG) _type_ = type::GENERAL;
+
+		// If Disjoint type was passed, check that it's even size
+		if(_type_==type::DISJOINT) _check_if_even_size();
+
 		_check_if_valid_construction();
 		_base_.shrink_to_fit();
 	}
@@ -190,10 +218,10 @@ public:
 
 	/// Move and set allocator
 	limit_vector(limit_vector<T,A> && other, const allocator_type& alloc)
-	: _base_(other._base_, alloc),
-	  _type_(other._type_),
-	  _step_(other._step_),
-	  _lmin_(other._lmin_)
+	: _base_(std::move(other._base_), alloc),
+	  _type_(std::move(other._type_)),
+	  _step_(std::move(other._step_)),
+	  _lmin_(std::move(other._lmin_))
 	{
 	}
 
@@ -326,6 +354,31 @@ public:
 
 		_base_ = std::move(vec);
 	}
+	/// Reconstruct as disjoint
+	template<typename To>
+	void reconstruct_as_disjoint(To && vec)
+	{
+		_check_if_valid_disjoint_setting(vec);
+
+		_base_ = std::forward<To>(vec);
+		_type_ = type::DISJOINT;
+	}
+#endif
+
+	// Change type to general or disjoint
+#if(1)
+
+	void make_general()
+	{
+		_type_ = type::GENERAL;
+	}
+
+	void make_disjoint()
+	{
+		_check_if_even_size();
+		_type_ = type::DISJOINT;
+	}
+
 #endif
 
 	// Assignment
@@ -439,7 +492,10 @@ public:
 	/// Get number of bins
 	size_type num_bins() const noexcept
 	{
-		return _base_.size()-1;
+		if(_type_==type::DISJOINT)
+			return _base_.size()/2;
+		else
+			return _base_.size()-1;
 	}
 
 	/// Get max size of the base vector
@@ -518,12 +574,13 @@ public:
 		using std::swap;
 		swap(_base_,other._base_);
 		swap(_type_,other._type_);
+		swap(_lmin_,other._lmin_);
+		swap(_step_,other._step_);
 	}
 
 	/// Clear function - leaves it in initial state
 	void clear()
 	{
-		_base_.clear();
 		_init();
 	}
 
@@ -564,11 +621,27 @@ public:
 	/// above_limits OR below_limits.
 	bool outside_limits(const T & val) const
 	{
-		return (above_limits(val) or under_limits(val));
+		if (above_limits(val) or under_limits(val)) return true;
+		if(_type_ != type::DISJOINT) return false;
+
+		// If we get here, it's a disjoint vector, and it's between the upper and lower limits
+		// We'll check which "general" bin it falls in. If it's in a gap, it's outside the limits,
+		// otherwise it's inside
+
+		for(size_t i=1; i<size(); ++i)
+		{
+			if(_base_[i]>=val)
+			{
+				if ( (i-1)%2 == 0 )
+					return false;
+				else
+					return true;
+			}
+		}
+		return true; // We shouldn't reach this path, but if we do, it's outside
 	}
 
-	/// Returns true if val is inside the limits of the vector (inclusive the lower
-	/// limit, exclusive the upper limit).
+	/// Returns true if val is inside the limits of the vector
 	bool inside_limits(const T & val) const
 	{
 		return !outside_limits(val);
@@ -602,6 +675,21 @@ public:
 
 			break;
 
+		case type::DISJOINT:
+
+			for(size_t i=1; i<size(); ++i)
+			{
+				if(_base_[i]>=val)
+				{
+					if ( (i-1)%2 == 0 )
+						return (i-1)/2;
+					else
+						return num_bins()+2;
+				}
+			}
+
+			break;
+
 		default: // limit_type::GENERAL
 
 			for(size_t i=1; i<size(); ++i)
@@ -609,11 +697,11 @@ public:
 				if(_base_[i]>=val) return i-1;
 			}
 
-			assert(false); // If we reach this path, there's an error
-			return 0; // Just to suppress editor errors
-
 			break;
 		}
+
+		assert(false); // If we reach this path, there's an error
+		return 0; // Just to suppress editor errors
 	}
 
 	/// Interpolate between values for successive bins
@@ -625,7 +713,9 @@ public:
 
 		size_t bin_i=size()-3;
 
-		for(size_t i=0; i<size()-2; ++i)
+		const char step_length = _type_==type::DISJOINT ? 2 : 1;
+
+		for(size_t i=0; i<size()-2; i += step_length)
 		{
 			if((_base_[i]+_base_[i+1])/2>=val)
 			{
@@ -638,7 +728,7 @@ public:
 		}
 
 		T xlo = (_base_[bin_i]+_base_[bin_i+1])/2;
-		T xhi = (_base_[bin_i+1]+_base_[bin_i+2])/2;
+		T xhi = (_base_[bin_i+step_length]+_base_[bin_i+step_length+1])/2;
 		const T2 & ylo = val_vec[bin_i];
 		const T2 & yhi = val_vec[bin_i+1];
 
@@ -647,14 +737,26 @@ public:
 
 	std::vector<T,A> get_bin_mids() const
 	{
-		std::vector<T,A> result(_base_);
-		for(size_t i=0; i<num_bins(); ++i)
+		if(_type_!=type::DISJOINT)
 		{
-			result[i] += (result[i+1]-result[i])/2;
-		}
+			std::vector<T,A> result(_base_);
+			for(size_t i=0; i<num_bins(); ++i)
+			{
+				result[i] += (result[i+1]-result[i])/2;
+			}
 
-		result.pop_back();
-		return result;
+			result.pop_back();
+			return result;
+		}
+		else
+		{
+			std::vector<T,A> result(num_bins());
+			for(size_t i=0; i<size(); i+=2)
+			{
+				result.push_back((_base_[i]+_base_[i+1])/2);
+			}
+			return result;
+		}
 	}
 
 #endif
@@ -681,7 +783,7 @@ public:
 	template<typename To>
 	std::valarray<To> to_valarray() const
 	{
-		std::vector<To> result;
+		std::valarray<To> result;
 		make_vector_coerce<1>(result,_base_);
 		return result;
 	}
@@ -693,7 +795,10 @@ public:
 
 	bool operator==(const brgastro::limit_vector<T,A> & other) const
 	{
-		return _base_==other._base_;
+		if((_type_==type::DISJOINT)||(other._type_==type::DISJOINT))
+			return (_base_==other._base_)&&(_type_==other._type_);
+		else
+			return _base_==other._base_;
 	}
 
 #endif

@@ -200,7 +200,7 @@ private:
 	const name *_host_ptr_;
 	BRG_DISTANCE _R0_, _R_;
 
-	CONST_BRG_DISTANCE_REF _arc_length_in_circle( CONST_BRG_DISTANCE_REF R2 ) const
+	BRG_DISTANCE _arc_length_in_circle( CONST_BRG_DISTANCE_REF R2 ) const
 	{
 		// Check for complete enclosure
 		if( _R0_ + R2 <= _R_)
