@@ -38,7 +38,7 @@ namespace brgastro {
 constexpr double mag_m_counting_min = 19;
 constexpr double mag_m_counting_max = 24.7;
 
-constexpr double mag_m_min = 23.7;
+constexpr double mag_m_min = 20;
 constexpr double mag_m_max = 24.7;
 constexpr double mag_m_step = 0.1;
 
