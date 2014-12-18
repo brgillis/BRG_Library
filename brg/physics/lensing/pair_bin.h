@@ -176,53 +176,53 @@ public:
 
 	void add_pair( const lens_source_pair & new_pair);
 	void add_lens( const lens_id & lens );
-	void clear();
+	virtual void clear() override;
 
 #endif
 
 	// Count
 #if(1)
-	size_t count() const
+	virtual size_t pair_count() const override
 	{
-		return shear_count();
+		return shear_pair_count();
 	}
-	size_t shear_count() const
+	virtual size_t shear_pair_count() const override
 	{
 		return extract_count(_shear_R_values_);
 	}
-	size_t magf_count() const
+	virtual size_t magf_pair_count() const override
 	{
 		return extract_count(_magf_R_values_);
 	}
-	double effective_count() const
+	virtual double effective_pair_count() const override
 	{
-		return shear_effective_count();
+		return shear_effective_pair_count();
 	}
-	double shear_effective_count() const
+	virtual double shear_effective_pair_count() const override
 	{
 		return safe_extract_effective_count(_delta_Sigma_t_values_);
 	}
-	double sum_of_weights() const
+	virtual double sum_of_weights() const override
 	{
 		return shear_sum_of_weights();
 	}
-	double shear_sum_of_weights() const
+	virtual double shear_sum_of_weights() const override
 	{
 		return safe_extract_sum_of_weights(_delta_Sigma_t_values_);
 	}
-	double sum_of_square_weights() const
+	virtual double sum_of_square_weights() const override
 	{
 		return shear_sum_of_square_weights();
 	}
-	double shear_sum_of_square_weights() const
+	virtual double shear_sum_of_square_weights() const override
 	{
 		return safe_extract_sum_of_square_weights(_delta_Sigma_t_values_);
 	}
-	size_t num_lenses() const
+	virtual size_t num_lenses() const override
 	{
 		return magf_num_lenses();
 	}
-	size_t magf_num_lenses() const
+	virtual size_t magf_num_lenses() const override
 	{
 		return _distinct_lens_ids_.size();
 	}
@@ -231,67 +231,67 @@ public:
 	// Limits and means accessors
 #if(1)
 
-	BRG_DISTANCE R_mean() const
+	virtual BRG_DISTANCE R_mean() const override
 	{
 		return shear_R_mean();
 	}
-	BRG_DISTANCE shear_R_mean() const
+	virtual BRG_DISTANCE shear_R_mean() const override
 	{
 		return safe_extract_weighted_mean(_shear_R_values_);
 	}
-	BRG_DISTANCE magf_R_mean() const
+	virtual BRG_DISTANCE magf_R_mean() const override
 	{
 		return safe_extract_weighted_mean(_magf_R_values_);
 	}
 
-	BRG_MASS m_lens_mean() const
+	virtual BRG_MASS lens_m_mean() const override
 	{
 		return shear_lens_m_mean();
 	}
-	BRG_MASS shear_lens_m_mean() const
+	virtual BRG_MASS shear_lens_m_mean() const override
 	{
 		return safe_extract_weighted_mean(_shear_lens_m_values_);
 	}
-	BRG_MASS magf_lens_m_mean() const
+	virtual BRG_MASS magf_lens_m_mean() const override
 	{
 		return safe_extract_weighted_mean(_magf_lens_m_values_);
 	}
 
-	double lens_z_mean() const
+	virtual double lens_z_mean() const override
 	{
 		return shear_lens_z_mean();
 	}
-	double shear_lens_z_mean() const
+	virtual double shear_lens_z_mean() const override
 	{
 		return safe_extract_weighted_mean(_shear_lens_z_values_);
 	}
-	double magf_lens_z_mean() const
+	virtual double magf_lens_z_mean() const override
 	{
 		return safe_extract_weighted_mean(_magf_lens_z_values_);
 	}
 
-	double lens_mag_mean() const
+	virtual double lens_mag_mean() const override
 	{
 		return shear_lens_mag_mean();
 	}
-	double shear_lens_mag_mean() const
+	virtual double shear_lens_mag_mean() const override
 	{
 		return safe_extract_weighted_mean(_shear_lens_mag_values_);
 	}
-	double magf_lens_mag_mean() const
+	virtual double magf_lens_mag_mean() const override
 	{
 		return safe_extract_weighted_mean(_magf_lens_mag_values_);
 	}
 
-	double source_z_mean() const
+	virtual double source_z_mean() const override
 	{
 		return shear_source_z_mean();
 	}
-	double shear_source_z_mean() const
+	virtual double shear_source_z_mean() const override
 	{
 		return safe_extract_weighted_mean(_shear_source_z_values_);
 	}
-	double magf_source_z_mean() const
+	virtual double magf_source_z_mean() const override
 	{
 		return safe_extract_weighted_mean(_magf_source_z_values_);
 	}
@@ -306,22 +306,22 @@ public:
 	// Calculations on stored values
 #if (1)
 
-	BRG_UNITS area() const;
+	virtual BRG_UNITS area() const override;
 
-	BRG_UNITS delta_Sigma_t_mean() const;
-	BRG_UNITS delta_Sigma_x_mean() const;
+	virtual BRG_UNITS delta_Sigma_t_mean() const override;
+	virtual BRG_UNITS delta_Sigma_x_mean() const override;
 
-	BRG_UNITS delta_Sigma_t_mean_square() const;
-	BRG_UNITS delta_Sigma_x_mean_square() const;
+	virtual BRG_UNITS delta_Sigma_t_mean_square() const override;
+	virtual BRG_UNITS delta_Sigma_x_mean_square() const override;
 
-	BRG_UNITS delta_Sigma_t_std() const;
-	BRG_UNITS delta_Sigma_x_std() const;
+	virtual BRG_UNITS delta_Sigma_t_std() const override;
+	virtual BRG_UNITS delta_Sigma_x_std() const override;
 
-	BRG_UNITS delta_Sigma_t_stderr() const;
-	BRG_UNITS delta_Sigma_x_stderr() const;
+	virtual BRG_UNITS delta_Sigma_t_stderr() const override;
+	virtual BRG_UNITS delta_Sigma_x_stderr() const override;
 
-	double mu_hat() const;
-	double mu_W() const;
+	virtual double mu_hat() const override;
+	virtual double mu_W() const override;
 
 #endif
 };

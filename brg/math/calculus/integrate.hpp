@@ -479,7 +479,7 @@ inline T integrate_Romberg( const f * func,
 		Rn.resize( 0 );
 
 		// Check for convergence
-		d = ( 2 * fabs( R[n][n] - R[n - 1][n - 1] )
+		d = ( 2 * std::fabs( R[n][n] - R[n - 1][n - 1] )
 						/ safe_d( fabs( R[n][n] + R[n - 1][n - 1] ) ) );
 		if ( d < precision )
 		{

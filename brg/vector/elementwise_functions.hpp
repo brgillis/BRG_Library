@@ -27,10 +27,12 @@
 #include <cassert>
 #include <cstdlib>
 #include <cmath>
+#include <type_traits>
 #include <vector>
 
 #include "brg/global.h"
 
+#include "brg/container/is_container.hpp"
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
 
@@ -42,47 +44,47 @@ namespace brgastro {
 #if (1)
 
 template< typename f, typename T >
-const std::vector<T> apply( const f func, const std::vector<T> & v1 )
+T apply( const f & func, T v1)
 {
-	std::vector<T> result(v1.size());
+	std::transform(v1.begin(), v1.end(), v1.begin(), func);
 
-	std::transform(v1.begin(), v1.end(), result.begin(), func);
-
-	return result;
+	return v1;
 }
 
-template< typename f, typename T1, typename T2 >
-const std::vector<T1> apply( const f func, const std::vector<T1> & v1, const std::vector<T2> & v2 )
+template< typename f, typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 apply( const f & func,  T1 v1, const T2 & v2)
 {
-	std::vector<T1> result(v1.size());
+	std::transform(v1.begin(), v1.end(), v2.begin(), v1.begin(), func);
 
-	std::transform(v1.begin(), v1.end(), v2.begin(), result.begin(), func);
-
-	return result;
+	return v1;
 }
 
-template< typename f, typename T1, typename T2 >
-const std::vector<T1> apply( const f func, const T1 & v1, const std::vector<T2> &v2 )
+template< typename f, typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 apply( const f & func, const T1 & v1, T2 v2)
 {
-	std::vector<T1> result(v2.size());
+	for(auto & v : v2) v = func(v1,v);
 
-	for(unsigned int i = 0; i < v2.size(); i++) result = func(v1,v2[i]);
-
-	return result;
+	return v2;
 }
 
-template< typename f, typename T1, typename T2 >
-const std::vector<T1> apply( const f func, const std::vector<T1> & v1, const T2 &v2 )
+template< typename f, typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 apply( const f & func, T1 v1, const T2 &v2 )
 {
-	std::vector<T1> result(v1.size());
+	for(auto & v : v1) v = func(v,v2);
 
-	for(unsigned int i = 0; i < v1.size(); i++) result = func(v1,v2[i]);
-
-	return result;
+	return v1;
 }
 
-template< typename f, typename T1, typename T2 >
-const T1 apply( const f * func, const T1 & v1, const T2 &v2 )
+template< typename f, typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 apply( const f & func, const T1 & v1, const T2 &v2 )
 {
 	T1 result = func(v1,v2);
 
@@ -95,45 +97,48 @@ const T1 apply( const f * func, const T1 & v1, const T2 &v2 )
 #if (1)
 
 template<typename T, typename f>
-const std::vector<T> rand_vector_of_size(const f func, const int size)
+T rand_vector_of_size(const f func, const int size)
 {
-	std::vector<T> result(size);
+	T result(size);
 
-	for(unsigned int i = 0; i < size; i++) result[i] = func();
+	for(auto & v : result) v = func();
 
 	return result;
 }
 
 template<typename f, typename T1>
-const std::vector<T1> rand_vector_of_size(const f func, const T1 & v1, const int size)
+T1 rand_vector_of_size(const f func, const T1 & v1, const int size)
 {
-	std::vector<T1> result(size);
+	T1 result(size);
 
-	for(unsigned int i = 0; i < size; i++) result[i] = func(v1);
+	for(auto & v : result) v = func(v1);
 
 	return result;
 }
 
 template<typename f, typename T1, typename T2>
-const std::vector<T1> rand_vector_of_size(const f func, const T1 & v1, const T2 & v2, const int size)
+T1 rand_vector_of_size(const f func, const T1 & v1, const T2 & v2, const int size)
 {
-	std::vector<T1> result(size);
+	T1 result(size);
 
-	for(unsigned int i = 0; i < size; i++) result[i] = func(v1,v2);
+	for(auto & v : result) v = func(v1,v2);
 
 	return result;
 }
 
-template<typename f, typename T1>
-const std::vector<T1> rand_vector(const f func, std::vector<T1> v1)
+template<typename f, typename T1,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr>
+T1 rand_vector(const f func, T1 v1 )
 {
 	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = func(v1[i]);
 
 	return v1;
 }
 
-template<typename f, typename T1, typename T2>
-const std::vector<T1> rand_vector(const f func, std::vector<T1> v1, const std::vector<T2> & v2)
+template<typename f, typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 rand_vector(const f func, T1 v1, const T2 & v2)
 {
 	assert(v1.size()==v2.size());
 
@@ -142,22 +147,24 @@ const std::vector<T1> rand_vector(const f func, std::vector<T1> v1, const std::v
 	return v1;
 }
 
-template<typename f, typename T1, typename T2>
-const std::vector<T1> rand_vector(const f func, std::vector<T1> v1, const T2 & v2)
+template<typename f, typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 rand_vector(const f func, T1 v1, const T2 & v2)
 {
-	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = func(v1[i],v2);
+	for(auto & v : v1) v = func(v,v2);
 
 	return v1;
 }
 
-template<typename f, typename T1, typename T2>
-const std::vector<T1> rand_vector(const f func, const T1 & v1, const std::vector<T2> & v2)
+template<typename f, typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 rand_vector(const f func, const T1 & v1, T2 v2)
 {
-	std::vector<T1> result(v2.size());
+	for(auto & v : v2) v = func(v1,v);
 
-	for(unsigned int i = 0; i < v2.size(); i++) result[i] = func(v1,v2[i]);
-
-	return result;
+	return v2;
 }
 
 #endif
@@ -168,8 +175,10 @@ const std::vector<T1> rand_vector(const f func, const T1 & v1, const std::vector
 // Element-wise addition
 #if (1)
 
-template< typename T1, typename T2 >
-const std::vector<T1> add( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+	typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+	typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 add( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 
@@ -181,30 +190,36 @@ const std::vector<T1> add( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> add( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+	typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+	typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 add( T1 v1, const T2 &v2 )
 {
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] += v2;
+		v += v2;
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T2> add( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+	typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+	typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 add( const T1 & v1, T2 v2 )
 {
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(auto & v : v2)
 	{
-		v2[i] += v1;
+		v += v1;
 	}
 
 	return v2;
 }
 
-template< typename T1, typename T2 >
-const T1 add( T1 v1, const T2 & v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 add( T1 v1, const T2 & v2 )
 {
 	return v1 += v2;
 }
@@ -214,8 +229,10 @@ const T1 add( T1 v1, const T2 & v2 )
 // Element-wise subtraction
 #if (1)
 
-template< typename T1, typename T2 >
-const std::vector<T1> subtract( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 subtract( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
@@ -226,30 +243,36 @@ const std::vector<T1> subtract( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> subtract( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 subtract( T1 v1, const T2 &v2 )
 {
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] -= v2;
+		v -= v2;
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T2> subtract( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 subtract( const T1 & v1, T2 v2 )
 {
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(auto & v : v2)
 	{
-		v2[i] = v1-v2[i];
+		v = v1-v;
 	}
 
 	return v2;
 }
 
-template< typename T1, typename T2 >
-const T1 subtract( T1 v1, const T2 & v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 subtract( T1 v1, const T2 & v2 )
 {
 	return v1 -= v2;
 }
@@ -259,8 +282,10 @@ const T1 subtract( T1 v1, const T2 & v2 )
 // Element-wise multiplication
 #if (1)
 
-template< typename T1, typename T2 >
-const std::vector<T1> multiply( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 multiply( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
@@ -271,30 +296,36 @@ const std::vector<T1> multiply( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> multiply( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 multiply( T1 v1, const T2 &v2 )
 {
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] *= v2;
+		v *= v2;
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T2> multiply( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 multiply( const T1 & v1, T2 v2 )
 {
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(auto & v : v2)
 	{
-		v2[i] *= v1;
+		v *= v1;
 	}
 
 	return v2;
 }
 
-template< typename T1, typename T2 >
-const T1 multiply( T1 v1, const T2 & v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 multiply( T1 v1, const T2 & v2 )
 {
 	return v1 *= v2;
 }
@@ -304,8 +335,10 @@ const T1 multiply( T1 v1, const T2 & v2 )
 // Element-wise division
 #if (1)
 
-template< typename T1, typename T2 >
-const std::vector<T1> divide( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 divide( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
@@ -316,31 +349,36 @@ const std::vector<T1> divide( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> divide( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 divide( T1 v1, const T2 &v2 )
 {
-
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] /= v2;
+		v /= v2;
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T2> divide( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 divide( const T1 & v1, T2 v2 )
 {
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(auto & v : v2)
 	{
-		v2[i] = v1/v2[i];
+		v = v1/v;
 	}
 
 	return v2;
 }
 
-template< typename T1, typename T2 >
-const T1 divide( T1 v1, const T2 & v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 divide( T1 v1, const T2 & v2 )
 {
 	return v1 /= v2;
 }
@@ -350,8 +388,10 @@ const T1 divide( T1 v1, const T2 & v2 )
 // Element-wise power
 #if (1)
 
-template< typename T1, typename T2 >
-const std::vector<T1> pow( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 pow( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
@@ -362,37 +402,45 @@ const std::vector<T1> pow( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> pow( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 pow( T1 v1, const T2 &v2 )
 {
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] = pow(v1[i], v2);
+		v = pow(v, v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T2> pow( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 pow( const T1 & v1, T2 v2 )
 {
 	using std::pow;
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(auto & v : v2)
 	{
-		v2[i] = pow(v1, v2[i]);
+		v = pow(v1, v);
 	}
 
 	return v2;
 }
 
-template< typename T1, typename T2 >
-const T1 pow( const T1 & v1, const T2 & v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 pow( const T1 & v1, const T2 & v2 )
 {
 	return std::pow(v1, v2);
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> ipow( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 ipow( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 	for(unsigned int i = 0; i < v1.size(); i++)
@@ -403,23 +451,28 @@ const std::vector<T1> ipow( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> ipow( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 ipow( T1 v1, const T2 &v2 )
 {
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] = ipow(v1[i], v2);
+		v = ipow(v, v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T2> ipow( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 ipow( const T1 & v1, const T2 & v2 )
 {
+	T1 result(v2.size());
 	for(unsigned int i = 0; i < v2.size(); i++)
 	{
-		v2[i] = ipow(v1, v2[i]);
+		result[i] = ipow(v1, v2[i]);
 	}
 
 	return v2;
@@ -430,8 +483,10 @@ const std::vector<T2> ipow( const T1 & v1, std::vector<T2> v2 )
 // Element-wise safe power
 #if (1)
 
-template< typename T1, typename T2 >
-const std::vector<T1> safe_pow( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 safe_pow( T1 v1, const T2 &v2 )
 {
 
 	assert(v1.size()==v2.size());
@@ -443,24 +498,28 @@ const std::vector<T1> safe_pow( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> safe_pow( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 safe_pow( T1 v1, const T2 &v2 )
 {
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] = safe_pow(v1[i], v2);
+		v = safe_pow(v, v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T2> safe_pow( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 safe_pow( const T1 & v1, T2 v2 )
 {
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(auto & v : v2)
 	{
-		v2[i] = safe_pow(v1, v2[i]);
+		v = safe_pow(v1, v);
 	}
 
 	return v2;
@@ -471,8 +530,10 @@ const std::vector<T2> safe_pow( const T1 & v1, std::vector<T2> v2 )
 // Element-wise max
 #if (1)
 
-template< typename T1, typename T2 >
-const std::vector<T1> max( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 max( T1 v1, const T2 &v2 )
 {
 
 	assert(v1.size()==v2.size());
@@ -484,24 +545,28 @@ const std::vector<T1> max( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T1> max( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 max( T1 v1, const T2 &v2 )
 {
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] = max(v1[i], v2);
+		v = max(v, v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-const std::vector<T2> max( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 max( const T1 & v1, T2 v2 )
 {
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(auto & v : v2)
 	{
-		v2[i] = max(v1, v2[i]);
+		v = max(v1, v);
 	}
 
 	return v2;
@@ -512,8 +577,10 @@ const std::vector<T2> max( const T1 & v1, std::vector<T2> v2 )
 // Element-wise min
 #if (1)
 
-template< typename T1, typename T2 >
-std::vector<T1> min( std::vector<T1> v1, const std::vector<T2> &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 min( T1 v1, const T2 &v2 )
 {
 
 	assert(v1.size()==v2.size());
@@ -525,24 +592,28 @@ std::vector<T1> min( std::vector<T1> v1, const std::vector<T2> &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2 >
-std::vector<T1> min( std::vector<T1> v1, const T2 &v2 )
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T1 min( T1 v1, const T2 &v2 )
 {
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(auto & v : v1)
 	{
-		v1[i] = min(v1[i], v2);
+		v = min(v, v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2 >
-std::vector<T2> min( const T1 & v1, std::vector<T2> v2 )
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+T2 min( const T1 & v1, T2 v2 )
 {
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(auto & v : v2)
 	{
-		v2[i] = min(v1, v2[i]);
+		v = min(v1, v);
 	}
 
 	return v2;
@@ -553,10 +624,13 @@ std::vector<T2> min( const T1 & v1, std::vector<T2> v2 )
 // Element-wise bound
 #if (1)
 
-template< typename T1, typename T2, typename T3 >
-std::vector<T2> bound( const std::vector<T1> & vlower,
-					   std::vector<T2> v,
-					   const std::vector<T3> & vupper)
+template< typename T1, typename T2, typename T3,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T3>::value,T3>::type* = nullptr >
+T2 bound( const T1 & vlower,
+					   T2 v,
+					   const T3 & vupper)
 {
 
 	assert(vlower.size()==v.size());
@@ -569,10 +643,13 @@ std::vector<T2> bound( const std::vector<T1> & vlower,
 	return v;
 }
 
-template< typename T1, typename T2, typename T3 >
-std::vector<T2> bound( T1 vlower,
-					   std::vector<T2> v,
-					   const std::vector<T3> & vupper)
+template< typename T1, typename T2, typename T3,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T3>::value,T3>::type* = nullptr >
+T2 bound( T1 vlower,
+					   T2 v,
+					   const T3 & vupper)
 {
 
 	assert(vupper.size()==v.size());
@@ -584,9 +661,12 @@ std::vector<T2> bound( T1 vlower,
 	return v;
 }
 
-template< typename T1, typename T2, typename T3 >
-std::vector<T2> bound( const std::vector<T1> & vlower,
-					   std::vector<T2> v,
+template< typename T1, typename T2, typename T3,
+typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T3>::value,T3>::type* = nullptr >
+T2 bound( const T1 & vlower,
+					   T2 v,
 					   T3 vupper)
 {
 
@@ -599,15 +679,18 @@ std::vector<T2> bound( const std::vector<T1> & vlower,
 	return v;
 }
 
-template< typename T1, typename T2, typename T3 >
-std::vector<T2> bound( T1 vlower,
-					   std::vector<T2> v,
+template< typename T1, typename T2, typename T3,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,T1>::type* = nullptr,
+typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr,
+typename std::enable_if<!brgastro::is_const_container<T3>::value,T3>::type* = nullptr >
+T2 bound( T1 vlower,
+					   T2 v,
 					   T3 vupper)
 {
 
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = bound(vlower,v[i],vupper);
+		vv = bound(vlower,vv,vupper);
 	}
 
 	return v;
@@ -618,19 +701,21 @@ std::vector<T2> bound( T1 vlower,
 // Element-wise negate
 #if (1)
 
-template< typename T >
-const std::vector<T> negate( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T negate( T v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = negate(v[i]);
+		vv = negate(vv);
 	}
 
 	return v;
 }
 
-template< typename T >
-const T negate( const T & v )
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T negate( const T & v )
 {
 	return -v;
 }
@@ -640,15 +725,15 @@ const T negate( const T & v )
 // Element-wise abs
 #if (1)
 
-template< typename T >
-const std::vector<T> abs( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T abs( T v )
 {
 	using std::abs;
-	using brgastro::abs;
 
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = abs(v[i]);
+		vv = abs(vv);
 	}
 
 	return v;
@@ -656,18 +741,46 @@ const std::vector<T> abs( std::vector<T> v )
 
 #endif // Element-wise abs
 
+// Element-wise fabs
+#if (1)
+
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T fabs( T v )
+{
+	using std::fabs;
+
+	for(auto & vv : v)
+	{
+		vv = fabs(vv);
+	}
+
+	return v;
+}
+
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T fabs( T v )
+{
+	using std::fabs;
+
+	return fabs(v);
+}
+
+#endif // Element-wise fabs
+
 // Element-wise square root
 #if (1)
 
-template< typename T >
-const std::vector<T> sqrt( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T sqrt( T v )
 {
 	using std::sqrt;
-	using brgastro::sqrt;
 
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = sqrt(v[i]);
+		vv = sqrt(vv);
 	}
 
 	return v;
@@ -678,17 +791,16 @@ const std::vector<T> sqrt( std::vector<T> v )
 // Element-wise safe square root
 #if (1)
 
-template< typename T >
-const std::vector<T> safe_sqrt( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T safe_sqrt( T v )
 {
-	std::vector<T> result(v.size(),0);
-
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		result[i] = safe_sqrt(v[i]);
+		vv = safe_sqrt(vv);
 	}
 
-	return result;
+	return v;
 }
 
 #endif // Element-wise safe square root
@@ -696,14 +808,14 @@ const std::vector<T> safe_sqrt( std::vector<T> v )
 // Element-wise exponential
 #if (1)
 
-template< typename T >
-const std::vector<T> exp( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T exp( T v )
 {
 	using std::exp;
-	using brgastro::exp;
 
-	for(unsigned int i = 0; i < v.size(); i++)
-		v[i] = exp(v[i]);
+	for(auto & vv : v)
+		vv = exp(vv);
 
 	return v;
 }
@@ -713,14 +825,14 @@ const std::vector<T> exp( std::vector<T> v )
 // Element-wise log
 #if (1)
 
-template< typename T >
-const std::vector<T> log( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr>
+T log( T v )
 {
 	using std::log;
-	using brgastro::log;
 
-	for(unsigned int i = 0; i < v.size(); i++)
-		v[i] = log(v[i]);
+	for(auto & vv : v)
+		vv = log(vv);
 
 	return v;
 }
@@ -730,12 +842,13 @@ const std::vector<T> log( std::vector<T> v )
 // Element-wise square
 #if (1)
 
-template< typename T >
-const std::vector<T> square( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr >
+T square( T v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = square(v[i]);
+		vv = square(vv);
 	}
 
 	return v;
@@ -746,12 +859,13 @@ const std::vector<T> square( std::vector<T> v )
 // Element-wise cube
 #if (1)
 
-template< typename T >
-const std::vector<T> cube( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr >
+T cube( T v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = cube(v[i]);
+		vv = cube(vv);
 	}
 
 	return v;
@@ -762,12 +876,13 @@ const std::vector<T> cube( std::vector<T> v )
 // Element-wise quart
 #if (1)
 
-template< typename T >
-const std::vector<T> quart( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr >
+T quart( T v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = quart(v[i]);
+		vv = quart(vv);
 	}
 
 	return v;
@@ -778,12 +893,13 @@ const std::vector<T> quart( std::vector<T> v )
 // Element-wise inverse
 #if (1)
 
-template< typename T >
-const std::vector<T> inverse( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr >
+T inverse( T v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = inverse(v[i]);
+		vv = inverse(vv);
 	}
 
 	return v;
@@ -794,12 +910,13 @@ const std::vector<T> inverse( std::vector<T> v )
 // Element-wise inv_square
 #if (1)
 
-template< typename T >
-const std::vector<T> inv_square( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr >
+T inv_square( T v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = inv_square(v[i]);
+		vv = inv_square(vv);
 	}
 
 	return v;
@@ -810,12 +927,13 @@ const std::vector<T> inv_square( std::vector<T> v )
 // Element-wise inv_cube
 #if (1)
 
-template< typename T >
-const std::vector<T> inv_cube( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr >
+T inv_cube( T v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = inv_cube(v[i]);
+		vv = inv_cube(vv);
 	}
 
 	return v;
@@ -826,12 +944,13 @@ const std::vector<T> inv_cube( std::vector<T> v )
 // Element-wise inv_quart
 #if (1)
 
-template< typename T >
-const std::vector<T> inv_quart( std::vector<T> v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr >
+T inv_quart( T v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(auto & vv : v)
 	{
-		v[i] = inv_quart(v[i]);
+		vv = inv_quart(vv);
 	}
 
 	return v;
@@ -842,15 +961,14 @@ const std::vector<T> inv_quart( std::vector<T> v )
 // Element-wise safe_d
 #if (1)
 
-template< typename T >
-const std::vector<T> safe_d( const std::vector<T> & v )
+template< typename T,
+typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr >
+T safe_d( T v )
 {
-	std::vector<T> result(v.size());
+	for(auto & vv : v)
+		vv = safe_d(vv);
 
-	for(unsigned int i = 0; i < v.size(); i++)
-		result[i] = safe_d(v[i]);
-
-	return result;
+	return v;
 }
 
 #endif // Element-wise safe_d
@@ -865,7 +983,7 @@ const std::vector<T> safe_d( const std::vector<T> & v )
 
 inline const std::vector<bool> operator!( std::vector<bool> v )
 {
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(std::vector<bool>::size_type i=0; i<v.size(); ++i)
 	{
 		v[i] = !v[i];
 	}
@@ -877,7 +995,7 @@ inline const std::vector<bool> operator!( std::vector<bool> v )
 // Element-wise equal
 #if (1)
 template< typename T1, typename T2 >
-const std::vector<bool> equal( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+std::vector<bool> equal( const T1 & v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 
@@ -891,8 +1009,8 @@ const std::vector<bool> equal( const std::vector<T1> & v1, const std::vector<T2>
 	return result;
 }
 
-template< typename T1, typename T2 >
-const std::vector<bool> equal( const std::vector<T1> & v1, const T2 &v2 )
+template< typename T1, typename T2, typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+std::vector<bool> equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
@@ -905,7 +1023,7 @@ const std::vector<bool> equal( const std::vector<T1> & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2 >
-const std::vector<bool> equal( const T2 & v1, const std::vector<T1> &v2 )
+std::vector<bool> equal( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
@@ -918,7 +1036,7 @@ const std::vector<bool> equal( const T2 & v1, const std::vector<T1> &v2 )
 }
 
 template< typename T1, typename T2 >
-const bool equal( const T1 & v1, const T2 & v2 )
+bool equal( const T1 & v1, const T2 & v2 )
 {
 	return (v1 == v2);
 }
@@ -928,7 +1046,7 @@ const bool equal( const T1 & v1, const T2 & v2 )
 // Element-wise not_equal
 #if (1)
 template< typename T1, typename T2 >
-const std::vector<bool> not_equal( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+std::vector<bool> not_equal( const T1 & v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 
@@ -942,8 +1060,8 @@ const std::vector<bool> not_equal( const std::vector<T1> & v1, const std::vector
 	return result;
 }
 
-template< typename T1, typename T2 >
-const std::vector<bool> not_equal( const std::vector<T1> & v1, const T2 &v2 )
+template< typename T1, typename T2, typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+std::vector<bool> not_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
@@ -956,7 +1074,7 @@ const std::vector<bool> not_equal( const std::vector<T1> & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2 >
-const std::vector<bool> not_equal( const T2 & v1, const std::vector<T1> &v2 )
+std::vector<bool> not_equal( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
@@ -969,7 +1087,7 @@ const std::vector<bool> not_equal( const T2 & v1, const std::vector<T1> &v2 )
 }
 
 template< typename T1, typename T2 >
-const bool not_equal( const T1 & v1, const T2 & v2 )
+bool not_equal( const T1 & v1, const T2 & v2 )
 {
 	return (v1 != v2);
 }
@@ -979,7 +1097,7 @@ const bool not_equal( const T1 & v1, const T2 & v2 )
 // Element-wise less_than
 #if (1)
 template< typename T1, typename T2 >
-const std::vector<bool> less_than( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+std::vector<bool> less_than( const T1 & v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 
@@ -993,8 +1111,8 @@ const std::vector<bool> less_than( const std::vector<T1> & v1, const std::vector
 	return result;
 }
 
-template< typename T1, typename T2 >
-const std::vector<bool> less_than( const std::vector<T1> & v1, const T2 &v2 )
+template< typename T1, typename T2, typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+std::vector<bool> less_than( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
@@ -1007,7 +1125,7 @@ const std::vector<bool> less_than( const std::vector<T1> & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2 >
-const std::vector<bool> less_than( const T2 & v1, const std::vector<T1> &v2 )
+std::vector<bool> less_than( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
@@ -1020,7 +1138,7 @@ const std::vector<bool> less_than( const T2 & v1, const std::vector<T1> &v2 )
 }
 
 template< typename T1, typename T2 >
-const bool less_than( const T1 & v1, const T2 & v2 )
+bool less_than( const T1 & v1, const T2 & v2 )
 {
 	return (v1 < v2);
 }
@@ -1030,7 +1148,7 @@ const bool less_than( const T1 & v1, const T2 & v2 )
 // Element-wise greater_than
 #if (1)
 template< typename T1, typename T2 >
-const std::vector<bool> greater_than( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+std::vector<bool> greater_than( const T1 & v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 
@@ -1044,8 +1162,8 @@ const std::vector<bool> greater_than( const std::vector<T1> & v1, const std::vec
 	return result;
 }
 
-template< typename T1, typename T2 >
-const std::vector<bool> greater_than( const std::vector<T1> & v1, const T2 &v2 )
+template< typename T1, typename T2, typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+std::vector<bool> greater_than( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
@@ -1058,7 +1176,7 @@ const std::vector<bool> greater_than( const std::vector<T1> & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2 >
-const std::vector<bool> greater_than( const T2 & v1, const std::vector<T1> &v2 )
+std::vector<bool> greater_than( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
@@ -1071,7 +1189,7 @@ const std::vector<bool> greater_than( const T2 & v1, const std::vector<T1> &v2 )
 }
 
 template< typename T1, typename T2 >
-const bool greater_than( const T1 & v1, const T2 & v2 )
+bool greater_than( const T1 & v1, const T2 & v2 )
 {
 	return (v1 > v2);
 }
@@ -1081,7 +1199,7 @@ const bool greater_than( const T1 & v1, const T2 & v2 )
 // Element-wise less_than_or_equal
 #if (1)
 template< typename T1, typename T2 >
-const std::vector<bool> less_than_or_equal( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+std::vector<bool> less_than_or_equal( const T1 & v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 
@@ -1095,8 +1213,8 @@ const std::vector<bool> less_than_or_equal( const std::vector<T1> & v1, const st
 	return result;
 }
 
-template< typename T1, typename T2 >
-const std::vector<bool> less_than_or_equal( const std::vector<T1> & v1, const T2 &v2 )
+template< typename T1, typename T2, typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+std::vector<bool> less_than_or_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
@@ -1109,7 +1227,7 @@ const std::vector<bool> less_than_or_equal( const std::vector<T1> & v1, const T2
 }
 
 template< typename T1, typename T2 >
-const std::vector<bool> less_than_or_equal( const T2 & v1, const std::vector<T1> &v2 )
+std::vector<bool> less_than_or_equal( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
@@ -1122,7 +1240,7 @@ const std::vector<bool> less_than_or_equal( const T2 & v1, const std::vector<T1>
 }
 
 template< typename T1, typename T2 >
-const bool less_than_or_equal( const T1 & v1, const T2 & v2 )
+bool less_than_or_equal( const T1 & v1, const T2 & v2 )
 {
 	return (v1 <= v2);
 }
@@ -1132,7 +1250,7 @@ const bool less_than_or_equal( const T1 & v1, const T2 & v2 )
 // Element-wise greater_than_or_equal
 #if (1)
 template< typename T1, typename T2 >
-const std::vector<bool> greater_than_or_equal( const std::vector<T1> & v1, const std::vector<T2> &v2 )
+std::vector<bool> greater_than_or_equal( const T1 & v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 
@@ -1146,8 +1264,8 @@ const std::vector<bool> greater_than_or_equal( const std::vector<T1> & v1, const
 	return result;
 }
 
-template< typename T1, typename T2 >
-const std::vector<bool> greater_than_or_equal( const std::vector<T1> & v1, const T2 &v2 )
+template< typename T1, typename T2, typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nullptr >
+std::vector<bool> greater_than_or_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
@@ -1160,7 +1278,7 @@ const std::vector<bool> greater_than_or_equal( const std::vector<T1> & v1, const
 }
 
 template< typename T1, typename T2 >
-const std::vector<bool> greater_than_or_equal( const T2 & v1, const std::vector<T1> &v2 )
+std::vector<bool> greater_than_or_equal( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
@@ -1173,7 +1291,7 @@ const std::vector<bool> greater_than_or_equal( const T2 & v1, const std::vector<
 }
 
 template< typename T1, typename T2 >
-const bool greater_than_or_equal( const T1 & v1, const T2 & v2 )
+bool greater_than_or_equal( const T1 & v1, const T2 & v2 )
 {
 	return (v1 >= v2);
 }
@@ -1188,7 +1306,7 @@ const bool greater_than_or_equal( const T1 & v1, const T2 & v2 )
 // not
 #if (1)
 template<typename T>
-inline const std::vector<T> v_not(const std::vector<T> v)
+inline const T v_not(const T v)
 {
 	for(unsigned int i=0; i < v.size(); i++)
 	{

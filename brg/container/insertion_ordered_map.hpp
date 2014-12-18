@@ -60,13 +60,15 @@ private:
 	map_type _key_map_;
 
 	template< typename new_val_type >
-	void _insert(new_val_type && val)
+	value_type & _insert(new_val_type && val)
 	{
 		// This function is only called if we already know we need it, so we
 		// don't check if the key already exists here
 		_key_map_[val.first] = _val_vector_.size(); // Once we add the value to the vector, this will
 													// point to the new element
 		_val_vector_.push_back(std::forward<new_val_type>(val));
+
+		return _val_vector_.back();
 	}
 
 	void _build_key_map()
@@ -90,14 +92,14 @@ public:
 	{
 	}
 
-	explicit insertion_ordered_map(const typename base_type::allocator_type& alloc)
+	explicit insertion_ordered_map(const typename base_type::allocator_type & alloc)
 	: _val_vector_(alloc)
 	{
 	}
 
 	template <class InputIterator>
 	insertion_ordered_map (InputIterator first, InputIterator last,
-		const typename base_type::allocator_type& alloc = typename base_type::allocator_type())
+		const typename base_type::allocator_type & alloc = typename base_type::allocator_type())
 	: _val_vector_(first,last,alloc)
 	{
 		_build_key_map();
@@ -122,6 +124,7 @@ public:
 	{
 	}
 	insertion_ordered_map(insertion_ordered_map&& other)
+	: insertion_ordered_map()
 	{
 		swap(other);
 	}
@@ -194,13 +197,14 @@ public:
     // More complicated overloads
 #if(1)
 
-    mapped_type & operator[](const key_type & key)
+    template< typename new_key_type >
+    mapped_type & operator[](new_key_type && key)
 	{
     	if(_key_map_.count(key)==0)
     	{
-    		_insert(std::make_pair(key,mapped_type()));
+    		return _insert(std::make_pair(std::forward<new_key_type>(key),mapped_type())).second;
     	}
-		return _val_vector_[_key_map_[key]].second;
+		return _val_vector_[_key_map_[std::forward<new_key_type>(key)]].second;
 	}
 
     template< typename new_val_type >

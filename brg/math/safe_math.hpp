@@ -30,6 +30,8 @@
 #include <type_traits>
 #include <valarray>
 
+#include "brg/container/is_container.hpp"
+
 #include "brg/global.h"
 
 namespace brgastro {
@@ -50,11 +52,11 @@ const T safe_sqrt( const T & a )
 #endif
 	return std::sqrt( std::fabs( a ) );
 }
-inline const double safe_sqrt( const int a ) // Special case for integers due to -INT_MIN > INT_MAX
+inline double safe_sqrt( const int a ) // Special case for integers due to -INT_MIN > INT_MAX
 {
 	using std::sqrt;
 
-	int res;
+	double res;
 
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 	if(a < 0)

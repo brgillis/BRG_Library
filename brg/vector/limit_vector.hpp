@@ -64,8 +64,6 @@ private:
 	/// Init function - sets limits to cover full numeric range. Must not be called when base is not empty
 	void _init()
 	{
-		assert(_base_.empty());
-
 		_type_ = type::GENERAL;
 
 		_base_.reserve(2);
@@ -121,15 +119,17 @@ public:
 	/// Construct as linear format
 	limit_vector(const T & min, const T & max, const size_type & num_bins,
 			const allocator_type& alloc = allocator_type())
+	: _base_(alloc)
 	{
-		reconstruct(type::LINEAR,min,max,num_bins,alloc);
+		reconstruct(type::LINEAR,min,max,num_bins);
 	}
 
 	/// Construct as linear or log format
 	limit_vector(const type & init_type, const T & min, const T & max, const size_type & num_bins,
 			const allocator_type& alloc = allocator_type())
+	: _base_(alloc)
 	{
-		reconstruct(init_type,min,max,num_bins,alloc);
+		reconstruct(init_type,min,max,num_bins);
 	}
 
 	/// Range constructor
@@ -282,7 +282,7 @@ public:
 #if(1)
 	/// Reconstruct as linear or log format
 	void reconstruct(const type & init_type, const T & min, const T & max,
-			const size_type & num_bins, const allocator_type& alloc = allocator_type())
+			const size_type & num_bins)
 	{
 		if(num_bins<1)
 			throw std::logic_error("Limit vector cannot be constructed with zero bins.\n");
@@ -313,30 +313,42 @@ public:
 	/// Reconstruct from a vector of the bin middles. Since some information is lost here,
 	/// the method has to take some guesses.
 	template<typename To, typename Ao>
-	void reconstruct_from_bin_mids(std::vector<To,Ao> vec)
+	void reconstruct_from_bin_mids(const std::vector<To,Ao> & vec)
 	{
+		if(vec.size()==1)
+		{
+			clear();
+			return;
+		}
+
 		if(!is_monotonically_increasing(vec))
 			throw std::logic_error("Cannot reconstruct from a mids vector which isn't monotonically increasing.\n");
 
+		_base_.resize(vec.size()+1);
+
 		size_t i;
 
-		for(i=0; i<vec.size()-1; ++i)
+		for(i=0; i<vec.size(); ++i)
 		{
-			vec[i] -= (vec[i+1]-vec[i])/2;
+			_base_[i] = (3*vec[i]-vec[i+1])/2;
 		}
 
 		// Special handling for the final element
-		To d_last = (vec[i]-vec[i-1])/3;
-		vec.push_back(vec[i]+d_last);
-		vec[i]-=d_last;
-
-		_base_ = std::move(vec);
+		_base_[i] = (3*vec[i-1]-vec[i-2])/2;
+		_type_ = type::GENERAL;
+		return;
 	}
 	/// Reconstruct from a vector of the bin middles (move version). Since some information is lost here,
 	/// the method has to take some guesses.
 	template<typename To, typename Ao>
 	void reconstruct_from_bin_mids(std::vector<To,Ao> && vec)
 	{
+		if(vec.size()==1)
+		{
+			clear();
+			return;
+		}
+
 		if(!is_monotonically_increasing(vec))
 			throw std::logic_error("Cannot reconstruct from a mids vector which isn't monotonically increasing.\n");
 
@@ -353,6 +365,7 @@ public:
 		vec[i]-=d_last;
 
 		_base_ = std::move(vec);
+		_type_ = type::GENERAL;
 	}
 	/// Reconstruct as disjoint
 	template<typename To>
@@ -581,6 +594,7 @@ public:
 	/// Clear function - leaves it in initial state
 	void clear()
 	{
+		_base_.clear();
 		_init();
 	}
 
@@ -605,21 +619,47 @@ public:
 		return _base_.back();
 	}
 
+	/// Get lower limit of specific bin
+	const_reference lower_limit( const size_type & i ) const noexcept
+	{
+		if(_type_ != type::DISJOINT)
+		{
+			return _base_[i];
+		}
+		else
+		{
+			return _base_[2*i];
+		}
+	}
+
+	/// Get upper limit of specific bin
+	const_reference upper_limit( const size_type & i ) const noexcept
+	{
+		if(_type_ != type::DISJOINT)
+		{
+			return _base_[i+1];
+		}
+		else
+		{
+			return _base_[2*i+1];
+		}
+	}
+
 	/// Returns true if val is equal to or greater than the maximum limit of this vector
-	bool above_limits(const T & val) const
+	bool above_limits(const T & val) const noexcept
 	{
 		return val>=max();
 	}
 
 	/// Returns true if val is less than the minimum limit of this vector
-	bool under_limits(const T & val) const
+	bool under_limits(const T & val) const noexcept
 	{
 		return val<min();
 	}
 
 	/// Returns true if val is outside the limits of this vector. Equivalent to
 	/// above_limits OR below_limits.
-	bool outside_limits(const T & val) const
+	bool outside_limits(const T & val) const noexcept
 	{
 		if (above_limits(val) or under_limits(val)) return true;
 		if(_type_ != type::DISJOINT) return false;
@@ -642,7 +682,7 @@ public:
 	}
 
 	/// Returns true if val is inside the limits of the vector
-	bool inside_limits(const T & val) const
+	bool inside_limits(const T & val) const noexcept
 	{
 		return !outside_limits(val);
 	}
@@ -705,11 +745,16 @@ public:
 	}
 
 	/// Interpolate between values for successive bins
-	template<typename T2>
-	T2 interpolate_bins(const T2 & val, const std::vector<T2> & val_vec) const
+	template<typename Tv, typename To>
+	Tv interpolate_bins(const Tv & val, const To & val_vec) const
 	{
 		if(val_vec.size()!=num_bins())
 			throw std::logic_error("Value vector's size must equal num_bins() in interpolate_bins.\n");
+
+		if(num_bins()==1)
+		{
+			return val_vec[0];
+		}
 
 		size_t bin_i=size()-3;
 
@@ -729,8 +774,8 @@ public:
 
 		T xlo = (_base_[bin_i]+_base_[bin_i+1])/2;
 		T xhi = (_base_[bin_i+step_length]+_base_[bin_i+step_length+1])/2;
-		const T2 & ylo = val_vec[bin_i];
-		const T2 & yhi = val_vec[bin_i+1];
+		const Tv & ylo = val_vec[bin_i];
+		const Tv & yhi = val_vec[bin_i+1];
 
 		return ylo + (yhi-ylo)/(xhi-xlo) * (val-xlo);
 	}

@@ -32,10 +32,13 @@
 
 #include "brg/global.h"
 
+#include "brg/container/is_container.hpp"
+
 namespace brgastro {
 
 // Returns true if val is Not a Number - Personal implementation, to make sure it works for all types
-template< typename T >
+template< typename T,
+typename std::enable_if< std::numeric_limits<T>::has_quiet_NaN, T>::type* = nullptr>
 inline bool isnan( const T & val )
 {
 	return ( val != val );
@@ -44,9 +47,16 @@ inline bool isnan( const std::string & val )
 {
 	return false;
 }
+template< typename T,
+typename std::enable_if< !std::numeric_limits<T>::has_quiet_NaN, T>::type* = nullptr>
+inline bool isnan( const T & val )
+{
+	return false;
+}
 
 // Returns true if val is infinity - ''
-template< typename T >
+template< typename T,
+typename std::enable_if< std::numeric_limits<T>::has_infinity, T>::type* = nullptr >
 inline bool isinf( T val )
 {
 	using std::fabs;
@@ -59,13 +69,17 @@ inline bool isinf( const std::string & val )
 {
 	return false;
 }
+template< typename T,
+typename std::enable_if< !std::numeric_limits<T>::has_infinity, T>::type* = nullptr>
+inline bool isinf( const T & val )
+{
+	return false;
+}
 
 // Returns true if val is NaN or Inf
 template< typename T >
 inline bool isbad( const T & val )
 {
-	using std::isnan;
-	using std::isinf;
 	using brgastro::isnan;
 	using brgastro::isinf; // Use ADL here
 	return ( isnan( val ) || isinf( val ) );
@@ -177,28 +191,32 @@ int round_int( T value, const double epsilon=std::numeric_limits<double>::epsilo
 }
 
 // Inline square
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 T square(T v1)
 {
 	return v1*=v1;
 }
 
 // Inline cube
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 T cube(T v1)
 {
 	return v1*=square(v1);
 }
 
 // Inline quart
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 T quart(T v1)
 {
 	return square(v1)*square(v1);
 }
 
 // Inline inverse
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 double inverse(const T & v1)
 {
 	return 1./v1;
@@ -209,7 +227,8 @@ inline long double inverse(const long double & v1)
 }
 
 // Inline square
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 double inv_square(const T & v1)
 {
 	return inverse(square(v1));
@@ -220,7 +239,8 @@ inline long double inv_square(const long double & v1)
 }
 
 // Inline cube
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 double inv_cube(const T & v1)
 {
 	return inverse(cube(v1));
@@ -231,7 +251,8 @@ inline long double inv_cube(const long double & v1)
 }
 
 // Inline quart
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 double inv_quart(const T & v1)
 {
 	return inverse(quart(v1));
@@ -247,7 +268,8 @@ inline long double inv_quart(const long double & v1)
 #if (1)
 // This version is optimized so that it won't check for the p==0 and p<0 cases, and generally
 // shouldn't be called directly
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 T _ipow( T v, int p )
 {
 	if(p==1) return v;
@@ -257,7 +279,8 @@ T _ipow( T v, int p )
 }
 #endif
 
-template< typename T >
+template< typename T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 T ipow( T v, int p )
 {
 	if(p<0) return 1/_ipow(v,-p);
@@ -269,7 +292,8 @@ T ipow( T v, int p )
 }
 
 // Returns 1 if a is positive, -1 if it is negative, and 0 if it is 0, NaN if it is NaN
-template< class T >
+template< class T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
 inline short int sign( const T & a )
 {
 	if ( ( a == 0 ) || ( isnan( a ) ) )
