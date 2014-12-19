@@ -27,8 +27,8 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/astro.h"
-#include "brg/physics/sky_obj/position_grid_cache.h"
+#include "brg_physics/astro.h"
+#include "brg_physics/sky_obj/position_grid_cache.h"
 
 namespace brgastro {
 

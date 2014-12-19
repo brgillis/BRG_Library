@@ -20,7 +20,7 @@
 
 \**********************************************************************/
 
-// body file: brg/physics/units/unit_obj.cpp
+// body file: brg_physics/units/unit_obj.cpp
 
 /**********************************************************************\
  unit_obj.h
@@ -349,7 +349,7 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/units/unit_conversions.hpp"
+#include "brg_physics/units/unit_conversions.hpp"
 
 #define DIST_UNIT_INDEX 0
 #define TIME_UNIT_INDEX 1

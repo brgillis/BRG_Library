@@ -22,8 +22,8 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/astro_caches.h"
-#include "brg/physics/astro.h"
+#include "brg_physics/astro_caches.h"
+#include "brg_physics/astro.h"
 
 #include "sky_obj.h"
 

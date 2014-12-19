@@ -26,7 +26,7 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/sky_obj/galaxy.h"
+#include "brg_physics/sky_obj/galaxy.h"
 
 #include "galaxy_group.h"
 

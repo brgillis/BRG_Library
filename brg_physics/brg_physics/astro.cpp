@@ -29,10 +29,10 @@
 #include "brg/math/cache/cache.hpp"
 #include "brg/math/cache/cache_2d.hpp"
 
-#include "brg/physics/astro_caches.h"
-#include "brg/physics/astro.h"
-#include "brg/physics/sky_obj/position_grid_cache.h"
-#include "brg/physics/units/unit_obj.h"
+#include "brg_physics/astro_caches.h"
+#include "brg_physics/astro.h"
+#include "brg_physics/sky_obj/position_grid_cache.h"
+#include "brg_physics/units/unit_obj.h"
 
 // brgastro::redshift_obj class methods
 #if (1)

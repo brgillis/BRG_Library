@@ -26,8 +26,8 @@
 
 #include "brg/math/calculus/integrate.hpp"
 #include "brg/math/solvers/solvers.hpp"
-#include "brg/physics/density_profile/density_profile_functors.h"
-#include "brg/physics/units/unit_obj.h"
+#include "brg_physics/density_profile/density_profile_functors.h"
+#include "brg_physics/units/unit_obj.h"
 
 #include "density_profile.h"
 

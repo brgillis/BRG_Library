@@ -20,15 +20,15 @@
 
 \**********************************************************************/
 
-// body file: brg/physics/astro/density_profile/density_profile_functors.cpp
+// body file: brg_physics/astro/density_profile/density_profile_functors.cpp
 
 #ifndef _BRG_DENSITY_PROFILE_FUNCTORS_H_
 #define _BRG_DENSITY_PROFILE_FUNCTORS_H_
 
 #include "brg/global.h"
 
-#include "brg/physics/density_profile/density_profile.h"
-#include "brg/physics/units/unit_obj.h"
+#include "brg_physics/density_profile/density_profile.h"
+#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 

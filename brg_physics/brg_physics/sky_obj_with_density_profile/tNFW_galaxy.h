@@ -27,10 +27,10 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/density_profile/density_profile.h"
-#include "brg/physics/density_profile/tNFW_profile.h"
-#include "brg/physics/sky_obj/sky_obj.h"
-#include "brg/physics/sky_obj/galaxy.h"
+#include "brg_physics/density_profile/density_profile.h"
+#include "brg_physics/density_profile/tNFW_profile.h"
+#include "brg_physics/sky_obj/sky_obj.h"
+#include "brg_physics/sky_obj/galaxy.h"
 
 namespace brgastro {
 

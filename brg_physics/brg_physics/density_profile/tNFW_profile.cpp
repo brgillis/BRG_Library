@@ -27,8 +27,8 @@
 #include <vector>
 
 #include "brg/math/solvers/solvers.hpp"
-#include "brg/physics/density_profile/tNFW_profile_functors.hpp"
-#include "brg/physics/units/unit_obj.h"
+#include "brg_physics/density_profile/tNFW_profile_functors.hpp"
+#include "brg_physics/units/unit_obj.h"
 #include "brg/utility.hpp"
 
 #include "tNFW_profile.h"

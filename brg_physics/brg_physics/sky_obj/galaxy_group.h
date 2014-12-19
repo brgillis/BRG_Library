@@ -29,8 +29,8 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/sky_obj/galaxy.h"
-#include "brg/physics/sky_obj/sky_obj.h"
+#include "brg_physics/sky_obj/galaxy.h"
+#include "brg_physics/sky_obj/sky_obj.h"
 
 namespace brgastro {
 

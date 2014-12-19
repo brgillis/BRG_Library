@@ -20,7 +20,7 @@
 
 \**********************************************************************/
 
-// body file: brg/physics/astro/density_profile/point_mass_profile.cpp
+// body file: brg_physics/astro/density_profile/point_mass_profile.cpp
 
 #ifndef _BRG_POINT_MASS_PROFILE_H_
 #define _BRG_POINT_MASS_PROFILE_H_
@@ -29,8 +29,8 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/density_profile/density_profile.h"
-#include "brg/physics/units/unit_obj.h"
+#include "brg_physics/density_profile/density_profile.h"
+#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 

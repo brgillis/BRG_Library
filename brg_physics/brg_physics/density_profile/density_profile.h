@@ -20,7 +20,7 @@
 
 \**********************************************************************/
 
-// body file: brg/physics/astro/density_profile/density_profile.cpp
+// body file: brg_physics/astro/density_profile/density_profile.cpp
 
 #ifndef _BRG_DENSITY_PROFILE_H_
 #define _BRG_DENSITY_PROFILE_H_
@@ -32,8 +32,8 @@
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
-#include "brg/physics/astro.h"
-#include "brg/physics/units/unit_obj.h"
+#include "brg_physics/astro.h"
+#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 
