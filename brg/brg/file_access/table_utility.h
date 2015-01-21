@@ -30,6 +30,8 @@
 #ifndef _BRG_TABLE_UTILITY_H_INCLUDED_
 #define _BRG_TABLE_UTILITY_H_INCLUDED_
 
+#include <cstdlib>
+#include <sstream>
 #include <string>
 #include <vector>
 

@@ -28,8 +28,8 @@
 #include "brg/global.h"
 
 #include "brg/math/calculus/differentiate.hpp"
-#include "brg/physics/density_profile/density_profile.h"
-#include "brg/physics/units/unit_obj.h"
+#include "brg_physics/density_profile/density_profile.h"
+#include "brg_physics/units/unit_obj.h"
 #include "brg/vector/make_vector.hpp"
 
 #include "gabdt.h"

@@ -38,26 +38,22 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: libbrg_stripping.so
-
-dependents:
-	-cd /disk2/brg/git/brg_library/brg/Release && $(MAKE) clean all
+all: libbrg_stripping.a
 
 # Tool invocations
-libbrg_stripping.so: $(OBJS) $(USER_OBJS) /disk2/brg/git/brg_library/brg/Release/libbrg.a
+libbrg_stripping.a: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
-	@echo 'Invoking: GCC C++ Linker'
-	g++ -L"/disk2/brg/git/brg_library/brg/Release" -fopenmp -shared -o "libbrg_stripping.so" $(OBJS) $(USER_OBJS) $(LIBS)
+	@echo 'Invoking: GCC Archiver'
+	ar -r  "libbrg_stripping.a" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(LIBRARIES)$(CC_DEPS)$(C++_DEPS)$(C_UPPER_DEPS)$(CXX_DEPS)$(OBJS)$(CPP_DEPS)$(C_DEPS) libbrg_stripping.so
+	-$(RM) $(CC_DEPS)$(C++_DEPS)$(ARCHIVES)$(C_UPPER_DEPS)$(CXX_DEPS)$(OBJS)$(CPP_DEPS)$(C_DEPS) libbrg_stripping.a
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
-/disk2/brg/git/brg_library/brg/Release/libbrg.a:
 
 -include ../makefile.targets

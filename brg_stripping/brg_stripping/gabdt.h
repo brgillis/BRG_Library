@@ -29,8 +29,8 @@
 
 #include "brg/global.h"
 
-#include "brg/physics/density_profile/density_profile.h"
-#include "brg/physics/units/unit_obj.h"
+#include "brg_physics/density_profile/density_profile.h"
+#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 

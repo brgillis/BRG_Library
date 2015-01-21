@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file labeled_matrix_row_reference.hpp
+ @file labeled_array_row_reference.hpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,137 +23,121 @@
 
 \**********************************************************************/
 
-#ifndef _BRG_CONTAINER_LABELED_MATRIX_ROW_REFERENCE_HPP_INCLUDED_
-#define _BRG_CONTAINER_LABELED_MATRIX_ROW_REFERENCE_HPP_INCLUDED_
+#ifndef _BRG_CONTAINER_LABELED_ARRAY_ROW_REFERENCE_HPP_INCLUDED_
+#define _BRG_CONTAINER_LABELED_ARRAY_ROW_REFERENCE_HPP_INCLUDED_
 
 #include <utility>
 
-#include "brg/container/labeled_matrix.hpp"
+#include <boost/type_traits/is_convertible.hpp>
+
+#include "brg/container/labeled_array.hpp"
 
 namespace brgastro {
 
-template<typename data_type, typename key_type=std::string>
-class labeled_matrix_row_reference
+template<typename labeled_array_type, typename row_type>
+class labeled_array_row_reference
 {
 private:
 
 	// Private typedefs
-	typedef labeled_matrix<data_type,key_type> labeled_matrix_type;
-	typedef typename labeled_matrix_type::map_type map_type;
-	typedef typename labeled_matrix_type::row_type row_type;
+	typedef typename labeled_array_type::map_type map_type;
 
 	// Members
-	const map_type & _key_map_;
-	row_type & _row_;
+	map_type * _key_map_;
+	row_type * _row_;
 
 public:
 
 	// Public typedefs
-	typedef key_type key_type;
-	typedef data_type value_type;
-	typedef typename labeled_matrix_type::size_type size_type;
-	typedef typename labeled_matrix_type::reference reference;
-	typedef typename labeled_matrix_type::const_reference const_reference;
-	typedef typename labeled_matrix_type::pointer pointer;
-	typedef typename labeled_matrix_type::const_pointer const_pointer;
+
+	typedef typename labeled_array_type::key_type key_type;
+	typedef typename labeled_array_type::data_type value_type;
+	typedef typename labeled_array_type::size_type size_type;
+
+	typedef row_type row_type;
+	typedef typename labeled_array_type::const_row_type const_row_type;
+
+	typedef typename row_type::reference reference;
+	typedef typename row_type::const_reference const_reference;
+
 	typedef typename row_type::iterator iterator;
 	typedef typename row_type::const_iterator const_iterator;
 	typedef typename row_type::reverse_iterator reverse_iterator;
 	typedef typename row_type::const_reverse_iterator const_reverse_iterator;
+
 	typedef typename row_type::difference_type difference_type;
 
-	/// Constructor. Requires a non-const reference to a labeled_matrix's key map and row
-	labeled_matrix_row_reference(const map_type & key_map, row_type & row)
+	/// Constructor. Requires a pointer to a labeled_array's key map and row
+	labeled_array_row_reference(map_type * key_map, row_type * row)
 	: _key_map_(key_map),
 	  _row_(row)
 	{
 	}
 
 	/// Virtual destructor
-	virtual ~labeled_matrix_row_reference() {}
-
-	/// Delete copy constructors and assignments
-#if(1)
-	labeled_matrix_row_reference(const labeled_matrix_row_reference & other) = delete;
-	labeled_matrix_row_reference & operator=(const labeled_matrix_row_reference & other) = delete;
-#endif
-
-	/// Move constructors and assignments
-#if(1)
-	labeled_matrix_row_reference(labeled_matrix_row_reference && other)
-	: _key_map_(std::move(other._key_map_)),
-	  _row_(std::move(other._row_))
-	{
-	}
-	labeled_matrix_row_reference & operator=(labeled_matrix_row_reference && other)
-	{
-		_key_map_ = std::move(other._key_map_);
-		_row_ = std::move(other._row_);
-		return *this;
-	}
-#endif
+	virtual ~labeled_array_row_reference() {}
 
 	// Iterator methods
 #if(1)
 	/// begin
 	const_iterator begin() const noexcept
 	{
-		return _row_.begin();
+		return _row_->begin();
 	}
 	/// begin
 	iterator begin() noexcept
 	{
-		return _row_.begin();
+		return _row_->begin();
 	}
 	/// end
 	const_iterator end() const noexcept
 	{
-		return _row_.end();
+		return _row_->end();
 	}
 	/// end
 	iterator end() noexcept
 	{
-		return _row_.end();
+		return _row_->end();
 	}
 	/// rbegin
 	const_iterator rbegin() const noexcept
 	{
-		return _row_.rbegin();
+		return _row_->rbegin();
 	}
 	/// rbegin
 	iterator rbegin() noexcept
 	{
-		return _row_.rbegin();
+		return _row_->rbegin();
 	}
 	/// rend
 	const_iterator rend() const noexcept
 	{
-		return _row_.rend();
+		return _row_->rend();
 	}
 	/// rend
 	iterator rend() noexcept
 	{
-		return _row_.rend();
+		return _row_->rend();
 	}
 	/// cbegin
 	const_iterator cbegin() const noexcept
 	{
-		return _row_.cbegin();
+		return _row_->cbegin();
 	}
 	/// cend
 	const_iterator cend() const noexcept
 	{
-		return _row_.cend();
+		return _row_->cend();
 	}
 	/// crbegin
 	const_iterator crbegin() const noexcept
 	{
-		return _row_.crbegin();
+		return _row_->crbegin();
 	}
 	/// crend
 	const_iterator crend() const noexcept
 	{
-		return _row_.crend();
+		return _row_->crend();
 	}
 
 #endif // Iterator methods
@@ -164,13 +148,13 @@ public:
 	/// size
 	size_type size() const noexcept
 	{
-		return _row_.size();
+		return _row_->size();
 	}
 
 	/// empty
 	bool empty() const noexcept
 	{
-		return _row_.empty();
+		return _row_->empty();
 	}
 
 #endif // Capacity methods
@@ -193,61 +177,61 @@ public:
 	/// Range-checked element access
 	const_reference at( const size_type & n ) const
 	{
-		return _row_.at(n);
+		return _row_->at(n);
 	}
 
 	/// Range-checked element access
 	reference at( const size_type & n )
 	{
-		return _row_.at(n);
+		return _row_->at(n);
 	}
 
 	/// Range-checked element access
 	const_reference at_label( const key_type & key ) const
 	{
-		return _row_[_key_map_.at(key)];
+		return _row_[_key_map_->at(key)];
 	}
 
 	/// Range-checked element access
 	reference at_label( const key_type & key )
 	{
-		return _row_[_key_map_.at(key)];
+		return _row_[_key_map_->at(key)];
 	}
 
 	/// Access first element
 	const_reference front() const
 	{
-		return _row_.front();
+		return _row_->front();
 	}
 
 	/// Access first element
 	reference front()
 	{
-		return _row_.front();
+		return _row_->front();
 	}
 
 	/// Access last element
 	const_reference back() const
 	{
-		return _row_.back();
+		return _row_->back();
 	}
 
 	/// Access last element
 	reference back()
 	{
-		return _row_.back();
+		return _row_->back();
 	}
 
 	/// Access data
 	const value_type* data() const noexcept
 	{
-		return _row_.data();
+		return _row_->data();
 	}
 
 	/// Access data
 	value_type* data() noexcept
 	{
-		return _row_.data();
+		return _row_->data();
 	}
 
 #endif // Element access
@@ -261,6 +245,12 @@ public:
 		return _row_;
 	}
 
+	/// Cast non-const version to const version
+	template <typename other_row_type,
+	typename std::enable_if<boost::is_convertible<other_row_type,row_type>, other_row_type>::type* = nullptr>
+	labeled_array_row_reference( const labeled_array_row_reference<labeled_array_type,other_row_type> & other)
+	: _key_map_(other._key_map_), _row_(other._row_) {}
+
 #endif
 
 };
@@ -269,4 +259,4 @@ public:
 
 
 
-#endif // _BRG_CONTAINER_LABELED_MATRIX_ROW_REFERENCE_HPP_INCLUDED_
+#endif // _BRG_CONTAINER_LABELED_ARRAY_ROW_REFERENCE_HPP_INCLUDED_
