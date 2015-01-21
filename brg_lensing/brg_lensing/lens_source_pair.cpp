@@ -232,7 +232,7 @@ const double & lens_source_pair::z_source() const
 double lens_source_pair::z_diff() const
 {
 	_conditional_store_data();
-	return _z_source_-_z_lens_;
+	return _z_source_-_z_lens_+std::numeric_limits<double>::epsilon();
 }
 const BRG_MASS & lens_source_pair::m_lens() const
 {

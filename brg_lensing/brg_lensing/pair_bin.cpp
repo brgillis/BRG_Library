@@ -102,8 +102,8 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 	// Now magnification
 	const auto & mag_source = new_pair.mag_source();
 	const auto & z_source = new_pair.z_source();
-	if((mag_weight>0) && (mag_source>=mag_m_min) && (mag_source<=mag_m_max) &&
-		(z_source>=mag_z_min) && (z_source<=mag_z_max) )
+	if((mag_weight>0) && (mag_source>=mag_m_min) && (mag_source<mag_m_max) &&
+		(z_source>=mag_z_min) && (z_source<mag_z_max) )
 	{
 		// General info
 		_magf_R_values_(new_pair.R_proj(), boost::accumulators::weight = mag_weight);

@@ -107,21 +107,21 @@ void pair_binner::_sort() const
 	// Now loop through and sort each pair into the proper bin
 	// Note that we don't zero the sorting index here. This is intentional, so
 	// we don't have to resort previously sorted pairs when new ones are added.
-	unsigned counter_1 = 0;
-	unsigned counter_2 = 0;
-	unsigned counter_3 = 0;
+	unsigned counter_1 = 0; //!!
+	unsigned counter_2 = 0; //!!
+	unsigned counter_3 = 0; //!!
 	for(const auto & pair : _pairs_)
 	{
-		++counter_1;
+		++counter_1; //!!
 
 		// Check bounds first
 		BRG_DISTANCE R_proj = pair.R_proj();
 		if(R_limits().outside_limits(R_proj)) continue;
-		++counter_2;
+		++counter_2; //!!
 
 		// Check lens-source z separation against buffer
 		if(pair.z_diff()<_z_buffer_-std::numeric_limits<double>::epsilon()) continue;
-		++counter_3;
+		++counter_3; //!!
 
 		// Add the pair to the proper bin
 		_pair_bins_buffer_[R_limits().get_bin_index(R_proj)].add_pair(pair);

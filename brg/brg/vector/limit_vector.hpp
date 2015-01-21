@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <limits>
+#include <type_traits>
 #include <utility>
 #include <valarray>
 #include <vector>
@@ -699,7 +700,16 @@ public:
 		case type::LINEAR:
 
 			{
-				return static_cast<size_type>((val-min())/_step_);
+				if(std::is_integral<T>::value)
+				{
+					return static_cast<size_type>((val-min())/_step_);
+				}
+				else
+				{
+					// For floating-point types, we add an epsilon at this step to prevent values at the exact bin boundaries
+					// from being assigned the wrong bin
+					return static_cast<size_type>((val-min()+std::numeric_limits<T>::epsilon())/_step_);
+				}
 			}
 
 			break;
@@ -709,7 +719,7 @@ public:
 			{
 				using std::log;
 				T lval = log(val);
-				return static_cast<size_type>((lval-_lmin_)/_step_);
+				return static_cast<size_type>((lval-_lmin_+std::numeric_limits<T>::epsilon())/_step_);
 
 			}
 
