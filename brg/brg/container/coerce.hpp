@@ -26,7 +26,11 @@
 #ifndef _BRG_CONTAINER_COERCE_HPP_INCLUDED_
 #define _BRG_CONTAINER_COERCE_HPP_INCLUDED_
 
+#include <type_traits>
 #include <iterator>
+
+#include "brg/container/has_data.hpp"
+#include "brg/container/is_container.hpp"
 
 namespace brgastro {
 
@@ -40,18 +44,36 @@ namespace brgastro {
  * assignment_coercer - a structure which performs coercion of one type to
  * another as a side-effect of its constructor.
  */
-template<unsigned short d, typename container, typename other_container>
+template<unsigned short d, typename container>
 struct assignment_coercer
 {
-	assignment_coercer(container & obj, const other_container & other_obj)
+	assignment_coercer() = delete;
+	assignment_coercer(const assignment_coercer &) = delete;
+	assignment_coercer(assignment_coercer &&) = delete;
+	assignment_coercer & operator=(const assignment_coercer &) = delete;
+	assignment_coercer & operator=(assignment_coercer &&) = delete;
+
+	template<typename oc, typename std::enable_if<brgastro::is_const_container<oc>::value,oc>::type* = nullptr>
+	assignment_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());
 		auto o_it = begin(other_obj);
-
 		for(auto it=begin(obj); it!=end(obj); ++it, ++o_it)
 		{
-			assignment_coercer<d-1,decltype(*it),decltype(*o_it)>(*it,*o_it);
+			assignment_coercer<d-1,decltype(*it)>(*it,*o_it);
 		}
+		return;
+	}
+
+	template<typename oc, typename std::enable_if<!brgastro::is_const_container<oc>::value,oc>::type* = nullptr>
+	assignment_coercer(container & obj, const oc & other_obj)
+	{
+		obj.resize(other_obj.size());
+		for(size_t i=0; i<other_obj.size(); ++i)
+		{
+			assignment_coercer<d-1,decltype(obj[i])>(obj[i],other_obj[i]);
+		}
+		return;
 	}
 };
 
@@ -59,10 +81,17 @@ struct assignment_coercer
  * d=0 partial specialization of assignment_coercer. Uses simple assignment to
  * coerce.
  */
-template<typename container, typename other_container>
-struct assignment_coercer<0,container,other_container>
+template<typename container>
+struct assignment_coercer<0,container>
 {
-	assignment_coercer(container & obj, const other_container & other_obj)
+	assignment_coercer() = delete;
+	assignment_coercer(const assignment_coercer &) = delete;
+	assignment_coercer(assignment_coercer &&) = delete;
+	assignment_coercer & operator=(const assignment_coercer &) = delete;
+	assignment_coercer & operator=(assignment_coercer &&) = delete;
+
+	template<typename oc>
+	assignment_coercer(container & obj, const oc & other_obj)
 	{
 		obj = other_obj;
 	}
@@ -77,18 +106,36 @@ struct assignment_coercer<0,container,other_container>
  * range_coercer - a structure which performs coercion of one type to
  * another as a side-effect of its constructor.
  */
-template<unsigned short d, typename container, typename other_container>
+template<unsigned short d, typename container>
 struct range_coercer
 {
-	range_coercer(container & obj, const other_container & other_obj)
+	range_coercer() = delete;
+	range_coercer(const range_coercer &) = delete;
+	range_coercer(range_coercer &&) = delete;
+	range_coercer & operator=(const range_coercer &) = delete;
+	range_coercer & operator=(range_coercer &&) = delete;
+
+	template<typename oc, typename std::enable_if<brgastro::is_const_container<oc>::value,oc>::type* = nullptr>
+	range_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());
 		auto o_it = begin(other_obj);
-
 		for(auto it=begin(obj); it!=end(obj); ++it, ++o_it)
 		{
-			assignment_coercer<d-1,decltype(*it),decltype(*o_it)>(*it,*o_it);
+			range_coercer<d-1,decltype(*it)>(*it,*o_it);
 		}
+		return;
+	}
+
+	template<typename oc, typename std::enable_if<!brgastro::is_const_container<oc>::value,oc>::type* = nullptr>
+	range_coercer(container & obj, const oc & other_obj)
+	{
+		obj.resize(other_obj.size());
+		for(size_t i=0; i<other_obj.size(); ++i)
+		{
+			range_coercer<d-1,decltype(obj[i])>(obj[i],other_obj[i]);
+		}
+		return;
 	}
 };
 
@@ -96,10 +143,17 @@ struct range_coercer
  * d=1 partial specialization of range_coercer. Uses range constructor to
  * coerce.
  */
-template<typename container, typename other_container>
-struct range_coercer<1,container,other_container>
+template<typename container>
+struct range_coercer<1,container>
 {
-	range_coercer(container & obj, const other_container & other_obj)
+	range_coercer() = delete;
+	range_coercer(const range_coercer &) = delete;
+	range_coercer(range_coercer &&) = delete;
+	range_coercer & operator=(const range_coercer &) = delete;
+	range_coercer & operator=(range_coercer &&) = delete;
+
+	template<typename oc>
+	range_coercer(container & obj, const oc & other_obj)
 	{
 		obj = container(begin(other_obj),end(other_obj));
 	}
@@ -109,10 +163,17 @@ struct range_coercer<1,container,other_container>
  * d=0 partial specialization of range_coercer. Uses simple assignment to
  * coerce.
  */
-template<typename container, typename other_container>
-struct range_coercer<0,container,other_container>
+template<typename container>
+struct range_coercer<0,container>
 {
-	range_coercer(container & obj, const other_container & other_obj)
+	range_coercer() = delete;
+	range_coercer(const range_coercer &) = delete;
+	range_coercer(range_coercer &&) = delete;
+	range_coercer & operator=(const range_coercer &) = delete;
+	range_coercer & operator=(range_coercer &&) = delete;
+
+	template<typename oc>
+	range_coercer(container & obj, const oc & other_obj)
 	{
 		obj = other_obj;
 	}
@@ -132,7 +193,7 @@ template<typename NewType, short unsigned d=1, typename OldType=NewType>
 NewType coerce(const OldType & old)
 {
 	NewType result;
-	assignment_coercer<d,NewType,OldType>(result,old);
+	assignment_coercer<d,NewType>(result,old);
 	return result;
 }
 
@@ -148,7 +209,7 @@ template<typename NewType, short unsigned d=1, typename OldType=NewType>
 NewType range_coerce(const OldType & old)
 {
 	NewType result;
-	range_coercer<d,NewType,OldType>(result,old);
+	range_coercer<d,NewType>(result,old);
 	return result;
 }
 

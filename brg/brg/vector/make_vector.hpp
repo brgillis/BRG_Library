@@ -374,7 +374,7 @@ void make_vector_function( container & vec, const func_type & func, const other_
 template<unsigned short d, typename container, typename other_container>
 void make_vector_coerce(container & vec, const other_container & other_vec)
 {
-	assignment_coercer<d,container,other_container>(vec,other_vec);
+	assignment_coercer<d,container>(vec,other_vec);
 }
 
 #endif

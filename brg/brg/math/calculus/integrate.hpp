@@ -790,7 +790,8 @@ inline T integrate_weighted_Romberg( const f_in_1 * func,
 	weight_out_params = integrate_Romberg( func_weight, min_in_params, max_in_params,
 			precision, tighten_precision, silent);
 
-	return prod_out_params / safe_d( weight_out_params );
+	auto r = prod_out_params / safe_d( weight_out_params );
+	return r;
 }
 
 // Vector-in, vector-out version

@@ -140,15 +140,15 @@ std::valarray<double> lensing_correlation_function_estimator::calculate()
 	std::valarray<double> R1D2_counts(_r_bin_limits_.num_bins());
 	std::valarray<double> R1R2_counts(_r_bin_limits_.num_bins());
 
-	unsigned D1D2_pairs = 0;
-	unsigned D1R2_pairs = 0;
-	unsigned R1D2_pairs = 0;
-	unsigned R1R2_pairs = 0;
+	long unsigned D1D2_pairs = 0;
+	long unsigned D1R2_pairs = 0;
+	long unsigned R1D2_pairs = 0;
+	long unsigned R1R2_pairs = 0;
 
 	const double & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of a valarray
-	auto increment_bin = [&] (std::valarray<double> & array, unsigned & pair_counter,
+	auto increment_bin = [&] (std::valarray<double> & array, long unsigned & pair_counter,
 			const std::tuple<double,double,double> & p1,
 			const std::tuple<double,double,double> & p2)
 	{
