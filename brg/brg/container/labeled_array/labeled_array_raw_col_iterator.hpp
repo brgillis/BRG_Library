@@ -32,7 +32,7 @@
 
 namespace brgastro {
 
-template< typename labeled_array_type, typename T, typename T_reference >
+template< typename labeled_array_type, typename T, typename T_reference>
 class labeled_array_raw_col_iterator :
 	boost::iterator_facade<
 		labeled_array_raw_col_iterator<labeled_array_type,T,T_reference>, // CRTP

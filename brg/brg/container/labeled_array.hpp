@@ -33,6 +33,7 @@
 #include <type_traits>
 
 #include <boost/bimap.hpp>
+#include <boost/iterator.hpp>
 
 #include <Eigen/Array>
 
@@ -59,6 +60,7 @@ public:
 	typedef typename Eigen::Array<value_type,Eigen::Dynamic,Eigen::Dynamic> data_table_type;
 	typedef typename Eigen::Array<const value_type,Eigen::Dynamic,Eigen::Dynamic> const_data_table_type;
 
+	typedef key_type key_type;
 	typedef value_type value_type;
 	typedef size_t size_type;
 
@@ -75,8 +77,8 @@ public:
 		col_type,col_reference_type> col_iterator;
 	typedef typename labeled_array_col_iterator<labeled_array<value_type,key_type>,
 		const_col_type,const_col_reference_type> const_col_iterator;
-	typedef col_iterator reverse_col_iterator; // FIXME
-	typedef const_col_iterator const_reverse_col_iterator; // FIXME
+	typedef boost::reverse_iterator<col_iterator> reverse_col_iterator;
+	typedef boost::reverse_iterator<const_col_iterator> const_reverse_col_iterator;
 
 	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
 		col_type,const_col_type,col_reference_type,const_col_reference_type,col_iterator,const_col_iterator> cols_type;
@@ -87,8 +89,8 @@ public:
 		col_type,col_reference_type> raw_col_iterator;
 	typedef typename labeled_array_raw_col_iterator<labeled_array<value_type,key_type>,
 		const_col_type,const_col_reference_type> const_raw_col_iterator;
-	typedef raw_col_iterator reverse_raw_col_iterator; // FIXME
-	typedef const_raw_col_iterator const_reverse_raw_col_iterator; // FIXME
+	typedef boost::reverse_iterator<raw_col_iterator> reverse_raw_col_iterator;
+	typedef boost::reverse_iterator<const_raw_col_iterator> const_reverse_raw_col_iterator;
 
 	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
 		col_type,const_col_type,col_reference_type,const_col_reference_type,
@@ -112,8 +114,8 @@ public:
 		row_type,row_reference_type> row_iterator;
 	typedef typename labeled_array_row_iterator<labeled_array<value_type,key_type>,
 		const_row_type,const_row_reference_type> const_row_iterator;
-	typedef row_iterator reverse_row_iterator; // FIXME
-	typedef const_row_iterator const_reverse_row_iterator; // FIXME
+	typedef boost::reverse_iterator<row_iterator> reverse_row_iterator;
+	typedef boost::reverse_iterator<const_row_iterator> const_reverse_row_iterator;
 
 	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
 		row_type,const_row_type,row_reference_type,const_row_reference_type,row_iterator,const_row_iterator> rows_type;
@@ -124,8 +126,8 @@ public:
 		row_type,row_reference_type> raw_row_iterator;
 	typedef typename labeled_array_raw_row_iterator<labeled_array<value_type,key_type>,
 		const_row_type,const_row_reference_type> const_raw_row_iterator;
-	typedef raw_row_iterator reverse_raw_row_iterator; // FIXME
-	typedef const_raw_row_iterator const_reverse_raw_row_iterator; // FIXME
+	typedef boost::reverse_iterator<raw_row_iterator> reverse_raw_row_iterator;
+	typedef boost::reverse_iterator<const_raw_row_iterator> const_reverse_raw_row_iterator;
 
 	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
 		row_type,const_row_type,row_reference_type,const_row_reference_type,
@@ -138,11 +140,12 @@ public:
 
 	typedef row_iterator iterator;
 	typedef const_row_iterator const_iterator;
-	typedef reverse_row_iterator iterator;
-	typedef const_reverse_row_iterator const_iterator;
+	typedef reverse_row_iterator reverse_iterator;
+	typedef const_reverse_row_iterator const_reverse_iterator;
 
 private:
 
+#if(1)
 	// Private typedefs
 	typedef typename boost::bimap<key_type,size_type> map_type;
 
@@ -322,6 +325,7 @@ private:
 		_add_buffer_to_data_table();
 		return _data_table_;
 	}
+#endif
 
 public:
 
@@ -386,6 +390,67 @@ public:
 	{
 		return _data_table().col(_key_map_.left.at(key));
 	}
+#endif
+
+	// Iterable table access
+#if(1)
+
+	// Get an iterable set of columns
+	cols_type cols()
+	{
+		return cols_type(this,num_cols());
+	}
+	const_cols_type cols() const
+	{
+		return const_cols_type(this,num_cols());
+	}
+	const_cols_type const_cols() const
+	{
+		return const_cols_type(this,num_cols());
+	}
+
+	// Get an iterable set of raw columns
+	raw_cols_type raw_cols()
+	{
+		return raw_cols_type(this,num_cols());
+	}
+	const_raw_cols_type raw_cols() const
+	{
+		return const_raw_cols_type(this,num_cols());
+	}
+	const_raw_cols_type const_raw_cols() const
+	{
+		return const_raw_cols_type(this,num_cols());
+	}
+
+	// Get an iterable set of rows
+	rows_type rows()
+	{
+		return rows_type(this,num_rows());
+	}
+	const_rows_type rows() const
+	{
+		return const_rows_type(this,num_rows());
+	}
+	const_rows_type const_rows() const
+	{
+		return const_rows_type(this,num_rows());
+	}
+
+	// Get an iterable set of raw rows
+	raw_rows_type raw_rows()
+	{
+		return raw_rows_type(this,num_rows());
+	}
+	const_raw_rows_type raw_rows() const
+	{
+		return const_raw_rows_type(this,num_rows());
+	}
+	const_raw_rows_type const_raw_rows() const
+	{
+		return const_raw_rows_type(this,num_rows());
+	}
+
 #endif
 
     // Column/row insertion

@@ -32,10 +32,10 @@
 
 namespace brgastro {
 
-template< typename labeled_array_type, typename T, typename T_reference >
+template< typename labeled_array_type, typename T, typename T_reference>
 class labeled_array_raw_row_iterator :
 	boost::iterator_facade<
-		labeled_array_raw_row_iterator<labeled_array_type,T,T_reference>, // CRTP
+		labeled_array_raw_row_iterator<labeled_array_type,T>, // CRTP
 		T, // Value type
 		boost::random_access_traversal_tag, // Traversal type
 		T_reference, // Reference type

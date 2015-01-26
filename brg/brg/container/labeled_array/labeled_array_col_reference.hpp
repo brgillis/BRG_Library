@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file labeled_array_row_reference.hpp
+ @file labeled_array_col_reference.hpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,8 +23,8 @@
 
 \**********************************************************************/
 
-#ifndef _BRG_CONTAINER_LABELED_ARRAY_ROW_REFERENCE_HPP_INCLUDED_
-#define _BRG_CONTAINER_LABELED_ARRAY_ROW_REFERENCE_HPP_INCLUDED_
+#ifndef _BRG_CONTAINER_LABELED_ARRAY_COL_REFERENCE_HPP_INCLUDED_
+#define _BRG_CONTAINER_LABELED_ARRAY_COL_REFERENCE_HPP_INCLUDED_
 
 #include <utility>
 
@@ -34,17 +34,9 @@
 
 namespace brgastro {
 
-template<typename labeled_array_type, typename row_type>
-class labeled_array_row_reference
+template<typename labeled_array_type, typename col_type>
+class labeled_array_col_reference
 {
-private:
-
-	// Private typedefs
-	typedef typename labeled_array_type::map_type map_type;
-
-	// Members
-	map_type * _key_map_;
-	row_type * _row_;
 
 public:
 
@@ -54,90 +46,98 @@ public:
 	typedef typename labeled_array_type::data_type value_type;
 	typedef typename labeled_array_type::size_type size_type;
 
-	typedef row_type row_type;
-	typedef typename labeled_array_type::const_row_type const_row_type;
+	typedef col_type col_type;
+	typedef typename labeled_array_type::const_col_type const_col_type;
 
-	typedef typename row_type::reference reference;
-	typedef typename row_type::const_reference const_reference;
+	typedef typename col_type::reference reference;
+	typedef typename col_type::const_reference const_reference;
 
-	typedef typename row_type::iterator iterator;
-	typedef typename row_type::const_iterator const_iterator;
-	typedef typename row_type::reverse_iterator reverse_iterator;
-	typedef typename row_type::const_reverse_iterator const_reverse_iterator;
+	typedef typename col_type::iterator iterator;
+	typedef typename col_type::const_iterator const_iterator;
+	typedef typename col_type::reverse_iterator reverse_iterator;
+	typedef typename col_type::const_reverse_iterator const_reverse_iterator;
 
-	typedef typename row_type::difference_type difference_type;
+	typedef typename col_type::difference_type difference_type;
 
-	/// Constructor. Requires a pointer to a labeled_array's key map and row
-	labeled_array_row_reference(map_type * key_map, row_type * row)
-	: _key_map_(key_map),
-	  _row_(row)
+private:
+
+	// Private Members
+	key_type * _key_;
+	col_type * _col_;
+
+public:
+
+	/// Constructor. Requires a pointer to a labeled_array's key and column
+	labeled_array_col_reference(key_type * key, col_type * col)
+	: _key_(key),
+	  _col_(col)
 	{
 	}
 
 	/// Virtual destructor
-	virtual ~labeled_array_row_reference() {}
+	virtual ~labeled_array_col_reference() {}
 
 	// Iterator methods
 #if(1)
 	/// begin
 	const_iterator begin() const noexcept
 	{
-		return _row_->begin();
+		return _col_->begin();
 	}
 	/// begin
 	iterator begin() noexcept
 	{
-		return _row_->begin();
+		return _col_->begin();
 	}
 	/// end
 	const_iterator end() const noexcept
 	{
-		return _row_->end();
+		return _col_->end();
 	}
 	/// end
 	iterator end() noexcept
 	{
-		return _row_->end();
+		return _col_->end();
 	}
 	/// rbegin
 	const_reverse_iterator rbegin() const noexcept
 	{
-		return _row_->rbegin();
+		return _col_->rbegin();
 	}
 	/// rbegin
 	reverse_iterator rbegin() noexcept
 	{
-		return _row_->rbegin();
+		return _col_->rbegin();
 	}
 	/// rend
 	const_reverse_iterator rend() const noexcept
 	{
-		return _row_->rend();
+		return _col_->rend();
 	}
 	/// rend
 	reverse_iterator rend() noexcept
 	{
-		return _row_->rend();
+		return _col_->rend();
 	}
 	/// cbegin
 	const_iterator cbegin() const noexcept
 	{
-		return _row_->cbegin();
+		return _col_->cbegin();
 	}
 	/// cend
 	const_iterator cend() const noexcept
 	{
-		return _row_->cend();
+		return _col_->cend();
 	}
 	/// crbegin
 	const_reverse_iterator crbegin() const noexcept
 	{
-		return _row_->crbegin();
+		return _col_->crbegin();
 	}
 	/// crend
 	const_reverse_iterator crend() const noexcept
 	{
-		return _row_->crend();
+		return _col_->crend();
 	}
 
 #endif // Iterator methods
@@ -148,13 +148,13 @@ public:
 	/// size
 	size_type size() const noexcept
 	{
-		return _row_->size();
+		return _col_->size();
 	}
 
 	/// empty
 	bool empty() const noexcept
 	{
-		return _row_->empty();
+		return _col_->empty();
 	}
 
 #endif // Capacity methods
@@ -165,91 +165,88 @@ public:
 	/// Element access
 	const_reference operator[] (const size_type & n) const
 	{
-		return _row_[n];
+		return _col_[n];
 	}
 
 	/// Element access
 	reference operator[] (const size_type & n)
 	{
-		return _row_[n];
+		return _col_[n];
 	}
 
 	/// Range-checked element access
 	const_reference at( const size_type & n ) const
 	{
-		return _row_->at(n);
+		return _col_->at(n);
 	}
 
 	/// Range-checked element access
 	reference at( const size_type & n )
 	{
-		return _row_->at(n);
-	}
-
-	/// Range-checked element access
-	const_reference at_label( const key_type & key ) const
-	{
-		return _row_[_key_map_->at(key)];
-	}
-
-	/// Range-checked element access
-	reference at_label( const key_type & key )
-	{
-		return _row_[_key_map_->at(key)];
+		return _col_->at(n);
 	}
 
 	/// Access first element
 	const_reference front() const
 	{
-		return _row_->front();
+		return _col_->front();
 	}
 
 	/// Access first element
 	reference front()
 	{
-		return _row_->front();
+		return _col_->front();
 	}
 
 	/// Access last element
 	const_reference back() const
 	{
-		return _row_->back();
+		return _col_->back();
 	}
 
 	/// Access last element
 	reference back()
 	{
-		return _row_->back();
+		return _col_->back();
 	}
 
 	/// Access data
 	const value_type* data() const noexcept
 	{
-		return _row_->data();
+		return _col_->data();
 	}
 
 	/// Access data
 	value_type* data() noexcept
 	{
-		return _row_->data();
+		return _col_->data();
 	}
 
 #endif // Element access
 
+	// Label access
+#if(1)
+	/// Get the label
+	const key_type & label() const noexcept
+	{
+		return *_key_;
+	}
+#endif
+
 	// Casting
 #if(1)
 
-	/// Cast to row_type
-	operator row_type &() const
+	/// Cast to col_type
+	operator col_type &() const
 	{
-		return _row_;
+		return *_col_;
 	}
 
 	/// Cast non-const version to const version
-	template <typename other_row_type,
-	typename std::enable_if<boost::is_convertible<other_row_type,row_type>, other_row_type>::type* = nullptr>
-	labeled_array_row_reference( const labeled_array_row_reference<labeled_array_type,other_row_type> & other)
-	: _key_map_(other._key_map_), _row_(other._row_) {}
+	template <typename other_col_type,
+	typename std::enable_if<boost::is_convertible<other_col_type,col_type>, other_col_type>::type* = nullptr>
+	labeled_array_col_reference( const labeled_array_col_reference<labeled_array_type,other_col_type> & other)
+	: _key_(other._key_), _col_(other._col_) {}
 
 #endif
 
@@ -259,4 +256,4 @@ public:
 
 
 
-#endif // _BRG_CONTAINER_LABELED_ARRAY_ROW_REFERENCE_HPP_INCLUDED_
+#endif // _BRG_CONTAINER_LABELED_ARRAY_COL_REFERENCE_HPP_INCLUDED_

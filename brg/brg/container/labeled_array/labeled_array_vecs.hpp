@@ -28,6 +28,8 @@
 
 #include <utility>
 
+#include <boost/iterator.hpp>
+
 #include "brg/container/labeled_array.hpp"
 
 namespace brgastro {
@@ -62,8 +64,8 @@ public:
 
 	typedef iterator iterator;
 	typedef const_iterator const_iterator;
-	typedef iterator reverse_iterator; // FIXME
-	typedef const_iterator const_reverse_iterator; // FIXME
+	typedef boost::reverse_iterator<iterator> reverse_iterator;
+	typedef boost::reverse_iterator<const_iterator> const_reverse_iterator;
 
 	typedef typename labeled_array_type::difference_type difference_type;
 
