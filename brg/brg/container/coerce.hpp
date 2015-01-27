@@ -53,7 +53,8 @@ struct assignment_coercer
 	assignment_coercer & operator=(const assignment_coercer &) = delete;
 	assignment_coercer & operator=(assignment_coercer &&) = delete;
 
-	template<typename oc, typename std::enable_if<brgastro::is_const_container<oc>::value,oc>::type* = nullptr>
+	template<typename oc, typename std::enable_if<(brgastro::is_const_container<oc>::value &&
+	brgastro::is_const_container<container>::value),oc>::type* = nullptr>
 	assignment_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());
@@ -65,7 +66,8 @@ struct assignment_coercer
 		return;
 	}
 
-	template<typename oc, typename std::enable_if<!brgastro::is_const_container<oc>::value,oc>::type* = nullptr>
+	template<typename oc, typename std::enable_if<!(brgastro::is_const_container<oc>::value &&
+		brgastro::is_const_container<container>::value),oc>::type* = nullptr>
 	assignment_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());
@@ -115,7 +117,8 @@ struct range_coercer
 	range_coercer & operator=(const range_coercer &) = delete;
 	range_coercer & operator=(range_coercer &&) = delete;
 
-	template<typename oc, typename std::enable_if<brgastro::is_const_container<oc>::value,oc>::type* = nullptr>
+	template<typename oc, typename std::enable_if<(brgastro::is_const_container<oc>::value &&
+		brgastro::is_const_container<container>::value),oc>::type* = nullptr>
 	range_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());
@@ -127,7 +130,8 @@ struct range_coercer
 		return;
 	}
 
-	template<typename oc, typename std::enable_if<!brgastro::is_const_container<oc>::value,oc>::type* = nullptr>
+	template<typename oc, typename std::enable_if<!(brgastro::is_const_container<oc>::value &&
+		brgastro::is_const_container<container>::value),oc>::type* = nullptr>
 	range_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());

@@ -35,9 +35,9 @@
 namespace brgastro {
 
 template<typename labeled_array_type,
-typename vec_type, typename const_vec_type,
-typename reference, typename const_reference,
-typename iterator, typename const_iterator>
+typename T_vec_type, typename T_const_vec_type,
+typename T_reference, typename T_const_reference,
+typename T_iterator, typename T_const_iterator>
 class labeled_array_vecs
 {
 private:
@@ -56,14 +56,14 @@ public:
 	typedef typename labeled_array_type::value_type value_type;
 	typedef typename labeled_array_type::size_type size_type;
 
-	typedef vec_type vec_type;
-	typedef const_vec_type const_vec_type;
+	typedef T_vec_type vec_type;
+	typedef T_const_vec_type const_vec_type;
 
-	typedef reference reference;
-	typedef const_reference const_reference;
+	typedef T_reference reference;
+	typedef T_const_reference const_reference;
 
-	typedef iterator iterator;
-	typedef const_iterator const_iterator;
+	typedef T_iterator iterator;
+	typedef T_const_iterator const_iterator;
 	typedef boost::reverse_iterator<iterator> reverse_iterator;
 	typedef boost::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -178,14 +178,14 @@ public:
 	/// Range-checked element access
 	const_reference at( const size_type & n ) const
 	{
-		if((n<0)||n>_size_) throw std::out_of_range;
+		if((n<0)||(n>_size_)) throw std::out_of_range();
 		return const_reference(_array_->_key_map_,n);
 	}
 
 	/// Range-checked element access
 	reference at( const size_type & n )
 	{
-		if((n<0)||n>_size_) throw std::out_of_range;
+		if((n<0)||n>_size_) throw std::out_of_range();
 		return reference(_array_->_key_map_,n);
 	}
 
@@ -232,9 +232,9 @@ public:
 
 	/// Cast non-const version to const version
 	template <typename other_vec_type, typename other_reference, typename other_iterator,
-	typename std::enable_if<boost::is_convertible<other_vec_type,vec_type>, other_vec_type>::type* = nullptr,
-	typename std::enable_if<boost::is_convertible<other_reference,reference>, other_reference>::type* = nullptr,
-	typename std::enable_if<boost::is_convertible<other_iterator,iterator>, other_iterator>::type* = nullptr>
+	typename std::enable_if<std::is_convertible<other_vec_type,vec_type>::value, other_vec_type *>::type = nullptr,
+	typename std::enable_if<std::is_convertible<other_reference,reference>::value, other_reference *>::type = nullptr,
+	typename std::enable_if<std::is_convertible<other_iterator,iterator>::value, other_iterator *>::type = nullptr>
 	labeled_array_vecs( const labeled_array_vecs<labeled_array_type,other_vec_type,const_vec_type,other_reference,const_reference,
 						other_iterator,const_iterator> & other)
 	: _array_(other._array_) {}

@@ -27,20 +27,26 @@
 #define _BRG_CONTAINER_LABELED_ARRAY_LABELED_ARRAY_RAW_ROW_ITERATOR_HPP_INCLUDED_
 
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/utility/enable_if.hpp>
 
 namespace brgastro {
 
 template< typename labeled_array_type, typename T, typename T_reference>
 class labeled_array_raw_row_iterator :
-	boost::iterator_facade<
-		labeled_array_raw_row_iterator<labeled_array_type,T>, // CRTP
+	public boost::iterator_facade<
+		labeled_array_raw_row_iterator<labeled_array_type,T,T_reference>, // CRTP
 		T, // Value type
 		boost::random_access_traversal_tag, // Traversal type
 		T_reference, // Reference type
 		size_t> // Difference type
 {
+private:
+	// Private typedefs
+	typedef typename boost::iterator_facade<labeled_array_raw_row_iterator<labeled_array_type,T,T_reference>,
+		T, boost::random_access_traversal_tag, T_reference, size_t> base;
+public:
+	// Public typedefs
+	typedef typename base::difference_type difference_type;
+
 private:
 	labeled_array_type * _base_;
 	size_t _row_index_;
@@ -63,7 +69,7 @@ private:
     difference_type distance_to(
     	const labeled_array_raw_row_iterator<labeled_array_type,T,T_reference> & other) const
     {
-    	return other._row_index_==row_index;
+    	return other._row_index_-_row_index_;
     }
 
     T_reference dereference() const { return _base_->raw_row(_row_index_); }
@@ -84,7 +90,7 @@ public:
 	template <class T_o, typename T_o_reference>
 	labeled_array_raw_row_iterator(
 		const labeled_array_raw_row_iterator<labeled_array_type,T_o,T_o_reference> & other,
-		typename boost::enable_if<boost::is_convertible<T_o_reference,T_reference>, enabler>::type = enabler()
+		typename std::enable_if<std::is_convertible<T_o_reference,T_reference>::value, T_o_reference>::type* = nullptr
 	)
 	: _base_(other._base_), _row_index_(other._row_index_) {}
 

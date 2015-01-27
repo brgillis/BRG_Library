@@ -35,34 +35,45 @@
 #include <boost/bimap.hpp>
 #include <boost/iterator.hpp>
 
-#include <Eigen/Array>
+#include <Eigen/Core>
 
+#include "brg/container/coerce.hpp"
 #include "brg/container/insertion_ordered_map.hpp"
 #include "brg/container/is_container.hpp"
 #include "brg/container/table_typedefs.hpp"
+
+#include "brg/math/misc_math.hpp"
 
 #include "labeled_array/labeled_array_raw_col_iterator.hpp"
 #include "labeled_array/labeled_array_col_iterator.hpp"
 #include "labeled_array/labeled_array_col_reference.hpp"
 #include "labeled_array/labeled_array_raw_row_iterator.hpp"
+#include "labeled_array/labeled_array_row_element_iterator.hpp"
 #include "labeled_array/labeled_array_row_iterator.hpp"
 #include "labeled_array/labeled_array_row_reference.hpp"
 #include "labeled_array/labeled_array_vecs.hpp"
 
 namespace brgastro {
 
-template<typename value_type, typename key_type=std::string>
+template<typename T_value_type=double, typename T_key_type=std::string>
 class labeled_array
 {
 public:
 
 	// Public typedefs
-	typedef typename Eigen::Array<value_type,Eigen::Dynamic,Eigen::Dynamic> data_table_type;
-	typedef typename Eigen::Array<const value_type,Eigen::Dynamic,Eigen::Dynamic> const_data_table_type;
+	typedef typename Eigen::Array<T_value_type,Eigen::Dynamic,Eigen::Dynamic> data_table_type;
+	typedef typename Eigen::Array<const T_key_type,Eigen::Dynamic,Eigen::Dynamic> const_data_table_type;
 
-	typedef key_type key_type;
-	typedef value_type value_type;
-	typedef size_t size_type;
+	typedef T_value_type value_type;
+	typedef const value_type const_value_type;
+	typedef value_type & reference;
+	typedef const value_type & const_reference;
+
+	typedef T_key_type key_type;
+	typedef const key_type const_key_type;
+
+	typedef decltype(data_table_type().size()) size_type;
+	typedef ptrdiff_t difference_type;
 
 	// Col typedefs
 #if(1)
@@ -70,33 +81,33 @@ public:
 	typedef typename data_table_type::ColXpr col_type;
 	typedef typename data_table_type::ConstColXpr const_col_type;
 
-	typedef typename labeled_array_col_reference<labeled_array<value_type,key_type>,col_type> col_reference_type;
-	typedef typename labeled_array_col_reference<labeled_array<value_type,key_type>,const_col_type> const_col_reference_type;
+	typedef labeled_array_col_reference<labeled_array<value_type,key_type>,col_type> col_reference;
+	typedef labeled_array_col_reference<labeled_array<value_type,key_type>,const_col_type> const_col_reference;
 
-	typedef typename labeled_array_col_iterator<labeled_array<value_type,key_type>,
-		col_type,col_reference_type> col_iterator;
-	typedef typename labeled_array_col_iterator<labeled_array<value_type,key_type>,
-		const_col_type,const_col_reference_type> const_col_iterator;
-	typedef boost::reverse_iterator<col_iterator> reverse_col_iterator;
-	typedef boost::reverse_iterator<const_col_iterator> const_reverse_col_iterator;
+	typedef labeled_array_col_iterator<labeled_array<value_type,key_type>,
+		col_type,col_reference> col_iterator;
+	typedef labeled_array_col_iterator<labeled_array<value_type,key_type>,
+		const_col_type,const_col_reference> const_col_iterator;
+	typedef typename boost::reverse_iterator<col_iterator> reverse_col_iterator;
+	typedef typename boost::reverse_iterator<const_col_iterator> const_reverse_col_iterator;
 
-	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
-		col_type,const_col_type,col_reference_type,const_col_reference_type,col_iterator,const_col_iterator> cols_type;
-	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
-		const_col_type,const_col_type,const_col_reference_type,const_col_reference_type,const_col_iterator,const_col_iterator> const_cols_type;
+	typedef labeled_array_vecs<labeled_array<value_type,key_type>,
+		col_type,const_col_type,col_reference,const_col_reference,col_iterator,const_col_iterator> cols_type;
+	typedef labeled_array_vecs<labeled_array<value_type,key_type>,
+		const_col_type,const_col_type,const_col_reference,const_col_reference,const_col_iterator,const_col_iterator> const_cols_type;
 
-	typedef typename labeled_array_raw_col_iterator<labeled_array<value_type,key_type>,
-		col_type,col_reference_type> raw_col_iterator;
-	typedef typename labeled_array_raw_col_iterator<labeled_array<value_type,key_type>,
-		const_col_type,const_col_reference_type> const_raw_col_iterator;
-	typedef boost::reverse_iterator<raw_col_iterator> reverse_raw_col_iterator;
-	typedef boost::reverse_iterator<const_raw_col_iterator> const_reverse_raw_col_iterator;
+	typedef labeled_array_raw_col_iterator<labeled_array<value_type,key_type>,
+		col_type,col_reference> raw_col_iterator;
+	typedef labeled_array_raw_col_iterator<labeled_array<value_type,key_type>,
+		const_col_type,const_col_reference> const_raw_col_iterator;
+	typedef typename boost::reverse_iterator<raw_col_iterator> reverse_raw_col_iterator;
+	typedef typename boost::reverse_iterator<const_raw_col_iterator> const_reverse_raw_col_iterator;
 
-	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
-		col_type,const_col_type,col_reference_type,const_col_reference_type,
+	typedef labeled_array_vecs<labeled_array<value_type,key_type>,
+		col_type,const_col_type,col_reference,const_col_reference,
 		raw_col_iterator,const_raw_col_iterator> raw_cols_type;
-	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
-		const_col_type,const_col_type,const_col_reference_type,const_col_reference_type,
+	typedef labeled_array_vecs<labeled_array<value_type,key_type>,
+		const_col_type,const_col_type,const_col_reference,const_col_reference,
 		const_raw_col_iterator,const_raw_col_iterator> const_raw_cols_type;
 
 #endif
@@ -107,41 +118,56 @@ public:
 	typedef typename data_table_type::RowXpr row_type;
 	typedef typename data_table_type::ConstRowXpr const_row_type;
 
-	typedef typename labeled_array_row_reference<labeled_array<value_type,key_type>,row_type> row_reference_type;
-	typedef typename labeled_array_row_reference<labeled_array<value_type,key_type>,const_row_type> const_row_reference_type;
+	typedef labeled_array_row_reference<labeled_array<value_type,key_type>,row_type> row_reference;
+	typedef labeled_array_row_reference<labeled_array<value_type,key_type>,const_row_type> const_row_reference;
 
-	typedef typename labeled_array_row_iterator<labeled_array<value_type,key_type>,
-		row_type,row_reference_type> row_iterator;
-	typedef typename labeled_array_row_iterator<labeled_array<value_type,key_type>,
-		const_row_type,const_row_reference_type> const_row_iterator;
-	typedef boost::reverse_iterator<row_iterator> reverse_row_iterator;
-	typedef boost::reverse_iterator<const_row_iterator> const_reverse_row_iterator;
+	typedef labeled_array_row_iterator<labeled_array<value_type,key_type>,
+		row_type,row_reference> row_iterator;
+	typedef labeled_array_row_iterator<labeled_array<value_type,key_type>,
+		const_row_type,const_row_reference> const_row_iterator;
+	typedef typename boost::reverse_iterator<row_iterator> reverse_row_iterator;
+	typedef typename boost::reverse_iterator<const_row_iterator> const_reverse_row_iterator;
 
-	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
-		row_type,const_row_type,row_reference_type,const_row_reference_type,row_iterator,const_row_iterator> rows_type;
-	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
-		const_row_type,const_row_type,const_row_reference_type,const_row_reference_type,const_row_iterator,const_row_iterator> const_rows_type;
+	typedef labeled_array_vecs<labeled_array<value_type,key_type>,
+		row_type,const_row_type,row_reference,const_row_reference,row_iterator,const_row_iterator> rows_type;
+	typedef labeled_array_vecs<labeled_array<value_type,key_type>,
+		const_row_type,const_row_type,const_row_reference,const_row_reference,const_row_iterator,const_row_iterator> const_rows_type;
 
-	typedef typename labeled_array_raw_row_iterator<labeled_array<value_type,key_type>,
-		row_type,row_reference_type> raw_row_iterator;
-	typedef typename labeled_array_raw_row_iterator<labeled_array<value_type,key_type>,
-		const_row_type,const_row_reference_type> const_raw_row_iterator;
-	typedef boost::reverse_iterator<raw_row_iterator> reverse_raw_row_iterator;
-	typedef boost::reverse_iterator<const_raw_row_iterator> const_reverse_raw_row_iterator;
+	typedef labeled_array_raw_row_iterator<labeled_array<value_type,key_type>,
+		row_type,row_reference> raw_row_iterator;
+	typedef labeled_array_raw_row_iterator<labeled_array<value_type,key_type>,
+		const_row_type,const_row_reference> const_raw_row_iterator;
+	typedef typename boost::reverse_iterator<raw_row_iterator> reverse_raw_row_iterator;
+	typedef typename boost::reverse_iterator<const_raw_row_iterator> const_reverse_raw_row_iterator;
 
-	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
-		row_type,const_row_type,row_reference_type,const_row_reference_type,
+	typedef labeled_array_vecs<labeled_array<value_type,key_type>,
+		row_type,const_row_type,row_reference,const_row_reference,
 		raw_row_iterator,const_raw_row_iterator> raw_rows_type;
-	typedef typename labeled_array_vecs<labeled_array<value_type,key_type>,
-		const_row_type,const_row_type,const_row_reference_type,const_row_reference_type,
+	typedef labeled_array_vecs<labeled_array<value_type,key_type>,
+		const_row_type,const_row_type,const_row_reference,const_row_reference,
 		const_raw_row_iterator,const_raw_row_iterator> const_raw_rows_type;
 
 #endif
 
-	typedef row_iterator iterator;
-	typedef const_row_iterator const_iterator;
-	typedef reverse_row_iterator reverse_iterator;
-	typedef const_reverse_row_iterator const_reverse_iterator;
+	// Iterators
+#if(1)
+
+	typedef value_type * iterator;
+	typedef const_value_type * const_iterator;
+	typedef boost::reverse_iterator<iterator> reverse_iterator;
+	typedef boost::reverse_iterator<const_iterator> const_reverse_iterator;
+
+	typedef iterator col_element_iterator;
+	typedef const_iterator const_col_element_iterator;
+	typedef reverse_iterator reverse_col_element_iterator;
+	typedef const_reverse_iterator const_reverse_col_element_iterator;
+
+	typedef labeled_array_row_element_iterator<value_type> row_element_iterator;
+	typedef labeled_array_row_element_iterator<const value_type> const_row_element_iterator;
+	typedef boost::reverse_iterator<row_element_iterator> reverse_row_element_iterator;
+	typedef boost::reverse_iterator<const_row_element_iterator> const_reverse_row_element_iterator;
+
+#endif
 
 private:
 
@@ -151,17 +177,23 @@ private:
 
 	typedef typename Eigen::Array<value_type,Eigen::Dynamic,1> column_buffer_column_type;
 	typedef typename brgastro::insertion_ordered_map<key_type,column_buffer_column_type> column_buffer_type;
+	typedef typename column_buffer_type::value_type column_buffer_labeled_column_type;
 
 	typedef typename std::vector<value_type> row_buffer_row_type;
 	typedef typename std::vector<row_buffer_row_type> row_buffer_type;
+	typedef typename row_buffer_type::value_type row_buffer_labeled_row_type;
 
 	mutable data_table_type _data_table_;
 	mutable map_type _key_map_;
 	mutable column_buffer_type _column_buffer_;
 	mutable row_buffer_type _row_buffer_;
 
-	friend class row_reference_type;
-	friend class const_row_reference_type;
+	friend row_reference;
+	friend const_row_reference;
+	friend cols_type;
+	friend const_cols_type;
+	friend rows_type;
+	friend const_rows_type;
 
 	void _add_buffer_to_data_table() const
 	{
@@ -182,7 +214,7 @@ private:
 
 		// If the data table is initially empty, we'll get the number of rows from the first
 		// buffered column
-		if(_data_table_.empty())
+		if(_data_table_.size()==0)
 		{
 			num_rows = _column_buffer_.begin()->second.size();
 		}
@@ -211,27 +243,27 @@ private:
 		size_type num_preexisting_cols = 0; // number of keys which we find already exist
 		for( const auto & column : _column_buffer_)
 		{
-			key_type & key = column.first;
+			const_key_type & key = column.first;
 			auto & column_data = column.second;
 
 			// Check if the key already exists
 			if(_key_map_.left.count(key)==1)
 			{
 				// Instead of adding a new column, we'll replace the existing one
-				size_type & column_index = _key_map_.left.at(key);
-				for(column_buffer_column_type::size_type i=0; i<column.size(); ++i)
+				const size_type & column_index = _key_map_.left.at(key);
+				for(size_type i=0; i<column_data.size(); ++i)
 				{
-					_data_table_(i,column_index) = column[i];
+					_data_table_(i,column_index) = column_data[i];
 				}
 				++num_preexisting_cols;
 			}
 			else // New column to add
 			{
 				// Add this to the key map
-				_key_map_.left[key] = current_column;
-				for(column_buffer_column_type::size_type i=0; i<column.size(); ++i)
+				_key_map_.left.insert(std::make_pair(key,current_column));
+				for(size_type i=0; i<column_data.size(); ++i)
 				{
-					_data_table_(i,current_column) = column[i];
+					_data_table_(i,current_column) = column_data[i];
 				}
 
 				// Increment the current column index
@@ -242,7 +274,7 @@ private:
 		// If we overwrote any preexisting columns, resize the data table now to the proper size
 		if(num_preexisting_cols>0)
 		{
-			_data_table_.conservativeResize(data_table_type::NoChange_t, new_num_cols-num_preexisting_cols);
+			_data_table_.conservativeResize(Eigen::NoChange_t(), new_num_cols-num_preexisting_cols);
 		}
 
 		// Clear the buffer, and we're done
@@ -263,7 +295,7 @@ private:
 
 		// If the data table is initially empty, we'll get the number of columns from the first
 		// buffered row
-		if(_data_table_.empty())
+		if(_data_table_.size()==0)
 		{
 			num_cols = _row_buffer_.front().size();
 		}
@@ -277,17 +309,17 @@ private:
 		for( const auto & row : _row_buffer_)
 		{
 			// Check that the row is the proper size
-			if(row.size()!=num_cols)
+			if(static_cast<size_type>(row.size())!=num_cols)
 			{
 				throw std::logic_error("All rows added to a labeled_array must have the same size.\n");
 			}
 		}
 
 		// If this is the first row being added, create a dummy key map
-		if(_data_table_.empty())
+		if(_data_table_.size()==0)
 		{
 			_generate_dummy_key_map(num_cols);
-			assert(_key_map_.left.size()==num_cols);
+			assert(static_cast<size_type>(_key_map_.left.size())==num_cols);
 		}
 
 		// Resize the data table, conserving existing elements
@@ -297,7 +329,7 @@ private:
 		// Go through the buffer and add each row to the data table
 		for( const auto & row : _row_buffer_)
 		{
-			for(row_buffer_row_type::size_type i=0; i<row.size(); ++i)
+			for(typename row_buffer_row_type::size_type i=0; i<row.size(); ++i)
 			{
 				_data_table_(current_row,i) = row[i];
 			}
@@ -315,7 +347,7 @@ private:
 		{
 			std::stringstream ss("col_");
 			ss << i;
-			_key_map_.left.insert(map_type::value_type(ss.str(),i));
+			_key_map_.left.insert(typename map_type::left_value_type(ss.str(),i));
 		}
 	}
 
@@ -366,27 +398,27 @@ public:
 
 	// Column access
 #if(1)
-	col_reference_type & col(const size_type & index)
+	col_reference col(const size_type & index)
 	{
-		return col_reference_type(&(get_key_for_column(index)),index);
+		return col_reference(&(get_key_for_column(index)),_data_table().col(index));
 	}
-	const_col_reference_type & col(const size_type & index) const
+	const_col_reference col(const size_type & index) const
 	{
-		return const_col_reference_type(&(get_key_for_column(index)),index);
+		return const_col_reference(&(get_key_for_column(index)),_data_table().col(index));
 	}
-	col_type & raw_col(const size_type & index)
-	{
-		return _data_table().col(index);
-	}
-	const_col_type & raw_col(const size_type & index) const
+	col_type raw_col(const size_type & index)
 	{
 		return _data_table().col(index);
 	}
-	col_type & at(const key_type & key)
+	const_col_type raw_col(const size_type & index) const
+	{
+		return _data_table().col(index);
+	}
+	col_type at(const key_type & key)
 	{
 		return _data_table().col(_key_map_.left.at(key));
 	}
-	const_col_type & at(const key_type & key) const
+	const_col_type at(const key_type & key) const
 	{
 		return _data_table().col(_key_map_.left.at(key));
 	}
@@ -455,18 +487,42 @@ public:
 
     // Column/row insertion
 #if(1)
-    template< typename new_column_type >
+    template< typename new_column_type,
+	typename std::enable_if<std::is_convertible<new_column_type,column_buffer_column_type>::value ||
+	std::is_convertible<new_column_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void insert_col(new_column_type && new_column)
     {
     	_add_row_buffer_to_data_table();
     	_column_buffer_.insert(std::forward<new_column_type>(new_column));
     }
 
-    template< typename new_row_type >
+    template< typename new_column_type,
+	typename std::enable_if<!(std::is_convertible<new_column_type,column_buffer_column_type>::value ||
+	std::is_convertible<new_column_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename std::decay<new_column_type>::type>::value,char>::type = 0>
+    void insert_col(new_column_type && new_column)
+    {
+    	_add_row_buffer_to_data_table();
+    	_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::forward<new_column_type>(new_column)));
+    }
+
+    template< typename new_row_type,
+	typename std::enable_if<std::is_convertible<new_row_type,row_buffer_row_type>::value ||
+	std::is_convertible<new_row_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void insert_row(new_row_type && new_row)
     {
     	_add_column_buffer_to_data_table();
     	_row_buffer_.push_back(std::forward<new_row_type>(new_row));
+    }
+
+    template< typename new_row_type,
+	typename std::enable_if<!(std::is_convertible<new_row_type,row_buffer_row_type>::value ||
+	std::is_convertible<new_row_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename std::decay<new_row_type>::type>::value,char>::type = 0>
+    void insert_row(new_row_type && new_column)
+    {
+    	_add_column_buffer_to_data_table();
+    	_row_buffer_.push_back(brgastro::coerce<row_buffer_row_type>(std::forward<new_row_type>(new_column)));
     }
 #endif
 
@@ -488,19 +544,19 @@ public:
 
 	// Row access
 #if(1)
-	row_reference_type & row(const size_type & index)
+	row_reference row(const size_type & index)
 	{
-		return row_reference_type(&_key_map_.left,&(_data_table().row(index)));
+		return row_reference(&_key_map_,_data_table().row(index),num_cols());
 	}
-	const_row_reference_type & row(const size_type & index) const
+	const_row_reference row(const size_type & index) const
 	{
-		return const_row_reference_type(&_key_map_.left,&(_data_table().row(index)));
+		return const_row_reference(&_key_map_,_data_table().row(index),num_cols());
 	}
-	row_type & raw_row(const size_type & index)
+	row_type raw_row(const size_type & index)
 	{
 		return _data_table().row(index);
 	}
-	const_row_type & raw_row(const size_type & index) const
+	const_row_type raw_row(const size_type & index) const
 	{
 		return _data_table().row(index);
 	}
@@ -508,23 +564,23 @@ public:
 
 	// Size information
 #if(1)
-	const size_type & nrows() const
+	size_type nrows() const
 	{
 		return num_rows();
 	}
-	const size_type & num_rows() const
+	size_type num_rows() const
 	{
 		return _data_table().rows();
 	}
-	const size_type & ncols() const
+	size_type ncols() const
 	{
 		return num_cols();
 	}
-	const size_type & num_cols() const
+	size_type num_cols() const
 	{
 		return _data_table().cols();
 	}
-	const size_type & size() const
+	size_type size() const
 	{
 		return _data_table().size();
 	}

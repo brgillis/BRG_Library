@@ -34,7 +34,7 @@
 
 namespace brgastro {
 
-template<typename labeled_array_type, typename col_type>
+template<typename labeled_array_type, typename T_col_type>
 class labeled_array_col_reference
 {
 
@@ -42,35 +42,37 @@ public:
 
 	// Public typedefs
 
-	typedef typename labeled_array_type::key_type key_type;
-	typedef typename labeled_array_type::data_type value_type;
+	typedef typename labeled_array_type::const_key_type key_type;
+	typedef typename labeled_array_type::value_type value_type;
 	typedef typename labeled_array_type::size_type size_type;
 
-	typedef col_type col_type;
+	typedef T_col_type col_type;
 	typedef typename labeled_array_type::const_col_type const_col_type;
 
-	typedef typename col_type::reference reference;
-	typedef typename col_type::const_reference const_reference;
+	typedef typename labeled_array_type::reference reference;
+	typedef typename labeled_array_type::const_reference const_reference;
 
-	typedef typename col_type::iterator iterator;
-	typedef typename col_type::const_iterator const_iterator;
-	typedef typename col_type::reverse_iterator reverse_iterator;
-	typedef typename col_type::const_reverse_iterator const_reverse_iterator;
+	typedef typename labeled_array_type::iterator iterator;
+	typedef typename labeled_array_type::const_iterator const_iterator;
+	typedef typename labeled_array_type::reverse_iterator reverse_iterator;
+	typedef typename labeled_array_type::const_reverse_iterator const_reverse_iterator;
 
-	typedef typename col_type::difference_type difference_type;
+
+	typedef size_t difference_type;
 
 private:
 
 	// Private Members
 	key_type * _key_;
-	col_type * _col_;
+	col_type _col_;
 
 public:
 
 	/// Constructor. Requires a pointer to a labeled_array's key and column
-	labeled_array_col_reference(key_type * key, col_type * col)
+	template< typename T_init_col_type >
+	labeled_array_col_reference(key_type * key, T_init_col_type && col)
 	: _key_(key),
-	  _col_(col)
+	  _col_(std::forward<T_init_col_type>(col))
 	{
 	}
 
@@ -82,62 +84,62 @@ public:
 	/// begin
 	const_iterator begin() const noexcept
 	{
-		return _col_->begin();
+		return _col_.data();
 	}
 	/// begin
 	iterator begin() noexcept
 	{
-		return _col_->begin();
+		return _col_.data();
 	}
 	/// end
 	const_iterator end() const noexcept
 	{
-		return _col_->end();
+		return _col_.data()+_col_.size();
 	}
 	/// end
 	iterator end() noexcept
 	{
-		return _col_->end();
+		return _col_.data()+_col_.size();
 	}
 	/// rbegin
 	const_reverse_iterator rbegin() const noexcept
 	{
-		return _col_->rbegin();
+		return _col_.rbegin();
 	}
 	/// rbegin
 	reverse_iterator rbegin() noexcept
 	{
-		return _col_->rbegin();
+		return _col_.rbegin();
 	}
 	/// rend
 	const_reverse_iterator rend() const noexcept
 	{
-		return _col_->rend();
+		return _col_.rend();
 	}
 	/// rend
 	reverse_iterator rend() noexcept
 	{
-		return _col_->rend();
+		return _col_.rend();
 	}
 	/// cbegin
 	const_iterator cbegin() const noexcept
 	{
-		return _col_->cbegin();
+		return _col_.cbegin();
 	}
 	/// cend
 	const_iterator cend() const noexcept
 	{
-		return _col_->cend();
+		return _col_.cend();
 	}
 	/// crbegin
 	const_reverse_iterator crbegin() const noexcept
 	{
-		return _col_->crbegin();
+		return _col_.crbegin();
 	}
 	/// crend
 	const_reverse_iterator crend() const noexcept
 	{
-		return _col_->crend();
+		return _col_.crend();
 	}
 
 #endif // Iterator methods
@@ -148,13 +150,13 @@ public:
 	/// size
 	size_type size() const noexcept
 	{
-		return _col_->size();
+		return _col_.size();
 	}
 
 	/// empty
 	bool empty() const noexcept
 	{
-		return _col_->empty();
+		return _col_.size()==0;
 	}
 
 #endif // Capacity methods
@@ -177,49 +179,61 @@ public:
 	/// Range-checked element access
 	const_reference at( const size_type & n ) const
 	{
-		return _col_->at(n);
+		return _col_(n);
 	}
 
 	/// Range-checked element access
 	reference at( const size_type & n )
 	{
-		return _col_->at(n);
+		return _col_(n);
+	}
+
+	/// Range-checked element access
+	const_reference operator()( const size_type & n ) const
+	{
+		return _col_(n);
+	}
+
+	/// Range-checked element access
+	reference operator()( const size_type & n )
+	{
+		return _col_(n);
 	}
 
 	/// Access first element
 	const_reference front() const
 	{
-		return _col_->front();
+		return _col_.front();
 	}
 
 	/// Access first element
 	reference front()
 	{
-		return _col_->front();
+		return _col_.front();
 	}
 
 	/// Access last element
 	const_reference back() const
 	{
-		return _col_->back();
+		return _col_.back();
 	}
 
 	/// Access last element
 	reference back()
 	{
-		return _col_->back();
+		return _col_.back();
 	}
 
 	/// Access data
 	const value_type* data() const noexcept
 	{
-		return _col_->data();
+		return _col_.data();
 	}
 
 	/// Access data
 	value_type* data() noexcept
 	{
-		return _col_->data();
+		return _col_.data();
 	}
 
 #endif // Element access
@@ -239,12 +253,12 @@ public:
 	/// Cast to col_type
 	operator col_type &() const
 	{
-		return *_col_;
+		return _col_;
 	}
 
 	/// Cast non-const version to const version
 	template <typename other_col_type,
-	typename std::enable_if<boost::is_convertible<other_col_type,col_type>, other_col_type>::type* = nullptr>
+	typename std::enable_if<std::is_convertible<other_col_type,col_type>::value, other_col_type>::type* = nullptr>
 	labeled_array_col_reference( const labeled_array_col_reference<labeled_array_type,other_col_type> & other)
 	: _key_(other._key_), _col_(other._col_) {}
 

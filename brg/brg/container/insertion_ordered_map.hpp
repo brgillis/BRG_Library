@@ -27,9 +27,11 @@
 #ifndef _BRG_INSERTION_ORDERED_MAP_HPP_INCLUDED_
 #define _BRG_INSERTION_ORDERED_MAP_HPP_INCLUDED_
 
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <type_traits>
 #include <vector>
 
 namespace brgastro {
@@ -82,6 +84,56 @@ private:
 	{
 		_key_map_.clear();
 		_build_key_map();
+	}
+
+	// _new_key(...) - Generates a new key of the templated type, which is not already in the map
+	template< typename new_key_type,
+	typename std::enable_if<std::is_arithmetic<new_key_type>::value,new_key_type>::type* = nullptr>
+	new_key_type _new_key()
+	{
+		// For arithmetic types, we'll start by setting the new key value equal to the number of
+		// elements in the map. If that's in, we'll add 1. Repeat till we find an unused value.
+		// If we try more values than are in the key map, something's gone wrong, so throw an
+		// exception.
+		new_key_type test_key = _key_map_.size();
+		size_type counter=0;
+		while((_key_map_.find(test_key) != _key_map_.end())&&(counter<=_key_map_.size()))
+		{
+			test_key += 1;
+			++counter;
+		}
+		if(counter>_key_map_.size()) throw std::runtime_error("Cannot generate new arithmetic key for insertion_ordered_map.");
+		return test_key;
+	}
+
+	template< typename new_key_type,
+	typename std::enable_if<!std::is_arithmetic<new_key_type>::value,new_key_type>::type* = nullptr,
+	typename std::enable_if<std::is_convertible<std::string,new_key_type>::value,new_key_type>::type* = nullptr>
+	new_key_type _new_key()
+	{
+		// For strings, we'll start by setting the new key value to "col_N", where N is the number of
+		// elements in the map. If that's in, we'll add 1 to N. Repeat till we find an unused value.
+		// If we try more values than are in the key map, something's gone wrong, so throw an
+		// exception.
+		size_type N = _key_map_.size();
+
+		std::stringstream ss;
+
+		ss.str();
+		ss << "col_" << N;
+		std::string test_key = ss.str();
+
+		size_type counter=0;
+		while((_key_map_.find(test_key) != _key_map_.end())&&(counter<=_key_map_.size()))
+		{
+			ss.str();
+			ss << "col_" << ++N;
+			test_key = ss.str();
+
+			++counter;
+		}
+		if(counter>_key_map_.size()) throw std::runtime_error("Cannot generate new string key for insertion_ordered_map.");
+		return test_key;
 	}
 
 public:
@@ -207,7 +259,8 @@ public:
 		return _val_vector_[_key_map_[std::forward<new_key_type>(key)]].second;
 	}
 
-    template< typename new_val_type >
+    template< typename new_val_type,
+	typename std::enable_if<std::is_convertible<new_val_type,value_type>::value,new_val_type>::type* = nullptr>
 	std::pair<typename base_type::iterator,bool> insert(new_val_type && val)
 	{
 		if(_key_map_.count(val.first)==0)
@@ -221,6 +274,15 @@ public:
 			return std::make_pair(static_cast<typename base_type::iterator>(&_val_vector_[_key_map_[val.first]]),
 					false);
 		}
+	}
+
+    template< typename new_mapped_type,
+	typename std::enable_if<!std::is_convertible<new_mapped_type,value_type>::value,new_mapped_type>::type* = nullptr,
+	typename std::enable_if<std::is_convertible<new_mapped_type,mapped_type>::value,new_mapped_type>::type* = nullptr>
+	std::pair<typename base_type::iterator,bool> insert(new_mapped_type && val)
+	{
+		_insert(std::make_pair(_new_key<key_type>(),std::forward<new_mapped_type>(val)));
+		return std::make_pair(_val_vector_.end(),true);
 	}
 
 	template <class... Args>
