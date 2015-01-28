@@ -44,6 +44,7 @@ public:
 
 	typedef typename labeled_array_type::const_key_type key_type;
 	typedef typename labeled_array_type::value_type value_type;
+	typedef typename labeled_array_type::const_value_type const_value_type;
 	typedef typename labeled_array_type::size_type size_type;
 
 	typedef T_col_type col_type;
@@ -65,14 +66,16 @@ private:
 	// Private Members
 	key_type * _key_;
 	col_type _col_;
+	size_type _num_cols_;
 
 public:
 
-	/// Constructor. Requires a pointer to a labeled_array's key and column
+	/// Constructor. Requires a pointer to a labeled_array's key, the column, and the number of rows
 	template< typename T_init_col_type >
-	labeled_array_col_reference(key_type * key, T_init_col_type && col)
+	labeled_array_col_reference(key_type * key, T_init_col_type && col, size_type num_rows)
 	: _key_(key),
-	  _col_(std::forward<T_init_col_type>(col))
+	  _col_(std::forward<T_init_col_type>(col)),
+	  _num_cols_(num_rows)
 	{
 	}
 
@@ -81,65 +84,172 @@ public:
 
 	// Iterator methods
 #if(1)
+	/// begin (const)
+	template< typename T_iterator = const_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator begin() const noexcept
+	{
+		return T_iterator(_col_.data(),_num_cols_);
+	}
+	template< typename T_iterator = const_iterator,
+		typename std::enable_if<std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator begin() const noexcept
+	{
+		return T_iterator(_col_.data());
+	}
+
 	/// begin
-	const_iterator begin() const noexcept
+	template< typename T_iterator = iterator,
+		typename std::enable_if<!std::is_same<T_iterator,value_type *>::value,char>::type = 0>
+	T_iterator begin() noexcept
 	{
-		return _col_.data();
+		return T_iterator(_col_.data(),_num_cols_);
 	}
-	/// begin
-	iterator begin() noexcept
+	template< typename T_iterator = iterator,
+		typename std::enable_if<std::is_same<T_iterator,value_type *>::value,char>::type = 0>
+	T_iterator begin() noexcept
 	{
-		return _col_.data();
+		return T_iterator(_col_.data());
 	}
+
+	/// end (const)
+	template< typename T_iterator = const_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator end() const noexcept
+	{
+		return T_iterator(_col_.data()+_col_.size()*_num_cols_,_num_cols_);
+	}
+	template< typename T_iterator = const_iterator,
+		typename std::enable_if<std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator end() const noexcept
+	{
+		return T_iterator(_col_.data()+_col_.size());
+	}
+
 	/// end
-	const_iterator end() const noexcept
+	template< typename T_iterator = iterator,
+		typename std::enable_if<!std::is_same<T_iterator,value_type *>::value,char>::type = 0>
+	T_iterator end() noexcept
 	{
-		return _col_.data()+_col_.size();
+		return T_iterator(_col_.data()+_col_.size()*_num_cols_,_num_cols_);
 	}
-	/// end
-	iterator end() noexcept
+	template< typename T_iterator = iterator,
+		typename std::enable_if<std::is_same<T_iterator,value_type *>::value,char>::type = 0>
+	T_iterator end() noexcept
 	{
-		return _col_.data()+_col_.size();
+		return T_iterator(_col_.data()+_col_.size());
 	}
+
+	/// rbegin (const)
+	template< typename T_iterator = const_reverse_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator rbegin() const noexcept
+	{
+		return T_iterator(_col_.data()+_col_.size()*_num_cols_-_num_cols_,_num_cols_);
+	}
+	template< typename T_iterator = const_reverse_iterator,
+		typename std::enable_if<std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator rbegin() const noexcept
+	{
+		return T_iterator(_col_.data()+_col_.size()-1);
+	}
+
 	/// rbegin
-	const_reverse_iterator rbegin() const noexcept
+	template< typename T_iterator = reverse_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,value_type *>::value,char>::type = 0>
+	T_iterator rbegin() noexcept
 	{
-		return _col_.rbegin();
+		return T_iterator(_col_.data()+_col_.size()*_num_cols_-_num_cols_,_num_cols_);
 	}
-	/// rbegin
-	reverse_iterator rbegin() noexcept
+	template< typename T_iterator = reverse_iterator,
+		typename std::enable_if<std::is_same<T_iterator,value_type *>::value,char>::type = 0>
+	T_iterator rbegin() noexcept
 	{
-		return _col_.rbegin();
+		return T_iterator(_col_.data()+_col_.size()-1);
 	}
+
+	/// rend (const)
+	template< typename T_iterator = const_reverse_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator rend() const noexcept
+	{
+		return T_iterator(_col_.data()-_num_cols_,_num_cols_);
+	}
+	template< typename T_iterator = const_reverse_iterator,
+		typename std::enable_if<std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator rend() const noexcept
+	{
+		return T_iterator(_col_.data()-1);
+	}
+
 	/// rend
-	const_reverse_iterator rend() const noexcept
+	template< typename T_iterator = reverse_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,value_type *>::value,char>::type = 0>
+	T_iterator rend() const noexcept
 	{
-		return _col_.rend();
+		return T_iterator(_col_.data()-_num_cols_,_num_cols_);
 	}
-	/// rend
-	reverse_iterator rend() noexcept
+	template< typename T_iterator = reverse_iterator,
+		typename std::enable_if<std::is_same<T_iterator,value_type *>::value,char>::type = 0>
+	T_iterator rend() const noexcept
 	{
-		return _col_.rend();
+		return T_iterator(_col_.data()-1);
 	}
+
 	/// cbegin
-	const_iterator cbegin() const noexcept
+	template< typename T_iterator = const_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator cbegin() const noexcept
 	{
-		return _col_.cbegin();
+		return T_iterator(_col_.data(),_num_cols_);
 	}
+	template< typename T_iterator = const_iterator,
+		typename std::enable_if<std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator cbegin() const noexcept
+	{
+		return T_iterator(_col_.data());
+	}
+
 	/// cend
-	const_iterator cend() const noexcept
+	template< typename T_iterator = const_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator cend() const noexcept
 	{
-		return _col_.cend();
+		return T_iterator(_col_.data()+_col_.size()*_num_cols_,_num_cols_);
 	}
+	template< typename T_iterator = const_iterator,
+		typename std::enable_if<std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator cend() const noexcept
+	{
+		return T_iterator(_col_.data()+_col_.size());
+	}
+
 	/// crbegin
-	const_reverse_iterator crbegin() const noexcept
+	template< typename T_iterator = const_reverse_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator crbegin() const noexcept
 	{
-		return _col_.crbegin();
+		return T_iterator(_col_.data()+_col_.size()*_num_cols_-_num_cols_,_num_cols_);
 	}
-	/// crend
-	const_reverse_iterator crend() const noexcept
+	template< typename T_iterator = const_reverse_iterator,
+		typename std::enable_if<std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator crbegin() const noexcept
 	{
-		return _col_.crend();
+		return T_iterator(_col_.data()+_col_.size()-1);
+	}
+
+	/// crend
+	template< typename T_iterator = const_reverse_iterator,
+		typename std::enable_if<!std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator crend() const noexcept
+	{
+		return T_iterator(_col_.data()-_num_cols_,_num_cols_);
+	}
+	template< typename T_iterator = const_reverse_iterator,
+		typename std::enable_if<std::is_same<T_iterator,const_value_type *>::value,char>::type = 0>
+	T_iterator crend() const noexcept
+	{
+		return T_iterator(_col_.data()-1);
 	}
 
 #endif // Iterator methods
@@ -177,6 +287,18 @@ public:
 	}
 
 	/// Range-checked element access
+	const_reference row( const size_type & n ) const
+	{
+		return _col_(n);
+	}
+
+	/// Range-checked element access
+	reference row( const size_type & n )
+	{
+		return _col_(n);
+	}
+
+	/// Range-checked element access
 	const_reference at( const size_type & n ) const
 	{
 		return _col_(n);
@@ -203,25 +325,25 @@ public:
 	/// Access first element
 	const_reference front() const
 	{
-		return _col_.front();
+		return _col_(0);
 	}
 
 	/// Access first element
 	reference front()
 	{
-		return _col_.front();
+		return _col_(0);
 	}
 
 	/// Access last element
 	const_reference back() const
 	{
-		return _col_.back();
+		return _col_(_col_.size()-1);
 	}
 
 	/// Access last element
 	reference back()
 	{
-		return _col_.back();
+		return _col_(_col_.size()-1);
 	}
 
 	/// Access data
@@ -260,7 +382,7 @@ public:
 	template <typename other_col_type,
 	typename std::enable_if<std::is_convertible<other_col_type,col_type>::value, other_col_type>::type* = nullptr>
 	labeled_array_col_reference( const labeled_array_col_reference<labeled_array_type,other_col_type> & other)
-	: _key_(other._key_), _col_(other._col_) {}
+	: _key_(other._key_), _col_(other._col_), _num_cols_(other._num_cols_)  {}
 
 #endif
 

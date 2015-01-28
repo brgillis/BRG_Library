@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file labeled_array_row_element_iterator.hpp
+ @file labeled_array_element_iterator.hpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,25 +23,25 @@
 
 \**********************************************************************/
 
-// body file: labeled_array_row_element_iterator.cpp
+// body file: labeled_array_element_iterator.cpp
 
-#ifndef _BRG_BRG_CONTAINER_LABELED_ARRAY_ROW_ELEMENT_ITERATOR_HPP_INCLUDED_
-#define _BRG_BRG_CONTAINER_LABELED_ARRAY_ROW_ELEMENT_ITERATOR_HPP_INCLUDED_
+#ifndef _BRG_BRG_CONTAINER_LABELED_ARRAY_ELEMENT_ITERATOR_HPP_INCLUDED_
+#define _BRG_BRG_CONTAINER_LABELED_ARRAY_ELEMENT_ITERATOR_HPP_INCLUDED_
 
 #include <boost/iterator/iterator_facade.hpp>
 
 namespace brgastro {
 
 template< typename value_type >
-class labeled_array_row_element_iterator
+class labeled_array_element_iterator
 	: public boost::iterator_facade<
-	  labeled_array_row_element_iterator<value_type>, // CRTP
+	  labeled_array_element_iterator<value_type>, // CRTP
 		value_type, // Value type
 		boost::random_access_traversal_tag> // Traversal type
 {
 private:
 	// Private typedefs
-	typedef typename boost::iterator_facade<labeled_array_row_element_iterator<value_type>,
+	typedef typename boost::iterator_facade<labeled_array_element_iterator<value_type>,
 		value_type, boost::random_access_traversal_tag> base;
 public:
 	// Public typedefs
@@ -60,14 +60,14 @@ private:
     void decrement() { _ptr_ -= _multiplier_; }
     void advance(const difference_type & n) { _ptr_ += _multiplier_*n; }
 
-    bool equal(const labeled_array_row_element_iterator<value_type> & other) const
+    bool equal(const labeled_array_element_iterator<value_type> & other) const
     {
         return (_ptr_ == other._ptr_) &&
         	(_multiplier_ == other._multiplier_);
     }
 
     difference_type distance_to(
-    	const labeled_array_row_element_iterator<value_type> & other) const
+    	const labeled_array_element_iterator<value_type> & other) const
     {
     	return (other._ptr_-_ptr_)/_multiplier_;
     }
@@ -77,19 +77,19 @@ private:
 #endif
 
 public:
-    labeled_array_row_element_iterator()
+    labeled_array_element_iterator()
 	: _ptr_(nullptr), _multiplier_(1)
 	{
 	}
 
-    labeled_array_row_element_iterator(value_type * ptr, const unsigned & multiplier = 1)
+    labeled_array_element_iterator(value_type * ptr, const unsigned & multiplier = 1)
 	: _ptr_(ptr), _multiplier_(multiplier)
 	{
 	}
 
 	template <typename T_o_value_type>
-	labeled_array_row_element_iterator(
-		const labeled_array_row_element_iterator<value_type> & other,
+	labeled_array_element_iterator(
+		const labeled_array_element_iterator<value_type> & other,
 		typename std::enable_if<std::is_convertible<T_o_value_type,value_type>::value, T_o_value_type *>::type = nullptr
 	)
 	: _ptr_(other._ptr_), _multiplier_(other.multiplier) {}
@@ -99,4 +99,4 @@ public:
 }
 
 
-#endif // _BRG_BRG_CONTAINER_LABELED_ARRAY_ROW_ELEMENT_ITERATOR_HPP_INCLUDED_
+#endif // _BRG_BRG_CONTAINER_LABELED_ARRAY_ELEMENT_ITERATOR_HPP_INCLUDED_

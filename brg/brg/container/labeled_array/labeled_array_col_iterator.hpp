@@ -89,7 +89,7 @@ public:
 
 	template <class T_o, typename T_o_reference>
 	labeled_array_col_iterator(
-		const labeled_array_raw_col_iterator<labeled_array_type,T_o,T_o_reference> & other,
+		const labeled_array_col_iterator<labeled_array_type,T_o,T_o_reference> & other,
 		typename std::enable_if<std::is_convertible<T_o_reference,T_reference>::value, T_o_reference *>::type = nullptr
 	)
 	: _base_(other._base_), _col_index_(other._col_index_) {}
