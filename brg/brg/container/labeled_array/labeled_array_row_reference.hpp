@@ -311,6 +311,18 @@ public:
 	}
 
 	/// Range-checked element access
+	const_reference col( const size_type & n ) const
+	{
+		return _row_(n);
+	}
+
+	/// Range-checked element access
+	reference col( const size_type & n )
+	{
+		return _row_(n);
+	}
+
+	/// Range-checked element access
 	const_reference at_label( const key_type & key ) const
 	{
 		return _row_(_key_map_->left.at(key));

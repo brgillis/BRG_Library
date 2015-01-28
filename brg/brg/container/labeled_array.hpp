@@ -176,7 +176,7 @@ private:
 	// Private typedefs
 	typedef typename boost::bimap<key_type,size_type> map_type;
 
-	typedef typename Eigen::Array<value_type,Eigen::Dynamic,1,T_major_tag> column_buffer_column_type;
+	typedef typename Eigen::Array<value_type,Eigen::Dynamic,1> column_buffer_column_type;
 	typedef typename brgastro::insertion_ordered_map<key_type,column_buffer_column_type> column_buffer_type;
 	typedef typename column_buffer_type::value_type column_buffer_labeled_column_type;
 
@@ -416,11 +416,19 @@ public:
 	{
 		return _data_table().col(index);
 	}
-	col_type at(const key_type & key)
+	col_type at(const size_type & index)
+	{
+		return col(index);
+	}
+	const_col_type at(const size_type & index) const
+	{
+		return col(index);
+	}
+	col_type at_label(const key_type & key)
 	{
 		return _data_table().col(_key_map_.left.at(key));
 	}
-	const_col_type at(const key_type & key) const
+	const_col_type at_label(const key_type & key) const
 	{
 		return _data_table().col(_key_map_.left.at(key));
 	}
@@ -530,17 +538,17 @@ public:
 
     // Column access/insertion
 #if(1)
-    template< typename new_key_type >
-	col_type & operator[](new_key_type && key)
+    col_type operator[](const key_type & key)
 	{
     	// Check if the key is new
     	if(count(key)==0)
     	{
     		// The key is new, so insert a column for it
-    		insert(std::make_pair(key,column_buffer_column_type(_data_table_.rows())));
+    		insert_col(std::make_pair(key,column_buffer_column_type(_data_table_.rows())));
+    		_data_table();
     	}
     	// Return a reference to this key's column
-		return _data_table().col(_key_map_.left.at(std::forward<new_key_type>(key)));
+		return _data_table().col(_key_map_.left.at(key));
 	}
 #endif
 
@@ -554,6 +562,22 @@ public:
 	{
 		return const_row_reference(&_key_map_,_data_table().row(index),num_rows());
 	}
+	row_reference operator[](const size_type & index)
+	{
+		return row(index);
+	}
+	const_row_reference operator[](const size_type & index) const
+	{
+		return row(index);
+	}
+	row_reference operator()(const size_type & index)
+	{
+		return row(index);
+	}
+	const_row_reference operator()(const size_type & index) const
+	{
+		return row(index);
+	}
 	row_type raw_row(const size_type & index)
 	{
 		return _data_table().row(index);
@@ -561,6 +585,18 @@ public:
 	const_row_type raw_row(const size_type & index) const
 	{
 		return _data_table().row(index);
+	}
+#endif
+
+	// Element access
+#if(1)
+	const_reference operator()(const size_type & row_index, const size_type & col_index) const
+	{
+		return _data_table()(row_index,col_index);
+	}
+	reference operator()(const size_type & row_index, const size_type & col_index)
+	{
+		return _data_table()(row_index,col_index);
 	}
 #endif
 
