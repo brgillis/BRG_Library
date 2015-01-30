@@ -87,9 +87,10 @@ private:
 	}
 
 	// _new_key(...) - Generates a new key of the templated type, which is not already in the map
-	template< typename new_key_type,
-	typename std::enable_if<std::is_arithmetic<new_key_type>::value,new_key_type>::type* = nullptr>
-	new_key_type _new_key()
+	template< typename new_key_type, typename other_map_type=insertion_ordered_map<key_type,mapped_type>,
+	typename std::enable_if<std::is_arithmetic<new_key_type>::value,new_key_type>::type* = nullptr,
+	typename std::enable_if<std::is_convertible<key_type,typename other_map_type::key_type>::value,new_key_type>::type* = nullptr>
+	new_key_type _new_key(const other_map_type & other_map = other_map_type())
 	{
 		// For arithmetic types, we'll start by setting the new key value equal to the number of
 		// elements in the map. If that's in, we'll add 1. Repeat till we find an unused value.
@@ -97,7 +98,9 @@ private:
 		// exception.
 		new_key_type test_key = _key_map_.size();
 		size_type counter=0;
-		while((_key_map_.find(test_key) != _key_map_.end())&&(counter<=_key_map_.size()))
+		while((_key_map_.find(test_key) != _key_map_.end()) &&
+			  (other_map.find(test_key) != other_map.end()) &&
+			  (counter<=_key_map_.size()))
 		{
 			test_key += 1;
 			++counter;
@@ -106,10 +109,10 @@ private:
 		return test_key;
 	}
 
-	template< typename new_key_type,
+	template< typename new_key_type, typename other_map_type=insertion_ordered_map<key_type,mapped_type>,
 	typename std::enable_if<!std::is_arithmetic<new_key_type>::value,new_key_type>::type* = nullptr,
-	typename std::enable_if<std::is_convertible<std::string,new_key_type>::value,new_key_type>::type* = nullptr>
-	new_key_type _new_key()
+	typename std::enable_if<std::is_convertible<key_type,typename other_map_type::key_type>::value,new_key_type>::type* = nullptr>
+	new_key_type _new_key(const other_map_type & other_map = other_map_type())
 	{
 		// For strings, we'll start by setting the new key value to "col_N", where N is the number of
 		// elements in the map. If that's in, we'll add 1 to N. Repeat till we find an unused value.
@@ -124,7 +127,8 @@ private:
 		std::string test_key = ss.str();
 
 		size_type counter=0;
-		while((_key_map_.find(test_key) != _key_map_.end())&&(counter<=_key_map_.size()))
+		while((_key_map_.count(test_key) + other_map.count(test_key) > 0) &&
+			  (counter<=_key_map_.size()+other_map.size()))
 		{
 			ss.str();
 			ss << "col_" << ++N;
@@ -132,7 +136,7 @@ private:
 
 			++counter;
 		}
-		if(counter>_key_map_.size()) throw std::runtime_error("Cannot generate new string key for insertion_ordered_map.");
+		if(counter>_key_map_.size()+other_map.size()) throw std::runtime_error("Cannot generate new string key for insertion_ordered_map.");
 		return test_key;
 	}
 
@@ -276,12 +280,13 @@ public:
 		}
 	}
 
-    template< typename new_mapped_type,
+    template< typename new_mapped_type, typename other_map_type = insertion_ordered_map<key_type,mapped_type>,
 	typename std::enable_if<!std::is_convertible<new_mapped_type,value_type>::value,new_mapped_type>::type* = nullptr,
-	typename std::enable_if<std::is_convertible<new_mapped_type,mapped_type>::value,new_mapped_type>::type* = nullptr>
-	std::pair<typename base_type::iterator,bool> insert(new_mapped_type && val)
+	typename std::enable_if<std::is_convertible<new_mapped_type,mapped_type>::value,new_mapped_type>::type* = nullptr,
+	typename std::enable_if<std::is_convertible<key_type,typename other_map_type::key_type>::value,key_type>::type* = nullptr>
+	std::pair<typename base_type::iterator,bool> insert(new_mapped_type && val, const other_map_type & other_map = other_map_type())
 	{
-		_insert(std::make_pair(_new_key<key_type>(),std::forward<new_mapped_type>(val)));
+		_insert(std::make_pair(_new_key<key_type>(other_map),std::forward<new_mapped_type>(val)));
 		return std::make_pair(_val_vector_.end(),true);
 	}
 

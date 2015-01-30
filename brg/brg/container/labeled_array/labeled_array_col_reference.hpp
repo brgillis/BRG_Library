@@ -48,15 +48,15 @@ public:
 	typedef typename labeled_array_type::size_type size_type;
 
 	typedef T_col_type col_type;
-	typedef typename labeled_array_type::const_col_type const_col_type;
+	typedef const col_type const_col_type;
 
 	typedef typename labeled_array_type::reference reference;
 	typedef typename labeled_array_type::const_reference const_reference;
 
-	typedef typename labeled_array_type::iterator iterator;
-	typedef typename labeled_array_type::const_iterator const_iterator;
-	typedef typename labeled_array_type::reverse_iterator reverse_iterator;
-	typedef typename labeled_array_type::const_reverse_iterator const_reverse_iterator;
+	typedef typename labeled_array_type::col_element_iterator iterator;
+	typedef typename labeled_array_type::const_col_element_iterator const_iterator;
+	typedef typename labeled_array_type::reverse_col_element_iterator reverse_iterator;
+	typedef typename labeled_array_type::const_reverse_col_element_iterator const_reverse_iterator;
 
 
 	typedef size_t difference_type;

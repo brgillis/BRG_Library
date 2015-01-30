@@ -87,10 +87,11 @@ public:
 	{
 	}
 
-	template <class T_o, typename T_o_reference>
+	template <class T_o, typename T_o_reference, typename T_o_labeled_array_type>
 	labeled_array_row_iterator(
-		const labeled_array_row_iterator<labeled_array_type,T_o,T_o_reference> & other,
-		typename std::enable_if<std::is_convertible<T_o_reference,T_reference>::value, T_o_reference>::type* = nullptr
+		const labeled_array_row_iterator<T_o_labeled_array_type,T_o,T_o_reference> & other,
+		typename std::enable_if<std::is_convertible<T_o_reference,T_reference>::value &&
+		std::is_convertible<T_o_labeled_array_type,labeled_array_type>::value, char>::type = 0
 	)
 	: _base_(other._base_), _row_index_(other._row_index_) {}
 

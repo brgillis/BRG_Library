@@ -34,10 +34,13 @@
 
 namespace brgastro {
 
+enum { forward_tag = false, reverse_tag = true };
+
 template<typename labeled_array_type,
 typename T_vec_type, typename T_const_vec_type,
 typename T_reference, typename T_const_reference,
-typename T_iterator, typename T_const_iterator>
+typename T_iterator, typename T_const_iterator,
+int T_direction_tag=forward_tag>
 class labeled_array_vecs
 {
 private:
@@ -56,6 +59,8 @@ public:
 	typedef typename labeled_array_type::value_type value_type;
 	typedef typename labeled_array_type::size_type size_type;
 
+	static_assert(std::is_signed<size_type>::value,"size_type for labeled_array must be signed.");
+
 	typedef T_vec_type vec_type;
 	typedef T_const_vec_type const_vec_type;
 
@@ -69,7 +74,56 @@ public:
 
 	typedef typename labeled_array_type::difference_type difference_type;
 
-	/// Constructor. Requires a non-const pointer to a labeled array
+private:
+
+	// Private iterator methods
+#if(1)
+
+	/// begin
+	iterator _begin() noexcept
+	{
+		return iterator(_array_,0);
+	}
+	/// end
+	iterator _end() noexcept
+	{
+		return iterator(_array_,_size_);
+	}
+	/// rbegin
+	reverse_iterator _rbegin() noexcept
+	{
+		return reverse_iterator(_end());
+	}
+	/// rend
+	reverse_iterator _rend() noexcept
+	{
+		return reverse_iterator(_begin());
+	}
+	/// cbegin
+	const_iterator _cbegin() const noexcept
+	{
+		return const_iterator(_array_,0);
+	}
+	/// cend
+	const_iterator _cend() const noexcept
+	{
+		return const_iterator(_array_,_size_);
+	}
+	/// crbegin
+	const_reverse_iterator _crbegin() const noexcept
+	{
+		return const_reverse_iterator(_cend());
+	}
+	/// crend
+	const_reverse_iterator _crend() const noexcept
+	{
+		return const_reverse_iterator(_cbegin());
+	}
+#endif
+
+public:
+
+	/// Constructor. Requires a pointer to a labeled array
 	labeled_array_vecs(labeled_array_type * init_array, const size_type & init_size)
 	: _array_(init_array), _size_(init_size)
 	{
@@ -78,82 +132,171 @@ public:
 	/// Virtual destructor
 	virtual ~labeled_array_vecs() {}
 
-	// Iterator methods
+	// Iterator methods (forward tag version)
 #if(1)
-	/// begin
-	const_iterator begin() const noexcept
+	/// begin (const)
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, const_iterator>::type begin() const noexcept
 	{
-		return const_iterator(_array_,0);
+		return _cbegin();
 	}
 	/// begin
-	iterator begin() noexcept
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, iterator>::type begin() noexcept
 	{
-		return iterator(_array_,0);
+		return _begin();
+	}
+	/// end (const)
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, const_iterator>::type end() const noexcept
+	{
+		return _cend();
 	}
 	/// end
-	const_iterator end() const noexcept
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, iterator>::type end() noexcept
 	{
-		return const_iterator(_array_,_size_);
+		return _end();
 	}
-	/// end
-	iterator end() noexcept
+	/// rbegin (const)
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, const_reverse_iterator>::type rbegin() const noexcept
 	{
-		return iterator(_array_,_size_);
+		return _crbegin();
 	}
-	/// begin
-	const_reverse_iterator rbegin() const noexcept
+	/// rbegin
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, reverse_iterator>::type rbegin() noexcept
 	{
-		return const_reverse_iterator(_array_,0);
+		return _rbegin();
 	}
-	/// begin
-	reverse_iterator rbegin() noexcept
+	/// rend (const)
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, const_reverse_iterator>::type rend() const noexcept
 	{
-		return reverse_iterator(_array_,0);
+		return _crend();
 	}
-	/// end
-	const_reverse_iterator rend() const noexcept
+	/// rend
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, reverse_iterator>::type rend() noexcept
 	{
-		return const_reverse_iterator(_array_,_array_->num_rows());
+		return _rend();
 	}
-	/// end
-	reverse_iterator rend() noexcept
+	/// cbegin
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, const_iterator>::type cbegin() const noexcept
 	{
-		return reverse_iterator(_array_,_array_->num_rows());
+		return _cbegin();
 	}
-	/// begin
-	const_iterator cbegin() const noexcept
+	/// cend
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, const_iterator>::type cend() const noexcept
 	{
-		return const_iterator(_array_,0);
+		return _cend();
 	}
-	/// end
-	const_iterator cend() const noexcept
+	/// crbegin
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, const_reverse_iterator>::type crbegin() const noexcept
 	{
-		return const_iterator(_array_,_array_->num_rows());
+		return _crbegin();
 	}
-	/// begin
-	const_reverse_iterator crbegin() const noexcept
+	/// crend
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==forward_tag, const_reverse_iterator>::type crend() const noexcept
 	{
-		return const_reverse_iterator(_array_,0);
-	}
-	/// end
-	const_reverse_iterator crend() const noexcept
-	{
-		return const_reverse_iterator(_array_,_array_->num_rows());
+		return _crend();
 	}
 
-#endif // Iterator methods
+#endif // Iterator methods (forward tag version)
+
+	// Iterator methods (reverse tag version)
+#if(1)
+	/// begin (const)
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, const_reverse_iterator>::type begin() const noexcept
+	{
+		return _crbegin();
+	}
+	/// begin
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, reverse_iterator>::type begin() noexcept
+	{
+		return _rbegin();
+	}
+	/// end (const)
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, const_reverse_iterator>::type end() const noexcept
+	{
+		return _crend();
+	}
+	/// end
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, reverse_iterator>::type end() noexcept
+	{
+		return _rend();
+	}
+	/// rbegin (const)
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, const_iterator>::type rbegin() const noexcept
+	{
+		return _cbegin();
+	}
+	/// rbegin
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, iterator>::type rbegin() noexcept
+	{
+		return _begin();
+	}
+	/// rend (const)
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, const_iterator>::type rend() const noexcept
+	{
+		return _cend();
+	}
+	/// rend
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, iterator>::type rend() noexcept
+	{
+		return _end();
+	}
+	/// cbegin
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, const_reverse_iterator>::type cbegin() const noexcept
+	{
+		return _crbegin();
+	}
+	/// cend
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, const_reverse_iterator>::type cend() const noexcept
+	{
+		return _crend();
+	}
+	/// crbegin
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, const_iterator>::type crbegin() const noexcept
+	{
+		return _cbegin();
+	}
+	/// crend
+	template<int direction_tag=T_direction_tag>
+	typename std::enable_if<direction_tag==reverse_tag, const_iterator>::type crend() const noexcept
+	{
+		return _cend();
+	}
+
+#endif // Iterator methods (reverse tag version)
 
 	// Size methods
 #if(1)
 
 	/// size
-	size_type size() const noexcept
+	const size_type & size() const noexcept
 	{
 		return _size_;
 	}
 
 	/// empty
-	bool empty() const noexcept
+	bool empty() const
 	{
 		return _size_==0;
 	}
@@ -213,14 +356,26 @@ public:
 		return reference(_array_->_key_map_,_size_-1);
 	}
 
+	/// Access base array
+	const labeled_array_type & base() const
+	{
+		return *_array_;
+	}
+
+	/// Access base array
+	labeled_array_type & base()
+	{
+		return *_array_;
+	}
+
 	/// Access data
-	const value_type* data() const noexcept
+	const value_type* data() const
 	{
 		return _array_->data();
 	}
 
 	/// Access data
-	value_type* data() noexcept
+	value_type* data()
 	{
 		return _array_->data();
 	}
@@ -231,13 +386,13 @@ public:
 #if (1)
 
 	/// Cast non-const version to const version
-	template <typename other_vec_type, typename other_reference, typename other_iterator,
+	template <typename other_vec_type, typename other_reference, typename other_iterator, int other_direction_tag,
 	typename std::enable_if<std::is_convertible<other_vec_type,vec_type>::value, other_vec_type *>::type = nullptr,
 	typename std::enable_if<std::is_convertible<other_reference,reference>::value, other_reference *>::type = nullptr,
 	typename std::enable_if<std::is_convertible<other_iterator,iterator>::value, other_iterator *>::type = nullptr>
 	labeled_array_vecs( const labeled_array_vecs<labeled_array_type,other_vec_type,const_vec_type,other_reference,const_reference,
-						other_iterator,const_iterator> & other)
-	: _array_(other._array_) {}
+						other_iterator,const_iterator,other_direction_tag> & other)
+	: _array_(&other.base()), _size_(other.size()) {}
 
 #endif
 
