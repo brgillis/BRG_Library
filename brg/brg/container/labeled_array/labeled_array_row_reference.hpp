@@ -386,7 +386,19 @@ public:
 #if(1)
 
 	/// Cast to row_type
-	operator row_type &() const
+	operator const_row_type() const noexcept
+	{
+		return _row_;
+	}
+	operator row_type() noexcept
+	{
+		return _row_;
+	}
+	const_row_type raw() const noexcept
+	{
+		return _row_;
+	}
+	row_type raw() noexcept
 	{
 		return _row_;
 	}

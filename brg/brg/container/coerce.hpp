@@ -29,8 +29,8 @@
 #include <type_traits>
 #include <iterator>
 
-#include "brg/container/has_data.hpp"
 #include "brg/container/is_container.hpp"
+#include "is_eigen_container.hpp"
 
 namespace brgastro {
 

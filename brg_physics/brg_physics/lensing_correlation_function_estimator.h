@@ -30,8 +30,9 @@
 #include <functional>
 #include <limits>
 #include <tuple>
-#include <valarray>
 #include <vector>
+
+#include <Eigen/Core>
 
 #include "brg/global.h"
 
@@ -53,7 +54,7 @@ private:
 
 	double _z_buffer_;
 
-	std::valarray<double> _unweighted_cached_value_;
+	Eigen::ArrayXd _unweighted_cached_value_;
 
 	bool _set_up();
 
@@ -115,24 +116,24 @@ public:
 	// Calculation methods
 #if(1)
 	/// Standard calculation function, using Hamilton estimator
-	std::valarray<double> calculate();
+	Eigen::ArrayXd calculate();
 
 	/// Weighted calculation function, using a Hamilton-like estimator. This assumes the weight
 	/// function passed here has an expected value of zero.
-	std::valarray<double> calculate_weighted(const std::function<double(double)> &
+	Eigen::ArrayXd calculate_weighted(const std::function<double(double)> &
 			weight_function = [] (const double & theta) {return 1.;});
 
 	/// Calculation function for dipole correlation function with a given offset. The offset should
 	/// vary from [0,1) or [-0.5,0.5) for unique results.
-	std::valarray<double> calculate_dipole(const double & offset=0);
+	Eigen::ArrayXd calculate_dipole(const double & offset=0);
 
 	/// Calculation function for quadrupole correlation function with a given offset. The offset should
 	/// vary from [0,1) or [-0.5,0.5) for unique results.
-	std::valarray<double> calculate_quadrupole(const double & offset=0);
+	Eigen::ArrayXd calculate_quadrupole(const double & offset=0);
 
 	/// Calculation function for octopole correlation function with a given offset. The offset should
 	/// vary from [0,1) or [-0.5,0.5) for unique results.
-	std::valarray<double> calculate_octopole(const double & offset=0);
+	Eigen::ArrayXd calculate_octopole(const double & offset=0);
 #endif
 };
 

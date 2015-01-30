@@ -25,44 +25,24 @@
 \**********************************************************************/
 
 
-#ifndef _BRG_CONTAINER_HAS_DATA_HPP_INCLUDED_
-#define _BRG_CONTAINER_HAS_DATA_HPP_INCLUDED_
+#ifndef _BRG_CONTAINER_IS_EIGEN_CONTAINER_HPP_INCLUDED_
+#define _BRG_CONTAINER_IS_EIGEN_CONTAINER_HPP_INCLUDED_
+
+#include <type_traits>
+
+#include <Eigen/Core>
 
 namespace brgastro
 {
 
-template<typename T>
-struct has_Scalar
-{
-private:
-    typedef char                      yes;
-    typedef struct { char array[2]; } no;
-
-    template<typename C> static yes test(typename C::Scalar*);
-    template<typename C> static no  test(...);
-public:
-    static const bool value = sizeof(test<T>(0)) == sizeof(yes);
-    typedef T type;
-};
-
-template <typename T>
-struct has_data_method
-{
-    template<typename C> static char (&f(typename std::enable_if<
-      std::is_same<decltype(static_cast<typename C::Scalar (C::*)() const>(&C::data)),
-      typename C::Scalar (C::*)() const>::value, void>::type*))[1];
-
-    template<typename C> static char (&f(...))[2];
-
-    static bool const value = sizeof(f<T>(0)) == 1;
-};
+// TODO: Make this just test if is derived from Eigen::Base
 
 template<typename T>
-struct has_data : std::integral_constant<bool, has_Scalar<T>::value && has_data_method<T>::value>
+struct is_eigen_container : std::integral_constant<bool, std::is_base_of<Eigen::DenseBase<T>,T>::value>
 { };
 
 } // end namespace brgastro
 
 
 
-#endif // _BRG_CONTAINER_HAS_DATA_HPP_INCLUDED_
+#endif // _BRG_CONTAINER_IS_EIGEN_CONTAINER_HPP_INCLUDED_

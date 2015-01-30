@@ -352,13 +352,6 @@ private:
 			_key_map_.left.insert(typename map_type::left_value_type(ss.str(),i));
 		}
 	}
-
-	// Data access after adding in buffer
-	data_table_type & _data_table() const
-	{
-		_add_buffer_to_data_table();
-		return _data_table_;
-	}
 #endif
 
 public:
@@ -402,19 +395,19 @@ public:
 #if(1)
 	col_reference col(const size_type & index)
 	{
-		return col_reference(&(get_key_for_column(index)),_data_table().col(index),num_cols());
+		return col_reference(&(get_key_for_column(index)),base().col(index),num_cols());
 	}
 	const_col_reference col(const size_type & index) const
 	{
-		return const_col_reference(&(get_key_for_column(index)),_data_table().col(index),num_cols());
+		return const_col_reference(&(get_key_for_column(index)),base().col(index),num_cols());
 	}
 	col_type raw_col(const size_type & index)
 	{
-		return _data_table().col(index);
+		return base().col(index);
 	}
 	const_col_type raw_col(const size_type & index) const
 	{
-		return _data_table().col(index);
+		return base().col(index);
 	}
 	col_type at(const size_type & index)
 	{
@@ -426,11 +419,11 @@ public:
 	}
 	col_type at_label(const key_type & key)
 	{
-		return _data_table().col(_key_map_.left.at(key));
+		return base().col(_key_map_.left.at(key));
 	}
 	const_col_type at_label(const key_type & key) const
 	{
-		return _data_table().col(_key_map_.left.at(key));
+		return base().col(_key_map_.left.at(key));
 	}
 #endif
 
@@ -545,10 +538,10 @@ public:
     	{
     		// The key is new, so insert a column for it
     		insert_col(std::make_pair(key,column_buffer_column_type(_data_table_.rows())));
-    		_data_table();
+    		_add_column_buffer_to_data_table();
     	}
     	// Return a reference to this key's column
-		return _data_table().col(_key_map_.left.at(key));
+		return base().col(_key_map_.left.at(key));
 	}
 #endif
 
@@ -556,11 +549,11 @@ public:
 #if(1)
 	row_reference row(const size_type & index)
 	{
-		return row_reference(&_key_map_,_data_table().row(index),num_rows());
+		return row_reference(&_key_map_,base().row(index),num_rows());
 	}
 	const_row_reference row(const size_type & index) const
 	{
-		return const_row_reference(&_key_map_,_data_table().row(index),num_rows());
+		return const_row_reference(&_key_map_,base().row(index),num_rows());
 	}
 	row_reference operator[](const size_type & index)
 	{
@@ -580,11 +573,11 @@ public:
 	}
 	row_type raw_row(const size_type & index)
 	{
-		return _data_table().row(index);
+		return base().row(index);
 	}
 	const_row_type raw_row(const size_type & index) const
 	{
-		return _data_table().row(index);
+		return base().row(index);
 	}
 #endif
 
@@ -592,12 +585,72 @@ public:
 #if(1)
 	const_reference operator()(const size_type & row_index, const size_type & col_index) const
 	{
-		return _data_table()(row_index,col_index);
+		return base()(row_index,col_index);
 	}
 	reference operator()(const size_type & row_index, const size_type & col_index)
 	{
-		return _data_table()(row_index,col_index);
+		return base()(row_index,col_index);
 	}
+#endif
+
+	// Data access
+#if(1)
+	// Base table access after adding in buffer
+	const data_table_type & base() const
+	{
+		_add_buffer_to_data_table();
+		return _data_table_;
+	}
+	data_table_type & base()
+	{
+		_add_buffer_to_data_table();
+		return _data_table_;
+	}
+	const_data_table_type & raw() const
+	{
+		return base();
+	}
+	data_table_type & raw()
+	{
+		return base();
+	}
+
+	// Base table access without adding in buffer
+	const_data_table_type & base_bypass_buffer() const noexcept
+	{
+		return _data_table_;
+	}
+	data_table_type & base_bypass_buffer() noexcept
+	{
+		return _data_table_;
+	}
+	const_data_table_type & raw_bypass_buffer() const
+	{
+		return base_bypass_buffer();
+	}
+	data_table_type & raw_bypass_buffer()
+	{
+		return base_bypass_buffer();
+	}
+
+	// Data pointer access
+	const_value_type * data() const
+	{
+		return base().data();
+	}
+	value_type * data()
+	{
+		return base().data();
+	}
+	const_value_type * data_bypass_buffer() const
+	{
+		return _data_table_.data();
+	}
+	value_type * data_bypass_buffer()
+	{
+		return _data_table_.data();
+	}
+
 #endif
 
 	// Size information
@@ -608,7 +661,7 @@ public:
 	}
 	size_type num_rows() const
 	{
-		return _data_table().rows();
+		return base().rows();
 	}
 	size_type ncols() const
 	{
@@ -616,11 +669,11 @@ public:
 	}
 	size_type num_cols() const
 	{
-		return _data_table().cols();
+		return base().cols();
 	}
 	size_type size() const
 	{
-		return _data_table().size();
+		return base().size();
 	}
 #endif
 

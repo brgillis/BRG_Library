@@ -28,11 +28,11 @@
 #include <iostream>
 #include <limits>
 #include <type_traits>
-#include <valarray>
 
 #include "brg/container/is_container.hpp"
 
 #include "brg/global.h"
+#include "../container/is_eigen_container.hpp"
 
 namespace brgastro {
 
@@ -107,7 +107,9 @@ inline const T1 safe_quad_sub( const T1 & v1, const T2 & v2 )
 
 // Safe_d is used a bit differently: Put it around the denominator to make
 // sure you don't hit a divide-by-zero error.
-template< class T >
+template< class T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T>::value,char>::type = 0>
 const T safe_d( const T & a )
 {
 
@@ -134,9 +136,10 @@ const T safe_d( const T & a )
 
 }
 
-// Valarray specialization
-template< class T >
-std::valarray<T> safe_d( std::valarray<T> array )
+// Container specialization
+template< class T,
+typename std::enable_if<brgastro::is_const_container<T>::value,char>::type = 0>
+T safe_d( T array )
 {
 	for( auto & a : array)
 	{
@@ -179,7 +182,57 @@ std::valarray<T> safe_d( std::valarray<T> array )
 	}
 
 	return array;
+}
 
+// Eigen-like container specialization
+template< class T,
+typename std::enable_if<!brgastro::is_const_container<T>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_eigen_container<T>::value,char>::type = 0>
+T safe_d( T array )
+{
+	auto p = array.data();
+	for( decltype(array.size()) i = 0; i < array.size(); ++i)
+	{
+
+		#ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
+		if( (*p == 0) || isbad(*p) )
+		{
+			std::cerr << "WARNING: safe_d() prevented error from zero input or bad input.\n";
+		}
+		#endif
+
+		#ifdef _BRG_USE_UNITS_
+		T min_d = *p; // So it'll have the right units
+		#else
+		typename T::Scalar min_d;
+		#endif
+
+		if(std::is_integral<T>::value)
+			min_d = 1;
+		else
+			min_d = MIN_DIVISOR;
+
+		if ( isnan( *p ) )
+		{
+			*p = min_d;
+			continue;
+		}
+		if ( isinf( *p ) )
+		{
+			*p = 1. / min_d;
+			continue;
+		}
+
+		if (std::fabs(*p)<min_d)
+		{
+			*p = min_d;
+			continue;
+		}
+
+		++p;
+	}
+
+	return array;
 }
 
 } // namespace brgastro

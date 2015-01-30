@@ -13,10 +13,11 @@
 #include <limits>
 #include <type_traits>
 #include <utility>
-#include <valarray>
 #include <vector>
 
 #include <boost/serialization/vector.hpp>
+
+#include <Eigen/Core>
 
 #include "brg/global.h"
 
@@ -826,20 +827,18 @@ public:
 	}
 
 	/// Coerce to vector
-	template<typename To, typename Ao>
+	template<typename To=T, typename Ao=A>
 	std::vector<To,Ao> to_vector() const
 	{
-		std::vector<To,Ao> result;
-		make_vector_coerce<1>(result,_base_);
+		auto result = coerce<std::vector<To,Ao>>(_base_);
 		return result;
 	}
 
-	/// Coerce to valarray
-	template<typename To>
-	std::valarray<To> to_valarray() const
+	/// Coerce to Eigen::array
+	template<typename To=T>
+	std::valarray<To> to_array() const
 	{
-		std::valarray<To> result;
-		make_vector_coerce<1>(result,_base_);
+		auto result = coerce<Eigen::Array<To,Eigen::Dynamic,1>>(_base_);
 		return result;
 	}
 

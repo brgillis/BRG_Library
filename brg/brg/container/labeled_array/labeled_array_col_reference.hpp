@@ -373,7 +373,19 @@ public:
 #if(1)
 
 	/// Cast to col_type
-	operator col_type &() const
+	operator const_col_type() const noexcept
+	{
+		return _col_;
+	}
+	operator col_type() noexcept
+	{
+		return _col_;
+	}
+	const_col_type raw() const noexcept
+	{
+		return _col_;
+	}
+	col_type raw() noexcept
 	{
 		return _col_;
 	}

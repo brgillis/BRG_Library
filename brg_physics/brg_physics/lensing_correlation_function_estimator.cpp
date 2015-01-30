@@ -27,6 +27,8 @@
 #include <tuple>
 #include <vector>
 
+#include <Eigen/Core>
+
 #include "brg/global.h"
 
 #include "brg/math/misc_math.hpp"
@@ -45,17 +47,17 @@ bool lensing_correlation_function_estimator::_set_up()
 
 
 // Calculation functions
-std::valarray<double> lensing_correlation_function_estimator::calculate_weighted(
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
 		const std::function<double(double)> & weight_function)
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
 
-	// We'll calculate four valarrays here, for the combinations of data and random lists
-	std::valarray<double> D1D2_counts(_r_bin_limits_.num_bins());
-	std::valarray<double> D1R2_counts(_r_bin_limits_.num_bins());
-	std::valarray<double> R1D2_counts(_r_bin_limits_.num_bins());
-	std::valarray<double> R1R2_counts(_r_bin_limits_.num_bins());
+	// We'll calculate four arrays here, for the combinations of data and random lists
+	Eigen::ArrayXd D1D2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1R2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1D2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1R2_counts(_r_bin_limits_.num_bins());
 
 	unsigned D1D2_pairs = 0;
 	unsigned D1R2_pairs = 0;
@@ -64,8 +66,8 @@ std::valarray<double> lensing_correlation_function_estimator::calculate_weighted
 
 	const double & max_r = _r_bin_limits_.max();
 
-	// Set up a function to add to the correct bin of a valarray
-	auto increment_bin = [&] (std::valarray<double> & array, unsigned & pair_counter,
+	// Set up a function to add to the correct bin of an array
+	auto increment_bin = [&] (Eigen::ArrayXd & array, unsigned & pair_counter,
 			const std::tuple<double,double,double> & p1,
 			const std::tuple<double,double,double> & p2)
 	{
@@ -123,22 +125,22 @@ std::valarray<double> lensing_correlation_function_estimator::calculate_weighted
 	R1R2_counts /= R1R2_pairs;
 
 	// And calculate the correlation function
-	std::valarray<double> result = (D1D2_counts*R1R2_counts)/
-			brgastro::safe_d(static_cast< std::valarray<double> >(D1R2_counts*R1D2_counts))-1;
+	Eigen::ArrayXd result = (D1D2_counts*R1R2_counts)/
+			brgastro::safe_d(static_cast< Eigen::ArrayXd >(D1R2_counts*R1D2_counts))-1;
 	return result;
 }
-std::valarray<double> lensing_correlation_function_estimator::calculate()
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate()
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
 
 	if(_unweighted_cached_value_.size()>0) return _unweighted_cached_value_;
 
-	// We'll calculate four valarrays here, for the combinations of data and random lists
-	std::valarray<double> D1D2_counts(_r_bin_limits_.num_bins());
-	std::valarray<double> D1R2_counts(_r_bin_limits_.num_bins());
-	std::valarray<double> R1D2_counts(_r_bin_limits_.num_bins());
-	std::valarray<double> R1R2_counts(_r_bin_limits_.num_bins());
+	// We'll calculate four arrays here, for the combinations of data and random lists
+	Eigen::ArrayXd D1D2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1R2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1D2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1R2_counts(_r_bin_limits_.num_bins());
 
 	long unsigned D1D2_pairs = 0;
 	long unsigned D1R2_pairs = 0;
@@ -147,8 +149,8 @@ std::valarray<double> lensing_correlation_function_estimator::calculate()
 
 	const double & max_r = _r_bin_limits_.max();
 
-	// Set up a function to add to the correct bin of a valarray
-	auto increment_bin = [&] (std::valarray<double> & array, long unsigned & pair_counter,
+	// Set up a function to add to the correct bin of an array
+	auto increment_bin = [&] (Eigen::ArrayXd & array, long unsigned & pair_counter,
 			const std::tuple<double,double,double> & p1,
 			const std::tuple<double,double,double> & p2)
 	{
@@ -206,11 +208,11 @@ std::valarray<double> lensing_correlation_function_estimator::calculate()
 	// And calculate the correlation function
 	_unweighted_cached_value_.resize(_r_bin_limits_.num_bins());
 	_unweighted_cached_value_ = (D1D2_counts*R1R2_counts)/
-			brgastro::safe_d(static_cast< std::valarray<double> >(D1R2_counts*R1D2_counts)) - 1;
+			brgastro::safe_d(static_cast< Eigen::ArrayXd >(D1R2_counts*R1D2_counts)) - 1;
 	return _unweighted_cached_value_;
 }
 
-std::valarray<double> lensing_correlation_function_estimator::calculate_dipole(const double & offset)
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const double & offset)
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
@@ -218,7 +220,7 @@ std::valarray<double> lensing_correlation_function_estimator::calculate_dipole(c
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-std::valarray<double> lensing_correlation_function_estimator::calculate_quadrupole(const double & offset)
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_quadrupole(const double & offset)
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
@@ -226,7 +228,7 @@ std::valarray<double> lensing_correlation_function_estimator::calculate_quadrupo
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-std::valarray<double> lensing_correlation_function_estimator::calculate_octopole(const double & offset)
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_octopole(const double & offset)
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
