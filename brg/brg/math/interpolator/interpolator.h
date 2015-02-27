@@ -31,7 +31,7 @@
 
 #include "brg/global.h"
 
-#include "brg/math/interpolator/tk_spline.h"
+#include "brg/external/tk_spline.h"
 
 namespace brgastro {
 
@@ -90,9 +90,9 @@ public:
 
 	// Accessors to current and default interpolation types
 	static const allowed_interpolation_type default_interpolation_type()
-	{return _default_interpolation_type_;}
+		{return _default_interpolation_type_;}
 	const allowed_interpolation_type interpolation_type() const
-	{return _interpolation_type_;}
+		{return _interpolation_type_;}
 
 	// Set functions for the current and default interpolation types
 	static void set_default_interpolation_type(const allowed_interpolation_type new_default_type);
@@ -111,6 +111,11 @@ public:
 	unsigned int size() const
 	{
 		return sorted_data().size();
+	}
+
+	bool empty() const
+	{
+		return (size()==0);
 	}
 
 	std::vector< std::pair<double,double> > & sorted_data() const;

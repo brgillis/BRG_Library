@@ -1,12 +1,12 @@
 /**********************************************************************\
- @file table_utility.cpp
+ @file mag_calibration_cache.cpp
  ------------------
 
  TODO <Insert file description here>
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2015  Bryan R. Gillis
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,51 +23,28 @@
 
 \**********************************************************************/
 
-#include <sstream>
-#include <string>
-#include <vector>
+#include <cstdlib>
 
 #include "brg/global.h"
 
-#include "brg/container/table_typedefs.hpp"
-#include "brg/file_access/table_utility.h"
+#include "brg/math/misc_math.hpp"
 
+#include "brg_lensing/magnification/mag_calibration_loader.h"
+#include "brg_lensing/magnification/mag_global_values.h"
+#include "brg_lensing/magnification/magnification_alpha.h"
 
-namespace brgastro {
+#include "mag_calibration_cache.h"
 
-std::vector< std::string > split_on_whitespace( const std::string & sentence )
+// Initialise the cache
+DEFINE_BRG_CACHE_STATIC_VARS( mag_calibration_cache,
+							  brgastro::mag_z_min,brgastro::mag_z_max,brgastro::mag_z_step);
+
+// brgastro::mag_calibration_cache class methods
+#if (1)
+const double brgastro::mag_calibration_cache::_calculate( const double in_param_1 ) const
 {
-	std::vector< std::string > result;
-	std::istringstream sentence_data_stream(sentence);
-
-	std::string word;
-	while (sentence_data_stream >> word)
-	{
-		result.push_back(word);
-	}
-
-	return result;
+	return mag_calibration_loader::get(in_param_1);
 }
-header_t convert_to_header( const std::string & line )
-{
-	header_t result;
-	std::istringstream line_data_stream(line);
+#endif
 
-	std::string word;
 
-	// Get rid of first word if it's the comment indicator
-	if ( line_data_stream.peek() == (int)( *"#" ) )
-	{
-		line_data_stream >> word;
-	}
-
-	while (line_data_stream >> word)
-	{
-
-		result.push_back(word);
-	}
-
-	return result;
-}
-
-}

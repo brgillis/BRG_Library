@@ -27,8 +27,9 @@
 
 #include <cstdlib>
 #include <cmath>
+
+#include "../random/random_functions.hpp"
 #include "brg/utility.hpp"
-#include "brg/math/random/random_functions.h"
 #include "brg/vector/elementwise_functions.hpp"
 #include "brg/vector/summary_functions.hpp"
 

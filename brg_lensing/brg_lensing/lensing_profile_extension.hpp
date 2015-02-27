@@ -49,10 +49,10 @@ private:
 #if(1)
 
 // Basic calculation functions which should be overridden if possible
-#if(1) // Basic calculation functions which should be overridden if possible
+#if(1)
 
 	const BRG_UNITS _proj_dens( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const // Projected surface density at radius R
+			const bool silent = false ) const // Projected surface density at radius R
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
 		double inf_factor = 20;
@@ -99,7 +99,7 @@ private:
 #if(1)
 
 	const BRG_UNITS _offset_WLsig( CONST_BRG_DISTANCE_REF R,
-			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
 	{
 		if ( offset_R == 0 )
 			return SPCP(name)->WLsig( R );
@@ -137,7 +137,7 @@ private:
 		return result;
 	}
 	const BRG_UNITS _group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c, const bool silent = true ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+			const double & group_c, const bool silent = false ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
 		brgastro::offset_WLsig_functor<name> func( SPCP(name), R_to_use );
@@ -149,7 +149,7 @@ private:
 		return out_params;
 	}
 	const BRG_UNITS _semiquick_group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c, const bool silent = true ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
+			const double & group_c, const bool silent = false ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
 		brgastro::quick_offset_WLsig_functor<name> func( SPCP(name), R_to_use );
@@ -161,8 +161,89 @@ private:
 		return out_params;
 	}
 
+	const BRG_UNITS _offset_Sigma( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const // Expected Sigma at radius R from position offset by offset_R
+	{
+		if ( offset_R == 0 )
+			return SPCP(name)->proj_dens( R );
+		BRG_DISTANCE R_to_use = std::fabs( R );
+		BRG_DISTANCE offset_R_to_use = std::fabs( offset_R );
+		offset_ring_dens_functor<name> ringfunc( SPCP(name), offset_R_to_use, R_to_use );
+
+		BRG_UNITS out_param_ring = 0;
+		BRG_UNITS ringmean;
+
+		double precision = 0.001;
+
+		BRG_UNITS min_in_params_ring = 0;
+		BRG_UNITS max_in_params_ring = pi;
+
+		out_param_ring = brgastro::integrate_Romberg( &ringfunc, min_in_params_ring,
+				max_in_params_ring, precision, false, silent );
+
+		ringmean = out_param_ring / pi;
+
+		return ringmean;
+	}
+	const BRG_UNITS _group_Sigma( CONST_BRG_DISTANCE_REF R,
+			const double & group_c, const bool silent = false ) const // Expected Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+	{
+		BRG_DISTANCE R_to_use = std::fabs( R );
+		auto func = [=, &R_to_use] (const double & offset_R, const bool silent = true)
+		{
+			return SPCP(name)->offset_Sigma( R_to_use, offset_R, silent );
+		};
+		auto weight_func = [=, &group_c] (const double & R, const bool silent = true)
+		{
+			if ( group_c == 0 )
+			{
+				return 2 * pi * R * SPCP(name)->proj_dens( R );
+			}
+			else
+			{
+				std::unique_ptr<name> group_profile(SPCP(name)->lensing_profile_extension_clone());
+				group_profile->set_c(group_c);
+				group_profile->set_tau(group_profile->tau()*group_c/SPCP(name)->c());
+				return 2 * pi * R * group_profile->proj_dens(R);
+			}
+		};
+		BRG_UNITS min_in_param( SMALL_FACTOR ), max_in_param( 2.5*SPCP(name)->rvir() ),
+				out_param( 0 );
+		out_param = brgastro::integrate_weighted_Romberg( &func, &weight_func,
+				min_in_param, max_in_param, 0.00001, false, silent);
+		return out_param;
+	}
+	const BRG_UNITS _semiquick_group_Sigma( CONST_BRG_DISTANCE_REF R,
+			const double & group_c, const bool silent = false ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
+	{
+		BRG_DISTANCE R_to_use = std::fabs( R );
+		auto func = [=, &R] (const double & offset_R, const bool silent = true)
+		{
+			return SPCP(name)->quick_offset_Sigma( R_to_use, offset_R, silent );
+		};
+		auto weight_func = [=, &group_c] (const double & R, const bool silent = true)
+		{
+			if ( group_c == 0 )
+			{
+				return 2 * pi * R * SPCP(name)->proj_dens( R );
+			}
+			else
+			{
+				std::unique_ptr<name> group_profile(SPCP(name)->lensing_profile_extension_clone());
+				group_profile->set_c(group_c);
+				group_profile->set_tau(group_profile->tau()*group_c/SPCP(name)->c());
+				return 2 * pi * R * group_profile->proj_dens(R);
+			}
+		};
+		BRG_UNITS min_in_param( SMALL_FACTOR ), max_in_param( 2.5*SPCP(name)->rvir() ),
+				out_param( 0 );
+		out_param = brgastro::integrate_weighted_Romberg( &func, &weight_func,
+				min_in_param, max_in_param, 0.00001, false, silent);
+		return out_param;
+	}
+
 	const BRG_UNITS _shifted_WLsig( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const
+			const bool silent = false ) const
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
 		BRG_DISTANCE sigma = SPCP(name)->_shift_sigma(R_to_use);
@@ -180,7 +261,7 @@ private:
 		return out_params;
 	}
 	const BRG_UNITS _semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const
+			const bool silent = false ) const
 	{
 		BRG_DISTANCE R_to_use = std::fabs( R );
 		BRG_DISTANCE sigma = SPCP(name)->_shift_sigma(R_to_use);
@@ -201,18 +282,38 @@ private:
 // Quick functions - should be overridden if a cache is implemented for the halo
 #if(1)
 
+	const BRG_UNITS _quick_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const // Weak lensing signal in tangential shear Delta-Sigma at radius R, using cache
+	{
+		return SPCP(name)->_WLsig(R,silent);
+	}
 	const BRG_UNITS _quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
-			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // As offset_WLsig, but uses cache to speed it up if overwritten
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const // As offset_WLsig, but uses cache to speed it up if overwritten
 	{
 		return SPCP(name)->offset_WLsig( R, offset_R, silent );
 	}
 	const BRG_UNITS _quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c, const bool silent = true ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
+			const double & group_c, const bool silent = false ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
 	{
 		return SPCP(name)->semiquick_group_WLsig( R, group_c, silent );
 	}
+	const BRG_UNITS _quick_Sigma( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const // As proj_dens, but uses cache to speed it up if overwritten
+	{
+		return SPCP(name)->_Sigma(R,silent);
+	}
+	const BRG_UNITS _quick_offset_Sigma( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const // As offset_Sigma, but uses cache to speed it up if overwritten
+	{
+		return SPCP(name)->offset_Sigma( R, offset_R, silent );
+	}
+	const BRG_UNITS _quick_group_Sigma( CONST_BRG_DISTANCE_REF R,
+			const double & group_c, const bool silent = false ) const // As Sigma, but uses group_WLsig cache to speed it up if overwritten
+	{
+		return SPCP(name)->semiquick_group_Sigma( R, group_c, silent );
+	}
 	const BRG_UNITS _quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const
+			const bool silent = false ) const
 	{
 		return SPCP(name)->semiquick_shifted_WLsig( R, silent );
 	}
@@ -229,11 +330,11 @@ private:
 				/ ( pi * square( R_to_use ) );
 	}
 
-	const BRG_DISTANCE _shift_sigma( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const
+	const BRG_DISTANCE _shift_sigma( CONST_BRG_DISTANCE_REF R, const bool silent = false ) const
 	{
 		return R*shift_factor(R,silent);
 	}
-	const double _shift_factor( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const
+	const double _shift_factor( CONST_BRG_DISTANCE_REF R, const bool silent = false ) const
 	{
 		if(R==0) return 0;
 		const BRG_ANGLE theta_separation = afd(R,SPCP(name)->z());
@@ -278,12 +379,12 @@ public:
 	// integrated
 #if (1)
 	const BRG_UNITS proj_dens( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const // Projected surface density at radius R
+			const bool silent = false ) const // Projected surface density at radius R
 	{
 		return SPCP(name)->_proj_dens(R,silent);
 	}
 	const BRG_MASS proj_enc_mass( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const // Mass enclosed within a cylinder of radius R
+			const bool silent = false ) const // Mass enclosed within a cylinder of radius R
 	{
 		return SPCP(name)->_proj_enc_mass(R,silent);
 	}
@@ -311,7 +412,7 @@ public:
 		return SPCP(name)->_WLsig(R,silent);
 	}
 	const BRG_UNITS quick_WLsig( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const // As deltasigma, but uses cache to speed it up if overwritten
+			const bool silent = false ) const // As deltasigma, but uses cache to speed it up if overwritten
 	{
 		return SPCP(name)->_quick_WLsig( R, silent );
 	}
@@ -320,12 +421,12 @@ public:
 	// Offset WLsig
 #if (1)
 	const BRG_UNITS offset_WLsig( CONST_BRG_DISTANCE_REF R,
-			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
 	{
 		return SPCP(name)->_offset_WLsig( R, offset_R, silent );
 	}
 	const BRG_UNITS quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
-			CONST_BRG_DISTANCE_REF offset_R, const bool silent = true ) const // As offset_WLsig, but uses cache to speed it up if overwritten
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const // As offset_WLsig, but uses cache to speed it up if overwritten
 	{
 		return SPCP(name)->_quick_offset_WLsig( R, offset_R, silent );
 	}
@@ -334,17 +435,17 @@ public:
 	// Group WLsig
 #if (1)
 	const BRG_UNITS group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c=2.5, const bool silent = true ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+			const double & group_c=2.5, const bool silent = false ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	{
 		return SPCP(name)->_group_WLsig( R, group_c, silent );
 	}
 	const BRG_UNITS semiquick_group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c=2.5, const bool silent = true ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
+			const double & group_c=2.5, const bool silent = false ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
 	{
 		return SPCP(name)->_semiquick_group_WLsig( R, group_c, silent );
 	}
 	const BRG_UNITS quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c=2.5, const bool silent = true ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
+			const double & group_c=2.5, const bool silent = false ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
 	{
 		return SPCP(name)->_quick_group_WLsig( R, group_c, silent );
 	}
@@ -355,25 +456,72 @@ public:
 	// This represents the weak-lensing signal after being corrected for errors due to relative
 	// shifting of the lens and source due to an intervening mass distribution
 
-	const double shift_factor( CONST_BRG_DISTANCE_REF R, const bool silent = true ) const
+	const double shift_factor( CONST_BRG_DISTANCE_REF R, const bool silent = false ) const
 	{
 		return SPCP(name)->_shift_factor( R, silent );
 	}
 
 	const BRG_UNITS shifted_WLsig( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const
+			const bool silent = false ) const
 	{
 		return SPCP(name)->_shifted_WLsig( R, silent );
 	}
 	const BRG_UNITS semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const
+			const bool silent = false ) const
 	{
 		return SPCP(name)->_semiquick_shifted_WLsig( R, silent );
 	}
 	const BRG_UNITS quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
-			const bool silent = true ) const
+			const bool silent = false ) const
 	{
 		return SPCP(name)->_quick_shifted_WLsig( R, silent );
+	}
+#endif
+
+	// Sigma
+#if (1)
+	const BRG_UNITS Sigma( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const // Magnification signal Sigma at radius R
+	{
+		return SPCP(name)->_proj_dens(R,silent);
+	}
+	const BRG_UNITS quick_Sigma( CONST_BRG_DISTANCE_REF R,
+			const bool silent = false ) const // As Sigma, but uses cache to speed it up if overridden
+	{
+		return SPCP(name)->_quick_Sigma( R, silent );
+	}
+#endif
+
+	// Offset Sigma
+#if (1)
+	const BRG_UNITS offset_Sigma( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from position offset by offset_R
+	{
+		return SPCP(name)->_offset_Sigma( R, offset_R, silent );
+	}
+	const BRG_UNITS quick_offset_Sigma( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const // As offset_WLsig, but uses cache to speed it up if overwritten
+	{
+		return SPCP(name)->_quick_offset_Sigma( R, offset_R, silent );
+	}
+#endif
+
+	// Group Sigma
+#if (1)
+	const BRG_UNITS group_Sigma( CONST_BRG_DISTANCE_REF R,
+			const double & group_c=2.5, const bool silent = false ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+	{
+		return SPCP(name)->_group_Sigma( R, group_c, silent );
+	}
+	const BRG_UNITS semiquick_group_Sigma( CONST_BRG_DISTANCE_REF R,
+			const double & group_c=2.5, const bool silent = false ) const // As group_WLsig, but uses offset_WLsig cache to speed it up if overwritten
+	{
+		return SPCP(name)->_semiquick_group_Sigma( R, group_c, silent );
+	}
+	const BRG_UNITS quick_group_Sigma( CONST_BRG_DISTANCE_REF R,
+			const double & group_c=2.5, const bool silent = false ) const // As deltasigma, but uses group_WLsig cache to speed it up if overwritten
+	{
+		return SPCP(name)->_quick_group_Sigma( R, group_c, silent );
 	}
 #endif
 

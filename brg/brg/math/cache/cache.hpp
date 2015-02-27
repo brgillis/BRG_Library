@@ -30,13 +30,13 @@
 #include <string>
 #include <sstream>
 
+#include "../../file_access/ascii_table.hpp"
 #include "brg/global.h"
 
 #include "brg/file_access/open_file.hpp"
 #include "brg/file_access/trim_comments.hpp"
 #include "brg/math/misc_math.hpp"
 
-#include "brg/file_access/ascii_table.h"
 #include "brg/math/safe_math.hpp"
 
 
@@ -51,7 +51,7 @@
 
 #define DECLARE_BRG_CACHE_STATIC_VARS()		\
 	static double _min_1_, _max_1_, _step_1_; \
-	static size_t _resolution_1_;      \
+	static size_t _resolution_1_;      		\
 	static std::vector< double > _results_; \
 											\
 	static std::string _file_name_;         \
@@ -69,7 +69,7 @@
 	bool brgastro::class_name::_initialised_ = false;						\
 	short int brgastro::class_name::_is_monotonic_ = 0;						\
 	unsigned int brgastro::class_name::_sig_digits_ = 8;					\
-	size_t brgastro::class_name::_resolution_1_ = 0;					\
+	size_t brgastro::class_name::_resolution_1_ = 0;						\
 	std::string brgastro::class_name::_file_name_ = "";						\
 	std::string brgastro::class_name::_header_string_ = "";					\
 	std::vector<double> brgastro::class_name::_results_;

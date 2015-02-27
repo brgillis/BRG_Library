@@ -1,12 +1,12 @@
 /**********************************************************************\
- @file fits_table.cpp
+ @file comparison_type.hpp
  ------------------
 
  TODO <Insert file description here>
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2015  Bryan R. Gillis
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,25 @@
 
 \**********************************************************************/
 
+// body file: comparison_type.cpp
+
+#ifndef _BRG_BRG_CONTAINER_COMPARISON_TYPE_HPP_INCLUDED_
+#define _BRG_BRG_CONTAINER_COMPARISON_TYPE_HPP_INCLUDED_
+
+#include <type_traits>
+
+// Applies both std::decay and std::remove_reference at once, for convenience
+
+namespace brgastro {
+
+template <typename T>
+struct ct
+{
+	typedef typename std::remove_cv<typename std::decay<T>::type>::type type;
+};
+
+}
 
 
 
+#endif // _BRG_BRG_CONTAINER_COMPARISON_TYPE_HPP_INCLUDED_

@@ -45,6 +45,7 @@
 #include "brg_lensing/magnification/mag_global_values.h"
 #include "brg_lensing/magnification/magnification_alpha.h"
 #include "brg_lensing/magnification/magnification_functors.h"
+#include "brg_lensing/magnification/mag_calibration_cache.h"
 #include "brg_lensing/magnification/mag_signal_integral_cache.h"
 #include "brg_lensing/magnification/mag_weight_integral_cache.h"
 
@@ -230,6 +231,10 @@ double pair_bin::mu_hat() const
 		const double mu_base = area()*mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_)/mu_W();
 
 		_mu_hat_cached_value_ = mu_observed+mu_base;
+
+		// Use calibration cache to correct for integration errors
+		// Be sure to comment this line out when doing a calibration run!
+		_mu_hat_cached_value_ /= mag_calibration_cache().get(magf_lens_z_mean()+_z_buffer_);
 
 		brgastro::fixbad(_mu_hat_cached_value_);
 	}

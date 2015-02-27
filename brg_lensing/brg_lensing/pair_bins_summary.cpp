@@ -583,6 +583,12 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 	header.push_back("model_dS_t");
 	header.push_back("model_gamma_t");
 
+	header.push_back("model_1h_dS_t");
+	header.push_back("model_1h_gamma_t");
+
+	header.push_back("model_group_dS_t");
+	header.push_back("model_group_gamma_t");
+
 	header.push_back("magf_R_mean");
 	header.push_back("magf_lens_m_mean");
 	header.push_back("magf_lens_z_mean");
@@ -605,6 +611,14 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 	header.push_back("model_mu");
 	header.push_back("model_kappa");
 	header.push_back("model_Sigma");
+
+	header.push_back("model_1h_mu");
+	header.push_back("model_1h_kappa");
+	header.push_back("model_1h_Sigma");
+
+	header.push_back("model_group_mu");
+	header.push_back("model_group_kappa");
+	header.push_back("model_group_Sigma");
 
 	size_t num_columns = header.size();
 
@@ -661,6 +675,12 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					data[++col_i].push_back(bin.model_delta_Sigma_t());
 					data[++col_i].push_back(bin.model_gamma_t());
 
+					data[++col_i].push_back(bin.model_1h_delta_Sigma_t());
+					data[++col_i].push_back(bin.model_1h_gamma_t());
+
+					data[++col_i].push_back(bin.model_offset_delta_Sigma_t());
+					data[++col_i].push_back(bin.model_offset_gamma_t());
+
 					data[++col_i].push_back(bin.magf_R_mean());
 					data[++col_i].push_back(bin.magf_lens_m_mean());
 					data[++col_i].push_back(bin.magf_lens_z_mean());
@@ -683,6 +703,14 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					data[++col_i].push_back(bin.model_mu());
 					data[++col_i].push_back(bin.model_kappa());
 					data[++col_i].push_back(bin.model_Sigma());
+
+					data[++col_i].push_back(bin.model_1h_mu());
+					data[++col_i].push_back(bin.model_1h_kappa());
+					data[++col_i].push_back(bin.model_1h_Sigma());
+
+					data[++col_i].push_back(bin.model_offset_mu());
+					data[++col_i].push_back(bin.model_offset_kappa());
+					data[++col_i].push_back(bin.model_offset_Sigma());
 				}
 			}
 		}

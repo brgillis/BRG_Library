@@ -41,27 +41,47 @@
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_sig_cache,
 	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/300,
 	0.1,1.5,0.1,
-	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/300);
+	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/300);
 
 // Initialisation for brgastro::tNFW_offset_sig_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_offset_sig_cache,
-	std::log(1e10*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e10))/100,
+	std::log(1e13*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e15)-std::log(1e13))/2,
 	0.1,1.5,0.4,
-	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/100,
-	std::log(0.01*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.01))/300);
+	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100,
+	std::log(0.01*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.01))/100);
 
 // Initialisation for brgastro::tNFW_group_sig_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_sig_cache,
-	std::log(1e10*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e10))/100,
+	std::log(1e13*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e15)-std::log(1e12))/2,
 	0.1,1.5,0.4,
-	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/100,
-	2.5,10.,0.5);
+	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100,
+	2.5,10.,2.5);
 
 // Initialisation for brgastro::tNFW_shifted_sig_cache
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_shifted_sig_cache,
 	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/100,
 	0.1,1.5,0.4,
-	std::log(0.1*unitconv::kpctom),std::log(20000*unitconv::kpctom),(std::log(20000)-std::log(0.1))/100);
+	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100);
+
+// Initialisation for brgastro::tNFW_Sigma_cache
+DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_Sigma_cache,
+	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/300,
+	0.1,1.5,0.1,
+	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/300);
+
+// Initialisation for brgastro::tNFW_offset_Sigma_cache
+DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_offset_Sigma_cache,
+	std::log(1e14*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e16)-std::log(1e14))/3,
+	0.1,1.5,0.4,
+	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100,
+	std::log(0.01*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.01))/100);
+
+// Initialisation for brgastro::tNFW_group_Sigma_cache
+DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_Sigma_cache,
+	std::log(1e14*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e16)-std::log(1e14))/3,
+	0.1,1.5,0.4,
+	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100,
+	2.5,10.,2.5);
 
 // brgastro::tNFW_sig_cache class methods
 #if (1)
@@ -122,5 +142,51 @@ const double brgastro::tNFW_shifted_sig_cache::_calculate( const double in_param
 }
 
 #endif // end brgastro::tNFW_sig_cache methods
+
+// brgastro::tNFW_Sigma_cache class methods
+#if (1)
+const double brgastro::tNFW_Sigma_cache::_calculate( const double in_param_1, const double in_param_2,
+		const double in_param_3 ) const
+{
+	const double mass = std::exp(in_param_1);
+	const double z = in_param_2;
+	const double r = std::exp(in_param_3);
+	brgastro::lensing_tNFW_profile profile(mass,z);
+	return profile.proj_dens( r );
+}
+
+#endif // end brgastro::tNFW_Sigma_cache methods
+
+// brgastro::NFW_offset_Sigma_cache class methods
+#if (1)
+
+const double brgastro::tNFW_offset_Sigma_cache::_calculate( const double in_param_1, const double in_param_2,
+		const double in_param_3, const double in_param_4 ) const
+{
+	const double mass = std::exp(in_param_1);
+	const double z = in_param_2;
+	const double r = std::exp(in_param_3);
+	const double offset_r = std::exp(in_param_4);
+	brgastro::lensing_tNFW_profile profile(mass,z);
+	return profile.offset_Sigma( r, offset_r );
+}
+
+#endif // end brgastro::NFW_offset_Sigma_cache functions
+
+// brgastro::tNFW_group_Sigma_cache class methods
+#if (1)
+
+const double brgastro::tNFW_group_Sigma_cache::_calculate( const double in_param_1, const double in_param_2,
+		const double in_param_3, const double in_param_4 ) const
+{
+	const double mass = std::exp(in_param_1);
+	const double z = in_param_2;
+	const double r = std::exp(in_param_3);
+	const double group_c = in_param_4;
+	brgastro::lensing_tNFW_profile profile(mass,z);
+	return profile.semiquick_group_Sigma( r, group_c );
+}
+
+#endif // end brgastro::tNFW_group_Sigma_cache functions
 
 

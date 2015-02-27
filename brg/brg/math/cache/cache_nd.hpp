@@ -36,7 +36,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_access/ascii_table.h"
+#include "../../file_access/ascii_table.hpp"
 #include "brg/file_access/open_file.hpp"
 #include "brg/vector/multi_vector.hpp"
 #include "brg/vector/elementwise_functions.hpp"

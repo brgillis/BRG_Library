@@ -54,10 +54,10 @@ Eigen::ArrayXd correlation_function_estimator::calculate_weighted(
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
 
 	// We'll calculate four arrays here, for the combinations of data and random lists
-	Eigen::ArrayXd D1D2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd D1R2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd R1D2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd R1R2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
 	const double & max_r = _r_bin_limits_.max();
 
@@ -120,10 +120,10 @@ Eigen::ArrayXd correlation_function_estimator::calculate()
 	if(_unweighted_cached_value_.size()>0) return _unweighted_cached_value_;
 
 	// We'll calculate four arrays here, for the combinations of data and random lists
-	Eigen::ArrayXd D1D2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd D1R2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd R1D2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd R1R2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
 	const double & max_r = _r_bin_limits_.max();
 

@@ -524,15 +524,35 @@ double pair_bin_summary::gamma_square_stderr() const
 	return 2*gamma_mean()*gamma_stderr();
 }
 
-BRG_UNITS pair_bin_summary::model_delta_Sigma_t(const double & MLratio) const
+BRG_UNITS pair_bin_summary::model_delta_Sigma_t(const double & MLratio_1h, CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
 {
-	BRG_UNITS result = _shear_model_profile(MLratio).WLsig(shear_R_mean());
-	return result;
+	BRG_UNITS res = model_1h_delta_Sigma_t(MLratio_1h) + model_offset_delta_Sigma_t(mean_group_mass,sat_frac);
+	return res;
 }
-double pair_bin_summary::model_gamma_t(const double & MLratio) const
+double pair_bin_summary::model_gamma_t(const double & MLratio_1h, CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
 {
-	double result = model_delta_Sigma_t(MLratio)/shear_sigma_crit();
-	return result;
+	double res = model_delta_Sigma_t(MLratio_1h,mean_group_mass,sat_frac)/shear_sigma_crit();
+	return res;
+}
+BRG_UNITS pair_bin_summary::model_1h_delta_Sigma_t(const double & MLratio) const
+{
+	BRG_UNITS res = _shear_model_profile(MLratio).WLsig(shear_R_mean());
+	return res;
+}
+double pair_bin_summary::model_1h_gamma_t(const double & MLratio) const
+{
+	double res = model_delta_Sigma_t(MLratio)/shear_sigma_crit();
+	return res;
+}
+BRG_UNITS pair_bin_summary::model_offset_delta_Sigma_t(CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
+{
+	BRG_UNITS res = sat_frac*brgastro::lensing_tNFW_profile(mean_group_mass,shear_lens_z_mean()).quick_group_WLsig(shear_R_mean());
+	return res;
+}
+double pair_bin_summary::model_offset_gamma_t(CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
+{
+	double res = model_offset_delta_Sigma_t(mean_group_mass,sat_frac)/shear_sigma_crit();
+	return res;
 }
 
 #endif // Shear
@@ -566,29 +586,60 @@ double pair_bin_summary::kappa_stderr() const
 
 BRG_UNITS pair_bin_summary::Sigma() const
 {
-	BRG_UNITS result = kappa() * magf_sigma_crit();
-	return result;
+	BRG_UNITS res = kappa() * magf_sigma_crit();
+	return res;
 }
 BRG_UNITS pair_bin_summary::Sigma_stderr() const
 {
-	BRG_UNITS result = kappa_stderr() * magf_sigma_crit();
-	return result;
+	BRG_UNITS res = kappa_stderr() * magf_sigma_crit();
+	return res;
 }
 
-double pair_bin_summary::model_mu(const double & MLratio) const
+double pair_bin_summary::model_mu(const double & MLratio_1h, CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
 {
-	double result = 1./(square(1-model_kappa(MLratio))+square(model_gamma_t(MLratio)));
-	return result;
+	double res = 1./(square(1-model_kappa(MLratio_1h,mean_group_mass,sat_frac))+square(model_gamma_t(MLratio_1h,mean_group_mass,sat_frac)));
+	return res;
 }
-double pair_bin_summary::model_kappa(const double & MLratio) const
+double pair_bin_summary::model_kappa(const double & MLratio_1h, CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
 {
-	double result = model_Sigma(MLratio)/magf_sigma_crit();
-	return result;
+	double res = model_1h_kappa(MLratio_1h) + model_offset_kappa(mean_group_mass,sat_frac);
+	return res;
 }
-BRG_UNITS pair_bin_summary::model_Sigma(const double & MLratio) const
+double pair_bin_summary::model_Sigma(const double & MLratio_1h, CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
 {
-	BRG_UNITS result = _magf_model_profile(MLratio).proj_dens(magf_R_mean());
-	return result;
+	double res = model_1h_Sigma(MLratio_1h) + model_offset_Sigma(mean_group_mass,sat_frac);
+	return res;
+}
+
+double pair_bin_summary::model_1h_mu(const double & MLratio_1h) const
+{
+	double res = 1./(square(1-model_1h_kappa(MLratio_1h))+square(model_1h_gamma_t(MLratio_1h)));
+	return res;
+}
+double pair_bin_summary::model_1h_kappa(const double & MLratio) const
+{
+	double res = model_1h_Sigma(MLratio)/magf_sigma_crit();
+	return res;
+}
+BRG_UNITS pair_bin_summary::model_1h_Sigma(const double & MLratio) const
+{
+	BRG_UNITS res = _magf_model_profile(MLratio).proj_dens(magf_R_mean());
+	return res;
+}
+double pair_bin_summary::model_offset_mu(CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
+{
+	double res = 1./(square(1-model_offset_kappa(mean_group_mass,sat_frac))+square(model_offset_gamma_t(mean_group_mass,sat_frac)));
+	return res;
+}
+double pair_bin_summary::model_offset_kappa(CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
+{
+	double res = model_offset_Sigma(mean_group_mass,sat_frac)/magf_sigma_crit();
+	return res;
+}
+BRG_UNITS pair_bin_summary::model_offset_Sigma(CONST_BRG_MASS_REF mean_group_mass, const double & sat_frac) const
+{
+	BRG_UNITS res = sat_frac*brgastro::lensing_tNFW_profile(mean_group_mass,magf_lens_z_mean()).quick_group_Sigma(magf_R_mean());
+	return res;
 }
 
 #endif // Magnification

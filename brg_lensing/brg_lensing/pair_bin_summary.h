@@ -443,8 +443,14 @@ public:
 	double gamma_stderr() const;
 	double gamma_square_stderr() const;
 
-	BRG_UNITS model_delta_Sigma_t(const double & MLratio = 50.) const;
-	double model_gamma_t(const double & MLratio = 50.) const;
+	BRG_UNITS model_delta_Sigma_t(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	double model_gamma_t(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+
+	BRG_UNITS model_1h_delta_Sigma_t(const double & MLratio_1h = 50.) const;
+	double model_1h_gamma_t(const double & MLratio_1h = 50.) const;
+
+	BRG_UNITS model_offset_delta_Sigma_t(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	double model_offset_gamma_t(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
 
 #endif // Shear
 
@@ -479,9 +485,17 @@ public:
 	BRG_UNITS Sigma() const;
 	BRG_UNITS Sigma_stderr() const;
 
-	double model_mu(const double & MLratio = 50.) const;
-	double model_kappa(const double & MLratio = 50.) const;
-	BRG_UNITS model_Sigma(const double & MLratio = 50.) const;
+	double model_mu(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	double model_kappa(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	BRG_UNITS model_Sigma(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+
+	double model_1h_mu(const double & MLratio_1h = 50.) const;
+	double model_1h_kappa(const double & MLratio_1h = 50.) const;
+	BRG_UNITS model_1h_Sigma(const double & MLratio_1h = 50.) const;
+
+	double model_offset_mu(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	double model_offset_kappa(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	BRG_UNITS model_offset_Sigma(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
 
 #endif // Magnification
 

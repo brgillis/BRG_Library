@@ -32,7 +32,6 @@
 
 #include "brg/global.h"
 
-#include "brg/file_access/ascii_table.h"
 #include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
 #include "brg/vector/make_vector.hpp"
@@ -41,6 +40,7 @@
 #include "brg_physics/units/unit_obj.h"
 
 #include "pair_binner.h"
+#include <brg/file_access/ascii_table.hpp>
 
 namespace brgastro {
 

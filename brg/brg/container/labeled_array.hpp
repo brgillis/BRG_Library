@@ -26,6 +26,7 @@
 #ifndef _BRG_CONTAINER_LABELED_ARRAY_HPP_INCLUDED_
 #define _BRG_CONTAINER_LABELED_ARRAY_HPP_INCLUDED_
 
+#include <fstream>
 #include <stdexcept>
 #include <string>
 #include <sstream>
@@ -34,13 +35,18 @@
 
 #include <boost/bimap.hpp>
 #include <boost/iterator.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <Eigen/Core>
 
 #include "brg/container/coerce.hpp"
+#include "brg/container/comparison_type.hpp"
 #include "brg/container/insertion_ordered_map.hpp"
 #include "brg/container/is_container.hpp"
 #include "brg/container/table_typedefs.hpp"
+
+#include "brg/file_access/ascii_table.hpp"
+#include "brg/file_access/open_file.hpp"
 
 #include "brg/math/misc_math.hpp"
 
@@ -62,6 +68,8 @@ class labeled_array
 public:
 
 	// Public typedefs
+#if(1)
+
 	typedef typename Eigen::Array<T_value_type,Eigen::Dynamic,Eigen::Dynamic,T_major_tag> data_table_type;
 	typedef typename Eigen::Array<const T_key_type,Eigen::Dynamic,Eigen::Dynamic,T_major_tag> const_data_table_type;
 
@@ -121,7 +129,7 @@ public:
 		const_col_type,const_col_type,const_col_reference,const_col_reference,
 		const_raw_col_iterator,const_raw_col_iterator,reverse_tag> const_reverse_raw_cols_type;
 
-#endif
+#endif // Col typedefs
 
 	// Row typedefs
 #if(1)
@@ -168,9 +176,9 @@ public:
 		const_row_type,const_row_type,const_row_reference,const_row_reference,
 		const_raw_row_iterator,const_raw_row_iterator,reverse_tag> const_reverse_raw_rows_type;
 
-#endif
+#endif // Row typedefs
 
-	// Iterators
+	// Iterator typedefs
 #if(1)
 
 	typedef value_type * iterator;
@@ -188,12 +196,17 @@ public:
 	typedef typename boost::reverse_iterator<row_element_iterator> reverse_row_element_iterator;
 	typedef typename boost::reverse_iterator<const_row_element_iterator> const_reverse_row_element_iterator;
 
-#endif
+#endif // Iterator typedefs
+
+#endif // Public typedefs
 
 private:
 
+	// Private section
 #if(1)
+
 	// Private typedefs
+#if(1)
 	typedef typename boost::bimap<key_type,size_type> map_type;
 
 	typedef typename Eigen::Array<value_type,Eigen::Dynamic,1> column_buffer_column_type;
@@ -203,12 +216,18 @@ private:
 	typedef typename std::vector<value_type> row_buffer_row_type;
 	typedef typename std::vector<row_buffer_row_type> row_buffer_type;
 	typedef typename row_buffer_type::value_type row_buffer_labeled_row_type;
+#endif // Private typedefs
 
+	// Private members
+#if(1)
 	mutable data_table_type _data_table_;
 	mutable map_type _key_map_;
 	mutable column_buffer_type _column_buffer_;
 	mutable row_buffer_type _row_buffer_;
+#endif // Private members
 
+	// Friend classes
+#if(1)
 	friend row_reference;
 	friend const_row_reference;
 	friend col_reference;
@@ -231,6 +250,13 @@ private:
 	friend const_raw_rows_type;
 	friend reverse_raw_rows_type;
 	friend const_reverse_raw_rows_type;
+#endif // Friend classes
+
+	// Private methods
+#if(1)
+
+	// Private methods to dump the buffer to the data table
+#if(1)
 
 	void _add_buffer_to_data_table() const
 	{
@@ -315,7 +341,7 @@ private:
 		}
 
 		// Clear the buffer, and we're done
-		_column_buffer_.clear();
+		_clear_column_buffer();
 
 	}
 
@@ -352,11 +378,14 @@ private:
 			}
 		}
 
-		// If this is the first row being added, create a dummy key map
+		// If this is the first row being added, check if we need to create a dummy key map
 		if(_data_table_.size()==0)
 		{
-			_generate_dummy_key_map(num_cols);
-			assert(static_cast<size_type>(_key_map_.left.size())==num_cols);
+			if(static_cast<size_type>(_key_map_.left.size())!=num_cols)
+			{
+				_generate_dummy_key_map(num_cols);
+				assert(static_cast<size_type>(_key_map_.left.size())==num_cols);
+			}
 		}
 
 		// Resize the data table, conserving existing elements
@@ -374,13 +403,18 @@ private:
 		}
 
 		// Clear the buffer, and we're done
-		_row_buffer_.clear();
+		_clear_row_buffer();
 
 	}
 
+#endif // Private methods to dump the buffer to the data table
+
+	// Private key map methods
+#if(1)
+
 	void _generate_dummy_key_map(const size_type & num_cols) const
 	{
-		_key_map_.left.clear();
+		_clear_key_map();
 		for(size_type i=0; i<num_cols; ++i)
 		{
 			std::stringstream ss("col_");
@@ -388,7 +422,111 @@ private:
 			_key_map_.left.insert(typename map_type::left_value_type(ss.str(),i));
 		}
 	}
-#endif
+
+	template< typename other_map_type,
+	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,key_type>::value,char>::type = 0>
+	void _set_key_map(const other_map_type & new_keys)
+	{
+		_clear_key_map();
+		size_type i = 0;
+		for(const auto & key : new_keys)
+		{
+			_key_map_.left.insert(typename map_type::left_value_type(key,i++));
+		}
+	}
+
+	template< typename other_map_type,
+	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,key_type>::value,char>::type = 0>
+	void _set_key_map(other_map_type && new_keys)
+	{
+		_clear_key_map();
+		typename brgastro::ct<typename map_type::left_value_type::second_type>::type i = 0;
+		for(auto & key : new_keys)
+		{
+			_key_map_.left.insert(typename map_type::left_value_type(std::move(key),i++));
+		}
+	}
+
+	template< typename other_map_type,
+	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,typename map_type::left_value_type>::value,char>::type = 0>
+	void _set_key_map(const other_map_type & other_map)
+	{
+		_clear_key_map();
+		for(const auto & value : other_map)
+		{
+			_key_map_.left.insert(typename map_type::left_value_type(value));
+		}
+	}
+
+	template< typename other_map_type,
+	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,typename map_type::left_value_type>::value,char>::type = 0>
+	void _set_key_map(other_map_type && other_map)
+	{
+		_clear_key_map();
+		for(auto & value : other_map)
+		{
+			_key_map_.left.insert(typename map_type::left_value_type(std::move(value)));
+		}
+	}
+
+	template< typename other_map_type,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<other_map_type>::type,map_type>::value,char>::type = 0>
+	void _set_key_map(other_map_type && other_map)
+	{
+		_key_map_ = std::forward<other_map_type>(other_map);
+	}
+
+#endif // Private key map methods
+
+	// Private clearing methods
+#if(1)
+
+	// Clear the column buffer
+	void _clear_column_buffer() const
+	{
+		_column_buffer_.clear();
+	}
+
+	// Clear the row buffer
+	void _clear_row_buffer() const
+	{
+		_row_buffer_.clear();
+	}
+
+	// Clear both buffers
+	void _clear_buffer() const
+	{
+		_clear_column_buffer();
+		_clear_row_buffer();
+	}
+
+	void _clear_data_table()
+	{
+		_data_table_.resize(0,0);
+	}
+
+	void _clear_key_map() const
+	{
+		_key_map_.left.clear();
+	}
+
+#endif // Private clearing methods
+
+	// Other private methods
+#if(1)
+
+	// Private implementation of loading - doesn't clear first
+    void _load(std::istream & fi)
+    {
+    	set_labels(load_header(fi));
+    	set_rows(load_table<T_value_type>(fi,Eigen::RowMajor,T_value_type(),_key_map_.size()));
+    }
+
+#endif // Other private methods
+
+#endif // Private methods
+
+#endif // Private section
 
 public:
 
@@ -400,8 +538,8 @@ public:
 
 	/// Copy/move from table_map
 	template< typename other_table_map_type,
-	typename std::enable_if<brgastro::is_const_container<other_table_map_type>::value,other_table_map_type>::type* = nullptr,
-	typename std::enable_if<brgastro::is_const_container<typename other_table_map_type::mapped_type>::value,other_table_map_type>::type* = nullptr>
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<other_table_map_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<other_table_map_type>::type::mapped_type>::value,char>::type = 0>
 	explicit labeled_array(other_table_map_type && init_column_buffer)
 	: _column_buffer_(std::forward<other_table_map_type>(init_column_buffer))
 	{
@@ -409,12 +547,64 @@ public:
 
 	/// Copy/move from vector of vectors
 	template< typename other_table_map_type,
-	typename std::enable_if<brgastro::is_const_container<other_table_map_type>::value,other_table_map_type>::type* = nullptr,
-	typename std::enable_if<brgastro::is_const_container<typename other_table_map_type::value_type>::value,other_table_map_type>::type* = nullptr>
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<other_table_map_type>::type,row_buffer_type>::value,char>::type = 0>
 	explicit labeled_array(other_table_map_type && init_row_buffer)
 	: _row_buffer_(std::forward<other_table_map_type>(init_row_buffer))
 	{
 	}
+
+	/// Copy/move from vector of vectors and copy key map
+	template< typename other_table_map_type,
+	typename init_key_map_type,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<other_table_map_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<init_key_map_type>::type::value_type,key_type>::value ||
+	                std::is_convertible<typename brgastro::ct<init_key_map_type>::type::value_type,typename map_type::left_value_type>::value ||
+					std::is_convertible<typename brgastro::ct<init_key_map_type>::type,map_type>::value,char>::type = 0>
+	explicit labeled_array(other_table_map_type && init_row_buffer,
+						   init_key_map_type && init_key_map)
+	: _row_buffer_(std::forward<other_table_map_type>(init_row_buffer))
+	{
+		set_labels(std::forward<init_key_map_type>(init_key_map));
+	}
+
+	/// Copy/move from array
+	template< typename other_data_table_type,
+	typename std::enable_if<brgastro::is_eigen_container<typename brgastro::ct<other_data_table_type>::type>::value,char>::type = 0>
+	explicit labeled_array(other_data_table_type && other_data_table)
+	: _data_table_(std::forward<other_data_table_type>(other_data_table))
+	{
+		_generate_dummy_key_map(_data_table_.cols());
+	}
+
+	/// Copy/move from array and copy key map
+	template< typename other_data_table_type,
+	typename init_key_map_type,
+	typename std::enable_if<brgastro::is_eigen_container<typename brgastro::ct<other_data_table_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<init_key_map_type>::type::value_type,key_type>::value ||
+	                std::is_convertible<typename brgastro::ct<init_key_map_type>::type::value_type,typename map_type::left_value_type>::value ||
+					std::is_convertible<typename brgastro::ct<init_key_map_type>::type,map_type>::value,char>::type = 0>
+	explicit labeled_array(other_data_table_type && other_data_table,
+						   init_key_map_type && init_key_map)
+	: _data_table_(std::forward<other_data_table_type>(other_data_table))
+	{
+		if(set_labels(std::forward<init_key_map_type>(init_key_map)))
+			_generate_dummy_key_map(_data_table_.cols());
+	}
+
+	/// Load from file stream
+	explicit labeled_array(std::istream & fi)
+    {
+    	_load(fi);
+    }
+
+	/// Load from file name
+	explicit labeled_array(const std::string & file_name)
+    {
+    	std::ifstream fi;
+    	open_file_input(fi,file_name);
+
+    	_load(fi);
+    }
 
 #endif
 
@@ -431,11 +621,11 @@ public:
 #if(1)
 	col_reference col(const size_type & index)
 	{
-		return col_reference(&(get_key_for_column(index)),base().col(index),num_cols());
+		return col_reference(&(get_label_for_column(index)),base().col(index),num_cols());
 	}
 	const_col_reference col(const size_type & index) const
 	{
-		return const_col_reference(&(get_key_for_column(index)),base().col(index),num_cols());
+		return const_col_reference(&(get_label_for_column(index)),base().col(index),num_cols());
 	}
 	col_type raw_col(const size_type & index)
 	{
@@ -580,11 +770,12 @@ public:
 
 #endif
 
-    // Column/row insertion
+    // Single column insertion
 #if(1)
+
     template< typename new_column_type,
-	typename std::enable_if<std::is_convertible<new_column_type,column_buffer_column_type>::value ||
-	std::is_convertible<new_column_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void insert_col(new_column_type && new_column)
     {
     	_add_row_buffer_to_data_table();
@@ -592,18 +783,86 @@ public:
     }
 
     template< typename new_column_type,
-	typename std::enable_if<!(std::is_convertible<new_column_type,column_buffer_column_type>::value ||
-	std::is_convertible<new_column_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename std::decay<new_column_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_column_type>::type>::value,char>::type = 0>
     void insert_col(new_column_type && new_column)
     {
     	_add_row_buffer_to_data_table();
     	_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::forward<new_column_type>(new_column)),_key_map_.left);
     }
 
+#endif // Single column insertion
+
+    // Multiple column insertion
+#if(1)
+
+    template< typename new_columns_type,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+    void insert_cols(const new_columns_type & new_columns)
+    {
+    	_add_row_buffer_to_data_table();
+
+    	for(const auto & new_column : new_columns)
+    	{
+    		_column_buffer_.insert(new_column);
+    	}
+    }
+
+    template< typename new_columns_type,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+    void insert_cols(new_columns_type && new_columns)
+    {
+    	_add_row_buffer_to_data_table();
+
+    	for(auto && new_column : new_columns)
+    	{
+    		_column_buffer_.insert(std::move(new_column));
+    	}
+    }
+
+    template< typename new_columns_type,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type::value_type>::value,char>::type = 0>
+    void insert_cols(const new_columns_type & new_columns)
+    {
+    	_add_row_buffer_to_data_table();
+
+    	for(const auto & new_column : new_columns)
+    	{
+    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(new_column),_key_map_.left);
+    	}
+    }
+
+    template< typename new_columns_type,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+    void insert_cols(new_columns_type && new_columns)
+    {
+    	_add_row_buffer_to_data_table();
+
+    	for(auto && new_column : new_columns)
+    	{
+    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::move(new_column)),_key_map_.left);
+    	}
+    }
+
+#endif // Multiple column insertion
+
+    // Single row insertion
+#if(1)
+
     template< typename new_row_type,
-	typename std::enable_if<std::is_convertible<new_row_type,row_buffer_row_type>::value ||
-	std::is_convertible<new_row_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_row_type>::type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_row_type>::type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void insert_row(new_row_type && new_row)
     {
     	_add_column_buffer_to_data_table();
@@ -611,15 +870,79 @@ public:
     }
 
     template< typename new_row_type,
-	typename std::enable_if<!(std::is_convertible<new_row_type,row_buffer_row_type>::value ||
-	std::is_convertible<new_row_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename std::decay<new_row_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_row_type>::type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_row_type>::type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_row_type>::type>::value,char>::type = 0>
     void insert_row(new_row_type && new_column)
     {
     	_add_column_buffer_to_data_table();
     	_row_buffer_.push_back(brgastro::coerce<row_buffer_row_type>(std::forward<new_row_type>(new_column)));
     }
-#endif
+
+#endif // Single row insertion
+
+    // Multiple row insertion
+#if(1)
+
+    template< typename new_rows_type,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+    void insert_rows(const new_rows_type & new_rows)
+    {
+    	_add_column_buffer_to_data_table();
+
+    	for(const auto & new_row : new_rows)
+    	{
+    		_row_buffer_.push_back(new_row);
+    	}
+    }
+
+    template< typename new_rows_type,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+    void insert_rows(new_rows_type && new_rows)
+    {
+    	_add_column_buffer_to_data_table();
+
+    	for(auto & new_row : new_rows)
+    	{
+    		_row_buffer_.push_back(std::move(new_row));
+    	}
+    }
+
+    template< typename new_rows_type,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+    void insert_rows(const new_rows_type & new_rows)
+    {
+    	_add_column_buffer_to_data_table();
+
+    	for(const auto & new_row : new_rows)
+    	{
+    		_row_buffer_.push_back(brgastro::coerce<row_buffer_row_type>(new_row));
+    	}
+    }
+
+    template< typename new_rows_type,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+    void insert_rows(new_rows_type && new_rows)
+    {
+    	_add_column_buffer_to_data_table();
+
+    	for(auto & new_row : new_rows)
+    	{
+    		_row_buffer_.push_back(brgastro::coerce<row_buffer_row_type>(std::move(new_row)));
+    	}
+    }
+
+#endif // Multiple row insertion
 
     // Column access/insertion
 #if(1)
@@ -745,6 +1068,170 @@ public:
 
 #endif
 
+	// Full table modification
+#if(1)
+
+	void clear()
+	{
+		_clear_buffer();
+		_clear_key_map();
+		_clear_data_table();
+	}
+
+    template< typename new_rows_type,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0>
+    void set_rows(new_rows_type && new_rows)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	_row_buffer_ = std::forward<new_rows_type>(new_rows);
+    }
+
+    template< typename new_rows_type,
+	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+    void set_rows(const new_rows_type & new_rows)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	for(const auto & new_row : new_rows)
+    	{
+    		_row_buffer_.push_back(new_row);
+    	}
+    }
+
+    template< typename new_rows_type,
+	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+    void set_rows(new_rows_type && new_rows)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	for(auto & new_row : new_rows)
+    	{
+    		_row_buffer_.push_back(std::move(new_row));
+    	}
+    }
+
+    template< typename new_rows_type,
+	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+    void set_rows(const new_rows_type & new_rows)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	for(const auto & new_row : new_rows)
+    	{
+    		_row_buffer_.push_back(brgastro::coerce<row_buffer_row_type>(new_row));
+    	}
+    }
+
+    template< typename new_rows_type,
+	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+    void set_rows(new_rows_type && new_rows)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	for(auto & new_row : new_rows)
+    	{
+    		_row_buffer_.push_back(brgastro::coerce<row_buffer_row_type>(std::move(new_row)));
+    	}
+    }
+
+    template< typename new_columns_type,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0>
+    void set_cols(new_columns_type && new_cols)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	_column_buffer_ = std::forward<new_columns_type>(new_cols);
+    }
+
+    template< typename new_columns_type,
+	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+    void set_cols(const new_columns_type & new_columns)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	for(const auto & new_column : new_columns)
+    	{
+    		_column_buffer_.insert(new_column);
+    	}
+    }
+
+    template< typename new_columns_type,
+	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+    void set_cols(new_columns_type && new_columns)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	for(auto && new_column : new_columns)
+    	{
+    		_column_buffer_.insert(std::move(new_column));
+    	}
+    }
+
+    template< typename new_columns_type,
+	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+    void set_cols(const new_columns_type & new_columns)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	for(const auto & new_column : new_columns)
+    	{
+    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(new_column),_key_map_.left);
+    	}
+    }
+
+    template< typename new_columns_type,
+	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+    void set_cols(new_columns_type && new_columns)
+    {
+		_clear_buffer();
+		_clear_data_table();
+
+    	for(auto && new_column : new_columns)
+    	{
+    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::move(new_column)),_key_map_.left);
+    	}
+    }
+
+#endif // Full table modification
+
 	// Size information
 #if(1)
 	size_type nrows() const
@@ -767,22 +1254,49 @@ public:
 	{
 		return base().size();
 	}
+	bool empty() const
+	{
+		return size()==0;
+	}
 #endif
 
-	// Key information
+	// Label information
 #if(1)
-	char count (const key_type & k) const
+	char count(const key_type & k) const
     {
     	_add_buffer_to_data_table();
 		return _key_map_.left.count(k);
     }
+
+    const key_type & get_label_for_column(const size_type & index) const
+    {
+    	return _key_map_.right.at(index);
+    }
+
+    const size_type & get_index_for_label(const key_type & label) const
+    {
+    	return _key_map_.left.at(label);
+    }
+
+    template<typename T_res_key_type=key_type>
+    std::vector<T_res_key_type> get_labels() const
+	{
+    	std::vector<T_res_key_type> res;
+
+    	for( size_type i=0; i<num_cols(); ++i )
+    	{
+    		res.push_back(get_label_for_column(i));
+    	}
+
+    	return res;
+	}
 #endif
 
-    // Key control
+    // Label control
 #if(1)
 
     /**
-     * Changes a key to another, without altering its mapped data or position.
+     * Changes a label to another, without altering its mapped data or position.
      *
      * @param init_key
      * @param new_key
@@ -791,7 +1305,7 @@ public:
      *                2 if new_key already exists in map
      */
     template< typename new_key_type >
-    char change_key(const key_type & init_key, new_key_type && new_key)
+    char change_label(const key_type & init_key, new_key_type && new_key)
     {
     	// Add in the buffer so the key map is fully set up
 		_add_buffer_to_data_table();
@@ -811,9 +1325,25 @@ public:
     	return 0;
     }
 
-    const key_type & get_key_for_column(const size_type & index) const
+	template< typename label_container_type,
+	typename std::enable_if< std::is_convertible<typename brgastro::ct<label_container_type>::type::value_type,key_type>::value ||
+	                std::is_convertible<typename brgastro::ct<label_container_type>::type::value_type,typename map_type::left_value_type>::value ||
+					std::is_convertible<typename brgastro::ct<label_container_type>::type,map_type>::value,char>::type = 0>
+    char set_labels(label_container_type && new_labels)
     {
-    	return _key_map_.right.at(index);
+    	// Add in the buffer so the previous key map is fully set up
+		_add_buffer_to_data_table();
+
+		// Allow this if the new keys vector is equal in size to the number of
+		// columns or if the table is empty
+		if((static_cast<size_type>(new_labels.size())==ncols()) || (ncols()==0))
+		{
+			_set_key_map(std::forward<label_container_type>(new_labels));
+			return 0;
+		}
+
+		if(static_cast<size_type>(new_labels.size())>ncols()) return 1;
+    	return 2; // Implicitly new_labels.size()<ncols()
     }
 
 #endif
@@ -838,6 +1368,70 @@ public:
     			col(d_it->second) *= factor;
     		}
     	}
+    }
+
+#endif
+
+    // Saving and loading in ascii format
+#if(1)
+
+    void save(std::ostream & fo, bool formatted=false) const
+    {
+    	header_t header = get_labels<std::string>();
+
+    	if(formatted)
+    	{
+    		// To print formatted, we'll use the existing print_table function
+
+			table_t<T_value_type> data;
+
+			// Fill up the output table
+			for( const auto & row : rows())
+			{
+				data.push_back(coerce<std::vector<T_value_type>>(row.raw()));
+			}
+	    	print_table(fo,data,header,Eigen::RowMajor);
+    	}
+    	else
+    	{
+    		// If not formatted, we'll use Eigen's output to simply print the table
+
+    		// First, the header
+    		fo << "# ";
+    		for(const auto & label : header)
+    		{
+    			fo << label << "\t";
+    		}
+    		fo << std::endl;
+
+    		// And now the data table
+    		fo << data_table();
+    	}
+
+    	return;
+    }
+
+    void save(const std::string & file_name, bool formatted=false) const
+    {
+    	std::ofstream fo;
+    	open_file_output(fo,file_name);
+
+    	save(fo,formatted);
+    }
+
+    void load(std::istream & fi)
+    {
+    	clear();
+
+    	_load(fi);
+    }
+
+    void load(const std::string & file_name)
+    {
+    	std::ifstream fi;
+    	open_file_input(fi,file_name);
+
+    	load(fi);
     }
 
 #endif

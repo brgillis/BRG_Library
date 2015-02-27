@@ -30,7 +30,6 @@
 #include "brg/global.h"
 
 #include "brg/math/interpolator/interpolator.h"
-#include "brg/math/interpolator/interpolator_derivative_functors.h"
 
 namespace brgastro {
 
@@ -67,8 +66,6 @@ private:
 	mutable brgastro::interpolator _known_interpolator_, _estimated_interpolator_;
 	bool _interpolator_ptr_set_up_;
 	mutable bool _calculated_;
-
-	interpolator_functor _interpolator_func_;
 
 	std::vector< double > _unknown_t_list_;
 

@@ -38,7 +38,8 @@
 #include "brg_lensing/shifting/corr_alpha.hpp"
 
 #include "shifting_loader.h"
-#include <brg/file_access/ascii_table.h>
+
+#include <brg/file_access/ascii_table.hpp>
 
 // Initialisation of static vars
 #if (1)

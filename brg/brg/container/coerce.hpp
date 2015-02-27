@@ -71,7 +71,7 @@ struct assignment_coercer
 	assignment_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());
-		for(size_t i=0; i<other_obj.size(); ++i)
+		for(decltype(other_obj.size()) i=0; i<other_obj.size(); ++i)
 		{
 			assignment_coercer<d-1,decltype(obj[i])>(obj[i],other_obj[i]);
 		}

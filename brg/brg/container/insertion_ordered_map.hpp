@@ -28,6 +28,7 @@
 #define _BRG_INSERTION_ORDERED_MAP_HPP_INCLUDED_
 
 #include <stdexcept>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 #include <utility>

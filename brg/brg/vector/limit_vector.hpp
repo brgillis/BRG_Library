@@ -709,7 +709,9 @@ public:
 				{
 					// For floating-point types, we add an epsilon at this step to prevent values at the exact bin boundaries
 					// from being assigned the wrong bin
-					return static_cast<size_type>((val-min()+std::numeric_limits<T>::epsilon())/_step_);
+					size_type res = static_cast<size_type>((val-min()+std::numeric_limits<T>::epsilon())/_step_);
+					if(res>=num_bins()) res=num_bins()-1; // This may on rare occasions happen due to the above epsilon-adding
+					return res;
 				}
 			}
 
@@ -759,7 +761,7 @@ public:
 	template<typename Tv, typename To>
 	Tv interpolate_bins(const Tv & val, const To & val_vec) const
 	{
-		if(val_vec.size()!=num_bins())
+		if(static_cast<size_type>(val_vec.size())!=num_bins())
 			throw std::logic_error("Value vector's size must equal num_bins() in interpolate_bins.\n");
 
 		if(num_bins()==1)

@@ -38,7 +38,7 @@
 
 #include "brg/global.h"
 
-#include "brg/file_access/ascii_table.h"
+#include "../../file_access/ascii_table.hpp"
 #include "brg/file_access/open_file.hpp"
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"

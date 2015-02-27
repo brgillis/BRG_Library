@@ -46,7 +46,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_offset_WLsig(
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_group_WLsig(
-		CONST_BRG_DISTANCE_REF r, const double group_c, const bool silent ) const
+		CONST_BRG_DISTANCE_REF r, const double & group_c, const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_group_sig_cache().get( std::log(mvir0()), z(), std::log(r),
 			group_c, silent );
@@ -57,6 +57,28 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_shifted_WLsig(
 {
 	BRG_UNITS result = brgastro::tNFW_shifted_sig_cache().get( std::log(mvir0()), z(), std::log(R),
 			silent );
+	return result;
+}
+const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_Sigma( CONST_BRG_DISTANCE_REF r,
+		const bool silent ) const
+{
+	BRG_UNITS result = brgastro::tNFW_Sigma_cache().get( std::log(mvir0()), z(), std::log(r), silent );
+	return result;
+}
+const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_offset_Sigma(
+		CONST_BRG_DISTANCE_REF r, CONST_BRG_DISTANCE_REF offset_r,
+		const bool silent ) const
+{
+	if(offset_r<=0) return WLsig(r,silent);
+	BRG_UNITS result = brgastro::tNFW_offset_Sigma_cache().get( std::log(mvir0()), z(), std::log(r),
+			std::log(offset_r), silent );
+	return result;
+}
+const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_group_Sigma(
+		CONST_BRG_DISTANCE_REF r, const double & group_c, const bool silent ) const
+{
+	BRG_UNITS result = brgastro::tNFW_group_Sigma_cache().get( std::log(mvir0()), z(), std::log(r),
+			group_c, silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_dens( CONST_BRG_DISTANCE_REF r,

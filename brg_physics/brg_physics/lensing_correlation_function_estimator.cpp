@@ -39,7 +39,7 @@
 
 namespace brgastro {
 
-bool lensing_correlation_function_estimator::_set_up()
+bool lensing_correlation_function_estimator::_set_up() const
 {
 	return !( (_D1_pos_list_.empty()) || (_D2_pos_list_.empty())
 			|| (_R1_pos_list_.empty()) || (_R2_pos_list_.empty()));
@@ -48,16 +48,16 @@ bool lensing_correlation_function_estimator::_set_up()
 
 // Calculation functions
 Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
-		const std::function<double(double)> & weight_function)
+		const std::function<double(double)> & weight_function) const
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
 
 	// We'll calculate four arrays here, for the combinations of data and random lists
-	Eigen::ArrayXd D1D2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd D1R2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd R1D2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd R1R2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
 	unsigned D1D2_pairs = 0;
 	unsigned D1R2_pairs = 0;
@@ -129,7 +129,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
 			brgastro::safe_d(static_cast< Eigen::ArrayXd >(D1R2_counts*R1D2_counts))-1;
 	return result;
 }
-Eigen::ArrayXd lensing_correlation_function_estimator::calculate()
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate() const
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
@@ -137,10 +137,10 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate()
 	if(_unweighted_cached_value_.size()>0) return _unweighted_cached_value_;
 
 	// We'll calculate four arrays here, for the combinations of data and random lists
-	Eigen::ArrayXd D1D2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd D1R2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd R1D2_counts(_r_bin_limits_.num_bins());
-	Eigen::ArrayXd R1R2_counts(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd D1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
+	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
 	long unsigned D1D2_pairs = 0;
 	long unsigned D1R2_pairs = 0;
@@ -212,7 +212,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate()
 	return _unweighted_cached_value_;
 }
 
-Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const double & offset)
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const double & offset) const
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
@@ -220,7 +220,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const do
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-Eigen::ArrayXd lensing_correlation_function_estimator::calculate_quadrupole(const double & offset)
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_quadrupole(const double & offset) const
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
@@ -228,7 +228,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_quadrupole(cons
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-Eigen::ArrayXd lensing_correlation_function_estimator::calculate_octopole(const double & offset)
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_octopole(const double & offset) const
 {
 	auto weight_function = [&offset] (const double & theta)
 	{

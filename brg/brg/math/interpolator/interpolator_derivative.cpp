@@ -24,6 +24,7 @@
 
 #include "brg/math/calculus/differentiate.hpp"
 #include "brg/math/calculus/integrate.hpp"
+#include "brg/math/random/distributions.hpp"
 
 #include "interpolator_derivative.h"
 
@@ -109,14 +110,12 @@ brgastro::interpolator_derivative & brgastro::interpolator_derivative::operator=
 void brgastro::interpolator_derivative::set_spline_ptr(
 		brgastro::interpolator *new_spline_ptr )
 {
-	_interpolator_func_.set_interpolator_ptr( new_spline_ptr );
 	_interpolator_ptr_ = new_spline_ptr;
 	_interpolator_ptr_set_up_ = true;
 }
 
 void brgastro::interpolator_derivative::clear_spline_ptr()
 {
-	_interpolator_func_.set_interpolator_ptr( NULL );
 	_interpolator_ptr_ = NULL;
 	_interpolator_ptr_set_up_ = false;
 }
@@ -274,23 +273,39 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 		_estimated_interpolator_ = _known_interpolator_;
 		_estimated_interpolator_.set_interpolation_type(_interpolation_type_);
 		size_t num_points_to_calculate = _unknown_t_list_.size();
-		interpolator_derivative_functor spline_derivative_functor_val(
-				_interpolator_ptr_ );
-		interpolator_derivative_weight_functor spline_derivative_weight_functor_val;
 
-		spline_derivative_weight_functor_val.set_sample_scale(
-				_sample_scale_ );
-		spline_derivative_weight_functor_val.set_sample_max_width(
-				_sample_max_width_ );
-		spline_derivative_weight_functor_val.set_t_min( _t_min_ );
-		spline_derivative_weight_functor_val.set_t_max( _t_max_ );
+		auto interpolator_functor = [&] (const double & in_param, bool silent=false)
+		{
+			return (*_interpolator_ptr_)(in_param);
+		};
+
+		auto spline_derivative_functor_val = [&] (const double & in_param, bool silent=false)
+		{
+			return differentiate( &interpolator_functor, in_param );
+		};
+
+		double t;
+
+		auto spline_derivative_weight_functor_val = [&] (const double & in_param, bool silent=false)
+		{
+
+			if ( std::fabs( in_param - t )
+					> _sample_max_width_ * std::fabs( _t_max_ - _t_min_ ) )
+			{
+				return 0.;
+			}
+			else
+			{
+				return Gaus_pdf( in_param, t,
+						_sample_scale_ * std::fabs( _t_max_ - _t_min_ ) );
+			}
+		};
 
 		double delta_t = fabs( _t_max_ - _t_min_ ) * _sample_max_width_;
 
 		for ( size_t i = 0; i < num_points_to_calculate; i++ ) // For each point we need to calculate
 		{
-			double t = _unknown_t_list_[i];
-			spline_derivative_weight_functor_val.set_center_point( t );
+			t = _unknown_t_list_[i];
 			BRG_UNITS min_in_params( t - delta_t );
 			BRG_UNITS max_in_params( t + delta_t );
 			BRG_UNITS out_params( 0 );

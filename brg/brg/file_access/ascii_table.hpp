@@ -24,9 +24,6 @@
 
 \**********************************************************************/
 
-
-// body file: ascii_table.cpp
-
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -34,12 +31,14 @@
 #include <string>
 #include <vector>
 
+#include <Eigen/Core> // Just for the Row/Column major tags
+
 #include "brg/global.h"
 
 #include "brg/container/table_typedefs.hpp"
 
 #include "brg/file_access/open_file.hpp"
-#include "brg/file_access/table_utility.h"
+#include "brg/file_access/table_utility.hpp"
 #include "brg/file_access/trim_comments.hpp"
 
 #include "brg/math/misc_math.hpp"
@@ -60,8 +59,8 @@ namespace brgastro {
 template<typename T>
 void print_table( std::ostream & out_stream,
 		const table_t<T> & data,
-		header_t header = header_t(),
-		const bool silent = false )
+		const header_t & header = header_t(),
+		const char major_tag = Eigen::ColMajor)
 {
 	// Set up the value we'll print if an entry is bad
 	std::stringstream ss("");
@@ -70,9 +69,21 @@ void print_table( std::ostream & out_stream,
 	ss.clear();
 	ss.str("");
 
-	size_t num_columns = data.size();
-	size_t num_rows = data.at(0).size();
-	std::vector< size_t > width(num_columns,0);
+	size_t num_col;
+	size_t num_row;
+
+	if(major_tag==Eigen::ColMajor)
+	{
+		num_col = data.size();
+		num_row = data.at(0).size();
+	}
+	else
+	{
+		num_row = data.size();
+		num_col = data.at(0).size();
+	}
+
+	std::vector< size_t > width(num_col,0);
 
 	const bool skip_header = (header.size()==0);
 
@@ -84,7 +95,7 @@ void print_table( std::ostream & out_stream,
 		// Check the header first
 		if(!skip_header)
 		{
-			for ( size_t c = 0; c < num_columns; c++ )
+			for ( size_t c = 0; c < num_col; c++ )
 			{
 				if(c==0)
 				{
@@ -104,24 +115,34 @@ void print_table( std::ostream & out_stream,
 		}
 
 		// Now loop through the data
-		for ( size_t i = 0; i < num_rows; i++ )
+		for ( size_t i = 0; i < num_row; i++ )
 		{
-			for ( size_t c = 0; c < num_columns; c++ )
+			for ( size_t c = 0; c < num_col; c++ )
 			{
-				std::string val_to_use;
-				if(isbad(data[c].at(i)))
+				T val;
+				if(major_tag==Eigen::ColMajor)
 				{
-					val_to_use = bad_value;
+					val = data[c].at(i);
+				}
+				else
+				{
+					val = data[i].at(c);
+				}
+
+				std::string str_val;
+				if(isbad(val))
+				{
+					str_val = bad_value;
 				}
 				else
 				{
 					ss.str("");
-					ss << data[c].at(i);
-					val_to_use = ss.str();
+					ss << val;
+					str_val = ss.str();
 				}
-				if ( val_to_use.length() > width[c] )
+				if ( str_val.length() > width[c] )
 				{
-					width[c] = val_to_use.length();
+					width[c] = str_val.length();
 				}
 			} // for( int c = 0; c < num_columns; c++ )
 		} // for( int i = 0; i < num_rows; i++ ) (testing width)
@@ -129,13 +150,13 @@ void print_table( std::ostream & out_stream,
 		if(add_comment_marker)
 		{
 			// Increase all widths by 1 to ensure spacing
-			for ( size_t c = 0; c < num_columns; c++ )
+			for ( size_t c = 0; c < num_col; c++ )
 				width[c] += 1;
 		}
 		else
 		{
 			// Increase all widths except the first by 1 to ensure spacing
-			for ( size_t c = 1; c < num_columns; c++ )
+			for ( size_t c = 1; c < num_col; c++ )
 				width[c] += 1;
 		}
 
@@ -146,33 +167,43 @@ void print_table( std::ostream & out_stream,
 			{
 				out_stream << "# ";
 			}
-			for ( size_t c = 0; c < num_columns; c++ )
+			for ( size_t c = 0; c < num_col; c++ )
 				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << header[c];
 		}
 
 		out_stream << std::endl;
 
 		// Output the data
-		for ( size_t i = 0; i < num_rows; i++ )
+		for ( size_t i = 0; i < num_row; i++ )
 		{
 			if(add_comment_marker)
 			{
 				out_stream << "  ";
 			}
-			for ( size_t c = 0; c < num_columns; c++ )
+			for ( size_t c = 0; c < num_col; c++ )
 			{
-				std::string val_to_use;
-				if(isbad(data[c].at(i)))
+				T val;
+				if(major_tag==Eigen::ColMajor)
 				{
-					val_to_use = bad_value;
+					val = data[c].at(i);
+				}
+				else
+				{
+					val = data[i].at(c);
+				}
+
+				std::string str_val;
+				if(isbad(val))
+				{
+					str_val = bad_value;
 				}
 				else
 				{
 					ss.str("");
-					ss << data[c].at(i);
-					val_to_use = ss.str();
+					ss << val;
+					str_val = ss.str();
 				}
-				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << val_to_use;
+				out_stream << std::setfill( ' ' ) << std::setw( width[c] ) << str_val;
 			}
 			out_stream << std::endl;
 		}
@@ -190,19 +221,20 @@ template<typename T>
 void print_table( const std::string & file_name,
 		const table_t<T> & data,
 		const header_t & header = header_t(),
-		const bool silent = false )
+		const char major_tag = Eigen::ColMajor)
 {
 	std::ofstream fo;
 	open_file_output(fo,file_name);
 
-	print_table<T>(fo,data,header,silent);
+	print_table<T>(fo,data,header,major_tag);
 }
 
-// Load table, either loading in the entire table, or only loading in certain columns into pointed-to
-// variables, found by matching header entries to the strings passed
+// Load in entire table
 template<typename T>
 table_t<T> load_table( std::istream & fi,
-		const bool silent=false, const T & default_value=T())
+						const char major_tag = Eigen::ColMajor,
+						const T & default_value=T(),
+						size_t min_length = 0)
 {
 	table_t<T> table_data;
 
@@ -216,47 +248,109 @@ table_t<T> load_table( std::istream & fi,
 	std::istringstream line_data_stream;
 	while ( getline(fi, line_data) )
 	{
-		std::vector<T> temp_vector(0);
-
 		line_data_stream.clear();
-		line_data_stream.str(line_data);
+		line_data_stream.str(std::move(line_data));
 
-		// Split the line on whitespace
-		T value(default_value);
-		while (line_data_stream >> value)
-		{
-			temp_vector.push_back(value);
-		}
+		auto temp_vector = split_line<T>(line_data_stream,default_value,min_length);
 
-		table_data.push_back(temp_vector);
+		if(min_length==0) min_length = temp_vector.size();
+
+		table_data.push_back(std::move(temp_vector));
 	}
 
-	return transpose(table_data,default_value);
+	if(major_tag == Eigen::ColMajor)
+		return transpose(table_data,default_value);
+	else
+		return table_data;
 }
 
 // And to allow us to load from a file name instead of a stream
 template<typename T>
 inline table_t<T> load_table( const std::string & file_name,
-		const bool silent = false, const T default_value=T() )
+								const char major_tag = Eigen::ColMajor,
+								const T & default_value=T())
 {
 	std::ifstream fi;
 	open_file_input(fi,file_name);
 
-	return load_table<T>(fi,silent,default_value);
+	return load_table<T>(fi,major_tag,default_value);
 }
 
 // Load a table's header as a vector of strings
-header_t load_header( std::istream & table_stream,
-		const bool silent=false);
+inline header_t load_header( std::istream & table_stream )
+{
+	std::string temp_line;
+	std::vector<header_t> possible_headers;
+
+	// Get all comment lines at the top of the file
+	while ( table_stream )
+	{
+		if ( table_stream.peek() == (int)( *"#" ) )
+		{
+			getline( table_stream, temp_line );
+
+			header_t temp_header = convert_to_header(temp_line);
+
+			if(temp_header.size() > 0)
+				possible_headers.push_back(temp_header);
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if(possible_headers.size()==1) return possible_headers[0];
+	if(possible_headers.size()==0) return header_t();
+
+	// If we get here, more than one line is a possible header candidate. Our next step is to
+	// go to the data and count the columns in the first line. If only one possible header has
+	// the right length, we know that's the one.
+
+	unsigned short int n_cols = 0;
+	do
+	{
+		getline( table_stream, temp_line );
+		std::string junk;
+		std::istringstream line_data_stream(temp_line);
+		while (line_data_stream >> junk)
+		{
+			++n_cols;
+		}
+	} while(n_cols==0 && table_stream);
+
+	if(n_cols==0) // If we can't find any data
+	{
+		return header_t();
+	}
+
+	// Search through the possible headers, and see if we find exactly one with the right size
+	unsigned short int num_right_size = 0;
+	size_t i_best = 0;
+	for(size_t i=0; i<possible_headers.size(); ++i)
+	{
+		if(possible_headers[i].size()==n_cols)
+		{
+			++num_right_size;
+			i_best = i;
+		}
+	}
+
+	if(num_right_size != 1) // If multiple or zero lines are the right size
+	{
+		return header_t();
+	}
+
+	return possible_headers[i_best];
+}
 
 // And to allow us to load from a file name instead of a stream
-inline header_t load_header( const std::string & file_name,
-		const bool silent = false )
+inline header_t load_header( const std::string & file_name )
 {
 	std::ifstream fi;
 	open_file_input(fi,file_name);
 
-	return load_header(fi,silent);
+	return load_header(fi);
 }
 
 } // namespace brgastro

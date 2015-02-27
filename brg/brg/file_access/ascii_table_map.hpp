@@ -31,19 +31,20 @@
 #include <map>
 #include <vector>
 
+#include <Eigen/Core> // Just for RowMajor and ColMajor tags
+
 #include "brg/global.h"
 
 #include "brg/container/table_typedefs.hpp"
-#include "brg/file_access/table_utility.h"
-#include "brg/file_access/ascii_table.h"
+#include "brg/file_access/ascii_table.hpp"
+#include "brg/file_access/table_utility.hpp"
 
 namespace brgastro {
 
 // Print a table from a map
 template<typename T>
 void print_table_map( std::ostream & out,
-		const table_map_t<T> & table_map,
-		const bool silent = false)
+		const table_map_t<T> & table_map)
 {
 	header_t header;
 	table_t<T> data;
@@ -53,47 +54,46 @@ void print_table_map( std::ostream & out,
 		header.push_back(it->first);
 		data.push_back(it->second);
 	}
-	print_table<T>(out,data,header,silent);
+	print_table<T>(out,data,header,Eigen::ColMajor);
 }
 
 // And to allow us to print to a file name instead of a stream
 template<typename T>
 inline void print_table_map( const std::string & file_name,
-		const table_map_t<T> & table_map,
-		const bool silent = false )
+		const table_map_t<T> & table_map)
 {
 	std::ofstream fo;
 	open_file_output(fo,file_name);
 
-	print_table_map<T>(fo,table_map,silent);
+	print_table_map<T>(fo,table_map);
 }
 
 // Directly load a map of the data
 template<typename T>
 table_map_t<T> load_table_map( std::istream & fi,
-		const bool silent=false, const T default_value=T())
+		const T default_value=T())
 {
-	header_t header = load_header(fi,silent);
-	table_t<T> data = load_table<T>(fi,silent,default_value);
-	return make_table_map<T>(data,header,silent);
+	header_t header = load_header(fi);
+	table_t<T> data = load_table<T>(fi,Eigen::ColMajor,default_value);
+	return make_table_map<T>(data,header);
 }
 
 // And to allow us to load from a file name instead of a stream
 template<typename T>
 table_map_t<T> load_table_map( const std::string & file_name,
-		const bool silent = false, const T default_value=T() )
+		const T default_value=T() )
 {
 	std::ifstream fi;
 	open_file_input(fi,file_name);
 
-	return load_table_map<T>(fi,silent,default_value);
+	return load_table_map<T>(fi,default_value);
 }
 template<typename T>
 void load_table_columns( std::istream & fi,
 		std::map< std::string, std::vector<T>* > & column_map,
-		const bool case_sensitive=false, const bool silent=false, const T default_value=T())
+		const bool case_sensitive=false, const T default_value=T())
 {
-	table_map_t<T> table_map = load_table_map<T>(fi,silent,default_value);
+	table_map_t<T> table_map = load_table_map<T>(fi,default_value);
 
 	for(typename std::map< std::string, std::vector<T>* >::iterator it=column_map.begin();
 			it!=column_map.end(); ++it)
@@ -101,12 +101,9 @@ void load_table_columns( std::istream & fi,
 		*(it->second) = table_map[it->first];
 
 		// Check that we found it
-		if(!silent)
+		if(it->second->size()==0)
 		{
-			if(it->second->size()==0)
-			{
-				std::cerr << "WARNING: Column " << it->first << " not found in table.\n";
-			}
+			// TODO output warning to logger here
 		}
 
 	}
@@ -116,12 +113,12 @@ void load_table_columns( std::istream & fi,
 template<typename T>
 void load_table_columns( const std::string & file_name,
 		std::map< std::string, std::vector<T>* > & column_map,
-		const bool case_sensitive=false, const bool silent=false, const T default_value=T())
+		const bool case_sensitive=false, const T default_value=T())
 {
 	std::ifstream fi;
 	open_file_input(fi,file_name);
 
-	load_table_columns<T>(fi,column_map,case_sensitive,silent,default_value);
+	load_table_columns<T>(fi,column_map,case_sensitive,default_value);
 }
 
 } // namespace brgastro

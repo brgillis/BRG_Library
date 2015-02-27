@@ -51,8 +51,14 @@ private:
 	const BRG_UNITS _quick_offset_WLsig( CONST_BRG_DISTANCE_REF R,
 			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const;
 	const BRG_UNITS _quick_group_WLsig( CONST_BRG_DISTANCE_REF R,
-			const double group_c, const bool silent = false ) const;
+			const double & group_c, const bool silent = false ) const;
 	const BRG_UNITS _quick_shifted_WLsig( CONST_BRG_DISTANCE_REF R, const bool silent = false ) const;
+	const BRG_UNITS _quick_Sigma( CONST_BRG_DISTANCE_REF R, const bool silent =
+			false ) const;
+	const BRG_UNITS _quick_offset_Sigma( CONST_BRG_DISTANCE_REF R,
+			CONST_BRG_DISTANCE_REF offset_R, const bool silent = false ) const;
+	const BRG_UNITS _quick_group_Sigma( CONST_BRG_DISTANCE_REF R,
+			const double & group_c, const bool silent = false ) const;
 
 #endif // Lensing related calculation methods
 

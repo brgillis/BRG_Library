@@ -24,15 +24,13 @@
 \**********************************************************************/
 
 
-// body file: table_utility.cpp
-
-
 #ifndef _BRG_TABLE_UTILITY_H_INCLUDED_
 #define _BRG_TABLE_UTILITY_H_INCLUDED_
 
 #include <cstdlib>
 #include <sstream>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "brg/global.h"
@@ -99,8 +97,65 @@ table_map_t<T> make_table_map(
 }
 
 // Splits a string into a vector of "word" strings on whitespace
-std::vector< std::string > split_on_whitespace( const std::string & sentence );
-header_t convert_to_header( const std::string & line );
+inline std::vector< std::string > split_on_whitespace( const std::string & sentence )
+{
+	std::vector< std::string > result;
+	std::istringstream sentence_data_stream(sentence);
+
+	std::string word;
+	while (sentence_data_stream >> word)
+	{
+		result.push_back(word);
+	}
+
+	return result;
+}
+inline header_t convert_to_header( const std::string & line )
+{
+	header_t result;
+	std::istringstream line_data_stream(line);
+
+	std::string word;
+
+	// Get rid of first word if it's the comment indicator
+	if ( line_data_stream.peek() == (int)( *"#" ) )
+	{
+		line_data_stream >> word;
+	}
+
+	while (line_data_stream >> word)
+	{
+
+		result.push_back(word);
+	}
+
+	return result;
+}
+
+template< typename T_out, typename T_in >
+std::vector<T_out> split_line(T_in && line_data, const T_out & default_value=T_out(), const size_t & min_length = 0)
+{
+	std::vector<T_out> & res;
+	res.resize(min_length,default_value);
+
+	// Split the line on whitespace
+
+	// Load up the minimum portion first
+	for( auto & value : res)
+	{
+		line_data >> value;
+	}
+
+	// Load up values beyond minimum
+	do
+	{
+		T_out value(default_value);
+		if((line_data >> value).eof()) break;
+		res.push_back(value);
+	} while(true);
+
+	return;
+}
 
 } // namespace brgastro
 

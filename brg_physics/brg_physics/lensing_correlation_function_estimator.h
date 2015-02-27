@@ -54,9 +54,9 @@ private:
 
 	double _z_buffer_;
 
-	Eigen::ArrayXd _unweighted_cached_value_;
+	mutable Eigen::ArrayXd _unweighted_cached_value_;
 
-	bool _set_up();
+	bool _set_up() const;
 
 public:
 
@@ -116,24 +116,24 @@ public:
 	// Calculation methods
 #if(1)
 	/// Standard calculation function, using Hamilton estimator
-	Eigen::ArrayXd calculate();
+	Eigen::ArrayXd calculate() const;
 
 	/// Weighted calculation function, using a Hamilton-like estimator. This assumes the weight
 	/// function passed here has an expected value of zero.
 	Eigen::ArrayXd calculate_weighted(const std::function<double(double)> &
-			weight_function = [] (const double & theta) {return 1.;});
+			weight_function = [] (const double & theta) {return 1.;}) const;
 
 	/// Calculation function for dipole correlation function with a given offset. The offset should
 	/// vary from [0,1) or [-0.5,0.5) for unique results.
-	Eigen::ArrayXd calculate_dipole(const double & offset=0);
+	Eigen::ArrayXd calculate_dipole(const double & offset=0) const;
 
 	/// Calculation function for quadrupole correlation function with a given offset. The offset should
 	/// vary from [0,1) or [-0.5,0.5) for unique results.
-	Eigen::ArrayXd calculate_quadrupole(const double & offset=0);
+	Eigen::ArrayXd calculate_quadrupole(const double & offset=0) const;
 
 	/// Calculation function for octopole correlation function with a given offset. The offset should
 	/// vary from [0,1) or [-0.5,0.5) for unique results.
-	Eigen::ArrayXd calculate_octopole(const double & offset=0);
+	Eigen::ArrayXd calculate_octopole(const double & offset=0) const;
 #endif
 };
 
