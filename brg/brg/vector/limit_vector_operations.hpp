@@ -2,7 +2,8 @@
  @file limit_vector_operations.hpp
  ------------------
 
- TODO <Insert file description here>
+ Operations that allow one to treat a regular vector as if it's a
+ limit vector (with type GENERAL) without converting it first.
 
  **********************************************************************
 

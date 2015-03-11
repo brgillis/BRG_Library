@@ -60,7 +60,8 @@ template<typename T>
 void print_table( std::ostream & out_stream,
 		const table_t<T> & data,
 		const header_t & header = header_t(),
-		const char major_tag = Eigen::ColMajor)
+		const char major_tag = Eigen::ColMajor,
+		const char precision = 10)
 {
 	// Set up the value we'll print if an entry is bad
 	std::stringstream ss("");
@@ -68,6 +69,9 @@ void print_table( std::ostream & out_stream,
 	std::string bad_value = ss.str();
 	ss.clear();
 	ss.str("");
+
+	// Set the precision of this stringstream
+	ss.precision(precision);
 
 	size_t num_col;
 	size_t num_row;

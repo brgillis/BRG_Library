@@ -42,7 +42,7 @@ namespace brgastro {
 
 // Merge a header and data table into a map
 template<typename T>
-table_map_t<T> make_table_map(
+inline table_map_t<T> make_table_map(
 		const table_t<T> & data,
 		const header_t & header,
 		const bool silent=false)
@@ -132,10 +132,33 @@ inline header_t convert_to_header( const std::string & line )
 	return result;
 }
 
-template< typename T_out, typename T_in >
-std::vector<T_out> split_line(T_in && line_data, const T_out & default_value=T_out(), const size_t & min_length = 0)
+template< typename T_out, typename T_in,
+	typename std::enable_if<std::is_same<T_out,std::string>::value,char>::type = 0 >
+inline T_in & pop_from_istream(T_in & in, T_out & out)
 {
-	std::vector<T_out> & res;
+	in >> out;
+	return in;
+}
+
+template< typename T_out, typename T_in,
+	typename std::enable_if<!std::is_same<T_out,std::string>::value,char>::type = 0 >
+inline T_in & pop_from_istream(T_in & in, T_out & out)
+{
+	in >> out;
+	if(in.fail())
+	{
+		// If we fail (but NOT for eof), clear the error state, and try to pop to a junk value
+		in.clear();
+		std::string junk;
+		in >> junk;
+	}
+	return in;
+}
+
+template< typename T_out, typename T_in >
+inline std::vector<T_out> split_line(T_in && line_data, const T_out & default_value=T_out(), const size_t & min_length = 0)
+{
+	std::vector<T_out> res;
 	res.resize(min_length,default_value);
 
 	// Split the line on whitespace
@@ -143,18 +166,18 @@ std::vector<T_out> split_line(T_in && line_data, const T_out & default_value=T_o
 	// Load up the minimum portion first
 	for( auto & value : res)
 	{
-		line_data >> value;
+		pop_from_istream(line_data,value);
 	}
 
 	// Load up values beyond minimum
 	do
 	{
 		T_out value(default_value);
-		if((line_data >> value).eof()) break;
+		if(!pop_from_istream(line_data,value)) break;
 		res.push_back(value);
 	} while(true);
 
-	return;
+	return res;
 }
 
 } // namespace brgastro

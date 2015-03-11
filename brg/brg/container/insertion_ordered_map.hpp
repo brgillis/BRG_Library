@@ -37,11 +37,13 @@
 
 namespace brgastro {
 
-template<typename key_type, typename mapped_type>
+template<typename T_key_type, typename T_mapped_type>
 class insertion_ordered_map
 {
 public:
 	// Public typedefs
+	typedef T_key_type key_type;
+	typedef T_mapped_type mapped_type;
 	typedef std::pair<key_type,mapped_type> value_type;
 	typedef std::vector<value_type> base_type;
 	typedef std::unordered_map<key_type,size_t> map_type;
@@ -174,6 +176,12 @@ public:
 		swap(_val_vector_,other._val_vector_);
 		swap(_key_map_,other._key_map_);
 	}
+	void swap(insertion_ordered_map&& other)
+	{
+		using std::swap;
+		swap(_val_vector_,other._val_vector_);
+		swap(_key_map_,other._key_map_);
+	}
 
 	insertion_ordered_map(const insertion_ordered_map & other)
 	: _val_vector_(other._val_vector_),
@@ -282,9 +290,9 @@ public:
 	}
 
     template< typename new_mapped_type, typename other_map_type = insertion_ordered_map<key_type,mapped_type>,
-	typename std::enable_if<!std::is_convertible<new_mapped_type,value_type>::value,new_mapped_type>::type* = nullptr,
-	typename std::enable_if<std::is_convertible<new_mapped_type,mapped_type>::value,new_mapped_type>::type* = nullptr,
-	typename std::enable_if<std::is_convertible<key_type,typename other_map_type::key_type>::value,key_type>::type* = nullptr>
+	typename std::enable_if<!std::is_convertible<new_mapped_type,value_type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<new_mapped_type,mapped_type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<key_type,typename other_map_type::key_type>::value,char>::type = 0>
 	std::pair<typename base_type::iterator,bool> insert(new_mapped_type && val, const other_map_type & other_map = other_map_type())
 	{
 		_insert(std::make_pair(_new_key<key_type>(other_map),std::forward<new_mapped_type>(val)));

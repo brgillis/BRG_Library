@@ -58,7 +58,7 @@ struct error_of_weighted_mean_accumulator
   template<typename Args>
   result_type result(Args const &args) const
   {
-	  if(count(args[accumulator])<2) return std::numeric_limits<double>::max();
+	  if(count(args[accumulator])<2) return std::numeric_limits<result_type>::max();
 	  return std::sqrt((weighted_variance(args[accumulator])/effective_count(args[accumulator])) *
 			  count(args[accumulator])/(count(args[accumulator])-1));
   }

@@ -66,7 +66,7 @@
 #ifndef _BRG_PI_DEFINED_
 #define _BRG_PI_DEFINED_
 // Defining pi to keep it short, but as a variable so it won't act unusually
-const double pi = 3.14159265358979323846;
+constexpr double pi = 3.14159265358979323846;
 #endif
 
 #ifndef MIN_DIVISOR
@@ -106,14 +106,6 @@ const double pi = 3.14159265358979323846;
 #define BRG_ANGLE brgastro::unit_angle
 #define BRG_CHARGE brgastro::unit_charge
 #define BRG_VELOCITY brgastro::unit_velocity
-
-#define CONST_BRG_UNITS_REF const brgastro::unit_obj &
-#define CONST_BRG_DISTANCE_REF const brgastro::unit_distance &
-#define CONST_BRG_TIME_REF const brgastro::unit_time &
-#define CONST_BRG_MASS_REF const brgastro::unit_mass &
-#define CONST_BRG_ANGLE_REF const brgastro::unit_angle &
-#define CONST_BRG_CHARGE_REF const brgastro::unit_charge &
-#define CONST_BRG_VELOCITY_REF const brgastro::unit_velocity &
 #else
 #define BRG_UNITS double
 #define BRG_DISTANCE double
@@ -122,15 +114,15 @@ const double pi = 3.14159265358979323846;
 #define BRG_ANGLE double
 #define BRG_CHARGE double
 #define BRG_VELOCITY double
-
-#define CONST_BRG_UNITS_REF const double &
-#define CONST_BRG_DISTANCE_REF const double &
-#define CONST_BRG_TIME_REF const double &
-#define CONST_BRG_MASS_REF const double &
-#define CONST_BRG_ANGLE_REF const double &
-#define CONST_BRG_CHARGE_REF const double &
-#define CONST_BRG_VELOCITY_REF const double &
 #endif // #ifdef _BRG_USE_UNITS_
+
+#define CONST_BRG_UNITS_REF const BRG_UNITS &
+#define CONST_BRG_DISTANCE_REF const BRG_DISTANCE &
+#define CONST_BRG_TIME_REF const BRG_TIME &
+#define CONST_BRG_MASS_REF const BRG_MASS &
+#define CONST_BRG_ANGLE_REF const BRG_ANGLE &
+#define CONST_BRG_CHARGE_REF const BRG_CHARGE &
+#define CONST_BRG_VELOCITY_REF const BRG_VELOCITY &
 
 #ifdef _BRG_USE_CPP_11_STD_
 #define BRG_UNIQUE_PTR std::unique_ptr
@@ -149,19 +141,5 @@ const double pi = 3.14159265358979323846;
 #endif // #ifndef NULL
 
 #endif // Conditional defines
-
-// Error code values
-#if(1)
-#define _BRG_ERR_CODES_DEFINED_
-#define LOWER_LEVEL_ERROR       10
-#define UNSPECIFIED_ERROR        1
-#define INVALID_ARGUMENTS_ERROR  2
-#define OUT_OF_BOUNDS_ERROR      3
-#define NOT_SET_UP_ERROR         4
-#define MUST_OVERRIDE_ERROR      5
-#define MEMORY_ERROR             6
-#define FILE_ACCESS_ERROR        7
-#define INFINITE_LOOP_ERROR      8
-#endif // Error code values
 
 #endif // _BRG_GLOBAL_H_INCLUDED_

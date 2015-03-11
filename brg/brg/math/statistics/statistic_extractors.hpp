@@ -38,6 +38,7 @@
 
 #include "brg/math/statistics/effective_count.hpp"
 #include "brg/math/statistics/error_of_weighted_mean.hpp"
+#include "brg/math/statistics/mean_weight.hpp"
 #include "brg/math/statistics/sum_of_square_weights.hpp"
 
 namespace brgastro {
@@ -92,6 +93,23 @@ auto safe_extract_sum_of_weights(Ti && acc) -> decltype(boost::accumulators::sum
 	return result;
 }
 #endif // sum of weights
+
+// mean weight
+#if(1)
+template<typename Ti>
+auto extract_mean_weight(Ti && acc) -> decltype(boost::accumulators::mean_weight(std::forward<Ti>(acc)))
+{
+	return boost::accumulators::mean_weight(std::forward<Ti>(acc));
+}
+
+template<typename Ti>
+auto safe_extract_mean_weight(Ti && acc) -> decltype(boost::accumulators::mean_weight(std::forward<Ti>(acc)))
+{
+	auto result = boost::accumulators::mean_weight(std::forward<Ti>(acc));
+	if(isbad(result)) result = 0;
+	return result;
+}
+#endif // mean weight
 
 // sum of square weights
 #if(1)

@@ -275,7 +275,7 @@ public:
 #if(1)
 
 	/// Element access
-	const_reference operator[] (const size_type & n) const
+	value_type operator[] (const size_type & n) const
 	{
 		return _row_[n];
 	}
@@ -287,7 +287,7 @@ public:
 	}
 
 	/// Range-checked element access
-	const_reference operator()( const size_type & n ) const
+	value_type operator()( const size_type & n ) const
 	{
 		return _row_(n);
 	}
@@ -299,7 +299,7 @@ public:
 	}
 
 	/// Range-checked element access
-	const_reference at( const size_type & n ) const
+	value_type at( const size_type & n ) const
 	{
 		return _row_(n);
 	}
@@ -311,7 +311,7 @@ public:
 	}
 
 	/// Range-checked element access
-	const_reference col( const size_type & n ) const
+	value_type col( const size_type & n ) const
 	{
 		return _row_(n);
 	}
@@ -323,7 +323,7 @@ public:
 	}
 
 	/// Range-checked element access
-	const_reference at_label( const key_type & key ) const
+	value_type at_label( const key_type & key ) const
 	{
 		return _row_(_key_map_->left.at(key));
 	}
@@ -335,7 +335,7 @@ public:
 	}
 
 	/// Access first element
-	const_reference front() const
+	value_type front() const
 	{
 		return _row_(0);
 	}
@@ -347,7 +347,7 @@ public:
 	}
 
 	/// Access last element
-	const_reference back() const
+	value_type back() const
 	{
 		return _row_(_row_.size()-1);
 	}

@@ -129,16 +129,11 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 			|| ( num_in_params != in_params_step.size() )
 			|| ( num_passed_in_params != passed_in_params.size() ) )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Bad number of input params passed to integrate().\n";
-		return INVALID_ARGUMENTS_ERROR;
+		throw std::logic_error("Bad number of input params passed to integrate().");
 	}
 
-	if ( int errcode = make_array( num_steps, num_in_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
-	if ( int errcode = make_array( in_params, num_tot_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	make_array( num_steps, num_in_params );
+	make_array( in_params, num_tot_params );
 
 	// Delete out_params array if it exists
 	del_array( out_params );
@@ -529,14 +524,10 @@ inline std::vector< T > integrate_Romberg( const f * func,
 			|| ( num_in_params != max_in_params.size() )
 			|| ( num_passed_in_params != passed_in_params.size() ) )
 	{
-		if ( !silent )
-			std::cerr
-					<< "ERROR: Bad number of input params passed to integrate_Rhomberg().\n";
-		return INVALID_ARGUMENTS_ERROR;
+		throw std::logic_error("ERROR: Bad number of input params passed to integrate_Rhomberg().");
 	}
 
-	if ( int errcode = make_array( in_params, num_tot_params ) )
-		return errcode + LOWER_LEVEL_ERROR;
+	make_array( in_params, num_tot_params );
 
 	// Were any params passed in from a previous iteration?
 	if ( num_passed_in_params > 0 )
@@ -589,9 +580,8 @@ inline std::vector< T > integrate_Romberg( const f * func,
 			{
 				in_params[param_starting_index] = a0
 						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2, n );
-				if ( int errcode = ( *func )( in_params, temp_out_params,
-						silent ) )
-					return errcode + LOWER_LEVEL_ERROR;
+				( *func )( in_params, temp_out_params,
+						silent );
 				for ( size_t i = 0; i < num_out_params; i++ )
 					ftot[i] += temp_out_params[i];
 			}
@@ -642,17 +632,14 @@ inline std::vector< T > integrate_Romberg( const f * func,
 					(double)num_in_params / new_num_in_params );
 		else
 			new_precision = precision;
-		if ( int errcode = make_array( new_passed_in_params,
-				new_num_passed_params ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		make_array( new_passed_in_params,
+				new_num_passed_params );
 		for ( size_t i = 0; i < num_passed_in_params; i++ )
 			new_passed_in_params[i] = passed_in_params[i];
 
 		// Set up new in-parameter arrays, excluding this first parameter
-		if ( int errcode = make_array( new_min_in_params, num_in_params - 1 ) )
-			return errcode + LOWER_LEVEL_ERROR;
-		if ( int errcode = make_array( new_max_in_params, num_in_params - 1 ) )
-			return errcode + LOWER_LEVEL_ERROR;
+		make_array( new_min_in_params, num_in_params - 1 );
+		make_array( new_max_in_params, num_in_params - 1 );
 		for ( size_t i = 0; i < num_in_params - 1; i++ )
 		{
 			new_min_in_params[i] = min_in_params[i + 1];

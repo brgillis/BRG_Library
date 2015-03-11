@@ -1,9 +1,28 @@
-/*
- * limit_vector.hpp
- *
- *  Created on: Nov 3, 2014
- *      Author: user
- */
+/**********************************************************************\
+ @file limit_vector.hpp
+ ------------------
+
+ A vector representing a set of limits for bins, with corresponding
+ useful operations.
+
+ **********************************************************************
+
+ Copyright (C) 2014, 2015  Bryan R. Gillis
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+\**********************************************************************/
 
 #ifndef _BRG_VECTOR_LIMIT_VECTOR_HPP_
 #define _BRG_VECTOR_LIMIT_VECTOR_HPP_
@@ -46,7 +65,7 @@ public:
 	typedef typename std::vector<T,A>::size_type size_type;
 
 	// Enum to describe type of limit vector this is
-	enum class type {GENERAL, LINEAR, LOG, DISJOINT}; // TODO Add DISJOINT type and support for it
+	enum class type {GENERAL, LINEAR, LOG, DISJOINT};
 
 private:
 	/// The base vector storing the data
@@ -600,6 +619,8 @@ public:
 		_init();
 	}
 
+	/// Fix bad values - use before serializing so it can be saved and reloaded.
+	/// Any NaN of inf values will be valid extreme values of the variable type
 	void fixbad()
 	{
 		for(auto & val : _base_)
@@ -814,6 +835,59 @@ public:
 				result.push_back((_base_[i]+_base_[i+1])/2);
 			}
 			return result;
+		}
+	}
+
+	std::vector<T,A> lower_limits() const
+	{
+		if(_type_!=type::DISJOINT)
+		{
+			std::vector<T,A> res(_base_);
+			res.pop_back();
+			return res;
+		}
+		else
+		{
+			std::vector<T,A> res;
+			const auto nbins = num_bins();
+			res.reserve(nbins);
+
+			for(size_type i=0; i<nbins; ++i)
+			{
+				res.push_back(_base_[2*i]);
+			}
+
+			return res;
+		}
+	}
+
+	std::vector<T,A> upper_limits() const
+	{
+		if(_type_!=type::DISJOINT)
+		{
+			std::vector<T,A> res;
+			const auto nbins = num_bins();
+			res.reserve(nbins);
+
+			for(size_type i=0; i<nbins; ++i)
+			{
+				res.push_back(_base_[i+1]);
+			}
+
+			return res;
+		}
+		else
+		{
+			std::vector<T,A> res;
+			const auto nbins = num_bins();
+			res.reserve(nbins);
+
+			for(size_type i=0; i<nbins; ++i)
+			{
+				res.push_back(_base_[2*i+1]);
+			}
+
+			return res;
 		}
 	}
 

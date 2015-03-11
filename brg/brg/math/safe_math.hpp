@@ -152,12 +152,12 @@ T safe_d( T array )
 		#endif
 
 		#ifdef _BRG_USE_UNITS_
-		T min_d = a; // So it'll have the right units
+		decltype(a) min_d = a; // So it'll have the right units
 		#else
-		T min_d;
+		decltype(a) min_d;
 		#endif
 
-		if(std::is_integral<T>::value)
+		if(std::is_integral<decltype(a)>::value)
 			min_d = 1;
 		else
 			min_d = MIN_DIVISOR;
@@ -201,13 +201,9 @@ T safe_d( T array )
 		}
 		#endif
 
-		#ifdef _BRG_USE_UNITS_
-		T min_d = *p; // So it'll have the right units
-		#else
-		typename T::Scalar min_d;
-		#endif
+		typename std::decay<decltype(*p)>::type min_d;
 
-		if(std::is_integral<T>::value)
+		if(std::is_integral<decltype(min_d)>::value)
 			min_d = 1;
 		else
 			min_d = MIN_DIVISOR;

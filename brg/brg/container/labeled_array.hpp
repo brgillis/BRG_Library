@@ -71,7 +71,7 @@ public:
 #if(1)
 
 	typedef typename Eigen::Array<T_value_type,Eigen::Dynamic,Eigen::Dynamic,T_major_tag> data_table_type;
-	typedef typename Eigen::Array<const T_key_type,Eigen::Dynamic,Eigen::Dynamic,T_major_tag> const_data_table_type;
+	typedef typename Eigen::Array<const T_value_type,Eigen::Dynamic,Eigen::Dynamic,T_major_tag> const_data_table_type;
 
 	typedef T_value_type value_type;
 	typedef const value_type const_value_type;
@@ -512,6 +512,35 @@ private:
 
 #endif // Private clearing methods
 
+	// Private range-checking methods
+#if(1)
+
+	void _check_valid_col_index(const size_type & i) const
+	{
+		_add_buffer_to_data_table();
+
+		if((i<0) || (i>=num_cols()))
+			throw std::out_of_range(std::string("Invalid column index requested from labeled_array: ") + std::to_string(i));
+	}
+
+	void _check_valid_row_index(const size_type & i) const
+	{
+		_add_buffer_to_data_table();
+
+		if((i<0) || (i>=num_rows()))
+			throw std::out_of_range(std::string("Invalid row index requested from labeled_array: ") + std::to_string(i));
+	}
+
+	void _check_valid_key(const key_type & key) const
+	{
+		_add_buffer_to_data_table();
+
+		if(count(key)==0)
+			throw std::out_of_range(std::string("Invalid label requested from labeled_array: ") + boost::lexical_cast<std::string>(key));
+	}
+
+#endif
+
 	// Other private methods
 #if(1)
 
@@ -621,35 +650,39 @@ public:
 #if(1)
 	col_reference col(const size_type & index)
 	{
-		return col_reference(&(get_label_for_column(index)),base().col(index),num_cols());
+		_check_valid_col_index(index);
+
+		return col_reference(&(get_label_for_column(index)),_data_table_.col(index),num_cols());
 	}
 	const_col_reference col(const size_type & index) const
 	{
-		return const_col_reference(&(get_label_for_column(index)),base().col(index),num_cols());
+		_check_valid_col_index(index);
+
+		return const_col_reference(&(get_label_for_column(index)),const_cast<const data_table_type &>(_data_table_).col(index),num_cols());
 	}
 	col_type raw_col(const size_type & index)
 	{
-		return base().col(index);
+		_check_valid_col_index(index);
+
+		return _data_table_.col(index);
 	}
 	const_col_type raw_col(const size_type & index) const
 	{
-		return base().col(index);
+		_check_valid_col_index(index);
+
+		return const_cast<const data_table_type &>(_data_table_).col(index);
 	}
-	col_type at(const size_type & index)
+	col_reference at_label(const key_type & key)
 	{
-		return col(index);
+		_check_valid_label(key);
+
+		return col(_key_map_.left.at(key));
 	}
-	const_col_type at(const size_type & index) const
+	const_col_reference at_label(const key_type & key) const
 	{
-		return col(index);
-	}
-	col_type at_label(const key_type & key)
-	{
-		return base().col(_key_map_.left.at(key));
-	}
-	const_col_type at_label(const key_type & key) const
-	{
-		return base().col(_key_map_.left.at(key));
+		_check_valid_key(key);
+
+		return col(_key_map_.left.at(key));
 	}
 #endif
 
@@ -790,6 +823,17 @@ public:
     {
     	_add_row_buffer_to_data_table();
     	_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::forward<new_column_type>(new_column)),_key_map_.left);
+    }
+
+    template< typename new_column_type,
+	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_column_type>::value ||
+	std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<!brgastro::is_const_container<typename brgastro::ct<new_column_type>::type>::value,char>::type = 0>
+    void insert_col(new_column_type && new_column)
+    {
+    	// For pairs with a coercible second type
+    	_add_row_buffer_to_data_table();
+    	_column_buffer_.insert(std::make_pair(new_column.first,brgastro::coerce<column_buffer_column_type>(new_column.second)));
     }
 
 #endif // Single column insertion
@@ -964,11 +1008,15 @@ public:
 #if(1)
 	row_reference row(const size_type & index)
 	{
-		return row_reference(&_key_map_,base().row(index),num_rows());
+		_check_valid_row_index(index);
+
+		return row_reference(&_key_map_,_data_table_.row(index),num_rows());
 	}
 	const_row_reference row(const size_type & index) const
 	{
-		return const_row_reference(&_key_map_,base().row(index),num_rows());
+		_check_valid_row_index(index);
+
+		return const_row_reference(&_key_map_,const_cast<const data_table_type &>(_data_table_).row(index),num_rows());
 	}
 	row_reference operator[](const size_type & index)
 	{
@@ -980,19 +1028,27 @@ public:
 	}
 	row_reference operator()(const size_type & index)
 	{
+		_check_valid_row_index(index);
+
 		return row(index);
 	}
 	const_row_reference operator()(const size_type & index) const
 	{
+		_check_valid_row_index(index);
+
 		return row(index);
 	}
 	row_type raw_row(const size_type & index)
 	{
-		return base().row(index);
+		_check_valid_row_index(index);
+
+		return _data_table_.row(index);
 	}
 	const_row_type raw_row(const size_type & index) const
 	{
-		return base().row(index);
+		_check_valid_row_index(index);
+
+		return const_cast<const data_table_type &>(_data_table_).row(index);
 	}
 #endif
 
@@ -1039,11 +1095,11 @@ public:
 	{
 		return _data_table_;
 	}
-	const_data_table_type & raw_bypass_buffer() const
+	const_data_table_type & raw_bypass_buffer() const noexcept
 	{
 		return base_bypass_buffer();
 	}
-	data_table_type & raw_bypass_buffer()
+	data_table_type & raw_bypass_buffer() noexcept
 	{
 		return base_bypass_buffer();
 	}
@@ -1057,11 +1113,11 @@ public:
 	{
 		return base().data();
 	}
-	const_value_type * data_bypass_buffer() const
+	const_value_type * data_bypass_buffer() const noexcept
 	{
 		return _data_table_.data();
 	}
-	value_type * data_bypass_buffer()
+	value_type * data_bypass_buffer() noexcept
 	{
 		return _data_table_.data();
 	}
@@ -1234,6 +1290,10 @@ public:
 
 	// Size information
 #if(1)
+	size_type nrow() const
+	{
+		return num_rows();
+	}
 	size_type nrows() const
 	{
 		return num_rows();
@@ -1241,6 +1301,10 @@ public:
 	size_type num_rows() const
 	{
 		return base().rows();
+	}
+	size_type ncol() const
+	{
+		return num_cols();
 	}
 	size_type ncols() const
 	{
@@ -1264,17 +1328,27 @@ public:
 #if(1)
 	char count(const key_type & k) const
     {
+    	// Add in the buffer so the key map is fully set up
     	_add_buffer_to_data_table();
+
 		return _key_map_.left.count(k);
     }
 
     const key_type & get_label_for_column(const size_type & index) const
     {
+    	// Add in the buffer so the key map is fully set up
+		_add_buffer_to_data_table();
+
+    	_check_valid_col_index(index);
     	return _key_map_.right.at(index);
     }
 
     const size_type & get_index_for_label(const key_type & label) const
     {
+    	// Add in the buffer so the key map is fully set up
+		_add_buffer_to_data_table();
+
+    	_check_valid_key(label);
     	return _key_map_.left.at(label);
     }
 
@@ -1320,7 +1394,7 @@ public:
 
     	// Alter the value in the key map by erasing old entry and adding new
     	_key_map_.left.erase(it);
-    	_key_map_.left[std::forward<new_key_type>(new_key)] = pos;
+    	_key_map_.left.insert(std::make_pair(std::forward<new_key_type>(new_key),pos));
 
     	return 0;
     }
@@ -1367,6 +1441,16 @@ public:
     			if(isbad(factor)) factor = 1; // To catch user mistakes
     			col(d_it->second) *= factor;
     		}
+    	}
+    }
+
+    // Fix bad values
+    void fixbad()
+    {
+    	_add_buffer_to_data_table();
+    	for(value_type * it = _data_table_.data(); it != _data_table_.data() + _data_table_.size(); ++it)
+    	{
+    		brgastro::fixbad(*it);
     	}
     }
 

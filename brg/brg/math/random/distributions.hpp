@@ -39,12 +39,12 @@ inline Tx erf(Tx x)
 	using std::exp;
 
     // constants
-    const double a1 =  0.254829592;
-    const double a2 = -0.284496736;
-    const double a3 =  1.421413741;
-    const double a4 = -1.453152027;
-    const double a5 =  1.061405429;
-    const double p  =  0.3275911;
+    constexpr double a1 =  0.254829592;
+    constexpr double a2 = -0.284496736;
+    constexpr double a3 =  1.421413741;
+    constexpr double a4 = -1.453152027;
+    constexpr double a5 =  1.061405429;
+    constexpr double p  =  0.3275911;
 
     // Save the sign of x
     int sign = 1;
