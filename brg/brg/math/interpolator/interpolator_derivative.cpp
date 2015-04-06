@@ -25,6 +25,7 @@
 #include "brg/math/calculus/differentiate.hpp"
 #include "brg/math/calculus/integrate.hpp"
 #include "brg/math/random/distributions.hpp"
+#include "brg/utility.hpp"
 
 #include "interpolator_derivative.h"
 
@@ -176,7 +177,7 @@ void brgastro::interpolator_derivative::reset_interpolation_type()
 void brgastro::interpolator_derivative::clear_known_points()
 {
 	_known_interpolator_.clear();
-	if(_unknown_t_list_.size()==0)
+	if(_unknown_t_list_.empty())
 	{
 		_t_max_ = ( -std::numeric_limits<double>::max() );
 		_t_min_ = std::numeric_limits<double>::max();
@@ -187,7 +188,7 @@ void brgastro::interpolator_derivative::clear_known_points()
 void brgastro::interpolator_derivative::clear_unknown_points()
 {
 	_unknown_t_list_.clear();
-	if(_known_interpolator_.size()==0)
+	if(_known_interpolator_.empty())
 	{
 		_t_max_ = ( -std::numeric_limits<double>::max() );
 		_t_min_ = std::numeric_limits<double>::max();
@@ -233,14 +234,14 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 {
 	if ( !_interpolator_ptr_set_up_ )
 	{
-		if ( _known_interpolator_.size() >= 2 ) // We can use the known spline for everything
+		if ( ssize(_known_interpolator_) >= 2 ) // We can use the known spline for everything
 		{
 			return _known_interpolator_( xval );
-		} // if(known_spline.size() >= 2)
+		} // if(ssize(known_spline) >= 2)
 		else // We don't know enough to get any points
 		{
 			throw std::logic_error("ERROR: Spline_derivative called without spline assigned to it.\n");
-		} //  if(known_spline.size() >= 2) ... else
+		} //  if(ssize(known_spline) >= 2) ... else
 	} // if(!spline_set_up)
 
 	if ( _calculated_ )
@@ -253,7 +254,7 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 		_t_min_ = std::numeric_limits<double>::max();
 		_t_max_ = ( -std::numeric_limits<double>::max() );
 
-		for ( size_t i = 0; i < _known_interpolator_.sorted_data().size(); i++ )
+		for ( ssize_t i = 0; i < ssize(_known_interpolator_.sorted_data()); i++ )
 		{
 			if ( _known_interpolator_.sorted_data().at( i ).first < _t_min_ )
 				_t_min_ = _known_interpolator_.sorted_data().at( i ).first;
@@ -261,7 +262,7 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 				_t_max_ = _known_interpolator_.sorted_data().at( i ).first;
 		}
 
-		for ( size_t i = 0; i < _unknown_t_list_.size(); i++ )
+		for ( ssize_t i = 0, size=ssize(_unknown_t_list_); i < size; i++ )
 		{
 			if ( _unknown_t_list_[i] < _t_min_ )
 				_t_min_ = _unknown_t_list_[i];
@@ -272,7 +273,7 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 		// Set up the estimated spline, starting by making a copy of the known spline
 		_estimated_interpolator_ = _known_interpolator_;
 		_estimated_interpolator_.set_interpolation_type(_interpolation_type_);
-		size_t num_points_to_calculate = _unknown_t_list_.size();
+		ssize_t num_points_to_calculate = ssize(_unknown_t_list_);
 
 		auto interpolator_functor = [&] (const double & in_param, bool silent=false)
 		{
@@ -303,7 +304,7 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 
 		double delta_t = fabs( _t_max_ - _t_min_ ) * _sample_max_width_;
 
-		for ( size_t i = 0; i < num_points_to_calculate; i++ ) // For each point we need to calculate
+		for ( ssize_t i = 0; i < num_points_to_calculate; i++ ) // For each point we need to calculate
 		{
 			t = _unknown_t_list_[i];
 			BRG_UNITS min_in_params( t - delta_t );
@@ -324,13 +325,13 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 						&spline_derivative_functor_val,
 						&spline_derivative_weight_functor_val,
 						min_in_params, max_in_params, _sample_precision_,
-						false, silent );
+						false );
 
 				_estimated_interpolator_.add_point( t, out_params );
 
 			}
 
-		} // for(size_t i = 0; i < num_points_to_calculate; i++ )
+		} // for(ssize_t i = 0; i < num_points_to_calculate; i++ )
 	} // if(calculated) ... else
 
 	_calculated_ = true;

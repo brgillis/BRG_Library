@@ -62,7 +62,7 @@
 
 namespace brgastro {
 
-template<typename T_value_type=double, char T_major_tag = Eigen::RowMajor, typename T_key_type=std::string>
+template<typename T_value_type=double, char T_major_tag = Eigen::RowMajor, typename T_label_type=std::string>
 class labeled_array
 {
 public:
@@ -78,10 +78,10 @@ public:
 	typedef value_type & reference;
 	typedef const_value_type & const_reference;
 
-	typedef T_key_type key_type;
-	typedef const key_type const_key_type;
+	typedef T_label_type label_type;
+	typedef const label_type const_label_type;
 
-	typedef decltype(data_table_type().size()) size_type;
+	typedef decltype(ssize(data_table_type())) size_type;
 	typedef ptrdiff_t difference_type;
 
 	// Col typedefs
@@ -90,42 +90,42 @@ public:
 	typedef typename data_table_type::ColXpr col_type;
 	typedef typename data_table_type::ConstColXpr const_col_type;
 
-	typedef labeled_array_col_reference<labeled_array<value_type,T_major_tag,key_type>,col_type> col_reference;
-	typedef labeled_array_col_reference<const labeled_array<value_type,T_major_tag,key_type>,const_col_type> const_col_reference;
+	typedef labeled_array_col_reference<labeled_array<value_type,T_major_tag,label_type>,col_type> col_reference;
+	typedef labeled_array_col_reference<const labeled_array<value_type,T_major_tag,label_type>,const_col_type> const_col_reference;
 
-	typedef labeled_array_col_iterator<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_col_iterator<labeled_array<value_type,T_major_tag,label_type>,
 		col_type,col_reference> col_iterator;
-	typedef labeled_array_col_iterator<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_col_iterator<const labeled_array<value_type,T_major_tag,label_type>,
 		const_col_type,const_col_reference> const_col_iterator;
 	typedef typename boost::reverse_iterator<col_iterator> reverse_col_iterator;
 	typedef typename boost::reverse_iterator<const_col_iterator> const_reverse_col_iterator;
 
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
 		col_type,const_col_type,col_reference,const_col_reference,col_iterator,const_col_iterator> cols_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
 		const_col_type,const_col_type,const_col_reference,const_col_reference,const_col_iterator,const_col_iterator> const_cols_type;
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
 		col_type,const_col_type,col_reference,const_col_reference,col_iterator,const_col_iterator,reverse_tag> reverse_cols_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
 		const_col_type,const_col_type,const_col_reference,const_col_reference,const_col_iterator,const_col_iterator,reverse_tag> const_reverse_cols_type;
 
-	typedef labeled_array_raw_col_iterator<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_raw_col_iterator<labeled_array<value_type,T_major_tag,label_type>,
 		col_type,col_type> raw_col_iterator;
-	typedef labeled_array_raw_col_iterator<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_raw_col_iterator<const labeled_array<value_type,T_major_tag,label_type>,
 		const_col_type,const_col_type> const_raw_col_iterator;
 	typedef typename boost::reverse_iterator<raw_col_iterator> reverse_raw_col_iterator;
 	typedef typename boost::reverse_iterator<const_raw_col_iterator> const_reverse_raw_col_iterator;
 
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
 		col_type,const_col_type,col_reference,const_col_reference,
 		raw_col_iterator,const_raw_col_iterator> raw_cols_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
 		const_col_type,const_col_type,const_col_reference,const_col_reference,
 		const_raw_col_iterator,const_raw_col_iterator> const_raw_cols_type;
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
 		col_type,const_col_type,col_reference,const_col_reference,
 		raw_col_iterator,const_raw_col_iterator,reverse_tag> reverse_raw_cols_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
 		const_col_type,const_col_type,const_col_reference,const_col_reference,
 		const_raw_col_iterator,const_raw_col_iterator,reverse_tag> const_reverse_raw_cols_type;
 
@@ -137,42 +137,42 @@ public:
 	typedef typename data_table_type::RowXpr row_type;
 	typedef typename data_table_type::ConstRowXpr const_row_type;
 
-	typedef labeled_array_row_reference<labeled_array<value_type,T_major_tag,key_type>,row_type> row_reference;
-	typedef labeled_array_row_reference<const labeled_array<value_type,T_major_tag,key_type>,const_row_type> const_row_reference;
+	typedef labeled_array_row_reference<labeled_array<value_type,T_major_tag,label_type>,row_type> row_reference;
+	typedef labeled_array_row_reference<const labeled_array<value_type,T_major_tag,label_type>,const_row_type> const_row_reference;
 
-	typedef labeled_array_row_iterator<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_row_iterator<labeled_array<value_type,T_major_tag,label_type>,
 		row_type,row_reference> row_iterator;
-	typedef labeled_array_row_iterator<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_row_iterator<const labeled_array<value_type,T_major_tag,label_type>,
 		const_row_type,const_row_reference> const_row_iterator;
 	typedef typename boost::reverse_iterator<row_iterator> reverse_row_iterator;
 	typedef typename boost::reverse_iterator<const_row_iterator> const_reverse_row_iterator;
 
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
 		row_type,const_row_type,row_reference,const_row_reference,row_iterator,const_row_iterator> rows_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
 		const_row_type,const_row_type,const_row_reference,const_row_reference,const_row_iterator,const_row_iterator> const_rows_type;
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
 		row_type,const_row_type,row_reference,const_row_reference,row_iterator,const_row_iterator,reverse_tag> reverse_rows_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
 		const_row_type,const_row_type,const_row_reference,const_row_reference,const_row_iterator,const_row_iterator,reverse_tag> const_reverse_rows_type;
 
-	typedef labeled_array_raw_row_iterator<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_raw_row_iterator<labeled_array<value_type,T_major_tag,label_type>,
 		row_type,row_type> raw_row_iterator;
-	typedef labeled_array_raw_row_iterator<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_raw_row_iterator<const labeled_array<value_type,T_major_tag,label_type>,
 		const_row_type,const_row_type> const_raw_row_iterator;
 	typedef typename boost::reverse_iterator<raw_row_iterator> reverse_raw_row_iterator;
 	typedef typename boost::reverse_iterator<const_raw_row_iterator> const_reverse_raw_row_iterator;
 
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
 		row_type,const_row_type,row_reference,const_row_reference,
 		raw_row_iterator,const_raw_row_iterator> raw_rows_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
 		const_row_type,const_row_type,const_row_reference,const_row_reference,
 		const_raw_row_iterator,const_raw_row_iterator> const_raw_rows_type;
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
 		row_type,const_row_type,row_reference,const_row_reference,
 		raw_row_iterator,const_raw_row_iterator,reverse_tag> reverse_raw_rows_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,key_type>,
+	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
 		const_row_type,const_row_type,const_row_reference,const_row_reference,
 		const_raw_row_iterator,const_raw_row_iterator,reverse_tag> const_reverse_raw_rows_type;
 
@@ -207,10 +207,10 @@ private:
 
 	// Private typedefs
 #if(1)
-	typedef typename boost::bimap<key_type,size_type> map_type;
+	typedef typename boost::bimap<label_type,size_type> map_type;
 
 	typedef typename Eigen::Array<value_type,Eigen::Dynamic,1> column_buffer_column_type;
-	typedef typename brgastro::insertion_ordered_map<key_type,column_buffer_column_type> column_buffer_type;
+	typedef typename brgastro::insertion_ordered_map<label_type,column_buffer_column_type> column_buffer_type;
 	typedef typename column_buffer_type::value_type column_buffer_labeled_column_type;
 
 	typedef typename std::vector<value_type> row_buffer_row_type;
@@ -221,7 +221,7 @@ private:
 	// Private members
 #if(1)
 	mutable data_table_type _data_table_;
-	mutable map_type _key_map_;
+	mutable map_type _label_map_;
 	mutable column_buffer_type _column_buffer_;
 	mutable row_buffer_type _row_buffer_;
 #endif // Private members
@@ -270,16 +270,16 @@ private:
 		if(_column_buffer_.empty()) return;
 
 		// Get the number of columns
-		const size_type num_cols_to_add = _column_buffer_.size();
+		const size_type num_cols_to_add = ssize(_column_buffer_);
 		const size_type old_num_cols = _data_table_.cols();
 		const size_type new_num_cols = _data_table_.cols() + num_cols_to_add;
 		size_type num_rows;
 
 		// If the data table is initially empty, we'll get the number of rows from the first
 		// buffered column
-		if(_data_table_.size()==0)
+		if(ssize(_data_table_)==0)
 		{
-			num_rows = _column_buffer_.begin()->second.size();
+			num_rows = ssize(_column_buffer_.begin()->second);
 		}
 		else // Otherwise use the current number of rows
 		{
@@ -291,7 +291,7 @@ private:
 		for( const auto & column : _column_buffer_)
 		{
 			// Check that the column is the proper size
-			if(column.second.size()!=num_rows)
+			if(ssize(column.second)!=num_rows)
 			{
 				throw std::logic_error("All columns added to a labeled_array must have the same size.\n");
 			}
@@ -300,21 +300,21 @@ private:
 		// Resize the data table, conserving existing elements
 		_data_table_.conservativeResize(num_rows, new_num_cols);
 
-		// Go through the buffer and add each column to the data table. If the key already exists,
+		// Go through the buffer and add each column to the data table. If the label already exists,
 		// replace that column instead
 		size_type current_column = old_num_cols;
-		size_type num_preexisting_cols = 0; // number of keys which we find already exist
+		size_type num_preexisting_cols = 0; // number of labels which we find already exist
 		for( const auto & column : _column_buffer_)
 		{
-			const_key_type & key = column.first;
+			const_label_type & label = column.first;
 			auto & column_data = column.second;
 
-			// Check if the key already exists
-			if(_key_map_.left.count(key)==1)
+			// Check if the label already exists
+			if(_label_map_.left.count(label)==1)
 			{
 				// Instead of adding a new column, we'll replace the existing one
-				const size_type & column_index = _key_map_.left.at(key);
-				for(size_type i=0; i<column_data.size(); ++i)
+				const size_type & column_index = _label_map_.left.at(label);
+				for(size_type i=0; i<ssize(column_data); ++i)
 				{
 					_data_table_(i,column_index) = column_data[i];
 				}
@@ -322,9 +322,9 @@ private:
 			}
 			else // New column to add
 			{
-				// Add this to the key map
-				_key_map_.left.insert(std::make_pair(key,current_column));
-				for(size_type i=0; i<column_data.size(); ++i)
+				// Add this to the label map
+				_label_map_.left.insert(std::make_pair(label,current_column));
+				for(size_type i=0; i<ssize(column_data); ++i)
 				{
 					_data_table_(i,current_column) = column_data[i];
 				}
@@ -351,16 +351,16 @@ private:
 		if(_row_buffer_.empty()) return;
 
 		// Get the number of rows
-		const size_type num_rows_to_add = _row_buffer_.size();
+		const size_type num_rows_to_add = ssize(_row_buffer_);
 		const size_type old_num_rows = _data_table_.rows();
 		const size_type new_num_rows = _data_table_.rows() + num_rows_to_add;
 		size_type num_cols;
 
 		// If the data table is initially empty, we'll get the number of columns from the first
 		// buffered row
-		if(_data_table_.size()==0)
+		if(ssize(_data_table_)==0)
 		{
-			num_cols = _row_buffer_.front().size();
+			num_cols = ssize(_row_buffer_.front());
 		}
 		else // Otherwise use the current number of columns
 		{
@@ -372,19 +372,19 @@ private:
 		for( const auto & row : _row_buffer_)
 		{
 			// Check that the row is the proper size
-			if(static_cast<size_type>(row.size())!=num_cols)
+			if(static_cast<size_type>(ssize(row))!=num_cols)
 			{
 				throw std::logic_error("All rows added to a labeled_array must have the same size.\n");
 			}
 		}
 
-		// If this is the first row being added, check if we need to create a dummy key map
-		if(_data_table_.size()==0)
+		// If this is the first row being added, check if we need to create a dummy label map
+		if(ssize(_data_table_)==0)
 		{
-			if(static_cast<size_type>(_key_map_.left.size())!=num_cols)
+			if(static_cast<size_type>(ssize(_label_map_.left))!=num_cols)
 			{
-				_generate_dummy_key_map(num_cols);
-				assert(static_cast<size_type>(_key_map_.left.size())==num_cols);
+				_generate_dummy_label_map(num_cols);
+				assert(static_cast<size_type>(ssize(_label_map_.left))==num_cols);
 			}
 		}
 
@@ -409,74 +409,74 @@ private:
 
 #endif // Private methods to dump the buffer to the data table
 
-	// Private key map methods
+	// Private label map methods
 #if(1)
 
-	void _generate_dummy_key_map(const size_type & num_cols) const
+	void _generate_dummy_label_map(const size_type & num_cols) const
 	{
-		_clear_key_map();
+		_clear_label_map();
 		for(size_type i=0; i<num_cols; ++i)
 		{
 			std::stringstream ss("col_");
 			ss << i;
-			_key_map_.left.insert(typename map_type::left_value_type(ss.str(),i));
+			_label_map_.left.insert(typename map_type::left_value_type(ss.str(),i));
 		}
 	}
 
 	template< typename other_map_type,
-	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,key_type>::value,char>::type = 0>
-	void _set_key_map(const other_map_type & new_keys)
+	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,label_type>::value,char>::type = 0>
+	void _set_label_map(const other_map_type & new_labels)
 	{
-		_clear_key_map();
+		_clear_label_map();
 		size_type i = 0;
-		for(const auto & key : new_keys)
+		for(const auto & label : new_labels)
 		{
-			_key_map_.left.insert(typename map_type::left_value_type(key,i++));
+			_label_map_.left.insert(typename map_type::left_value_type(label,i++));
 		}
 	}
 
 	template< typename other_map_type,
-	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,key_type>::value,char>::type = 0>
-	void _set_key_map(other_map_type && new_keys)
+	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,label_type>::value,char>::type = 0>
+	void _set_label_map(other_map_type && new_labels)
 	{
-		_clear_key_map();
+		_clear_label_map();
 		typename brgastro::ct<typename map_type::left_value_type::second_type>::type i = 0;
-		for(auto & key : new_keys)
+		for(auto & label : new_labels)
 		{
-			_key_map_.left.insert(typename map_type::left_value_type(std::move(key),i++));
+			_label_map_.left.insert(typename map_type::left_value_type(std::move(label),i++));
 		}
 	}
 
 	template< typename other_map_type,
 	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,typename map_type::left_value_type>::value,char>::type = 0>
-	void _set_key_map(const other_map_type & other_map)
+	void _set_label_map(const other_map_type & other_map)
 	{
-		_clear_key_map();
+		_clear_label_map();
 		for(const auto & value : other_map)
 		{
-			_key_map_.left.insert(typename map_type::left_value_type(value));
+			_label_map_.left.insert(typename map_type::left_value_type(value));
 		}
 	}
 
 	template< typename other_map_type,
 	typename std::enable_if<std::is_convertible<typename other_map_type::value_type,typename map_type::left_value_type>::value,char>::type = 0>
-	void _set_key_map(other_map_type && other_map)
+	void _set_label_map(other_map_type && other_map)
 	{
-		_clear_key_map();
+		_clear_label_map();
 		for(auto & value : other_map)
 		{
-			_key_map_.left.insert(typename map_type::left_value_type(std::move(value)));
+			_label_map_.left.insert(typename map_type::left_value_type(std::move(value)));
 		}
 	}
 
 	template< typename other_map_type,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<other_map_type>::type,map_type>::value,char>::type = 0>
-	void _set_key_map(other_map_type && other_map)
+	void _set_label_map(other_map_type && other_map)
 	{
-		_key_map_ = std::forward<other_map_type>(other_map);
+		_label_map_ = std::forward<other_map_type>(other_map);
 	}
 
-#endif // Private key map methods
+#endif // Private label map methods
 
 	// Private clearing methods
 #if(1)
@@ -505,9 +505,9 @@ private:
 		_data_table_.resize(0,0);
 	}
 
-	void _clear_key_map() const
+	void _clear_label_map() const
 	{
-		_key_map_.left.clear();
+		_label_map_.left.clear();
 	}
 
 #endif // Private clearing methods
@@ -531,12 +531,12 @@ private:
 			throw std::out_of_range(std::string("Invalid row index requested from labeled_array: ") + std::to_string(i));
 	}
 
-	void _check_valid_key(const key_type & key) const
+	void _check_valid_label(const label_type & label) const
 	{
 		_add_buffer_to_data_table();
 
-		if(count(key)==0)
-			throw std::out_of_range(std::string("Invalid label requested from labeled_array: ") + boost::lexical_cast<std::string>(key));
+		if(count(label)==0)
+			throw std::out_of_range(std::string("Invalid label requested from labeled_array: ") + boost::lexical_cast<std::string>(label));
 	}
 
 #endif
@@ -548,7 +548,7 @@ private:
     void _load(std::istream & fi)
     {
     	set_labels(load_header(fi));
-    	set_rows(load_table<T_value_type>(fi,Eigen::RowMajor,T_value_type(),_key_map_.size()));
+    	set_rows(load_table<T_value_type>(fi,Eigen::RowMajor,T_value_type(),ssize(_label_map_)));
     }
 
 #endif // Other private methods
@@ -582,18 +582,18 @@ public:
 	{
 	}
 
-	/// Copy/move from vector of vectors and copy key map
+	/// Copy/move from vector of vectors and copy label map
 	template< typename other_table_map_type,
-	typename init_key_map_type,
+	typename init_label_map_type,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<other_table_map_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename brgastro::ct<init_key_map_type>::type::value_type,key_type>::value ||
-	                std::is_convertible<typename brgastro::ct<init_key_map_type>::type::value_type,typename map_type::left_value_type>::value ||
-					std::is_convertible<typename brgastro::ct<init_key_map_type>::type,map_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<init_label_map_type>::type::value_type,label_type>::value ||
+	                std::is_convertible<typename brgastro::ct<init_label_map_type>::type::value_type,typename map_type::left_value_type>::value ||
+					std::is_convertible<typename brgastro::ct<init_label_map_type>::type,map_type>::value,char>::type = 0>
 	explicit labeled_array(other_table_map_type && init_row_buffer,
-						   init_key_map_type && init_key_map)
+						   init_label_map_type && init_label_map)
 	: _row_buffer_(std::forward<other_table_map_type>(init_row_buffer))
 	{
-		set_labels(std::forward<init_key_map_type>(init_key_map));
+		set_labels(std::forward<init_label_map_type>(init_label_map));
 	}
 
 	/// Copy/move from array
@@ -602,22 +602,22 @@ public:
 	explicit labeled_array(other_data_table_type && other_data_table)
 	: _data_table_(std::forward<other_data_table_type>(other_data_table))
 	{
-		_generate_dummy_key_map(_data_table_.cols());
+		_generate_dummy_label_map(_data_table_.cols());
 	}
 
-	/// Copy/move from array and copy key map
+	/// Copy/move from array and copy label map
 	template< typename other_data_table_type,
-	typename init_key_map_type,
+	typename init_label_map_type,
 	typename std::enable_if<brgastro::is_eigen_container<typename brgastro::ct<other_data_table_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename brgastro::ct<init_key_map_type>::type::value_type,key_type>::value ||
-	                std::is_convertible<typename brgastro::ct<init_key_map_type>::type::value_type,typename map_type::left_value_type>::value ||
-					std::is_convertible<typename brgastro::ct<init_key_map_type>::type,map_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename brgastro::ct<init_label_map_type>::type::value_type,label_type>::value ||
+	                std::is_convertible<typename brgastro::ct<init_label_map_type>::type::value_type,typename map_type::left_value_type>::value ||
+					std::is_convertible<typename brgastro::ct<init_label_map_type>::type,map_type>::value,char>::type = 0>
 	explicit labeled_array(other_data_table_type && other_data_table,
-						   init_key_map_type && init_key_map)
+						   init_label_map_type && init_label_map)
 	: _data_table_(std::forward<other_data_table_type>(other_data_table))
 	{
-		if(set_labels(std::forward<init_key_map_type>(init_key_map)))
-			_generate_dummy_key_map(_data_table_.cols());
+		if(set_labels(std::forward<init_label_map_type>(init_label_map)))
+			_generate_dummy_label_map(_data_table_.cols());
 	}
 
 	/// Load from file stream
@@ -672,17 +672,17 @@ public:
 
 		return const_cast<const data_table_type &>(_data_table_).col(index);
 	}
-	col_reference at_label(const key_type & key)
+	col_reference at_label(const label_type & label)
 	{
-		_check_valid_label(key);
+		_check_valid_label(label);
 
-		return col(_key_map_.left.at(key));
+		return col(_label_map_.left.at(label));
 	}
-	const_col_reference at_label(const key_type & key) const
+	const_col_reference at_label(const label_type & label) const
 	{
-		_check_valid_key(key);
+		_check_valid_label(label);
 
-		return col(_key_map_.left.at(key));
+		return col(_label_map_.left.at(label));
 	}
 #endif
 
@@ -822,7 +822,7 @@ public:
     void insert_col(new_column_type && new_column)
     {
     	_add_row_buffer_to_data_table();
-    	_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::forward<new_column_type>(new_column)),_key_map_.left);
+    	_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::forward<new_column_type>(new_column)),_label_map_.left);
     }
 
     template< typename new_column_type,
@@ -880,7 +880,7 @@ public:
 
     	for(const auto & new_column : new_columns)
     	{
-    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(new_column),_key_map_.left);
+    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(new_column),_label_map_.left);
     	}
     }
 
@@ -895,7 +895,7 @@ public:
 
     	for(auto && new_column : new_columns)
     	{
-    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::move(new_column)),_key_map_.left);
+    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::move(new_column)),_label_map_.left);
     	}
     }
 
@@ -990,17 +990,17 @@ public:
 
     // Column access/insertion
 #if(1)
-    col_type operator[](const key_type & key)
+    col_type operator[](const label_type & label)
 	{
-    	// Check if the key is new
-    	if(count(key)==0)
+    	// Check if the label is new
+    	if(count(label)==0)
     	{
-    		// The key is new, so insert a column for it
-    		insert_col(std::make_pair(key,column_buffer_column_type(_data_table_.rows())));
+    		// The label is new, so insert a column for it
+    		insert_col(std::make_pair(label,column_buffer_column_type(_data_table_.rows())));
     		_add_column_buffer_to_data_table();
     	}
-    	// Return a reference to this key's column
-		return base().col(_key_map_.left.at(key));
+    	// Return a reference to this label's column
+		return base().col(_label_map_.left.at(label));
 	}
 #endif
 
@@ -1010,13 +1010,13 @@ public:
 	{
 		_check_valid_row_index(index);
 
-		return row_reference(&_key_map_,_data_table_.row(index),num_rows());
+		return row_reference(&_label_map_,_data_table_.row(index),num_rows());
 	}
 	const_row_reference row(const size_type & index) const
 	{
 		_check_valid_row_index(index);
 
-		return const_row_reference(&_key_map_,const_cast<const data_table_type &>(_data_table_).row(index),num_rows());
+		return const_row_reference(&_label_map_,const_cast<const data_table_type &>(_data_table_).row(index),num_rows());
 	}
 	row_reference operator[](const size_type & index)
 	{
@@ -1130,7 +1130,7 @@ public:
 	void clear()
 	{
 		_clear_buffer();
-		_clear_key_map();
+		_clear_label_map();
 		_clear_data_table();
 	}
 
@@ -1265,7 +1265,7 @@ public:
 
     	for(const auto & new_column : new_columns)
     	{
-    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(new_column),_key_map_.left);
+    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(new_column),_label_map_.left);
     	}
     }
 
@@ -1282,7 +1282,7 @@ public:
 
     	for(auto && new_column : new_columns)
     	{
-    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::move(new_column)),_key_map_.left);
+    		_column_buffer_.insert(brgastro::coerce<column_buffer_column_type>(std::move(new_column)),_label_map_.left);
     	}
     }
 
@@ -1316,7 +1316,7 @@ public:
 	}
 	size_type size() const
 	{
-		return base().size();
+		return ssize(base());
 	}
 	bool empty() const
 	{
@@ -1326,36 +1326,36 @@ public:
 
 	// Label information
 #if(1)
-	char count(const key_type & k) const
+	char count(const label_type & k) const
     {
-    	// Add in the buffer so the key map is fully set up
+    	// Add in the buffer so the label map is fully set up
     	_add_buffer_to_data_table();
 
-		return _key_map_.left.count(k);
+		return _label_map_.left.count(k);
     }
 
-    const key_type & get_label_for_column(const size_type & index) const
+    const label_type & get_label_for_column(const size_type & index) const
     {
-    	// Add in the buffer so the key map is fully set up
+    	// Add in the buffer so the label map is fully set up
 		_add_buffer_to_data_table();
 
     	_check_valid_col_index(index);
-    	return _key_map_.right.at(index);
+    	return _label_map_.right.at(index);
     }
 
-    const size_type & get_index_for_label(const key_type & label) const
+    const size_type & get_index_for_label(const label_type & label) const
     {
-    	// Add in the buffer so the key map is fully set up
+    	// Add in the buffer so the label map is fully set up
 		_add_buffer_to_data_table();
 
-    	_check_valid_key(label);
-    	return _key_map_.left.at(label);
+    	_check_valid_label(label);
+    	return _label_map_.left.at(label);
     }
 
-    template<typename T_res_key_type=key_type>
-    std::vector<T_res_key_type> get_labels() const
+    template<typename T_res_label_type=label_type>
+    std::vector<T_res_label_type> get_labels() const
 	{
-    	std::vector<T_res_key_type> res;
+    	std::vector<T_res_label_type> res;
 
     	for( size_type i=0; i<num_cols(); ++i )
     	{
@@ -1372,52 +1372,52 @@ public:
     /**
      * Changes a label to another, without altering its mapped data or position.
      *
-     * @param init_key
-     * @param new_key
+     * @param init_label
+     * @param new_label
      * @return char - 0 if successful
-     *                1 if init_key doesn't exist in map
-     *                2 if new_key already exists in map
+     *                1 if init_label doesn't exist in map
+     *                2 if new_label already exists in map
      */
-    template< typename new_key_type >
-    char change_label(const key_type & init_key, new_key_type && new_key)
+    template< typename new_label_type >
+    char change_label(const label_type & init_label, new_label_type && new_label)
     {
-    	// Add in the buffer so the key map is fully set up
+    	// Add in the buffer so the label map is fully set up
 		_add_buffer_to_data_table();
 
     	// Get the position of the value we're going to be altering
-    	auto it = _key_map_.left.find(init_key);
+    	auto it = _label_map_.left.find(init_label);
 
-    	if(it==_key_map_.left.end()) return 1;
-    	if(_key_map_.left.count(new_key)>0) return 2;
+    	if(it==_label_map_.left.end()) return 1;
+    	if(_label_map_.left.count(new_label)>0) return 2;
 
-    	size_t pos = it->second;
+    	auto pos = it->second;
 
-    	// Alter the value in the key map by erasing old entry and adding new
-    	_key_map_.left.erase(it);
-    	_key_map_.left.insert(std::make_pair(std::forward<new_key_type>(new_key),pos));
+    	// Alter the value in the label map by erasing old entry and adding new
+    	_label_map_.left.erase(it);
+    	_label_map_.left.insert(std::make_pair(std::forward<new_label_type>(new_label),pos));
 
     	return 0;
     }
 
 	template< typename label_container_type,
-	typename std::enable_if< std::is_convertible<typename brgastro::ct<label_container_type>::type::value_type,key_type>::value ||
+	typename std::enable_if< std::is_convertible<typename brgastro::ct<label_container_type>::type::value_type,label_type>::value ||
 	                std::is_convertible<typename brgastro::ct<label_container_type>::type::value_type,typename map_type::left_value_type>::value ||
 					std::is_convertible<typename brgastro::ct<label_container_type>::type,map_type>::value,char>::type = 0>
     char set_labels(label_container_type && new_labels)
     {
-    	// Add in the buffer so the previous key map is fully set up
+    	// Add in the buffer so the previous label map is fully set up
 		_add_buffer_to_data_table();
 
-		// Allow this if the new keys vector is equal in size to the number of
+		// Allow this if the new labels vector is equal in size to the number of
 		// columns or if the table is empty
-		if((static_cast<size_type>(new_labels.size())==ncols()) || (ncols()==0))
+		if((static_cast<size_type>(ssize(new_labels))==ncols()) || (ncols()==0))
 		{
-			_set_key_map(std::forward<label_container_type>(new_labels));
+			_set_label_map(std::forward<label_container_type>(new_labels));
 			return 0;
 		}
 
-		if(static_cast<size_type>(new_labels.size())>ncols()) return 1;
-    	return 2; // Implicitly new_labels.size()<ncols()
+		if(static_cast<size_type>(ssize(new_labels))>ncols()) return 1;
+    	return 2; // Implicitly ssize(new_labels)<ncols()
     }
 
 #endif
@@ -1432,14 +1432,35 @@ public:
     	_add_buffer_to_data_table();
     	for(auto u_it=u_map.begin(); u_it!=u_map.end(); ++u_it)
     	{
-    		auto d_it = _key_map_.left.find(u_it->first);
+			double factor = 1./(u_it->second);
+			if(isbad(factor)) factor = 1; // To catch user mistakes
+
+    		auto d_it = _label_map_.left.find(u_it->first);
     		// Check if this value is actually in the data table
-    		if(d_it!=_key_map_.left.end())
+    		if(d_it!=_label_map_.left.end())
     		{
     			// It's in the table, so multiply its associated vector by the inverse unit conversion
-    			double factor = 1./(u_it->second);
-    			if(isbad(factor)) factor = 1; // To catch user mistakes
-    			col(d_it->second) *= factor;
+    			raw_col(d_it->second) *= factor;
+    		}
+    	}
+    }
+
+    // Apply unit conversions
+    template< typename unitconvs >
+    void apply_inverse_unitconvs( const unitconvs & u_map )
+    {
+    	_add_buffer_to_data_table();
+    	for(auto u_it=u_map.begin(); u_it!=u_map.end(); ++u_it)
+    	{
+			double factor = u_it->second;
+			if(isbad(factor)) factor = 1; // To catch user mistakes
+
+    		auto d_it = _label_map_.left.find(u_it->first);
+    		// Check if this value is actually in the data table
+    		if(d_it!=_label_map_.left.end())
+    		{
+    			// It's in the table, so multiply its associated vector by the unit conversion
+    			raw_col(d_it->second) *= factor;
     		}
     	}
     }
@@ -1448,7 +1469,7 @@ public:
     void fixbad()
     {
     	_add_buffer_to_data_table();
-    	for(value_type * it = _data_table_.data(); it != _data_table_.data() + _data_table_.size(); ++it)
+    	for(value_type * it = _data_table_.data(); it != _data_table_.data() + ssize(_data_table_); ++it)
     	{
     		brgastro::fixbad(*it);
     	}

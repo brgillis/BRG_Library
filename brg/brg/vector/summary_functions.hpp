@@ -27,28 +27,68 @@
 
 #include "brg/global.h"
 
+#include "brg/container/is_container.hpp"
+#include "brg/container/is_eigen_container.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/elementwise_functions.hpp"
 
 namespace brgastro {
 
-// Sum
-#if (1)
+// Recursive size
+#if(1)
 
-template< typename T >
-const T sum(const std::vector<T> &v)
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
+typename T::Index rsize(const T & v)
 {
-	T result = 0;
-	for(unsigned int i = 0; i < v.size(); i++)
+	return v.size();
+}
+
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
+ssize_t rsize(const T & v)
+{
+	return 1;
+}
+
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+ssize_t rsize(const T &v)
+{
+	ssize_t result = 0;
+	for(const auto & val : v)
 	{
-		result += v[i];
+		result += rsize(val);
 	}
 	return result;
 }
+#endif
 
-template< typename T >
-const T sum(const T v)
+// Sum
+#if (1)
+
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
+T sum(const T & v)
 {
 	return v;
+}
+
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
+typename T::Scalar sum(const T & v)
+{
+	return v.sum();
+}
+
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+typename T::value_type sum(const T & v)
+{
+	typename T::value_type result = 0;
+	for(const auto & val : v)
+	{
+		result += sum(val);
+	}
+	return result;
 }
 
 #endif // Sum
@@ -56,10 +96,24 @@ const T sum(const T v)
 // Product
 #if (1)
 
-template< typename T >
-const T product(const std::vector<T> &v)
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
+typename T::Scalar product(const T & v)
 {
-	T result = 1;
+	return v.prod();
+}
+
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
+T product(const T v)
+{
+	return v;
+}
+
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+typename T::value_type product(const T &v)
+{
+	typename T::value_type result = 1;
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
 		result *= v[i];
@@ -67,26 +121,28 @@ const T product(const std::vector<T> &v)
 	return result;
 }
 
-template< typename T >
-const T product(const T v)
-{
-	return v;
-}
-
 #endif // Product
 
 // Mean
 #if (1)
 
-template< typename T >
-const T mean(const std::vector<T> &v)
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+typename T::value_type mean(const std::vector<T> &v)
 {
-	if(v.size()==0) return 0;
-	return sum(v)/v.size();
+	if(rsize(v)==0) return 0;
+	return sum(v)/rsize(v);
 }
 
-template< typename T >
-const T mean(const T v)
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
+typename T::Scalar mean(const T & v)
+{
+	return v.mean();
+}
+
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
+T mean(const T & v)
 {
 	return v;
 }
@@ -96,28 +152,46 @@ const T mean(const T v)
 // Standard Deviation
 #if (1)
 
-template< typename T >
-const T std(const std::vector<T> &v)
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+typename T::value_type std(const T & v)
 {
-	if(v.size()<=1) return 0;
+	if(rsize(v)<=1) return 0;
 
-	return std::sqrt( subtract(sum( square(v) )/v.size(), square(sum(v)/v.size()) ) );
+	return std::sqrt( subtract(sum( square(v) )/rsize(v), square(sum(v)/rsize(v)) ) );
 }
 
-template< typename T >
-const T stddev(const std::vector<T> &v)
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+typename T::value_type stddev(const T & v)
 {
 	return std(v);
 }
 
-template< typename T >
-const T std(const T v)
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
+typename T::Scalar std(const T & v)
+{
+	if(v.size()<=1) return 0;
+
+	return std::sqrt( sum(v.square())/v.size() - square(v.sum()/v.size()) );
+}
+
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
+typename T::Scalar stddev(const T & v)
+{
+	return std(v);
+}
+
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
+T std(const T & v)
 {
 	return 0;
 }
 
-template< typename T >
-const T stddev(const T v)
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
+T stddev(const T & v)
 {
 	return 0;
 }
@@ -127,16 +201,27 @@ const T stddev(const T v)
 // Sample standard error
 #if(1)
 
-template< typename T >
-const T stderr(const std::vector<T> &v)
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+typename T::value_type stderr(const T &v)
 {
-	if(v.size()<=2) return std::numeric_limits<T>::max();
+	auto size = rsize(v);
+	if(size<=1) return std::numeric_limits<T>::max();
+
+	return std(v)/std::sqrt(size-1);
+}
+
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
+typename T::Scalar stderr(const T & v)
+{
+	if(v.size()<=1) return std::numeric_limits<T>::max();
 
 	return std(v)/std::sqrt(v.size()-1);
 }
 
-template< typename T >
-const T stderr(const T &v)
+template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
+T stderr(const T &v)
 {
 	return std::numeric_limits<T>::max();
 }
@@ -175,14 +260,16 @@ bool is_monotonically_increasing(const InputIterator &first, const InputIterator
 	return true;
 }
 
-template<typename T>
-bool is_monotonically_increasing(const std::vector<T> &v)
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value ||
+	brgastro::is_eigen_container<T>::value, char>::type = 0 >
+bool is_monotonically_increasing(const T &v)
 {
-	return is_monotonically_increasing(v.begin(),v.end());
+	return is_monotonically_increasing(begin(v),end(v));
 }
 
-template<typename T>
-bool is_monotonically_increasing(T v)
+template<typename T, typename std::enable_if<!(brgastro::is_const_container<T>::value ||
+brgastro::is_eigen_container<T>::value), char>::type = 0 >
+bool is_monotonically_increasing(const T & v)
 {
 	return false;
 }
@@ -222,14 +309,16 @@ bool is_monotonically_decreasing(const InputIterator &first, const InputIterator
 	return true;
 }
 
-template<typename T>
-bool is_monotonically_decreasing(const std::vector<T> &v)
+template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value ||
+	brgastro::is_eigen_container<T>::value, char>::type = 0 >
+bool is_monotonically_decreasing(const T &v)
 {
-	return is_monotonically_decreasing(v.begin(),v.end());
+	return is_monotonically_decreasing(begin(v),end(v));
 }
 
-template<typename T>
-bool is_monotonically_decreasing(T v)
+template<typename T, typename std::enable_if<!(brgastro::is_const_container<T>::value ||
+	brgastro::is_eigen_container<T>::value), char>::type = 0 >
+bool is_monotonically_decreasing(const T & v)
 {
 	return false;
 }
@@ -238,7 +327,7 @@ bool is_monotonically_decreasing(T v)
 
 // all_true
 #if (1)
-inline bool all_true(const std::vector<bool> v)
+inline bool all_true(const std::vector<bool> & v)
 {
 	for(unsigned int i=0; i < v.size(); i++)
 	{
@@ -247,7 +336,7 @@ inline bool all_true(const std::vector<bool> v)
 	return true;
 }
 
-inline bool all_true(const bool v)
+constexpr inline bool all_true(bool v)
 {
 	return v;
 }
@@ -255,7 +344,7 @@ inline bool all_true(const bool v)
 
 // all_false
 #if (1)
-inline bool all_false(const std::vector<bool> v)
+inline bool all_false(const std::vector<bool> & v)
 {
 	for(unsigned int i=0; i < v.size(); i++)
 	{
@@ -264,7 +353,7 @@ inline bool all_false(const std::vector<bool> v)
 	return true;
 }
 
-inline bool all_false(const bool v)
+constexpr inline bool all_false(const bool & v)
 {
 	return (!v);
 }
@@ -272,12 +361,12 @@ inline bool all_false(const bool v)
 
 // not_all_true
 #if (1)
-inline bool not_all_true(const std::vector<bool> v)
+inline bool not_all_true(const std::vector<bool> & v)
 {
 	return !all_true(v);
 }
 
-inline bool not_all_true(const bool v)
+constexpr inline bool not_all_true(const bool & v)
 {
 	return !v;
 }
@@ -285,12 +374,12 @@ inline bool not_all_true(const bool v)
 
 // not_all_false
 #if (1)
-inline bool not_all_false(const std::vector<bool> v)
+inline bool not_all_false(const std::vector<bool> & v)
 {
 	return !all_false(v);
 }
 
-inline bool not_all_false(const bool v)
+constexpr inline bool not_all_false(bool v)
 {
 	return v;
 }
@@ -298,12 +387,12 @@ inline bool not_all_false(const bool v)
 
 // some_true_some_false
 #if (1)
-inline bool some_true_some_false(const std::vector<bool> v)
+inline bool some_true_some_false(const std::vector<bool> & v)
 {
 	return ( (!all_true(v)) && (!all_false(v)) );
 }
 
-inline bool some_true_some_false(const bool v)
+constexpr inline bool some_true_some_false(const bool & v)
 {
 	return false;
 }

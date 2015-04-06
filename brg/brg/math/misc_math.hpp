@@ -32,6 +32,8 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
+
 #include "brg/container/is_container.hpp"
 
 namespace brgastro {
@@ -124,17 +126,24 @@ inline void fixbad( T & val )
 // different types, so the function goes for the most general
 // type of number allowed (unit_obj if units are being used,
 // otherwise double).
-template< class T1, class T2 >
+template< class T1, class T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,char>::type = 0 >
 inline T1 min( T1 a, const T2 & b )
 {
 	return ( a < static_cast<T1>(b) ? a :  static_cast<T1>(b) );
 }
-template< class T1, class T2 >
+template< class T1, class T2,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,char>::type = 0 >
 inline T1 max( T1 a, const T2 & b )
 {
 	return ( a <  static_cast<T1>(b) ?  static_cast<T1>(b) : a );
 }
-template<  class T1, class T2, class T3 >
+template<  class T1, class T2, class T3,
+typename std::enable_if<!brgastro::is_const_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_const_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_const_container<T3>::value,char>::type = 0  >
 inline T2 bound( const T1 & lower_bound, T2 a, const T3 & upper_bound)
 {
 	return brgastro::min( brgastro::max( a, lower_bound ) , upper_bound);

@@ -29,10 +29,12 @@
 #include <limits>
 #include <type_traits>
 
-#include "brg/container/is_container.hpp"
 
 #include "brg/global.h"
-#include "../container/is_eigen_container.hpp"
+
+#include "brg/container/is_container.hpp"
+#include "brg/container/is_eigen_container.hpp"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -191,7 +193,7 @@ typename std::enable_if<brgastro::is_eigen_container<T>::value,char>::type = 0>
 T safe_d( T array )
 {
 	auto p = array.data();
-	for( decltype(array.size()) i = 0; i < array.size(); ++i)
+	for( decltype(ssize(array)) i = 0; i < ssize(array); ++i)
 	{
 
 		#ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_

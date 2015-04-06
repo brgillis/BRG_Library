@@ -36,8 +36,9 @@
 
 #include "brg/global.h"
 
-#include "../../file_access/ascii_table.hpp"
+#include "brg/file_access/ascii_table.hpp"
 #include "brg/file_access/open_file.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/multi_vector.hpp"
 #include "brg/vector/elementwise_functions.hpp"
 
@@ -52,7 +53,7 @@
 
 #define DECLARE_BRG_CACHE_ND_STATIC_VARS()		       \
 	static brgastro::multi_vector<double> _mins_, _maxes_, _steps_;      \
-	static brgastro::multi_vector<size_t> _resolutions_;           \
+	static brgastro::multi_vector<ssize_t> _resolutions_;           \
 	static brgastro::multi_vector<double> _results_;                     \
 											                       \
 	static std::string _file_name_;                                \
@@ -70,7 +71,7 @@
 	brgastro::vector<double> brgastro::class_name::_steps_ = init_steps;                         \
 	bool brgastro::class_name::_loaded_ = false;							                     \
 	bool brgastro::class_name::_initialised_ = false;					                         \
-	brgastro::vector<size_t> brgastro::class_name::_resolutions_ =                         \
+	brgastro::vector<ssize_t> brgastro::class_name::_resolutions_ =                         \
 		max( (((brgastro::class_name::_maxes_-brgastro::class_name::_mins_) /                    \
 				safe_d(brgastro::class_name::_steps_))+1), 1);                                   \
 	std::string brgastro::class_name::_file_name_ = "";					     	                 \
@@ -165,7 +166,7 @@ private:
 			SPCP(name)->_mins_.resize(SPCP(name)->_num_dim_,0);
 			SPCP(name)->_maxes_.resize(SPCP(name)->_num_dim_,0);
 			SPCP(name)->_steps_.resize(SPCP(name)->_num_dim_,0);
-			for(size_t i = 0; i < SPCP(name)->_num_dim_; i++)
+			for(ssize_t i = 0; i < SPCP(name)->_num_dim_; i++)
 			{
 				in_file.read((char *)&(SPCP(name)->_mins_[i]),sizeof(SPCP(name)->_mins_[i]));
 				in_file.read((char *)&(SPCP(name)->_maxes_[i]),sizeof(SPCP(name)->_maxes_[i]));
@@ -187,16 +188,16 @@ private:
 			// Read in data
 
 			// Initialize
-			size_t i = 0;
+			ssize_t i = 0;
 			const std::streamsize size = sizeof(SPCP(name)->_results_[0]); // Store the size for speed
-			brgastro::multi_vector<size_t> position(SPCP(name)->_num_dim_,0);
+			brgastro::multi_vector<ssize_t> position(SPCP(name)->_num_dim_,0);
 
 			while ( ( !in_file.eof() ) && ( i < product(SPCP(name)->_resolutions_) ) && (in_file) )
 			{
 				in_file.read((char *)&(SPCP(name)->_results_(position)),size);
 				i++;
 
-				for(size_t d=0; d<SPCP(name)->_num_dim_; d++)
+				for(ssize_t d=0; d<SPCP(name)->_num_dim_; d++)
 				{
 					position[d]++;
 					if(position[d] != SPCP(name)->_resolutions_[d])
@@ -231,7 +232,7 @@ private:
 	void _calc( const bool silent = false ) const
 	{
 		// Test that range is sane
-		for(size_t i = 0; i < SPCP(name)->_num_dim_; i++)
+		for(ssize_t i = 0; i < SPCP(name)->_num_dim_; i++)
 		{
 			try {
 				if ( ( SPCP(name)->_maxes_.at(i) <= SPCP(name)->_mins_.at(i) ) || ( SPCP(name)->_steps_.at(i) <= 0 ) )
@@ -254,15 +255,15 @@ private:
 		SPCP(name)->_resolutions_ = max( (((SPCP(name)->_maxes_-SPCP(name)->_mins_) / safe_d(SPCP(name)->_steps_))+1.), 1.);
 		SPCP(name)->_results_.reshape(SPCP(name)->_resolutions_.v() );
 
-		brgastro::multi_vector<size_t> position(SPCP(name)->_num_dim_,0);
+		brgastro::multi_vector<ssize_t> position(SPCP(name)->_num_dim_,0);
 		brgastro::multi_vector<double> x(SPCP(name)->_num_dim_,0);
-		for ( size_t i = 0; i < SPCP(name)->_results_.size(); i++ )
+		for ( ssize_t i = 0; i < size(SPCP(name)->_results_); i++ )
 		{
 			x = SPCP(name)->_mins_ + SPCP(name)->_steps_*position;
 			double result = 0;
 			SPCP(name)->_results_(position) = SPCP(name)->_calculate(x);
 
-			for(size_t d=0; d<SPCP(name)->_num_dim_; d++)
+			for(ssize_t d=0; d<SPCP(name)->_num_dim_; d++)
 			{
 				position[d]++;
 				if(position[d] != SPCP(name)->_resolutions_[d])
@@ -302,7 +303,7 @@ private:
 		out_file.write((char *)&file_version,sizeof(file_version));
 
 		// Output range parameters
-		for(size_t i = 0; i < SPCP(name)->_num_dim_; i++)
+		for(ssize_t i = 0; i < SPCP(name)->_num_dim_; i++)
 		{
 			out_file.write((char *)&(SPCP(name)->_mins_[i]),sizeof(SPCP(name)->_mins_[i]));
 			out_file.write((char *)&(SPCP(name)->_maxes_[i]),sizeof(SPCP(name)->_maxes_[i]));
@@ -312,16 +313,16 @@ private:
 		// Output data
 
 		// Initialize
-		size_t i = 0;
+		ssize_t i = 0;
 		const std::streamsize size = sizeof(SPCP(name)->_results_[0]);
-		brgastro::multi_vector<size_t> position(SPCP(name)->_num_dim_,0);
+		brgastro::multi_vector<ssize_t> position(SPCP(name)->_num_dim_,0);
 
 		while ( i < product(SPCP(name)->_resolutions_) )
 		{
 			out_file.write((char *)&(SPCP(name)->_results_(position)),size);
 			i++;
 
-			for(size_t d=0; d<SPCP(name)->_num_dim_; d++)
+			for(ssize_t d=0; d<SPCP(name)->_num_dim_; d++)
 			{
 				position[d]++;
 				if(position[d] != SPCP(name)->_resolutions_[d])
@@ -404,14 +405,14 @@ public:
 			SPCP(name)->_load( true );
 
 		// Check sizes of passed vectors
-		if( (new_mins.size() != SPCP(name)->_num_dim_) || (new_maxes.size() != SPCP(name)->_num_dim_) ||
-				(new_steps.size() != SPCP(name)->_num_dim_) )
+		if( (ssize(new_mins) != SPCP(name)->_num_dim_) || (ssize(new_maxes) != SPCP(name)->_num_dim_) ||
+				(ssize(new_steps) != SPCP(name)->_num_dim_) )
 		{
 			throw std::runtime_error("ERROR: Incorrect sizes of vectors passed to set_range.\n");
 		}
 
 		// Go through variables, check if any are actually changed. If so, recalculate cache
-		for(size_t i = 0; i < SPCP(name)->_num_dim_; i++)
+		for(ssize_t i = 0; i < SPCP(name)->_num_dim_; i++)
 		{
 			if ( ( SPCP(name)->_mins_.at(i) != new_mins.at(i) ) || ( SPCP(name)->_maxes_.at(i) != new_maxes.at(i) )
 					|| ( SPCP(name)->_steps_.at(i) != new_steps.at(i) ) )
@@ -431,7 +432,7 @@ public:
 	{
 
 		brgastro::multi_vector<double> xlo, xhi;
-		brgastro::multi_vector<size_t> x_i; // Lower nearby array points
+		brgastro::multi_vector<ssize_t> x_i; // Lower nearby array points
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
@@ -473,18 +474,18 @@ public:
 		xlo = SPCP(name)->_mins_ + SPCP(name)->_steps_ * x_i;
 		xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
 
-		size_t num_surrounding_points = 2;
+		ssize_t num_surrounding_points = 2;
 		for(int i=0; i<SPCP(name)->_num_dim_-1; ++i ) num_surrounding_points*=2;
 
 		result = 0;
 		double total_weight = 0;
-		brgastro::multi_vector<size_t> position(SPCP(name)->_num_dim_,0);
+		brgastro::multi_vector<ssize_t> position(SPCP(name)->_num_dim_,0);
 
-		for(size_t j=0; j < num_surrounding_points; j++)
+		for(ssize_t j=0; j < num_surrounding_points; j++)
 		{
 			double weight = 1;
 			unsigned int divisor = 1;
-			for(size_t i=0; i < SPCP(name)->_num_dim_; i++)
+			for(ssize_t i=0; i < SPCP(name)->_num_dim_; i++)
 			{
 				if(divisible(j/divisor,2))
 				{

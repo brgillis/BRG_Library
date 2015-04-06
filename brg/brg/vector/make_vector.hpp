@@ -46,7 +46,7 @@ namespace brgastro
 #if(1)
 
 template<typename container>
-void make_vector_default( container & vec, size_t d1)
+void make_vector_default( container & vec, const typename container::size_type & d1)
 {
 	static_assert(std::is_default_constructible<typename container::value_type>::value,
 			"make_default_vector requires that object type is default-constructible.");
@@ -58,7 +58,7 @@ void make_vector_default( container & vec, size_t d1)
 }
 
 template<typename container, typename... Args>
-void make_vector_default( container & vec, size_t d1, size_t d2, Args... remaining_dims)
+void make_vector_default( container & vec, const typename container::size_type & d1, const typename container::size_type & d2, Args... remaining_dims)
 {
 	vec.clear();
 	vec.resize(d1);
@@ -127,7 +127,7 @@ void make_vector_default( container & vec, const value_type & val, const other_c
 #if(1)
 
 template<typename container>
-void make_vector_zeroes( container & vec, size_t d1)
+void make_vector_zeroes( container & vec, const typename container::size_type & d1)
 {
 	vec.resize(d1);
 	for(auto it=vec.begin(); it!=vec.end(); ++it)
@@ -137,7 +137,7 @@ void make_vector_zeroes( container & vec, size_t d1)
 }
 
 template<typename container, typename... Args>
-void make_vector_zeroes( container & vec, size_t d1, size_t d2, Args... remaining_dims)
+void make_vector_zeroes( container & vec, const typename container::size_type & d1, const typename container::size_type & d2, Args... remaining_dims)
 {
 	vec.clear();
 	vec.resize(d1);
@@ -171,7 +171,7 @@ struct vector_zeroer<1,container,other_container>
 {
 	vector_zeroer(container & vec, const other_container & other_vec)
 	{
-		if(other_vec.size()>0)
+		if(!other_vec.empty())
 		{
 			vec.resize(1);
 			set_zero(vec.front());
@@ -210,14 +210,14 @@ void make_vector_zeroes( container & vec, const value_type & val, const other_co
 #if(1)
 
 template<typename container, typename val_type>
-void make_vector_value( container & vec, const val_type & val, size_t d1)
+void make_vector_value( container & vec, const val_type & val, const typename container::size_type & d1)
 {
 	vec.clear();
 	vec.resize(d1,val);
 }
 
 template<typename container, typename val_type, typename... Args>
-void make_vector_value( container & vec, const val_type & val, size_t d1, size_t d2, Args... remaining_dims)
+void make_vector_value( container & vec, const val_type & val, const typename container::size_type & d1, const typename container::size_type & d2, Args... remaining_dims)
 {
 	vec.clear();
 	vec.resize(d1);
@@ -281,12 +281,12 @@ void make_vector_value( container & vec, const value_type & val, const other_con
 #if(1)
 
 template<typename container, typename func_type>
-void make_vector_function( container & vec, const func_type & func, size_t d1)
+void make_vector_function( container & vec, const func_type & func, const typename container::size_type & d1)
 {
 	vec.clear();
 	vec.reserve(d1);
 
-	size_t i(0);
+	typename container::size_type i(0);
 
 	for(i=0; i<d1; ++i)
 	{
@@ -295,14 +295,14 @@ void make_vector_function( container & vec, const func_type & func, size_t d1)
 }
 
 template<typename container, typename func_type, typename... Args>
-void make_vector_function( container & vec, const func_type & func, size_t d1, size_t d2, Args... remaining_dims)
+void make_vector_function( container & vec, const func_type & func, const typename container::size_type & d1, const typename container::size_type & d2, Args... remaining_dims)
 {
 	vec.clear();
 	vec.resize(d1);
 
-	size_t i(0);
+	typename container::size_type i(0);
 
-	auto new_func = [&] (size_t i2, Args... remaining_is)
+	auto new_func = [&] (const typename container::size_type & i2, Args... remaining_is)
 		{
 			return func(i,i2,remaining_is...);
 		};
@@ -324,7 +324,7 @@ struct vector_functioner
 	template<typename... Args>
 	vector_functioner(container & vec, const func_type & func, const other_container & other_vec)
 	{
-		size_t i;
+		const typename container::size_type i;
 		auto new_func = [&] (Args... args)
 		{
 			return func(i,args...);

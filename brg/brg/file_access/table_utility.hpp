@@ -36,6 +36,7 @@
 #include "brg/global.h"
 
 #include "brg/container/table_typedefs.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/make_vector.hpp"
 
 namespace brgastro {
@@ -49,8 +50,8 @@ inline table_map_t<T> make_table_map(
 {
 	table_map_t<T> result;
 
-	size_t h_size = header.size();
-	size_t d_size = data.size();
+	auto h_size = ssize(header);
+	auto d_size = ssize(data);
 
 	const header_t *header_to_use = &header;
 	header_t new_header;
@@ -63,7 +64,7 @@ inline table_map_t<T> make_table_map(
 		// We'll pad the header with default values
 		new_header = header;
 		new_header.resize(d_size);
-		for(size_t i=h_size; i<d_size; ++i)
+		for(auto i=h_size; i<d_size; ++i)
 		{
 			std::stringstream ss("col_");
 			ss << i+1;
@@ -80,7 +81,7 @@ inline table_map_t<T> make_table_map(
 		if(d_size>0)
 		{
 			// If we have some data, match the size of it in new columns
-			for(size_t i=d_size; i<h_size; ++i)
+			for(auto i=d_size; i<h_size; ++i)
 			{
 				make_vector_default(new_data[i],new_data[0].size());
 			}
@@ -89,7 +90,7 @@ inline table_map_t<T> make_table_map(
 		d_size = h_size;
 	}
 
-	for(size_t i=0; i<h_size; ++i)
+	for(decltype(h_size) i=0; i<h_size; ++i)
 	{
 		result[(*header_to_use)[i]] = (*data_to_use)[i];
 	}

@@ -32,6 +32,8 @@
 
 #include <vector>
 
+#include "brg/utility.hpp"
+
 namespace tk {
 
 // band matrix solver

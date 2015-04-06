@@ -78,18 +78,18 @@ void print_table( std::ostream & out_stream,
 
 	if(major_tag==Eigen::ColMajor)
 	{
-		num_col = data.size();
-		num_row = data.at(0).size();
+		num_col = ssize(data);
+		num_row = ssize(data.at(0));
 	}
 	else
 	{
-		num_row = data.size();
-		num_col = data.at(0).size();
+		num_row = ssize(data);
+		num_col = ssize(data.at(0));
 	}
 
 	std::vector< size_t > width(num_col,0);
 
-	const bool skip_header = (header.size()==0);
+	const bool skip_header = (ssize(header)==0);
 
 	try
 	{
@@ -257,7 +257,7 @@ table_t<T> load_table( std::istream & fi,
 
 		auto temp_vector = split_line<T>(line_data_stream,default_value,min_length);
 
-		if(min_length==0) min_length = temp_vector.size();
+		if(min_length==0) min_length = ssize(temp_vector);
 
 		table_data.push_back(std::move(temp_vector));
 	}
@@ -295,7 +295,7 @@ inline header_t load_header( std::istream & table_stream )
 
 			header_t temp_header = convert_to_header(temp_line);
 
-			if(temp_header.size() > 0)
+			if(ssize(temp_header) > 0)
 				possible_headers.push_back(temp_header);
 		}
 		else
@@ -304,8 +304,8 @@ inline header_t load_header( std::istream & table_stream )
 		}
 	}
 
-	if(possible_headers.size()==1) return possible_headers[0];
-	if(possible_headers.size()==0) return header_t();
+	if(ssize(possible_headers)==1) return possible_headers[0];
+	if(ssize(possible_headers)==0) return header_t();
 
 	// If we get here, more than one line is a possible header candidate. Our next step is to
 	// go to the data and count the columns in the first line. If only one possible header has
@@ -330,10 +330,10 @@ inline header_t load_header( std::istream & table_stream )
 
 	// Search through the possible headers, and see if we find exactly one with the right size
 	unsigned short int num_right_size = 0;
-	size_t i_best = 0;
-	for(size_t i=0; i<possible_headers.size(); ++i)
+	ssize_t i_best = 0;
+	for(ssize_t i=0; i<ssize(possible_headers); ++i)
 	{
-		if(possible_headers[i].size()==n_cols)
+		if(ssize(possible_headers[i])==n_cols)
 		{
 			++num_right_size;
 			i_best = i;

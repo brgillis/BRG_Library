@@ -43,6 +43,32 @@ struct is_eigen_container : std::integral_constant<bool, std::is_base_of<Eigen::
 
 } // end namespace brgastro
 
+// Global namespace begin and end definitions
+
+template <typename Derived>
+auto begin(const Eigen::EigenBase<Derived> & vec) -> decltype(vec.data())
+{
+	return vec.data();
+}
+
+template <typename Derived>
+auto begin(Eigen::EigenBase<Derived> & vec) -> decltype(vec.data())
+{
+	return vec.data();
+}
+
+template <typename Derived>
+auto end(const Eigen::EigenBase<Derived> & vec) -> decltype(vec.data())
+{
+	return vec.data()+vec.size();
+}
+
+template <typename Derived>
+auto end(Eigen::EigenBase<Derived> & vec) -> decltype(vec.data())
+{
+	return vec.data()+vec.size();
+}
+
 
 
 #endif // _BRG_CONTAINER_IS_EIGEN_CONTAINER_HPP_INCLUDED_

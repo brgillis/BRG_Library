@@ -40,6 +40,7 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
 #include "brg/vector/make_limit_vector_base.hpp"
 #include "brg/vector/make_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
@@ -62,7 +63,7 @@ public:
 	typedef typename std::vector<T,A>::reverse_iterator reverse_iterator;
 	typedef typename std::vector<T,A>::const_reverse_iterator const_reverse_iterator;
 	typedef typename std::vector<T,A>::difference_type difference_type;
-	typedef typename std::vector<T,A>::size_type size_type;
+	typedef typename std::make_signed<typename std::vector<T,A>::size_type>::type size_type;
 
 	// Enum to describe type of limit vector this is
 	enum class type {GENERAL, LINEAR, LOG, DISJOINT};
@@ -331,10 +332,10 @@ public:
 		_base_.shrink_to_fit();
 	}
 
-	/// Reconstruct from a vector of the bin middles. Since some information is lost here,
+	/// Reconstruct from a vector of the bin dles. Since some information is lost here,
 	/// the method has to take some guesses.
 	template<typename To, typename Ao>
-	void reconstruct_from_bin_mids(const std::vector<To,Ao> & vec)
+	void reconstruct_from_bin_s(const std::vector<To,Ao> & vec)
 	{
 		if(vec.size()==1)
 		{
@@ -343,7 +344,7 @@ public:
 		}
 
 		if(!is_monotonically_increasing(vec))
-			throw std::logic_error("Cannot reconstruct from a mids vector which isn't monotonically increasing.\n");
+			throw std::logic_error("Cannot reconstruct from a s vector which isn't monotonically increasing.\n");
 
 		_base_.resize(vec.size()+1);
 
@@ -359,10 +360,10 @@ public:
 		_type_ = type::GENERAL;
 		return;
 	}
-	/// Reconstruct from a vector of the bin middles (move version). Since some information is lost here,
+	/// Reconstruct from a vector of the bin dles (move version). Since some information is lost here,
 	/// the method has to take some guesses.
 	template<typename To, typename Ao>
-	void reconstruct_from_bin_mids(std::vector<To,Ao> && vec)
+	void reconstruct_from_bin_s(std::vector<To,Ao> && vec)
 	{
 		if(vec.size()==1)
 		{
@@ -371,7 +372,7 @@ public:
 		}
 
 		if(!is_monotonically_increasing(vec))
-			throw std::logic_error("Cannot reconstruct from a mids vector which isn't monotonically increasing.\n");
+			throw std::logic_error("Cannot reconstruct from a s vector which isn't monotonically increasing.\n");
 
 		size_t i;
 
@@ -524,7 +525,7 @@ public:
 	}
 
 	/// Get number of bins
-	size_type num_bins() const noexcept
+	size_type num_bins() const
 	{
 		if(_type_==type::DISJOINT)
 			return _base_.size()/2;
@@ -626,6 +627,66 @@ public:
 		for(auto & val : _base_)
 			brgastro::fixbad(val);
 	}
+
+	/// Multiply the whole vector by a constant
+	void multiply(const value_type & val)
+	{
+		// Modify the base
+		for(auto & elem : _base_)
+		{
+			elem *= val;
+		}
+
+		switch(_type_)
+		{
+
+		case type::LINEAR:
+			// If linear, modify _step_
+			_step_ *= val;
+			break;
+
+		case type::LOG:
+			// If log, modify _lmin_
+			_lmin_ = std::log(min());
+			break;
+
+		default:
+			// Nothing special is needed for general and disjoint types
+			break;
+		}
+
+		return;
+	}
+
+	/// Divide the whole vector by a constant
+	void divide(const value_type & val)
+	{
+		// Modify the base
+		for(auto & elem : _base_)
+		{
+			elem /= val;
+		}
+
+		switch(_type_)
+		{
+
+		case type::LINEAR:
+			// If linear, modify _step_
+			_step_ /= val;
+			break;
+
+		case type::LOG:
+			// If log, modify _lmin_
+			_lmin_ = std::log(min());
+			break;
+
+		default:
+			// Nothing special is needed for general and disjoint types
+			break;
+		}
+
+		return;
+	}
 #endif // Modifiers
 
 	// Limit_vector-specific functions
@@ -668,6 +729,11 @@ public:
 		}
 	}
 
+	value_type bin_mid( const size_type & i ) const
+	{
+		return (lower_limit(i)+upper_limit(i))/2.;
+	}
+
 	/// Returns true if val is equal to or greater than the maximum limit of this vector
 	bool above_limits(const T & val) const noexcept
 	{
@@ -691,7 +757,7 @@ public:
 		// We'll check which "general" bin it falls in. If it's in a gap, it's outside the limits,
 		// otherwise it's inside
 
-		for(size_t i=1; i<size(); ++i)
+		for(size_type i=1, my_size=size(); i<my_size; ++i)
 		{
 			if(_base_[i]>=val)
 			{
@@ -751,7 +817,7 @@ public:
 
 		case type::DISJOINT:
 
-			for(size_t i=1; i<size(); ++i)
+			for(size_type i=1, my_size=size(); i<my_size; ++i)
 			{
 				if(_base_[i]>=val)
 				{
@@ -766,7 +832,7 @@ public:
 
 		default: // limit_type::GENERAL
 
-			for(size_t i=1; i<size(); ++i)
+			for(size_type i=1, my_size=size(); i<my_size; ++i)
 			{
 				if(_base_[i]>=val) return i-1;
 			}
@@ -790,11 +856,11 @@ public:
 			return val_vec[0];
 		}
 
-		size_t bin_i=size()-3;
+		size_type bin_i=size()-3;
 
 		const char step_length = _type_==type::DISJOINT ? 2 : 1;
 
-		for(size_t i=0; i<size()-2; i += step_length)
+		for(size_type i=0; i<size()-2; i += step_length)
 		{
 			if((_base_[i]+_base_[i+1])/2>=val)
 			{
@@ -819,7 +885,7 @@ public:
 		if(_type_!=type::DISJOINT)
 		{
 			std::vector<T,A> result(_base_);
-			for(size_t i=0; i<num_bins(); ++i)
+			for(size_type i=0; i<num_bins(); ++i)
 			{
 				result[i] += (result[i+1]-result[i])/2;
 			}
@@ -830,7 +896,7 @@ public:
 		else
 		{
 			std::vector<T,A> result(num_bins());
-			for(size_t i=0; i<size(); i+=2)
+			for(size_type i=0; i<size(); i+=2)
 			{
 				result.push_back((_base_[i]+_base_[i+1])/2);
 			}

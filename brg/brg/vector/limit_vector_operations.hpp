@@ -33,6 +33,7 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
 
@@ -133,7 +134,7 @@ bool checked_inside_limits(const T & val, const brgastro::limit_vector<T,A> & ve
 }
 
 template<typename T, typename A=std::allocator<T>>
-size_t checked_get_bin_index(const T & val, const std::vector<T,A> & vec)
+ssize_t checked_get_bin_index(const T & val, const std::vector<T,A> & vec)
 {
 	if(!is_monotonically_increasing(vec))
 		throw std::logic_error("Invalid limit vector passed to checked_get_bin_index.");
@@ -142,7 +143,7 @@ size_t checked_get_bin_index(const T & val, const std::vector<T,A> & vec)
 	return get_bin_index(val,vec);
 }
 template<typename T, typename A=std::allocator<T>>
-size_t checked_get_bin_index(const T & val, const brgastro::limit_vector<T,A> & vec)
+ssize_t checked_get_bin_index(const T & val, const brgastro::limit_vector<T,A> & vec)
 {
 	if(vec.outside_limits(val))
 		throw std::runtime_error("Value outside limits of vector in checked_get_bin_index.");
@@ -150,35 +151,35 @@ size_t checked_get_bin_index(const T & val, const brgastro::limit_vector<T,A> & 
 }
 
 template<typename T, typename A=std::allocator<T>>
-size_t get_bin_index(const T & val, const std::vector<T,A> & vec)
+ssize_t get_bin_index(const T & val, const std::vector<T,A> & vec)
 {
 	assert(is_monotonically_increasing(vec));
-	for(size_t i=1; i<vec.size(); ++i)
+	for(ssize_t i=1; i<ssize(vec); ++i)
 	{
 		if(vec[i]>=val) return i-1;
 	}
-	if(above_limits(val,vec)) return vec.size()+1;
-	return vec.size();
+	if(above_limits(val,vec)) return ssize(vec)+1;
+	return ssize(vec);
 }
 template<typename T, typename A=std::allocator<T>>
-size_t get_bin_index(const T & val, const brgastro::limit_vector<T,A> & vec)
+ssize_t get_bin_index(const T & val, const brgastro::limit_vector<T,A> & vec)
 {
 	return vec.get_bin_index(val);
 }
 
 template<typename T, typename A=std::allocator<T>>
-size_t get_bin_index_no_overflow(const T & val, const std::vector<T,A> & vec)
+ssize_t get_bin_index_no_overflow(const T & val, const std::vector<T,A> & vec)
 {
 	assert(is_monotonically_increasing(vec));
-	for(size_t i=1; i<vec.size(); ++i)
+	for(ssize_t i=1; i<ssize(vec); ++i)
 	{
 		if(vec[i]>=val) return i-1;
 	}
-	if(above_limits(val,vec)) return vec.size()-2;
+	if(above_limits(val,vec)) return ssize(vec)-2;
 	return 0;
 }
 template<typename T, typename A=std::allocator<T>>
-size_t get_bin_index_no_overflow(const T & val, const brgastro::limit_vector<T,A> & vec)
+ssize_t get_bin_index_no_overflow(const T & val, const brgastro::limit_vector<T,A> & vec)
 {
 	return vec.get_bin_index_no_overflow(val);
 }
@@ -186,14 +187,14 @@ size_t get_bin_index_no_overflow(const T & val, const brgastro::limit_vector<T,A
 template<typename T1, typename A1=std::allocator<T1>, typename T2=T1, typename A2=std::allocator<T2>>
 T2 interpolate_bins(const T2 & val, const std::vector<T1,A1> & lim_vec, const std::vector<T2,A2> & val_vec)
 {
-	assert(val_vec.size()>1);
-	assert(lim_vec.size()==val_vec.size()+1);
+	assert(ssize(val_vec)>1);
+	assert(ssize(lim_vec)==ssize(val_vec)+1);
 	assert(is_monotonically_increasing(lim_vec));
-	assert(lim_vec.size()>2);
+	assert(ssize(lim_vec)>2);
 
-	size_t bin_i=lim_vec.size()-3;
+	ssize_t bin_i=ssize(lim_vec)-3;
 
-	for(size_t i=0; i<lim_vec.size()-2; ++i)
+	for(ssize_t i=0; i<ssize(lim_vec)-2; ++i)
 	{
 		if((lim_vec[i]+lim_vec[i+1])/2>=val)
 		{
@@ -223,7 +224,7 @@ std::vector<T1,A1> get_bin_mids_from_limits(std::vector<T1,A1> vec)
 {
 	assert(is_monotonically_increasing(vec));
 
-	for(size_t i=0; i<vec.size()-1; ++i)
+	for(ssize_t i=0; i<ssize(vec)-1; ++i)
 	{
 		vec[i] += (vec[i+1]-vec[i])/2;
 	}
@@ -242,9 +243,9 @@ std::vector<T1,A1> get_bin_limits_from_mids(std::vector<T1,A1> vec)
 {
 	assert(is_monotonically_increasing(vec));
 
-	size_t i;
+	ssize_t i;
 
-	for(i=0; i<vec.size()-1; ++i)
+	for(i=0; i<ssize(vec)-1; ++i)
 	{
 		vec[i] -= (vec[i+1]-vec[i])/2;
 	}

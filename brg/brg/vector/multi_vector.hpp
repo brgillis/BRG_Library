@@ -28,6 +28,7 @@
 #include <stdexcept>
 #include <memory>
 
+#include "brg/utility.hpp"
 #include "brg/vector/elementwise_functions.hpp"
 #include "brg/vector/summary_functions.hpp"
 

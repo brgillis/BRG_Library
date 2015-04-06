@@ -30,6 +30,7 @@
 #include "brg/global.h"
 
 #include "brg/math/interpolator/interpolator.h"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -122,9 +123,9 @@ public:
 
 	// Get functions
 	double operator()( double xval, bool silent = false ) const;
-	size_t size() const
+	ssize_t size() const
 	{
-		return _known_interpolator_.size() + _unknown_t_list_.size();
+		return ssize(_known_interpolator_) + ssize(_unknown_t_list_);
 	}
 };
 // class interpolator_derivative

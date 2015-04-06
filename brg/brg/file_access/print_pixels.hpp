@@ -29,8 +29,9 @@
 #include <type_traits>
 
 #include "brg/container/is_container.hpp"
+#include "brg/file_access/ascii_table_map.hpp"
 #include "brg/file_access/open_file.hpp"
-#include "../brg/file_access/ascii_table_map.hpp"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -41,7 +42,7 @@ void print_pixels(std::ostream & out_stream, const T & data)
 {
 	table_map_t<T_data> table;
 
-	for(size_t i=0; i<data.size(); ++i)
+	for(ssize_t i=0; i<ssize(data); ++i)
 	{
 		table["row"].push_back(static_cast<T_data>(i));
 		table["value"].push_back(static_cast<T_data>(data[i]));
@@ -67,9 +68,9 @@ void print_pixels(std::ostream & out_stream, const T & data)
 {
 	table_map_t<T_data> table;
 
-	for(size_t i=0; i<data.size(); ++i)
+	for(ssize_t i=0; i<ssize(data); ++i)
 	{
-		for(size_t j=0; j<data[i].size(); ++j)
+		for(ssize_t j=0; j<ssize(data[i]); ++j)
 		{
 			table["row"].push_back(static_cast<T_data>(i));
 			table["col"].push_back(static_cast<T_data>(j));
@@ -99,11 +100,11 @@ void print_pixels(std::ostream & out_stream, const T & data)
 {
 	table_map_t<T_data> table;
 
-	for(size_t i=0; i<data.size(); ++i)
+	for(ssize_t i=0; i<ssize(data); ++i)
 	{
-		for(size_t j=0; j<data[i].size(); ++j)
+		for(ssize_t j=0; j<ssize(data[i]); ++j)
 		{
-			for(size_t k=0; j<data[i][j].size(); ++k)
+			for(ssize_t k=0; j<ssize(data[i][j]); ++k)
 			{
 				table["row"].push_back(static_cast<T_data>(i));
 				table["col"].push_back(static_cast<T_data>(j));

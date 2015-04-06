@@ -35,6 +35,7 @@
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/make_vector.hpp"
 
 namespace brgastro {
@@ -55,7 +56,7 @@ namespace brgastro {
 template< typename f, typename T >
 inline T differentiate( const f * func, const T & in_param,
 		const int order = 1, const double power = 1,
-		const bool silent = false, const T & factor=SMALL_FACTOR )
+		const T & factor=SMALL_FACTOR )
 {
 
 	T d_in_param( 0 );
@@ -72,7 +73,7 @@ inline T differentiate( const f * func, const T & in_param,
 
 	if ( ( order_to_use > 1 ) )
 	{
-		throw std::logic_error("ERROR: brgastro::differentiate with order > 1 is not currently supported.\n");
+		throw std::logic_error("brgastro::differentiate with order > 1 is not currently supported.\n");
 	}
 
 	if ( power != 1 )
@@ -129,8 +130,8 @@ inline T differentiate( const f * func, const T & in_param,
 		// Run the function to get value at test point
 		try
 		{
-			low_out_param = ( *func )( low_in_param, silent );
-			high_out_param = ( *func )( high_in_param, silent );
+			low_out_param = ( *func )( low_in_param );
+			high_out_param = ( *func )( high_in_param );
 		}
 		catch(const std::runtime_error &e)
 		{
@@ -160,9 +161,9 @@ inline T differentiate( const f * func, const T & in_param,
 // Vector-in, vector-out version
 template< typename f, typename T >
 inline std::vector< std::vector< T > > differentiate( const f * func, const std::vector< T > & in_params,
-		const int order = 1, const double power = 1, const bool silent = false )
+		const int order = 1, const double power = 1 )
 {
-	const typename std::vector<T>::size_type num_in_params = in_params.size();
+	auto num_in_params = ssize(in_params);
 	std::vector< std::vector< T > > Jacobian;
 
 	std::vector< T > d_in_params( 0 );
@@ -238,8 +239,8 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 	}
 
 	// Get value of function at input parameters
-	base_out_params = ( *func )( in_params, silent );
-	typename std::vector<T>::size_type num_out_params=base_out_params.size();
+	base_out_params = ( *func )( in_params );
+	auto num_out_params=ssize(base_out_params);
 
 	// Set up Jacobian
 	make_vector_default( Jacobian, num_out_params, num_in_params );
@@ -269,12 +270,12 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 			// Run the function to get value at test point
 			try
 			{
-				test_out_params = ( *func )( test_in_params, silent );
+				test_out_params = ( *func )( test_in_params );
 			}
 			catch(const std::exception &e)
 			{
 				bad_function_result = true;
-				for(size_t j=0; j< in_params.size(); j++)
+				for(ssize_t j=0; j< ssize(in_params); j++)
 					d_in_params[j] /= 10; // Try again with smaller step size
 				continue;
 			}
@@ -290,7 +291,7 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 				if(isbad(Jacobian[i][j]))
 				{
 					bad_function_result = true;
-					for(size_t j=0; j< in_params.size(); j++)
+					for(size_t j=0; j< ssize(in_params); j++)
 						d_in_params[j] /= 10; // Try again with smaller step size
 					continue;
 				}

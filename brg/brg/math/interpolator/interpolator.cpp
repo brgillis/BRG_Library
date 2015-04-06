@@ -25,6 +25,8 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
+
 #include "interpolator.h"
 
 // Global function implementations
@@ -106,7 +108,7 @@ void brgastro::interpolator::_set_spline_points() const
 {
 	std::vector<double> x_points(0), y_points(0);
 	sorted_data(); // Ensure it's cached
-	for(size_t i = 0; i < _sorted_data_.size(); i++)
+	for(ssize_t i = 0; i < ssize(_sorted_data_); i++)
 	{
 		x_points.push_back(_sorted_data_[i].first);
 		y_points.push_back(_sorted_data_[i].second);
@@ -139,7 +141,7 @@ void brgastro::interpolator::add_point(const double x, const double y)
 
 void brgastro::interpolator::try_add_point(const double x, const double y)
 {
-	for (size_t i=0;i<_data_.size();i++)
+	for (ssize_t i=0;i<ssize(_data_);i++)
 	{
 		assert(x!=_data_[i].first);
 	}
@@ -164,7 +166,7 @@ const double brgastro::interpolator::operator()(const double x) const
 {
 	if(_interpolation_type_==SPLINE)
 	{
-		if(_data_.size() < 2)
+		if(ssize(_data_) < 2)
 			throw std::logic_error("Interpolator called before at least 2 points were loaded.\n");
 
 		if(!_spline_cached_)
@@ -174,7 +176,7 @@ const double brgastro::interpolator::operator()(const double x) const
 	}
 	else if(_interpolation_type_==LINEAR)
 	{
-		if(_data_.size() < 2)
+		if(ssize(_data_) < 2)
 			throw std::logic_error("Interpolator called before at least 2 points were loaded.\n");
 
 		double xlo, xhi, ylo, yhi;
@@ -187,8 +189,8 @@ const double brgastro::interpolator::operator()(const double x) const
 		}
 		else if(x>=_sorted_data_.back().first)
 		{
-			xlo = _sorted_data_[_sorted_data_.size()-2].first;
-			ylo = _sorted_data_[_sorted_data_.size()-2].second;
+			xlo = _sorted_data_[ssize(_sorted_data_)-2].first;
+			ylo = _sorted_data_[ssize(_sorted_data_)-2].second;
 			xhi = _sorted_data_.back().first;
 			yhi = _sorted_data_.back().second;
 		}
@@ -211,7 +213,7 @@ const double brgastro::interpolator::operator()(const double x) const
 	}
 	else if(_interpolation_type_==LOWER)
 	{
-		if(_data_.size() < 1)
+		if(ssize(_data_) < 1)
 			throw std::logic_error("ERROR: Interpolator called before at least 1 point was loaded.\n");
 
 		if(x<=sorted_data().front().first)
@@ -236,7 +238,7 @@ const double brgastro::interpolator::operator()(const double x) const
 	}
 	else if(_interpolation_type_==UPPER)
 	{
-		if(_data_.size() < 1)
+		if(ssize(_data_) < 1)
 			throw std::logic_error("ERROR: Interpolator called before at least 1 point was loaded.\n");
 
 		if(x<=sorted_data().front().first)

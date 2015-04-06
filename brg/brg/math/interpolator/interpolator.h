@@ -31,6 +31,8 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
+
 #include "brg/external/tk_spline.h"
 
 namespace brgastro {
@@ -108,9 +110,9 @@ public:
 	// exception
 	void try_add_point(const double x, const double y);
 
-	unsigned int size() const
+	ssize_t size() const
 	{
-		return sorted_data().size();
+		return ssize(sorted_data());
 	}
 
 	bool empty() const

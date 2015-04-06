@@ -35,6 +35,7 @@
 #include "brg/container/is_container.hpp"
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -130,7 +131,7 @@ template<typename f, typename T1,
 typename std::enable_if<brgastro::is_const_container<T1>::value,T1>::type* = nullptr>
 T1 rand_vector(const f func, T1 v1 )
 {
-	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = func(v1[i]);
+	for(typename T1::size_type i = 0; i < v1.size(); i++) v1[i] = func(v1[i]);
 
 	return v1;
 }
@@ -142,7 +143,7 @@ T1 rand_vector(const f func, T1 v1, const T2 & v2)
 {
 	assert(v1.size()==v2.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++) v1[i] = (func)(v1[i],v2[i]);
+	for(typename T1::size_type i = 0; i < v1.size(); i++) v1[i] = (func)(v1[i],v2[i]);
 
 	return v1;
 }
@@ -182,7 +183,7 @@ T1 add( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] += v2[i];
 	}
@@ -235,7 +236,7 @@ typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nul
 T1 subtract( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] -= v2[i];
 	}
@@ -288,7 +289,7 @@ typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nul
 T1 multiply( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] *= v2[i];
 	}
@@ -341,7 +342,7 @@ typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nul
 T1 divide( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] /= v2[i];
 	}
@@ -394,7 +395,7 @@ typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nul
 T1 pow( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] = pow(v1[i], v2[i]);
 	}
@@ -443,7 +444,7 @@ typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nul
 T1 ipow( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] = ipow(v1[i], v2[i]);
 	}
@@ -470,7 +471,7 @@ typename std::enable_if<brgastro::is_const_container<T2>::value,T2>::type* = nul
 T1 ipow( const T1 & v1, const T2 & v2 )
 {
 	T1 result(v2.size());
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(typename T2::size_type i = 0; i < v2.size(); i++)
 	{
 		result[i] = ipow(v1, v2[i]);
 	}
@@ -537,7 +538,7 @@ T1 max( T1 v1, const T2 &v2 )
 {
 
 	assert(v1.size()==v2.size());
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] = max(v1[i], v2[i]);
 	}
@@ -584,7 +585,7 @@ T1 min( T1 v1, const T2 &v2 )
 {
 
 	assert(v1.size()==v2.size());
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] = min(v1[i], v2[i]);
 	}
@@ -635,7 +636,7 @@ T2 bound( const T1 & vlower,
 
 	assert(vlower.size()==v.size());
 	assert(vupper.size()==v.size());
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(typename T2::size_type i = 0; i < v.size(); i++)
 	{
 		v[i] = bound(vlower[i],v[i],vupper[i]);
 	}
@@ -653,7 +654,7 @@ T2 bound( T1 vlower,
 {
 
 	assert(vupper.size()==v.size());
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(typename T2::size_type i = 0; i < v.size(); i++)
 	{
 		v[i] = bound(vlower,v[i],vupper[i]);
 	}
@@ -671,7 +672,7 @@ T2 bound( const T1 & vlower,
 {
 
 	assert(vlower.size()==v.size());
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(typename T2::size_type i = 0; i < v.size(); i++)
 	{
 		v[i] = bound(vlower[i],v[i],vupper);
 	}
@@ -981,7 +982,7 @@ T safe_d( T v )
 // Element-wise not
 #if (1)
 
-inline const std::vector<bool> operator!( std::vector<bool> v )
+inline const std::vector<bool> v_not( std::vector<bool> v )
 {
 	for(std::vector<bool>::size_type i=0; i<v.size(); ++i)
 	{
@@ -1001,7 +1002,7 @@ std::vector<bool> equal( const T1 & v1, const T2 &v2 )
 
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] == v2[i]);
 	}
@@ -1014,7 +1015,7 @@ std::vector<bool> equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] == v2);
 	}
@@ -1027,7 +1028,7 @@ std::vector<bool> equal( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(typename T2::size_type i = 0; i < v2.size(); i++)
 	{
 		result[i] = (v2[i] == v1);
 	}
@@ -1052,7 +1053,7 @@ std::vector<bool> not_equal( const T1 & v1, const T2 &v2 )
 
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] != v2[i]);
 	}
@@ -1065,7 +1066,7 @@ std::vector<bool> not_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] != v2);
 	}
@@ -1078,7 +1079,7 @@ std::vector<bool> not_equal( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(typename T2::size_type i = 0; i < v2.size(); i++)
 	{
 		result[i] = (v2[i] != v1);
 	}
@@ -1103,7 +1104,7 @@ std::vector<bool> less_than( const T1 & v1, const T2 &v2 )
 
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] < v2[i]);
 	}
@@ -1116,7 +1117,7 @@ std::vector<bool> less_than( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] < v2);
 	}
@@ -1129,7 +1130,7 @@ std::vector<bool> less_than( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(typename T2::size_type i = 0; i < v2.size(); i++)
 	{
 		result[i] = (v1 < v2[i]);
 	}
@@ -1154,7 +1155,7 @@ std::vector<bool> greater_than( const T1 & v1, const T2 &v2 )
 
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] > v2[i]);
 	}
@@ -1167,7 +1168,7 @@ std::vector<bool> greater_than( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] > v2);
 	}
@@ -1180,7 +1181,7 @@ std::vector<bool> greater_than( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(typename T2::size_type i = 0; i < v2.size(); i++)
 	{
 		result[i] = (v1 > v2[i]);
 	}
@@ -1205,7 +1206,7 @@ std::vector<bool> less_than_or_equal( const T1 & v1, const T2 &v2 )
 
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] <= v2[i]);
 	}
@@ -1218,7 +1219,7 @@ std::vector<bool> less_than_or_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] <= v2);
 	}
@@ -1231,7 +1232,7 @@ std::vector<bool> less_than_or_equal( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(typename T1::size_type i = 0; i < v2.size(); i++)
 	{
 		result[i] = (v1 <= v2[i]);
 	}
@@ -1256,7 +1257,7 @@ std::vector<bool> greater_than_or_equal( const T1 & v1, const T2 &v2 )
 
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] >= v2[i]);
 	}
@@ -1269,7 +1270,7 @@ std::vector<bool> greater_than_or_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
 
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
 		result[i] = (v1[i] >= v2);
 	}
@@ -1282,7 +1283,7 @@ std::vector<bool> greater_than_or_equal( const T2 & v1, const T1 &v2 )
 {
 	std::vector<bool> result(v2.size());
 
-	for(unsigned int i = 0; i < v2.size(); i++)
+	for(typename T2::size_type i = 0; i < v2.size(); i++)
 	{
 		result[i] = (v1 >= v2[i]);
 	}
@@ -1308,7 +1309,7 @@ bool greater_than_or_equal( const T1 & v1, const T2 & v2 )
 template<typename T>
 inline const T v_not(const T v)
 {
-	for(unsigned int i=0; i < v.size(); i++)
+	for(typename T::size_type i=0; i < v.size(); i++)
 	{
 		v[i] = v_not(v[i]);
 	}

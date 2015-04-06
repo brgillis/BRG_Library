@@ -35,6 +35,8 @@
 #include <type_traits>
 #include <vector>
 
+#include "brg/utility.hpp"
+
 namespace brgastro {
 
 template<typename T_key_type, typename T_mapped_type>
@@ -69,7 +71,7 @@ private:
 	{
 		// This function is only called if we already know we need it, so we
 		// don't check if the key already exists here
-		_key_map_[val.first] = _val_vector_.size(); // Once we add the value to the vector, this will
+		_key_map_[val.first] = ssize(_val_vector_); // Once we add the value to the vector, this will
 													// point to the new element
 		_val_vector_.push_back(std::forward<new_val_type>(val));
 
@@ -78,7 +80,7 @@ private:
 
 	void _build_key_map()
 	{
-		for( size_t i=0; i<_val_vector_.size(); ++i)
+		for( size_t i=0; i<ssize(_val_vector_); ++i)
 		{
 			_key_map_[_val_vector_[i].first] = i;
 		}
@@ -99,16 +101,16 @@ private:
 		// elements in the map. If that's in, we'll add 1. Repeat till we find an unused value.
 		// If we try more values than are in the key map, something's gone wrong, so throw an
 		// exception.
-		new_key_type test_key = _key_map_.size();
+		new_key_type test_key = ssize(_key_map_);
 		size_type counter=0;
 		while((_key_map_.find(test_key) != _key_map_.end()) &&
 			  (other_map.find(test_key) != other_map.end()) &&
-			  (counter<=_key_map_.size()))
+			  (counter<=ssize(_key_map_)))
 		{
 			test_key += 1;
 			++counter;
 		}
-		if(counter>_key_map_.size()) throw std::runtime_error("Cannot generate new arithmetic key for insertion_ordered_map.");
+		if(counter>ssize(_key_map_)) throw std::runtime_error("Cannot generate new arithmetic key for insertion_ordered_map.");
 		return test_key;
 	}
 
@@ -121,7 +123,7 @@ private:
 		// elements in the map. If that's in, we'll add 1 to N. Repeat till we find an unused value.
 		// If we try more values than are in the key map, something's gone wrong, so throw an
 		// exception.
-		size_type N = _key_map_.size();
+		size_type N = ssize(_key_map_);
 
 		std::stringstream ss;
 
@@ -131,7 +133,7 @@ private:
 
 		size_type counter=0;
 		while((_key_map_.count(test_key) + other_map.count(test_key) > 0) &&
-			  (counter<=_key_map_.size()+other_map.size()))
+			  (counter<=ssize(_key_map_)+other_map.size()))
 		{
 			ss.str();
 			ss << "col_" << ++N;
@@ -139,7 +141,7 @@ private:
 
 			++counter;
 		}
-		if(counter>_key_map_.size()+other_map.size()) throw std::runtime_error("Cannot generate new string key for insertion_ordered_map.");
+		if(counter>ssize(_key_map_)+other_map.size()) throw std::runtime_error("Cannot generate new string key for insertion_ordered_map.");
 		return test_key;
 	}
 
@@ -314,10 +316,10 @@ public:
 	}
 	typename base_type::size_type erase (const key_type& k)
 	{
-		if(_key_map_.count(k)==0) return _val_vector_.size();
+		if(_key_map_.count(k)==0) return ssize(_val_vector_);
 
 		_val_vector_.erase(static_cast<typename base_type::iterator>(&_val_vector_[_key_map_.at(k)]));
-		auto result=_val_vector_.size();
+		auto result=ssize(_val_vector_);
 		_rebuild_key_map();
 		return result;
 	}
@@ -395,7 +397,7 @@ public:
     }
     typename base_type::size_type size() const
     {
-    	return _val_vector_.size();
+    	return ssize(_val_vector_);
     }
     typename base_type::size_type max_size() const
     {

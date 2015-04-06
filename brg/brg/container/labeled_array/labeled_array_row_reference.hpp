@@ -32,6 +32,7 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #include "brg/container/labeled_array.hpp"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -40,7 +41,7 @@ class labeled_array_row_reference
 {
 public:
 
-	typedef typename labeled_array_type::key_type key_type;
+	typedef typename labeled_array_type::label_type label_type;
 	typedef typename labeled_array_type::value_type value_type;
 	typedef typename labeled_array_type::const_value_type const_value_type;
 	typedef typename labeled_array_type::size_type size_type;
@@ -64,16 +65,16 @@ private:
 	typedef typename labeled_array_type::map_type map_type;
 
 	// Members
-	map_type * _key_map_;
+	map_type * _label_map_;
 	row_type _row_;
 	size_type _num_rows_;
 
 public:
 
-	/// Constructor. Requires a pointer to a labeled_array's key map and row
+	/// Constructor. Requires a pointer to a labeled_array's label map and row
 	template <typename T_init_row_type>
-	labeled_array_row_reference(map_type * key_map, T_init_row_type && row, const size_type & num_cols)
-	: _key_map_(key_map),
+	labeled_array_row_reference(map_type * label_map, T_init_row_type && row, const size_type & num_cols)
+	: _label_map_(label_map),
 	  _row_(std::forward<T_init_row_type>(row)),
 	  _num_rows_(num_cols)
 	{
@@ -323,15 +324,15 @@ public:
 	}
 
 	/// Range-checked element access
-	value_type at_label( const key_type & key ) const
+	value_type at_label( const label_type & label ) const
 	{
-		return _row_(_key_map_->left.at(key));
+		return _row_(_label_map_->left.at(label));
 	}
 
 	/// Range-checked element access
-	reference at_label( const key_type & key )
+	reference at_label( const label_type & label )
 	{
-		return _row_(_key_map_->left.at(key));
+		return _row_(_label_map_->left.at(label));
 	}
 
 	/// Access first element
@@ -375,9 +376,9 @@ public:
 	// Label access
 #if(1)
 
-	key_type label(const size_type & n) const
+	label_type label(const size_type & n) const
 	{
-		return _key_map_->right.at(n);
+		return _label_map_->right.at(n);
 	}
 
 #endif
@@ -407,7 +408,7 @@ public:
 	template <typename other_row_type,
 	typename std::enable_if<std::is_convertible<other_row_type,row_type>::value, other_row_type>::type* = nullptr>
 	labeled_array_row_reference( const labeled_array_row_reference<labeled_array_type,other_row_type> & other)
-	: _key_map_(other._key_map_), _row_(other._row_), _num_rows_(other._num_rows_) {}
+	: _label_map_(other._label_map_), _row_(other._row_), _num_rows_(other._num_rows_) {}
 
 #endif
 

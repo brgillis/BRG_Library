@@ -28,12 +28,25 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "global.h"
 
+
 namespace brgastro
 {
+
+// Function to get the size of a container casted to a signed integer
+template<typename T>
+auto ssize( const T & container) -> typename std::make_signed<decltype(container.size())>::type
+{
+	return container.size(); // The return type really does all the work here
+}
+
+// Typedef for the signed version of size_t
+typedef std::make_signed<size_t>::type ssize_t;
 
 // Generic functions
 #if (1)

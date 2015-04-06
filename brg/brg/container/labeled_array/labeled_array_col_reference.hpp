@@ -31,6 +31,7 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #include "brg/container/labeled_array.hpp"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -42,7 +43,7 @@ public:
 
 	// Public typedefs
 
-	typedef typename labeled_array_type::const_key_type key_type;
+	typedef typename labeled_array_type::const_label_type label_type;
 	typedef typename labeled_array_type::value_type value_type;
 	typedef typename labeled_array_type::const_value_type const_value_type;
 	typedef typename labeled_array_type::size_type size_type;
@@ -64,16 +65,16 @@ public:
 private:
 
 	// Private Members
-	key_type * _key_;
+	label_type * _label_;
 	col_type _col_;
 	size_type _num_cols_;
 
 public:
 
-	/// Constructor. Requires a pointer to a labeled_array's key, the column, and the number of rows
+	/// Constructor. Requires a pointer to a labeled_array's label, the column, and the number of rows
 	template< typename T_init_col_type >
-	labeled_array_col_reference(key_type * key, T_init_col_type && col, size_type num_rows)
-	: _key_(key),
+	labeled_array_col_reference(label_type * label, T_init_col_type && col, size_type num_rows)
+	: _label_(label),
 	  _col_(std::forward<T_init_col_type>(col)),
 	  _num_cols_(num_rows)
 	{
@@ -363,9 +364,9 @@ public:
 	// Label access
 #if(1)
 	/// Get the label
-	const key_type & label() const noexcept
+	const label_type & label() const noexcept
 	{
-		return *_key_;
+		return *_label_;
 	}
 #endif
 
@@ -394,7 +395,7 @@ public:
 	template <typename other_col_type,
 	typename std::enable_if<std::is_convertible<other_col_type,col_type>::value, other_col_type>::type* = nullptr>
 	labeled_array_col_reference( const labeled_array_col_reference<labeled_array_type,other_col_type> & other)
-	: _key_(other._key_), _col_(other._col_), _num_cols_(other._num_cols_)  {}
+	: _label_(other._label_), _col_(other._col_), _num_cols_(other._num_cols_)  {}
 
 #endif
 

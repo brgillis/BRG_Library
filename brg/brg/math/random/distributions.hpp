@@ -23,6 +23,7 @@
 #ifndef _BRG_DISTRIBUTIONS_HPP_INCLUDED_
 #define _BRG_DISTRIBUTIONS_HPP_INCLUDED_
 
+#include <cmath>
 #include <cstdlib>
 
 #include "brg/global.h"
@@ -31,32 +32,17 @@
 
 namespace brgastro {
 
-// Error function - Thanks to John D. Cook for this code
+// Error function - forward to std::erf
 template< typename Tx >
-inline Tx erf(Tx x)
+inline Tx erf(Tx && x)
 {
-	using std::fabs;
-	using std::exp;
+	return std::erf(std::forward<Tx>(x));
+}
 
-    // constants
-    constexpr double a1 =  0.254829592;
-    constexpr double a2 = -0.284496736;
-    constexpr double a3 =  1.421413741;
-    constexpr double a4 = -1.453152027;
-    constexpr double a5 =  1.061405429;
-    constexpr double p  =  0.3275911;
-
-    // Save the sign of x
-    int sign = 1;
-    if (x < 0)
-        sign = -1;
-    x = fabs(x);
-
-    // A&S formula 7.1.26
-    double t = 1.0/(1.0 + p*x);
-    Tx y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-square(x));
-
-    return y*=sign;
+template< typename Tx >
+inline Tx erfc(Tx && x)
+{
+	return std::erfc(std::forward<Tx>(x));
 }
 
 // Gaussian PDF
@@ -74,7 +60,7 @@ template< typename Tx, typename Tmean, typename Tstddev >
 inline const double Gaus_pdf( const Tx x, const Tmean mean,
 		const Tstddev std_dev )
 {
-	return std::exp( -square( x - mean ) / ( 2 * std_dev * std_dev ) )
+	return std::exp( -square( x - mean ) / ( 2 * square(std_dev) ) )
 			/ ( std_dev * std::sqrt( 2 * pi ) );
 }
 

@@ -30,6 +30,7 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
 #include "brg/vector/make_vector.hpp"
 
 namespace brgastro {

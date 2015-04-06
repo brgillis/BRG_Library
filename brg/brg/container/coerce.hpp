@@ -30,7 +30,8 @@
 #include <iterator>
 
 #include "brg/container/is_container.hpp"
-#include "is_eigen_container.hpp"
+#include "brg/container/is_eigen_container.hpp"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -71,7 +72,8 @@ struct assignment_coercer
 	assignment_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());
-		for(decltype(other_obj.size()) i=0; i<other_obj.size(); ++i)
+		auto size = ssize(other_obj);
+		for(decltype(size) i=0; i<size; ++i)
 		{
 			assignment_coercer<d-1,decltype(obj[i])>(obj[i],other_obj[i]);
 		}
@@ -135,7 +137,8 @@ struct range_coercer
 	range_coercer(container & obj, const oc & other_obj)
 	{
 		obj.resize(other_obj.size());
-		for(size_t i=0; i<other_obj.size(); ++i)
+		auto size=ssize(other_obj);
+		for(decltype(size) i=0; i<size; ++i)
 		{
 			range_coercer<d-1,decltype(obj[i])>(obj[i],other_obj[i]);
 		}

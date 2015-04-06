@@ -31,6 +31,7 @@
 #include <boost/iterator.hpp>
 
 #include "brg/container/labeled_array.hpp"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -55,7 +56,7 @@ private:
 public:
 
 	// Public typedefs
-	typedef typename labeled_array_type::key_type key_type;
+	typedef typename labeled_array_type::label_type label_type;
 	typedef typename labeled_array_type::value_type value_type;
 	typedef typename labeled_array_type::size_type size_type;
 
@@ -309,51 +310,51 @@ public:
 	/// Element access
 	const_reference operator[] (const size_type & n) const
 	{
-		return const_reference(_array_->_key_map_,n);
+		return const_reference(_array_->_label_map_,n);
 	}
 
 	/// Element access
 	reference operator[] (const size_type & n)
 	{
-		return reference(_array_->_key_map_,n);
+		return reference(_array_->_label_map_,n);
 	}
 
 	/// Range-checked element access
 	const_reference at( const size_type & n ) const
 	{
 		if((n<0)||(n>_size_)) throw std::out_of_range();
-		return const_reference(_array_->_key_map_,n);
+		return const_reference(_array_->_label_map_,n);
 	}
 
 	/// Range-checked element access
 	reference at( const size_type & n )
 	{
 		if((n<0)||n>_size_) throw std::out_of_range();
-		return reference(_array_->_key_map_,n);
+		return reference(_array_->_label_map_,n);
 	}
 
 	/// Access first element
 	const_reference front() const
 	{
-		return const_reference(_array_->_key_map_,0);
+		return const_reference(_array_->_label_map_,0);
 	}
 
 	/// Access first element
 	reference front()
 	{
-		return reference(_array_->_key_map_,0);
+		return reference(_array_->_label_map_,0);
 	}
 
 	/// Access last element
 	const_reference back() const
 	{
-		return const_reference(_array_->_key_map_,_size_-1);
+		return const_reference(_array_->_label_map_,_size_-1);
 	}
 
 	/// Access last element
 	reference back()
 	{
-		return reference(_array_->_key_map_,_size_-1);
+		return reference(_array_->_label_map_,_size_-1);
 	}
 
 	/// Access base array

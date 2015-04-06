@@ -26,11 +26,11 @@
 #ifndef _BRG_DE_HPP_INCLUDED_
 #define _BRG_DE_HPP_INCLUDED_
 
+#include <type_traits>
+
 #include "brg/global.h"
 
 #include "brg/math/misc_math.hpp"
-#include "brg/physics/phase.hpp"
-#include "brg/physics/units/unit_obj.h"
 
 namespace brgastro {
 
@@ -38,17 +38,20 @@ namespace brgastro {
 // out by half a timestep, with velocity at t+t_step/2 (though it does allow phase classes to be passed to it). This method takes a single step,
 // using the passed acceleration function. The passed function for this implementation must take in one parameter (the magnitude of distance from
 // a centre point) and return one parameter (the magnitude of the acceleration toward this centre point).
-template< typename f >
-inline const int leapfrog_step( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
-		CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx, CONST_BRG_VELOCITY_REF vy,
-		CONST_BRG_VELOCITY_REF vz,
-		BRG_DISTANCE & new_x, BRG_DISTANCE & new_y, BRG_DISTANCE & new_z,
-		BRG_VELOCITY & new_vx, BRG_VELOCITY & new_vy, BRG_VELOCITY & new_vz,
-		const BRG_TIME &t_step, const f *accel_func,
-		const bool silent = false )
+template< typename f, typename Td=double, typename Tv=double, typename Tt=double >
+inline const int leapfrog_step( const Td & x, const Td & y,
+								const Td & z, const Tv & vx, const Tv & vy,
+								const Tv & vz,
+								Td & new_x, Td & new_y, Td & new_z,
+								Tv & new_vx, Tv & new_vy, Tv & new_vz,
+								const Tt &t_step, const f *accel_func )
 {
-	BRG_DISTANCE d;
-	BRG_UNITS a;
+	static_assert(std::is_same<decltype(Td()/Tt()),decltype(Tv())>::value,"Invalid types passed to parameters of leapfrog_step");
+
+	typedef decltype(Td()/(Tt()*Tt())) Ta;
+
+	Td d;
+	Ta a;
 
 	d = 0;
 	a = 0;
@@ -60,7 +63,7 @@ inline const int leapfrog_step( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF
 
 	// Calculate acceleration at this new position
 	d = dist3d( new_x, new_y, new_z );
-	a = (*accel_func)( d, silent );
+	a = (*accel_func)( d );
 
 	// Adjust velocities
 	new_vx = vx + a * new_x / d * t_step;
@@ -70,19 +73,19 @@ inline const int leapfrog_step( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF
 	return 0;
 }
 
-template< typename f >
-inline const int leapfrog_step( BRG_DISTANCE & x, BRG_DISTANCE & y,
-		BRG_DISTANCE & z,
-		BRG_VELOCITY & vx, BRG_VELOCITY & vy, BRG_VELOCITY & vz,
-		const BRG_TIME & t_step, const f *accel_func,
-		const bool silent = false )
+template< typename f, typename Td=double, typename Tv=double, typename Tt=double >
+inline const int leapfrog_step( Td & x, Td & y, Td & z,
+		Tv & vx, Tv & vy, Tv & vz,
+		const Tt & t_step, const f *accel_func )
 {
-	BRG_DISTANCE new_x, new_y, new_z;
-	BRG_VELOCITY new_vx, new_vy, new_vz;
+	static_assert(std::is_same<decltype(Td()/Tt()),decltype(Tv())>::value,"Invalid types passed to parameters of leapfrog_step");
+
+	Td new_x, new_y, new_z;
+	Tv new_vx, new_vy, new_vz;
 
 	int result;
 	result = leapfrog_step( x, y, z, vx, vy, vz, new_x, new_y, new_z, new_vx,
-			new_vy, new_vz, t_step, accel_func, silent );
+			new_vy, new_vz, t_step, accel_func );
 	x = new_x;
 	y = new_y;
 	z = new_z;
@@ -92,22 +95,25 @@ inline const int leapfrog_step( BRG_DISTANCE & x, BRG_DISTANCE & y,
 	return result;
 }
 
-template< typename f >
-inline const int leapfrog_step( const phase &p, phase & new_p,
-		CONST_BRG_TIME_REF t_step, const f *accel_func,
-		const bool silent = false )
+template< typename f, typename Tp, typename Tt=double >
+inline const int leapfrog_step( const Tp &p, Tp & new_p,
+		const Tt & t_step, const f *accel_func )
 {
+	static_assert(std::is_same<decltype(p.x/Tt()),decltype(p.vx)>::value,"Invalid types passed to parameters of leapfrog_step");
+
 	return leapfrog_step( p.x, p.y, p.z, p.vx, p.vy, p.vz, new_p.x, new_p.y,
-			new_p.z, new_p.vx, new_p.vy, new_p.vz, t_step, accel_func, silent );
+			new_p.z, new_p.vx, new_p.vy, new_p.vz, t_step, accel_func );
 }
 
-template< typename f >
-inline const int leapfrog_step( phase & p, CONST_BRG_TIME_REF t_step,
-		const f *accel_func, const bool silent = false )
+template< typename f, typename Tp, typename Tt=double >
+inline const int leapfrog_step( Tp & p, const Tt & t_step,
+		const f *accel_func )
 {
+	static_assert(std::is_same<decltype(p.x/Tt()),decltype(p.vx)>::value,"Invalid types passed to parameters of leapfrog_step");
+
 	int result;
-	phase new_p(p);
-	result = leapfrog_step( p, new_p, t_step, accel_func, silent );
+	Tp new_p(p);
+	result = leapfrog_step( p, new_p, t_step, accel_func );
 	p = new_p;
 	return result;
 }

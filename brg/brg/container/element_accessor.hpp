@@ -26,6 +26,8 @@
 #ifndef _BRG_CONTAINER_ELEMENT_ACCESSOR_HPP_INCLUDED_
 #define _BRG_CONTAINER_ELEMENT_ACCESSOR_HPP_INCLUDED_
 
+#include "brg/utility.hpp"
+
 namespace brgastro {
 
 template<typename ContainerType>

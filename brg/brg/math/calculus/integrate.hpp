@@ -57,8 +57,7 @@ namespace brgastro
 // Scalar-in, scaler-out version.
 template< typename f, typename T >
 inline T integrate_trapezoid( const f * func, const T & min_in_param, const T & max_in_param,
-		const T & in_param_step,
-		T & out_param, const bool silent = false )
+		const T & in_param_step, T & out_param)
 {
 	T in_param( 0 );
 	T temp_out_param( 0 );
@@ -81,7 +80,7 @@ inline T integrate_trapezoid( const f * func, const T & min_in_param, const T & 
 		last_out_param = temp_out_param;
 
 		// Call function at this value
-		temp_out_param = ( *func )( in_param, silent );
+		temp_out_param = ( *func )( in_param );
 
 		if(first_step)
 			first_step = false;
@@ -100,8 +99,7 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params,
 		const std::vector< T > & in_params_step,
-		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
-		const bool silent = false )
+		const std::vector< T > & passed_in_params = std::vector< T >( 0 ) )
 {
 	std::vector< T > in_params( 0 );
 	std::vector< T > new_min_in_params( 0 );
@@ -112,9 +110,9 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 	std::vector< T > last_out_params( 0 );
 	std::vector< T > out_params( 0 );
 
-	typename std::vector<T>::size_type num_in_params=min_in_params.size();
-	typename std::vector<T>::size_type num_passed_in_params=passed_in_params.size();
-	typename std::vector<T>::size_type num_out_params=(*func)(in_params,true).size();
+	auto num_in_params = ssize(min_in_params);
+	auto num_passed_in_params = ssize(passed_in_params);
+	auto num_out_params = ssize((*func)(in_params,true));
 
 	bool array_created = false; // So we can only create the out_params array once, after the first step
 	std::vector< int > num_steps;
@@ -124,10 +122,10 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 
 	// Check that we have a sane number of input parameters
 	if ( ( num_in_params < 1 ) || ( num_in_params > MAX_STACK_DEPTH )
-			|| ( num_in_params != min_in_params.size() )
-			|| ( num_in_params != max_in_params.size() )
-			|| ( num_in_params != in_params_step.size() )
-			|| ( num_passed_in_params != passed_in_params.size() ) )
+			|| ( num_in_params != ssize(min_in_params) )
+			|| ( num_in_params != ssize(max_in_params) )
+			|| ( num_in_params != ssize(in_params_step) )
+			|| ( num_passed_in_params != ssize(passed_in_params) ) )
 	{
 		throw std::logic_error("Bad number of input params passed to integrate().");
 	}
@@ -168,7 +166,7 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 					+ in_params_step[0] * i;
 
 			// If we have output params from last time, shift them to the last_out_params array
-			if ( temp_out_params.size() > 0 )
+			if ( !temp_out_params.empty() )
 			{
 				for ( size_t j = 0; j < num_out_params; j++ )
 					last_out_params[j] = temp_out_params[j];
@@ -176,7 +174,7 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 			}
 
 			// Call function at this value
-			temp_out_params = ( *func )( in_params, silent );
+			temp_out_params = ( *func )( in_params );
 
 			// Create output param arrays if necessary
 			if ( !array_created )
@@ -230,8 +228,8 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 							+ in_params_step[param_starting_index] * i;
 
 			// Call integrate on remaining in_params
-			integrate_trapezoid( func, new_min_in_params, new_max_in_params, new_in_params_step,
-					temp_out_params, new_passed_in_params );
+			temp_out_params = integrate_trapezoid( func, new_min_in_params, new_max_in_params, new_in_params_step,
+					new_passed_in_params );
 
 			// Create output param array if necessary
 			if ( !array_created )
@@ -259,13 +257,12 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 
 // Scalar-in, scalar-out version
 template< typename f, typename T >
-inline T integrate_trapezoid( const f * func, const T & min_in_params, const T & max_in_params, const int num_samples,
-		const bool silent = false )
+inline T integrate_trapezoid( const f * func, const T & min_in_params, const T & max_in_params, const int num_samples )
 {
 	T in_params_step( ( max_in_params - min_in_params )
 				/ safe_d( num_samples - 1 ));
 	return integrate_trapezoid( func, min_in_params, max_in_params,
-			in_params_step, silent );
+			in_params_step );
 }
 
 // Vector-in, vector-out version
@@ -273,10 +270,9 @@ template< typename f, typename T >
 inline std::vector<T> integrate_trapezoid( const f * func,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, const int num_samples,
-		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
-		const bool silent = false )
+		const std::vector< T > & passed_in_params = std::vector< T >( 0 ) )
 {
-	const typename std::vector<T>::size_type num_in_params(min_in_params.size());
+	const typename std::vector<T>::size_type num_in_params(ssize(min_in_params));
 	std::vector< T > in_params_step( num_in_params );
 	for ( size_t i = 0; i < num_in_params; i++ )
 	{
@@ -284,23 +280,22 @@ inline std::vector<T> integrate_trapezoid( const f * func,
 				/ safe_d( num_samples - 1 );
 	}
 	return integrate_trapezoid( func, min_in_params, max_in_params,
-			in_params_step, passed_in_params, silent );
+			in_params_step, passed_in_params );
 }
 
 // Scalar-in, scalar-out version
 template< typename f1, typename f2, typename T >
 inline T integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
-		const T & min_in_params, const T & max_in_params, const T & in_params_step,
-		const bool silent = false )
+		const T & min_in_params, const T & max_in_params, const T & in_params_step )
 {
 	functor_product< f1, f2, T > fprod( func, func_weight );
 	size_t num_prod_out_params = 0, num_weight_out_params = 0;
 	T prod_out_params( 0 ), weight_out_params( 0 );
 
 	prod_out_params = integrate_trapezoid( &fprod, min_in_params,
-			max_in_params, in_params_step, silent);
+			max_in_params, in_params_step );
 	weight_out_params = integrate_trapezoid( func_weight, min_in_params,
-			max_in_params, in_params_step, silent);
+			max_in_params, in_params_step );
 
 	return prod_out_params / safe_d( weight_out_params );
 }
@@ -311,20 +306,19 @@ inline std::vector<T> integrate_weighted_trapezoid( const f1 * func, const f2 * 
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params,
 		const std::vector< T > & in_params_step,
-		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
-		const bool silent = false )
+		const std::vector< T > & passed_in_params = std::vector< T >( 0 ) )
 {
 	functor_product< f1, f2, T > fprod( func, func_weight );
 	size_t num_prod_out_params = 0, num_weight_out_params = 0;
 	std::vector< T > prod_out_params( 0 ), weight_out_params( 0 );
 
 	prod_out_params = integrate_trapezoid( &fprod, min_in_params,
-			max_in_params, in_params_step, passed_in_params, silent );
+			max_in_params, in_params_step, passed_in_params );
 	weight_out_params = integrate_trapezoid( func_weight, min_in_params,
-			max_in_params, in_params_step, passed_in_params, silent );
+			max_in_params, in_params_step, passed_in_params );
 
-	std::vector<T> out_params( prod_out_params.size() );
-	for ( size_t i = 0; i < prod_out_params.size(); i++ )
+	std::vector<T> out_params( ssize(prod_out_params) );
+	for ( size_t i = 0; i < ssize(prod_out_params); i++ )
 	{
 		out_params[i] = prod_out_params[i] / safe_d( weight_out_params[i] );
 	}
@@ -336,17 +330,16 @@ inline std::vector<T> integrate_weighted_trapezoid( const f1 * func, const f2 * 
 template< typename f1, typename f2, typename T >
 inline T integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
 		const T & min_in_params,
-		const T & max_in_params, const int num_samples,
-		const bool silent = false )
+		const T & max_in_params, const int num_samples )
 {
 	functor_product< f1, f2, T > fprod( func, func_weight );
 	size_t num_prod_out_params = 0, num_weight_out_params = 0;
 	T prod_out_params( 0 ), weight_out_params( 0 );
 
 	prod_out_params = integrate_trapezoid( &fprod, min_in_params,
-			max_in_params, num_samples, silent );
+			max_in_params, num_samples );
 	weight_out_params = integrate_trapezoid( func_weight, min_in_params,
-			max_in_params, num_samples, silent );
+			max_in_params, num_samples );
 
 	return prod_out_params / safe_d( weight_out_params );
 }
@@ -356,19 +349,18 @@ template< typename f1, typename f2, typename T >
 inline std::vector<T> integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
 		const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, const int num_samples,
-		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
-		const bool silent = false )
+		const std::vector< T > & passed_in_params = std::vector< T >( 0 ) )
 {
 	functor_product< f1, f2, T > fprod( func, func_weight );
 	std::vector< T > prod_out_params( 0 ), weight_out_params( 0 );
 
 	prod_out_params = integrate( &fprod, min_in_params,
-			max_in_params, num_samples, passed_in_params, silent );
+			max_in_params, num_samples, passed_in_params );
 	weight_out_params = integrate( func_weight, min_in_params,
-			max_in_params, num_samples, passed_in_params, silent );
+			max_in_params, num_samples, passed_in_params );
 
-	std::vector<T> out_params( prod_out_params.size() );
-	for ( size_t i = 0; i < prod_out_params.size(); i++ )
+	std::vector<T> out_params( ssize(prod_out_params) );
+	for ( size_t i = 0; i < ssize(prod_out_params); i++ )
 	{
 		out_params[i] = prod_out_params[i] / safe_d( weight_out_params[i] );
 	}
@@ -376,28 +368,27 @@ inline std::vector<T> integrate_weighted_trapezoid( const f1 * func, const f2 * 
 	return 0;
 }
 
-// Monte-carlo integration method. NYI
+// Monte-carlo integration method
 template< typename f, typename T >
 inline std::vector< T > integrate_mc( const f * func,
 		const std::vector< T > & min_in_params,
-		const std::vector< T > & max_in_params, const int num_samples,
-		const bool silent = false )
+		const std::vector< T > & max_in_params, const int num_samples )
 {
 	bool first_sample = true;
 	std::vector<T> test_in_params, test_out_params, out_params;
 
 	test_in_params = drand(min_in_params,max_in_params);
-	out_params = (*func)(test_in_params,silent);
+	out_params = (*func)(test_in_params);
 
 	for(size_t i=0; i<num_samples-1; ++i )
 	{
 		test_in_params = drand(min_in_params,max_in_params);
-		test_out_params = (*func)(test_in_params,silent);
-		for(size_t j=0; j<test_out_params.size(); ++j)
+		test_out_params = (*func)(test_in_params);
+		for(size_t j=0; j<ssize(test_out_params); ++j)
 			out_params[j] += test_out_params[j];
 	}
 
-	for(size_t j=0; j<out_params.size(); ++j)
+	for(size_t j=0; j<ssize(out_params); ++j)
 		out_params[j] /= num_samples;
 
 	return out_params;
@@ -421,7 +412,7 @@ inline std::vector< T > integrate_mc( const f * func,
 template< typename f, typename T >
 inline T integrate_Romberg( const f * func,
 		T min_in_param, T max_in_param, double precision = 0.00001,
-		bool tighten_precision = false, bool silent = false )
+		bool tighten_precision = false )
 {
 	T in_param(0);
 	std::vector< std::vector< T > > R( 0 );
@@ -437,8 +428,8 @@ inline T integrate_Romberg( const f * func,
 	b0 = max_in_param;
 
 	// Get R[0][0] first
-	fa = ( *func )( a0, silent );
-	fb = ( *func )( b0, silent );
+	fa = ( *func )( a0 );
+	fb = ( *func )( b0 );
 
 	Rnm = 0.5 * ( b0 - a0 ) * ( fa + fb );
 
@@ -456,7 +447,7 @@ inline T integrate_Romberg( const f * func,
 		{
 			in_param = a0
 					+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2, n );
-			ftot += ( *func )( in_param, silent );
+			ftot += ( *func )( in_param );
 		}
 
 		Rnm = 0.5 * R[n - 1][0] + ( b0 - a0 ) / ipow( 2, n ) * ftot;
@@ -483,7 +474,7 @@ inline T integrate_Romberg( const f * func,
 
 	} // for(int n = 0; n < RHOMBERG_N_MAX; n++)
 
-	if(!silent) std::cerr << "WARNING: Integrate_Romberg did not converge.\n";
+	throw std::runtime_error("integrate_Romberg did not converge.");
 	return R.back().back();
 }
 
@@ -494,8 +485,7 @@ inline std::vector< T > integrate_Romberg( const f * func,
 		const std::vector< T > & max_in_params,
 		const double precision = 0.00001,
 		const bool tighten_precision = false,
-		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
-		const bool silent = false )
+		const std::vector< T > & passed_in_params = std::vector< T >( 0 ) )
 {
 	std::vector< T > in_params( 0 );
 	std::vector< T > new_in_params( 0 );
@@ -514,17 +504,17 @@ inline std::vector< T > integrate_Romberg( const f * func,
 	T d;
 
 	size_t param_starting_index;
-	size_t num_in_params = min_in_params.size(), num_passed_in_params = passed_in_params.size(),
+	size_t num_in_params = ssize(min_in_params), num_passed_in_params = ssize(passed_in_params),
 			new_num_in_params = 0, new_num_passed_params = 0, num_tot_params =
 			num_in_params + num_passed_in_params;
 
 	// Check that we have a sane number of input parameters
 	if ( ( num_in_params < 1 ) || ( num_in_params > MAX_STACK_DEPTH )
-			|| ( num_in_params != min_in_params.size() )
-			|| ( num_in_params != max_in_params.size() )
-			|| ( num_passed_in_params != passed_in_params.size() ) )
+			|| ( num_in_params != ssize(min_in_params) )
+			|| ( num_in_params != ssize(max_in_params) )
+			|| ( num_passed_in_params != ssize(passed_in_params) ) )
 	{
-		throw std::logic_error("ERROR: Bad number of input params passed to integrate_Rhomberg().");
+		throw std::logic_error("Bad number of input params passed to integrate_Rhomberg().");
 	}
 
 	make_array( in_params, num_tot_params );
@@ -555,12 +545,12 @@ inline std::vector< T > integrate_Romberg( const f * func,
 		// Get R[0][0] first
 
 		in_params[param_starting_index] = a0;
-		fa = ( *func )( in_params, silent );
+		fa = ( *func )( in_params );
 
 		in_params[param_starting_index] = b0;
-		fb = ( *func )( in_params, silent );
+		fb = ( *func )( in_params );
 
-		size_t num_out_params = fa.size();
+		size_t num_out_params = ssize(fa);
 
 		Rnm.resize( num_out_params );
 
@@ -580,8 +570,7 @@ inline std::vector< T > integrate_Romberg( const f * func,
 			{
 				in_params[param_starting_index] = a0
 						+ ( 2 * k - 1 ) * ( b0 - a0 ) / ipow( 2, n );
-				( *func )( in_params, temp_out_params,
-						silent );
+				( *func )( in_params, temp_out_params );
 				for ( size_t i = 0; i < num_out_params; i++ )
 					ftot[i] += temp_out_params[i];
 			}
@@ -655,16 +644,16 @@ inline std::vector< T > integrate_Romberg( const f * func,
 		fa = brgastro::integrate_Romberg( func,
 				new_min_in_params, new_max_in_params,
 				new_precision, tighten_precision,
-				new_passed_in_params, silent );
+				new_passed_in_params );
 		// Determine input param and add it to passed parameters array
 		new_passed_in_params[new_num_passed_params - 1] = b0;
 		// Call integrate on remaining in_params
 		fb = brgastro::integrate_Romberg( func,
 				new_min_in_params, new_max_in_params,
 				new_precision, tighten_precision,
-				new_passed_in_params, silent );
+				new_passed_in_params );
 
-		size_t num_out_params = fa.size();
+		size_t num_out_params = ssize(fa);
 
 		Rnm.resize( num_out_params );
 
@@ -688,7 +677,7 @@ inline std::vector< T > integrate_Romberg( const f * func,
 						new_min_in_params,
 						new_max_in_params,
 						new_precision, tighten_precision,
-						new_passed_in_params, silent );
+						new_passed_in_params );
 				for ( size_t i = 0; i < num_out_params; i++ )
 					ftot[i] += temp_out_params[i];
 			}
@@ -730,7 +719,8 @@ inline std::vector< T > integrate_Romberg( const f * func,
 		throw std::runtime_error("Invalid path!");
 	} // else
 
-	if(!silent) std::cerr << "WARNING: Integrate_Romberg did not converge.\n";
+	throw std::runtime_error("Integrate_Romberg did not converge.");
+
 	return R.back().back();
 }
 
@@ -739,12 +729,12 @@ template< typename f_in_1, typename f_in_2, typename T >
 inline T integrate_product_Romberg( const f_in_1 * func1,
 		const f_in_2 * func2, const T & min_in_params, const T & max_in_params,
 		const double precision = 0.00001, const bool tighten_precision = false,
-		const T & passed_in_params = T( 0 ), const bool silent = false )
+		const T & passed_in_params = T( 0 ) )
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
 
 	return integrate_Romberg( &fprod, min_in_params, max_in_params,
-			precision, tighten_precision, passed_in_params, silent );
+			precision, tighten_precision, passed_in_params );
 }
 
 // Vector-in, vector-out version
@@ -753,29 +743,27 @@ inline std::vector< T > integrate_product_Romberg( const f_in_1 * func1,
 		const f_in_2 * func2, const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, const double precision = 0.00001,
 		const bool tighten_precision = false,
-		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
-		const bool silent = false )
+		const std::vector< T > & passed_in_params = std::vector< T >( 0 ) )
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
 
 	return integrate_Romberg( &fprod, min_in_params, max_in_params,
-			precision, tighten_precision, passed_in_params, silent );
+			precision, tighten_precision, passed_in_params );
 }
 
 // Scalar-in, scalar-out version
 template< typename f_in_1, typename f_in_2, typename T >
 inline T integrate_weighted_Romberg( const f_in_1 * func,
 		const f_in_2 * func_weight, const T & min_in_params, const T & max_in_params,
-		const double precision = 0.00001, const bool tighten_precision = false,
-		const bool silent = false )
+		const double precision = 0.00001, const bool tighten_precision = false )
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func, func_weight );
 	T prod_out_params( 0 ), weight_out_params( 0 );
 
 	prod_out_params = integrate_Romberg( &fprod, min_in_params, max_in_params,
-			precision, tighten_precision, silent);
+			precision, tighten_precision );
 	weight_out_params = integrate_Romberg( func_weight, min_in_params, max_in_params,
-			precision, tighten_precision, silent);
+			precision, tighten_precision );
 
 	auto r = prod_out_params / safe_d( weight_out_params );
 	return r;
@@ -787,19 +775,18 @@ inline std::vector< T > integrate_weighted_Romberg( const f_in_1 * func,
 		const f_in_2 * func_weight,	const std::vector< T > & min_in_params,
 		const std::vector< T > & max_in_params, const double precision = 0.00001,
 		const bool tighten_precision = false,
-		const std::vector< T > & passed_in_params = std::vector< T >( 0 ),
-		const bool silent = false )
+		const std::vector< T > & passed_in_params = std::vector< T >( 0 ) )
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func, func_weight );
 	std::vector< T > prod_out_params( 0 ), weight_out_params( 0 );
 
 	prod_out_params = integrate_Romberg( &fprod, min_in_params, max_in_params,
-			precision, tighten_precision, passed_in_params, silent );
+			precision, tighten_precision, passed_in_params );
 	weight_out_params = integrate_Romberg( func_weight, min_in_params, max_in_params,
-			precision, tighten_precision, passed_in_params, silent );
+			precision, tighten_precision, passed_in_params );
 
-	std::vector< T > out_params( prod_out_params.size() );
-	for ( size_t i = 0; i < prod_out_params.size(); i++ )
+	std::vector< T > out_params( ssize(prod_out_params) );
+	for ( size_t i = 0; i < ssize(prod_out_params); i++ )
 	{
 		out_params[i] = prod_out_params[i] / safe_d( weight_out_params[i] );
 	}

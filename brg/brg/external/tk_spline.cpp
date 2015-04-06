@@ -30,6 +30,7 @@
 #include <cstdio>
 
 #include "tk_spline.h"
+#include "brg/utility.hpp"
 
 // band_matrix implementation
 // -------------------------
