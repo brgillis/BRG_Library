@@ -34,10 +34,13 @@
 
 #include "brg/file_access/ascii_table_map.hpp"
 #include "brg/math/misc_math.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
 
 #include "brg_lensing/magnification/expected_count_loader.h"
 #include "brg_lensing/magnification/mag_global_values.h"
+
+#define USE_FIELD_WEIGHTING
 
 namespace brgastro {
 
@@ -52,6 +55,12 @@ std::vector<std::vector<double>> expected_count_loader::_smoothed_count_derivati
 
 std::string expected_count_loader::_filename_base_("/disk2/brg/git/CFHTLenS_cat/Data/magnitude_hist_gz");
 std::string expected_count_loader::_filename_tail_(".dat");
+
+#ifdef USE_FIELD_WEIGHTING
+#define COUNT_COLUMN "weighted_count"
+#else
+#define COUNT_COLUMN "count"
+#endif
 
 #endif
 
@@ -87,12 +96,12 @@ void expected_count_loader::_load()
 			{
 				auto table_map = brgastro::load_table_map<double>(filename);
 				std::vector<double> temp_mag_limits = table_map.at("mag_bin_lower");
-				_smoothed_count_[z_i] = table_map.at("count");
+				_smoothed_count_[z_i] = table_map.at(COUNT_COLUMN);
 				_smoothed_count_derivative_[z_i] = table_map.at("smoothed_alpha");
 
 				// Add a final value to the _mag_limits_ vector
 				temp_mag_limits.push_back(2*temp_mag_limits.back()-
-						temp_mag_limits.at(temp_mag_limits.size()-2));
+						temp_mag_limits.at(ssize(temp_mag_limits)-2));
 				_mag_limits_[z_i] = temp_mag_limits;
 			}
 			catch(const std::runtime_error &e)
@@ -123,7 +132,7 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 	// Load if necessary
 	_load();
 
-	size_t z_i = _z_limits_.get_bin_index(z);
+	ssize_t z_i = _z_limits_.get_bin_index(z);
 
 	if(z_i>=_z_limits_.num_bins()-1) z_i=_z_limits_.num_bins()-2;
 	const double & z_lo = _z_limits_.lower_limit(z_i);

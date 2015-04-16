@@ -120,7 +120,7 @@ private:
 		BRG_UNITS max_in_params_ring = pi;
 
 		out_param_ring = brgastro::integrate_Romberg( &ringfunc, min_in_params_ring,
-				max_in_params_ring, precision, false, silent );
+				max_in_params_ring, precision, false );
 
 		ringmean = out_param_ring / pi;
 
@@ -128,7 +128,7 @@ private:
 		BRG_UNITS max_in_params_circ = offset_R_to_use+R_to_use;
 
 		out_param_circ = brgastro::integrate_Romberg( &circfunc, min_in_params_circ,
-				max_in_params_circ, precision, false, silent );
+				max_in_params_circ, precision, false );
 
 		circmean = out_param_circ / ( pi * square(R_to_use) );
 
@@ -157,7 +157,7 @@ private:
 		BRG_UNITS min_in_params( SMALL_FACTOR ), max_in_params( 2.5*SPCP(name)->rvir() ),
 				out_params( 0 );
 		out_params = brgastro::integrate_weighted_Romberg( &func, &weight_func,
-				min_in_params, max_in_params, 0.00001, false, silent);
+				min_in_params, max_in_params, 0.00001, false);
 		return out_params;
 	}
 
@@ -179,7 +179,7 @@ private:
 		BRG_UNITS max_in_params_ring = pi;
 
 		out_param_ring = brgastro::integrate_Romberg( &ringfunc, min_in_params_ring,
-				max_in_params_ring, precision, false, silent );
+				max_in_params_ring, precision, false );
 
 		ringmean = out_param_ring / pi;
 
@@ -238,7 +238,7 @@ private:
 		BRG_UNITS min_in_param( SMALL_FACTOR ), max_in_param( 2.5*SPCP(name)->rvir() ),
 				out_param( 0 );
 		out_param = brgastro::integrate_weighted_Romberg( &func, &weight_func,
-				min_in_param, max_in_param, 0.00001, false, silent);
+				min_in_param, max_in_param, 0.00001, false);
 		return out_param;
 	}
 
@@ -257,7 +257,7 @@ private:
 				out_params( 0 );
 
 		out_params = brgastro::integrate_weighted_Romberg( &func, &weight_func,
-				min_in_params, max_in_params, precision, false, silent );
+				min_in_params, max_in_params, precision, false );
 		return out_params;
 	}
 	const BRG_UNITS _semiquick_shifted_WLsig( CONST_BRG_DISTANCE_REF R,
@@ -273,7 +273,7 @@ private:
 				out_params( 0 );
 
 		out_params = brgastro::integrate_weighted_Romberg( &func, &weight_func,
-				min_in_params, max_in_params, 0.00001, false, silent);
+				min_in_params, max_in_params, 0.00001, false);
 		return out_params;
 	}
 

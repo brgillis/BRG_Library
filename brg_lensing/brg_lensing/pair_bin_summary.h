@@ -67,8 +67,8 @@ private:
 	// Summary data
 #if (1)
 
-	size_t _shear_pair_count_;
-	size_t _magf_pair_count_;
+	ssize_t _shear_pair_count_;
+	ssize_t _magf_pair_count_;
 
 	BRG_DISTANCE _shear_R_mean_;
 	BRG_DISTANCE _magf_R_mean_;
@@ -84,14 +84,16 @@ private:
 	double _magf_source_z_mean_;
 
 	double _shear_sum_of_weights_;
+	double _magf_sum_of_weights_;
 	double _shear_sum_of_square_weights_;
+	double _magf_sum_of_square_weights_;
 	BRG_UNITS _delta_Sigma_t_mean_, _delta_Sigma_x_mean_;
 	BRG_UNITS _delta_Sigma_t_mean_square_, _delta_Sigma_x_mean_square_;
 
 	double _mu_hat_;
-	double _mu_W_;
+	double _mu_square_hat_;
 	BRG_UNITS _area_;
-	size_t _magf_lens_count_;
+	ssize_t _magf_lens_count_;
 
 #endif
 
@@ -123,24 +125,30 @@ private:
 		ar & _magf_source_z_mean_;
 
 		ar & _shear_sum_of_weights_;
+		ar & _magf_sum_of_weights_;
 		ar & _shear_sum_of_square_weights_;
+		ar & _magf_sum_of_square_weights_;
 		ar & _delta_Sigma_t_mean_ & _delta_Sigma_x_mean_;
 		ar & _delta_Sigma_t_mean_square_ & _delta_Sigma_x_mean_square_;
 
 		ar & _mu_hat_;
-		ar & _mu_W_;
+		ar & _mu_square_hat_;
 		ar & _area_;
 		ar & _magf_lens_count_;
 	}
 #endif
 
 	double _magf_gamma_t_mean() const;
+	double _magf_gamma_t_mean_square() const;
 	double _magf_gamma_x_mean() const;
+	double _magf_gamma_x_mean_square() const;
 	double _magf_gamma_mean() const;
 	double _magf_gamma_mean_square() const;
 
 	double _magf_gamma_t_stderr() const;
+	double _magf_gamma_t_square_stderr() const;
 	double _magf_gamma_x_stderr() const;
+	double _magf_gamma_x_square_stderr() const;
 	double _magf_gamma_stderr() const;
 	double _magf_gamma_square_stderr() const;
 
@@ -234,15 +242,15 @@ public:
 #if(1)
 
 	// Count
-	virtual size_t pair_count() const
+	virtual ssize_t pair_count() const
 	{
 		return _shear_pair_count_;
 	}
-	virtual size_t shear_pair_count() const
+	virtual ssize_t shear_pair_count() const
 	{
 		return _shear_pair_count_;
 	}
-	virtual size_t magf_pair_count() const
+	virtual ssize_t magf_pair_count() const
 	{
 		return _magf_pair_count_;
 	}
@@ -264,6 +272,10 @@ public:
 	{
 		return _shear_sum_of_weights_;
 	}
+	virtual double magf_sum_of_weights() const
+	{
+		return _magf_sum_of_weights_;
+	}
 	// Sum of square weights
 	virtual double sum_of_square_weights() const
 	{
@@ -272,6 +284,10 @@ public:
 	virtual double shear_sum_of_square_weights() const
 	{
 		return _shear_sum_of_square_weights_;
+	}
+	virtual double magf_sum_of_square_weights() const
+	{
+		return _magf_sum_of_square_weights_;
 	}
 
 #endif
@@ -462,11 +478,15 @@ public:
 	{
 		return _area_;
 	}
-	virtual size_t num_lenses() const
+	virtual ssize_t num_lenses() const
 	{
 		return _magf_lens_count_;
 	}
-	virtual size_t magf_num_lenses() const
+	virtual double magf_effective_num_lenses() const
+	{
+		return square(magf_sum_of_weights())/magf_sum_of_square_weights();
+	}
+	virtual ssize_t magf_num_lenses() const
 	{
 		return _magf_lens_count_;
 	}
@@ -474,10 +494,15 @@ public:
 	{
 		return _mu_hat_;
 	}
+	virtual double mu_square_hat() const
+	{
+		return _mu_square_hat_;
+	}
 	virtual double mu_W() const
 	{
-		return _mu_W_;
+		return magf_sum_of_weights();
 	}
+	double mu_std() const;
 	double mu_stderr() const;
 	double kappa() const;
 	double kappa_stderr() const;

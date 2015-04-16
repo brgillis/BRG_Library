@@ -34,6 +34,7 @@
 #include <vector>
 
 #include "brg/global.h"
+#include "brg/utility.hpp"
 
 
 namespace brgastro {
@@ -45,15 +46,15 @@ class shifting_loader {
 	static bool _loaded_;
 	static std::vector< std::vector<double> > _data_;
 
-	const size_t _zvals_size_;
+	const ssize_t _zvals_size_;
 	std::vector<double> _zvals_;
 
 	const char * _class_source_name_;
 	const char * _corr_alpha_name_;
 
 	void _load();
-	size_t _lower_theta_index(double theta);
-	size_t _lower_z_index(double z);
+	ssize_t _lower_theta_index(double theta);
+	ssize_t _lower_z_index(double z);
 public:
 
 	double get(double theta, double z);
@@ -67,7 +68,7 @@ public:
 		_zvals_.push_back(1.0);
 		_zvals_.push_back(1.5);
 
-		assert(_zvals_.size()==_zvals_size_);
+		assert(ssize(_zvals_)==_zvals_size_);
 
 	}
 };

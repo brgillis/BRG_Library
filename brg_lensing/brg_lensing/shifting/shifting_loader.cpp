@@ -33,6 +33,7 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
 #include "brg/vector/manipulations.hpp"
 
 #include "brg_lensing/shifting/corr_alpha.hpp"
@@ -61,30 +62,32 @@ void brgastro::shifting_loader::_load()
 
 			_data_ = reverse_vertical(_data_);
 
-			assert(_data_.size()==_zvals_size_+1);
-			assert(_data_[0].size()>=2);
+			assert(ssize(_data_)==_zvals_size_+1);
+			assert(ssize(_data_[0])>=2);
 
 			_loaded_ = true;
 		}
 	}
 
 }
-size_t brgastro::shifting_loader::_lower_theta_index(double theta)
+ssize_t brgastro::shifting_loader::_lower_theta_index(double theta)
 {
 	if(!_loaded_) _load();
 
-	for(size_t i=1; i<_data_[0].size(); ++i)
+	auto size = ssize(_data_[0]);
+
+	for(ssize_t i=1; i<size; ++i)
 	{
 		if(theta<_data_[0][i])
 			return i-1;
 	}
-	return _data_[0].size()-1;
+	return size-1;
 }
-size_t brgastro::shifting_loader::_lower_z_index(double z)
+ssize_t brgastro::shifting_loader::_lower_z_index(double z)
 {
 	assert(_zvals_size_>=2);
 
-	for(size_t i=1; i<_zvals_size_; ++i)
+	for(ssize_t i=1; i<_zvals_size_; ++i)
 	{
 		if(z<_zvals_[i])
 			return i-1;
@@ -96,8 +99,8 @@ double brgastro::shifting_loader::get(double t, double z)
 {
 	if(!_loaded_) _load();
 
-	const size_t ti = _lower_theta_index(t);
-	const size_t zi = _lower_z_index(z);
+	const ssize_t ti = _lower_theta_index(t);
+	const ssize_t zi = _lower_z_index(z);
 
 	const double tlo = _data_[0][ti];
 	const double thi = _data_[0][ti+1];

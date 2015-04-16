@@ -45,7 +45,7 @@ BRG_UNITS mu_signal_integration_functor::operator() (const long double & m, bool
 {
 	long double alpha = magnification_alpha(m,_z_mean_);
 	long double count = test_fudge_factor*expected_count_cache().get(m,_z_mean_);
-	return count*(alpha-1)*(alpha-2);
+	return count*(alpha-1);
 }
 
 BRG_UNITS mu_weight_integration_functor::operator() (const long double & m, bool silent) const

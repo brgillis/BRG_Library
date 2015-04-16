@@ -6,7 +6,7 @@
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2014, 2015  Bryan R. Gillis
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 
 #include "brg/global.h"
 
+#include "brg/file_access/open_file.hpp"
 #include "brg/math/calculus/integrate.hpp"
 #include "brg/math/misc_math.hpp"
 #include "brg/vector/summary_functions.hpp"
@@ -41,7 +42,6 @@
 #include "brg_physics/units/unit_obj.h"
 
 #include "pair_bin_summary.h"
-#include <brg/file_access/open_file.hpp>
 
 namespace brgastro {
 
@@ -52,9 +52,17 @@ double pair_bin_summary::_magf_gamma_t_mean() const
 {
 	return delta_Sigma_t_mean()/magf_sigma_crit();
 }
+double pair_bin_summary::_magf_gamma_t_mean_square() const
+{
+	return square(_magf_gamma_t_mean());
+}
 double pair_bin_summary::_magf_gamma_x_mean() const
 {
 	return delta_Sigma_x_mean()/magf_sigma_crit();
+}
+double pair_bin_summary::_magf_gamma_x_mean_square() const
+{
+	return square(_magf_gamma_x_mean());
 }
 double pair_bin_summary::_magf_gamma_mean() const
 {
@@ -70,9 +78,17 @@ double pair_bin_summary::_magf_gamma_t_stderr() const
 {
 	return delta_Sigma_t_stderr()/magf_sigma_crit();
 }
+double pair_bin_summary::_magf_gamma_t_square_stderr() const
+{
+	return 2*_magf_gamma_t_mean()*_magf_gamma_t_stderr();
+}
 double pair_bin_summary::_magf_gamma_x_stderr() const
 {
 	return delta_Sigma_x_stderr()/magf_sigma_crit();
+}
+double pair_bin_summary::_magf_gamma_x_square_stderr() const
+{
+	return 2*_magf_gamma_x_mean()*_magf_gamma_x_stderr();
 }
 double pair_bin_summary::_magf_gamma_stderr() const
 {
@@ -125,14 +141,16 @@ pair_bin_summary::pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG
 	_magf_source_z_mean_(0),
 
 	_shear_sum_of_weights_(0),
+	_magf_sum_of_weights_(0),
 	_shear_sum_of_square_weights_(0),
+	_magf_sum_of_square_weights_(0),
 	_delta_Sigma_t_mean_(0),
 	_delta_Sigma_x_mean_(0),
 	_delta_Sigma_t_mean_square_(0),
 	_delta_Sigma_x_mean_square_(0),
 
 	_mu_hat_(0),
-	_mu_W_(0),
+	_mu_square_hat_(0),
 	_area_(0),
 	_magf_lens_count_(0)
 {
@@ -165,14 +183,16 @@ pair_bin_summary::pair_bin_summary( const pair_bin & bin)
 	_magf_source_z_mean_(bin.magf_source_z_mean()),
 
 	_shear_sum_of_weights_(bin.shear_sum_of_weights()),
+	_magf_sum_of_weights_(bin.magf_sum_of_weights()),
 	_shear_sum_of_square_weights_(bin.shear_sum_of_square_weights()),
+	_magf_sum_of_square_weights_(bin.magf_sum_of_square_weights()),
 	_delta_Sigma_t_mean_(bin.delta_Sigma_t_mean()),
 	_delta_Sigma_x_mean_(bin.delta_Sigma_x_mean()),
 	_delta_Sigma_t_mean_square_(bin.delta_Sigma_t_mean_square()),
 	_delta_Sigma_x_mean_square_(bin.delta_Sigma_x_mean_square()),
 
 	_mu_hat_(bin.mu_hat()),
-	_mu_W_(bin.mu_W()),
+	_mu_square_hat_(bin.mu_square_hat()),
 	_area_(bin.area()),
 	_magf_lens_count_(bin.magf_num_lenses())
 {
@@ -209,13 +229,20 @@ void pair_bin_summary::clear()
 	_magf_source_z_mean_ = 0;
 
 	_shear_sum_of_weights_ = 0;
+	_magf_sum_of_weights_ = 0;
 	_shear_sum_of_square_weights_ = 0;
+	_magf_sum_of_square_weights_ = 0;
 
 	_delta_Sigma_t_mean_ = 0;
 	_delta_Sigma_x_mean_ = 0;
 	_delta_Sigma_t_mean_square_ = 0;
 	_delta_Sigma_x_mean_square_ = 0;
+
+	_mu_hat_ = 0;
+	_mu_square_hat_ = 0;
+	_area_ = 0;
 	_magf_lens_count_ = 0;
+
 	_uncache_values();
 }
 
@@ -237,8 +264,8 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 	assert(_mag_max_==other.mag_max());
 
 	// Check whether this or the other is empty in shear or magnification data
-	const bool this_magf_zero = ((area()==0)&&(magf_num_lenses()==0));
-	const bool other_magf_zero = ((other.area()==0)&&(other.magf_num_lenses()==0));
+	const bool this_magf_zero = (magf_sum_of_weights()==0);
+	const bool other_magf_zero = (other.magf_sum_of_weights()==0);
 	const bool this_shear_zero = (shear_sum_of_weights()==0);
 	const bool other_shear_zero = (other.shear_sum_of_weights()==0);
 
@@ -267,9 +294,11 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 
 			_magf_source_z_mean_ = other.magf_source_z_mean();
 
-			_mu_hat_ = other.mu_hat();
+			_magf_sum_of_weights_ = other.magf_sum_of_weights();
+			_magf_sum_of_square_weights_ = other.magf_sum_of_square_weights();
 
-			_mu_W_ = other.mu_W();
+			_mu_hat_ = other.mu_hat();
+			_mu_square_hat_ = other.mu_square_hat();
 		}
 		else
 		{
@@ -287,17 +316,19 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 
 			_magf_pair_count_ = new_pair_count;
 
-			brgastro::fixbad(_mu_W_);
-			const auto o_mu_W = other.mu_W();
-			const auto new_mu_W = _mu_W_ + o_mu_W;
+			brgastro::fixbad(_magf_sum_of_weights_);
+			const auto o_mu_W = other.magf_sum_of_weights();
+			const auto new_mu_W = _magf_sum_of_weights_ + o_mu_W;
 
-			_mu_hat_ = (mu_hat()*_mu_W_ + other.mu_hat()*o_mu_W)/new_mu_W;
+			_mu_hat_ = (mu_hat()*_magf_sum_of_weights_ + other.mu_hat()*o_mu_W)/new_mu_W;
+			_mu_square_hat_ = (mu_square_hat()*_magf_sum_of_weights_ + other.mu_square_hat()*o_mu_W)/new_mu_W;
 
-			_magf_lens_m_mean_ = (magf_lens_m_mean()*_mu_W_ + other.magf_lens_m_mean()*o_mu_W)/new_mu_W;
-			_magf_lens_z_mean_ = (magf_lens_z_mean()*_mu_W_ + other.magf_lens_z_mean()*o_mu_W)/new_mu_W;
-			_magf_lens_mag_mean_ = (magf_lens_mag_mean()*_mu_W_ + other.magf_lens_mag_mean()*o_mu_W)/new_mu_W;
+			_magf_lens_m_mean_ = (magf_lens_m_mean()*_magf_sum_of_weights_ + other.magf_lens_m_mean()*o_mu_W)/new_mu_W;
+			_magf_lens_z_mean_ = (magf_lens_z_mean()*_magf_sum_of_weights_ + other.magf_lens_z_mean()*o_mu_W)/new_mu_W;
+			_magf_lens_mag_mean_ = (magf_lens_mag_mean()*_magf_sum_of_weights_ + other.magf_lens_mag_mean()*o_mu_W)/new_mu_W;
 
-			_mu_W_ = new_mu_W;
+			_magf_sum_of_weights_ = new_mu_W;
+			_magf_sum_of_square_weights_ += other.magf_sum_of_square_weights();
 		}
 	}
 
@@ -385,7 +416,9 @@ void pair_bin_summary::fixbad()
 	brgastro::fixbad(_magf_source_z_mean_);
 
 	brgastro::fixbad(_shear_sum_of_weights_);
+	brgastro::fixbad(_magf_sum_of_weights_);
 	brgastro::fixbad(_shear_sum_of_square_weights_);
+	brgastro::fixbad(_magf_sum_of_square_weights_);
 
 	brgastro::fixbad(_delta_Sigma_t_mean_);
 	brgastro::fixbad(_delta_Sigma_x_mean_);
@@ -393,8 +426,9 @@ void pair_bin_summary::fixbad()
 	brgastro::fixbad(_delta_Sigma_x_mean_square_);
 
 	brgastro::fixbad(_mu_hat_);
-	brgastro::fixbad(_mu_W_);
+	brgastro::fixbad(_mu_square_hat_);
 	brgastro::fixbad(_area_);
+	brgastro::fixbad(_magf_lens_count_);
 }
 
 // Saving/loading data
@@ -564,21 +598,30 @@ BRG_UNITS pair_bin_summary::area_per_lens() const
 {
 	return area()/magf_num_lenses();
 }
+double pair_bin_summary::mu_std() const
+{
+	double std_uncorrected = std::sqrt(mu_square_hat()-square(mu_hat()));
+	double correction = magf_sum_of_weights()/std::sqrt( square(magf_sum_of_weights()) - magf_sum_of_square_weights() );
+
+	return correction * std_uncorrected;
+}
 double pair_bin_summary::mu_stderr() const
 {
-	// TODO Correct this for weighted lenses and pairs used for magnification if needed
-	return 1./std::sqrt(mu_W());
+	if(magf_num_lenses()<2) return std::numeric_limits<double>::max();
+	double result = mu_std()/std::sqrt(magf_num_lenses()-1);
+	if(isgood(result)) return result;
+	return 0;
 }
 double pair_bin_summary::kappa() const
 {
-	double gms = _magf_gamma_mean_square();
+	double gms = _magf_gamma_t_mean_square();
 	brgastro::fixbad(gms);
 	return 1.-std::sqrt(1/mu_hat()+gms);
 }
 double pair_bin_summary::kappa_stderr() const
 {
-	double gms = _magf_gamma_mean_square();
-	double gserr = _magf_gamma_square_stderr();
+	double gms = _magf_gamma_t_mean_square();
+	double gserr = _magf_gamma_t_square_stderr();
 	brgastro::fixbad(gms);
 	brgastro::fixbad(gserr);
 	return sqrt_err(1/mu_hat()+gms,quad_add(mu_stderr(),gserr));

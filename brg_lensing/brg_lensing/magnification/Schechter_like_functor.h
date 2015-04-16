@@ -32,6 +32,7 @@
 #include <vector>
 
 #include "brg/math/functor/functor.hpp"
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -40,7 +41,7 @@ namespace brgastro {
  */
 class Schechter_like_functor: public brgastro::functor<long double,std::vector<long double>> {
 private:
-	const size_t _num_params_ = 7;
+	constexpr static ssize_t _num_params_ = 7;
 
 public:
 	Schechter_like_functor()
@@ -59,37 +60,37 @@ public:
 
 	long double N_scale() const
 	{
-		assert(params().size()==_num_params_);
+		assert(ssize(params())==_num_params_);
 		return params()[0];
 	}
 	long double m_star() const
 	{
-		assert(params().size()==_num_params_);
+		assert(ssize(params())==_num_params_);
 		return params()[1];
 	}
 	long double alpha() const
 	{
-		assert(params().size()==_num_params_);
+		assert(ssize(params())==_num_params_);
 		return params()[2];
 	}
 	long double mag_lower_lim_sharpness() const
 	{
-		assert(params().size()==_num_params_);
+		assert(ssize(params())==_num_params_);
 		return params()[3];
 	}
 	long double mag23_jump() const
 	{
-		assert(params().size()==_num_params_);
+		assert(ssize(params())==_num_params_);
 		return params()[4];
 	}
 	long double mag_upper_lim() const
 	{
-		assert(params().size()==_num_params_);
+		assert(ssize(params())==_num_params_);
 		return params()[5];
 	}
 	long double mag_upper_lim_sharpness() const
 	{
-		assert(params().size()==_num_params_);
+		assert(ssize(params())==_num_params_);
 		return params()[6];
 	}
 

@@ -34,6 +34,7 @@
 
 #include "brg/file_access/ascii_table_map.hpp"
 #include "brg/math/misc_math.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/summary_functions.hpp"
 
 #include "brg_lensing/magnification/mag_calibration_loader.h"
@@ -110,14 +111,15 @@ double mag_calibration_loader::get(const double & z)
 	_load();
 
 	// First, find the first z_min value this z is less than
-	size_t z_i;
-	for(z_i = 1; z_i<_z_mins_.size(); ++z_i)
+	auto size = ssize(_z_mins_);
+	decltype(size) z_i;
+	for(z_i = 1; z_i<size; ++z_i)
 	{
 		if(_z_mins_[z_i]>z) break;
 	}
 
 	// Check if it's above the upper bound
-	if(z_i>=_z_mins_.size()) z_i = _z_mins_.size();
+	if(z_i>=size) z_i = size;
 
 	--z_i; // Decrease it by one, so it now represents the lower limit of the two we'll interpolate between
 

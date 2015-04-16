@@ -36,14 +36,17 @@
 #include <boost/accumulators/statistics/weighted_moment.hpp>
 #include <boost/accumulators/statistics/weighted_variance.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
+#include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 
 #include "brg/math/statistics/effective_count.hpp"
+#include "brg/math/statistics/mean_weight.hpp"
 #include "brg/math/statistics/statistic_extractors.hpp"
 
 #include "brg/global.h"
 
 #include "brg/math/statistics/error_of_weighted_mean.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
 
@@ -58,7 +61,7 @@ namespace brgastro {
 #if(1)
 struct lens_id
 {
-	size_t id;
+	ssize_t id;
 	BRG_MASS m;
 	double z;
 	double mag;
@@ -74,7 +77,7 @@ struct lens_id
 
 #endif
 
-	lens_id(const size_t & id, const BRG_MASS & m, const double & z, const double & mag,
+	lens_id(const ssize_t & id, const BRG_MASS & m, const double & z, const double & mag,
 			const std::vector<BRG_DISTANCE> & unmasked_frac_bin_limits,
 			const std::vector<double> & unmasked_fracs,
 			const double & weight=1)
@@ -100,17 +103,18 @@ private:
 	using bin_stat_vec_t = boost::accumulators::accumulator_set<T,
 			boost::accumulators::stats<
 				boost::accumulators::tag::count,
-				boost::accumulators::tag::weighted_mean >,
+				boost::accumulators::tag::weighted_mean,
+				boost::accumulators::tag::mean_weight >,
 				double >;
 	template <typename T>
 	using stat_vec_t = boost::accumulators::accumulator_set<T,
 			boost::accumulators::stats<
 				boost::accumulators::tag::count,
 				boost::accumulators::tag::effective_count,
+				boost::accumulators::tag::error_of_weighted_mean,
 				boost::accumulators::tag::weighted_mean,
 				boost::accumulators::tag::weighted_moment<2>,
-				boost::accumulators::tag::weighted_variance,
-				boost::accumulators::tag::error_of_weighted_mean >,
+				boost::accumulators::tag::weighted_variance >,
 				double >;
 
 	// Pair data
@@ -134,7 +138,8 @@ private:
 	stat_vec_t<BRG_UNITS> _delta_Sigma_t_values_;
 	stat_vec_t<BRG_UNITS> _delta_Sigma_x_values_;
 
-	boost::container::flat_set<size_t> _distinct_lens_ids_;
+	boost::container::flat_set<ssize_t> _distinct_lens_ids_;
+	boost::container::flat_map<ssize_t,double> _lens_weights_;
 
 	mutable double _mu_hat_cached_value_;
 	mutable double _mu_W_cached_value_;
@@ -184,15 +189,15 @@ public:
 
 	// Count
 #if(1)
-	virtual size_t pair_count() const override
+	virtual ssize_t pair_count() const override
 	{
 		return shear_pair_count();
 	}
-	virtual size_t shear_pair_count() const override
+	virtual ssize_t shear_pair_count() const override
 	{
 		return extract_count(_shear_R_values_);
 	}
-	virtual size_t magf_pair_count() const override
+	virtual ssize_t magf_pair_count() const override
 	{
 		return extract_count(_magf_R_values_);
 	}
@@ -212,6 +217,7 @@ public:
 	{
 		return safe_extract_sum_of_weights(_delta_Sigma_t_values_);
 	}
+	virtual double magf_sum_of_weights() const override;
 	virtual double sum_of_square_weights() const override
 	{
 		return shear_sum_of_square_weights();
@@ -220,13 +226,14 @@ public:
 	{
 		return safe_extract_sum_of_square_weights(_delta_Sigma_t_values_);
 	}
-	virtual size_t num_lenses() const override
+	virtual double magf_sum_of_square_weights() const override;
+	virtual ssize_t num_lenses() const override
 	{
 		return magf_num_lenses();
 	}
-	virtual size_t magf_num_lenses() const override
+	virtual ssize_t magf_num_lenses() const override
 	{
-		return _distinct_lens_ids_.size();
+		return ssize(_distinct_lens_ids_);
 	}
 #endif
 
@@ -323,6 +330,7 @@ public:
 	virtual BRG_UNITS delta_Sigma_x_stderr() const override;
 
 	virtual double mu_hat() const override;
+	virtual double mu_square_hat() const override;
 	virtual double mu_W() const override;
 
 #endif

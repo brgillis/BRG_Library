@@ -124,7 +124,19 @@ void pair_bin::add_lens( const lens_id & lens )
 		_magf_lens_m_values_(lens.m, boost::accumulators::weight = lens.weight);
 		_magf_lens_mag_values_(lens.mag, boost::accumulators::weight = lens.weight);
 		_magf_lens_z_values_(lens.z, boost::accumulators::weight = lens.weight);
-		_magf_unmasked_fracs_(lens.unmasked_frac(R_amid()), boost::accumulators::weight = lens.weight);
+
+		double unmasked_frac = lens.unmasked_frac(R_amid());
+		_magf_unmasked_fracs_(unmasked_frac, boost::accumulators::weight = lens.weight);
+
+		// Get the new weight from the lens's individual weight and its unmasked area
+		double area = pi*(square(afd(R_max(),lens.z))-square(afd(R_min(),lens.z)));
+		double unmasked_area = unmasked_frac*area;
+
+		double mu_W = unmasked_area*mag_weight_integral_cache().get(lens.z+_z_buffer_);
+
+		brgastro::fixbad(mu_W);
+
+		_lens_weights_.insert(std::make_pair(lens.id,lens.weight*mu_W));
 		_uncache_values();
 	}
 }
@@ -149,6 +161,7 @@ void pair_bin::clear()
 	set_zero(_delta_Sigma_x_values_);
 
 	set_zero(_distinct_lens_ids_);
+	set_zero(_lens_weights_);
 
 	_uncache_values();
 
@@ -159,6 +172,26 @@ void pair_bin::clear()
 
 // Calculations on stored values
 #if (1)
+
+double pair_bin::magf_sum_of_weights() const
+{
+	double res = 0;
+	for(const auto & id : _distinct_lens_ids_)
+	{
+		res += _lens_weights_.at(id);
+	}
+	return res;
+}
+
+double pair_bin::magf_sum_of_square_weights() const
+{
+	double res = 0;
+	for(const auto & id : _distinct_lens_ids_)
+	{
+		res += square(_lens_weights_.at(id));
+	}
+	return res;
+}
 
 BRG_UNITS pair_bin::area() const
 {
@@ -226,20 +259,25 @@ double pair_bin::mu_hat() const
 	{
 		// Not cached, so calculate and cache it
 
-		const double mu_observed = extract_weighted_sum(_mu_obs_values_)/mu_W();
+		const double mu_observed = extract_weighted_sum(_mu_obs_values_)/(extract_mean_weight(_mu_obs_values_)*mu_W());
 
 		const double mu_base = area()*mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_)/mu_W();
 
-		_mu_hat_cached_value_ = mu_observed+mu_base;
+		_mu_hat_cached_value_ = 1.+mu_observed-mu_base;
 
 		// Use calibration cache to correct for integration errors
 		// Be sure to comment this line out when doing a calibration run!
-		_mu_hat_cached_value_ /= mag_calibration_cache().get(magf_lens_z_mean()+_z_buffer_);
+		//_mu_hat_cached_value_ /= mag_calibration_cache().get(magf_lens_z_mean()+_z_buffer_);
 
 		brgastro::fixbad(_mu_hat_cached_value_);
 	}
 	return _mu_hat_cached_value_;
 
+}
+
+double pair_bin::mu_square_hat() const
+{
+	return square(mu_hat());
 }
 
 #endif

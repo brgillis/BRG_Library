@@ -574,7 +574,7 @@ public:
 		BRG_UNITS out_param(0);
 
 		out_param = brgastro::integrate_Romberg( &func, min_in_param, max_in_param,
-				precision, false, silent );
+				precision, false );
 
 		return out_param /= pi;
 	}

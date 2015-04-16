@@ -86,30 +86,30 @@ private:
 	// Set specific limits through a linear spacing
 	void _set_linear_R_limits(CONST_BRG_DISTANCE_REF R_min,
 			CONST_BRG_DISTANCE_REF R_max,
-			const size_t & R_bins);
+			const ssize_t & R_bins);
 	void _set_linear_m_limits(CONST_BRG_MASS_REF m_min,
 			CONST_BRG_MASS_REF m_max,
-			const size_t & m_bins);
+			const ssize_t & m_bins);
 	void _set_linear_z_limits(const double & z_min,
 			const double & z_max,
-			const size_t & z_bins);
+			const ssize_t & z_bins);
 	void _set_linear_mag_limits(const double & mag_min,
 			const double & mag_max,
-			const size_t & maag_bins);
+			const ssize_t & maag_bins);
 
 	// Set specific limits through a log spacing
 	void _set_log_R_limits(CONST_BRG_DISTANCE_REF R_min,
 			CONST_BRG_DISTANCE_REF R_max,
-			const size_t & R_num_bins=1);
+			const ssize_t & R_num_bins=1);
 	void _set_log_m_limits(CONST_BRG_MASS_REF m_min,
 			CONST_BRG_MASS_REF m_max,
-			const size_t & m_num_bins=1);
+			const ssize_t & m_num_bins=1);
 	void _set_log_z_limits(const double & z_min,
 			const double & z_max,
-			const size_t & z_num_bins=1);
+			const ssize_t & z_num_bins=1);
 	void _set_log_mag_limits(const double & mag_min,
 			const double & mag_max,
-			const size_t & mag_num_bins=1);
+			const ssize_t & mag_num_bins=1);
 
 	// Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
 	void _clear_R_limits();
@@ -167,16 +167,16 @@ public:
 	// Set limits by min, max, and step
 	pair_bins_summary(CONST_BRG_DISTANCE_REF R_min,
 				CONST_BRG_DISTANCE_REF R_max,
-				const size_t & R_bins=1,
+				const ssize_t & R_bins=1,
 				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
 				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
-				const size_t & m_bins=1,
+				const ssize_t & m_bins=1,
 				const double & z_min=-std::numeric_limits<double>::infinity(),
 				const double & z_max=std::numeric_limits<double>::infinity(),
-				const size_t & z_bins=1,
+				const ssize_t & z_bins=1,
 				const double & mag_min=-std::numeric_limits<double>::infinity(),
 				const double & mag_max=std::numeric_limits<double>::infinity(),
-				const size_t & mag_bins=1);
+				const ssize_t & mag_bins=1);
 
 	// Load from archive
 	pair_bins_summary( std::istream & in );
@@ -207,30 +207,30 @@ public:
 	// Set specific limits through a linear spacing
 	void set_linear_R_limits(CONST_BRG_DISTANCE_REF R_min,
 			CONST_BRG_DISTANCE_REF R_max,
-			const size_t & R_bins);
+			const ssize_t & R_bins);
 	void set_linear_m_limits(CONST_BRG_MASS_REF m_min,
 			CONST_BRG_MASS_REF m_max,
-			const size_t & m_bins);
+			const ssize_t & m_bins);
 	void set_linear_z_limits(const double & z_min,
 			const double & z_max,
-			const size_t & z_bins);
+			const ssize_t & z_bins);
 	void set_linear_mag_limits(const double & mag_min,
 			const double & mag_max,
-			const size_t & mag_bins);
+			const ssize_t & mag_bins);
 
 	// Set specific limits through a log spacing
 	void set_log_R_limits(CONST_BRG_DISTANCE_REF R_min,
 			CONST_BRG_DISTANCE_REF R_max,
-			const size_t & R_num_bins=1);
+			const ssize_t & R_num_bins=1);
 	void set_log_m_limits(CONST_BRG_MASS_REF m_min,
 			CONST_BRG_MASS_REF m_max,
-			const size_t & m_num_bins=1);
+			const ssize_t & m_num_bins=1);
 	void set_log_z_limits(const double & z_min,
 			const double & z_max,
-			const size_t & z_num_bins=1);
+			const ssize_t & z_num_bins=1);
 	void set_log_mag_limits(const double & mag_min,
 			const double & mag_max,
-			const size_t & mag_num_bins=1);
+			const ssize_t & mag_num_bins=1);
 
 	// Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
 	void clear_R_limits();
@@ -245,29 +245,29 @@ public:
 
 	void set_linear_limits(CONST_BRG_DISTANCE_REF R_min,
 				CONST_BRG_DISTANCE_REF R_max,
-				const size_t & R_num_bins=1,
+				const ssize_t & R_num_bins=1,
 				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
 				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
-				const size_t & m_num_bins=1,
+				const ssize_t & m_num_bins=1,
 				const double & z_min=-std::numeric_limits<double>::infinity(),
 				const double & z_max=std::numeric_limits<double>::infinity(),
-				const size_t & z_num_bins=1,
+				const ssize_t & z_num_bins=1,
 				const double & mag_min=-std::numeric_limits<double>::infinity(),
 				const double & mag_max=std::numeric_limits<double>::infinity(),
-				const size_t & mag_num_bins=1);
+				const ssize_t & mag_num_bins=1);
 
 	void set_log_limits(CONST_BRG_DISTANCE_REF R_min,
 				CONST_BRG_DISTANCE_REF R_max,
-				const size_t & R_num_bins=1,
+				const ssize_t & R_num_bins=1,
 				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
 				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
-				const size_t & m_num_bins=1,
+				const ssize_t & m_num_bins=1,
 				const double & z_min=-std::numeric_limits<double>::infinity(),
 				const double & z_max=std::numeric_limits<double>::infinity(),
-				const size_t & z_num_bins=1,
+				const ssize_t & z_num_bins=1,
 				const double & mag_min=-std::numeric_limits<double>::infinity(),
 				const double & mag_max=std::numeric_limits<double>::infinity(),
-				const size_t & mag_num_bins=1);
+				const ssize_t & mag_num_bins=1);
 
 #endif // Set/change limits
 
@@ -324,14 +324,14 @@ public:
 
 	// Access by index (will throw if out of bounds)
 #if(1)
-	virtual BRG_UNITS delta_Sigma_t_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i) const;
-	virtual BRG_UNITS delta_Sigma_x_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i) const;
+	virtual BRG_UNITS delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual BRG_UNITS delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
 
-	virtual BRG_UNITS delta_Sigma_t_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i) const;
-	virtual BRG_UNITS delta_Sigma_x_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i) const;
+	virtual BRG_UNITS delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual BRG_UNITS delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
 
-	virtual BRG_UNITS delta_Sigma_t_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i) const;
-	virtual BRG_UNITS delta_Sigma_x_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i) const;
+	virtual BRG_UNITS delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual BRG_UNITS delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
 #endif // Access by index
 
 	// Access by position

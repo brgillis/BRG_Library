@@ -46,7 +46,7 @@ class expected_count_fit_loader {
 	static brgastro::table_map_t<double> _data_map_;
 
 	static void _load();
-	static size_t _lower_z_index(double z);
+	static ssize_t _lower_z_index(double z);
 public:
 
 	static std::vector<long double> get(long double z);

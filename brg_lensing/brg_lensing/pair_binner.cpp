@@ -85,13 +85,13 @@ void pair_binner::_sort() const
 	}
 
 	// Get the bin indices for this lens
-	const size_t m_i = m_limits().get_bin_index(m);
-	const size_t z_i = z_limits().get_bin_index(z);
-	const size_t mag_i = mag_limits().get_bin_index(mag);
+	const ssize_t m_i = m_limits().get_bin_index(m);
+	const ssize_t z_i = z_limits().get_bin_index(z);
+	const ssize_t mag_i = mag_limits().get_bin_index(mag);
 
 	_pair_bins_buffer_.resize(R_limits().num_bins());
 
-	size_t R_i = 0;
+	ssize_t R_i = 0;
 	for( auto & bin : _pair_bins_buffer_ )
 	{
 		bin.clear();
@@ -129,7 +129,7 @@ void pair_binner::_sort() const
 
 	// Add the buffer to the summaries
 	_construct();
-	for(size_t R_i = 0; R_i<R_limits().num_bins(); ++R_i)
+	for(ssize_t R_i = 0; R_i<R_limits().num_bins(); ++R_i)
 	{
 		_pair_bin_summaries_[R_i][m_i][z_i][mag_i] += _pair_bins_buffer_[R_i];
 	}
@@ -165,7 +165,7 @@ void pair_binner::add_pair( const lens_source_pair & new_pair)
 	_pairs_.push_back(new_pair);
 	_sorted_ = false;
 }
-void pair_binner::add_lens_id( const size_t & new_id, const BRG_MASS & m, const double & z,
+void pair_binner::add_lens_id( const ssize_t & new_id, const BRG_MASS & m, const double & z,
 		const double & mag, const double & weight)
 {
 	// Check if we're already buffering a different lens
@@ -218,34 +218,34 @@ void pair_binner::sort() const
 
 // Access by index (will throw if out of bounds)
 #if(1)
-BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
 }
 
-BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
 }
 
-BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(size_t R_i, size_t m_i, size_t z_i, size_t mag_i)
+BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
@@ -258,20 +258,20 @@ BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONS
 												  const double & z, const double & mag)
 {
 	_sort();
-	size_t R_i = R_limits().get_bin_index(R);
-	size_t m_i = m_limits().get_bin_index(m);
-	size_t z_i = z_limits().get_bin_index(z);
-	size_t mag_i = mag_limits().get_bin_index(mag);
+	ssize_t R_i = R_limits().get_bin_index(R);
+	ssize_t m_i = m_limits().get_bin_index(m);
+	ssize_t z_i = z_limits().get_bin_index(z);
+	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 												  const double & z, const double & mag)
 {
 	_sort();
-	size_t R_i = R_limits().get_bin_index(R);
-	size_t m_i = m_limits().get_bin_index(m);
-	size_t z_i = z_limits().get_bin_index(z);
-	size_t mag_i = mag_limits().get_bin_index(mag);
+	ssize_t R_i = R_limits().get_bin_index(R);
+	ssize_t m_i = m_limits().get_bin_index(m);
+	ssize_t z_i = z_limits().get_bin_index(z);
+	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
 }
 
@@ -279,20 +279,20 @@ BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST
 												 const double & z, const double & mag)
 {
 	_sort();
-	size_t R_i = R_limits().get_bin_index(R);
-	size_t m_i = m_limits().get_bin_index(m);
-	size_t z_i = z_limits().get_bin_index(z);
-	size_t mag_i = mag_limits().get_bin_index(mag);
+	ssize_t R_i = R_limits().get_bin_index(R);
+	ssize_t m_i = m_limits().get_bin_index(m);
+	ssize_t z_i = z_limits().get_bin_index(z);
+	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 												 const double & z, const double & mag)
 {
 	_sort();
-	size_t R_i = R_limits().get_bin_index(R);
-	size_t m_i = m_limits().get_bin_index(m);
-	size_t z_i = z_limits().get_bin_index(z);
-	size_t mag_i = mag_limits().get_bin_index(mag);
+	ssize_t R_i = R_limits().get_bin_index(R);
+	ssize_t m_i = m_limits().get_bin_index(m);
+	ssize_t z_i = z_limits().get_bin_index(z);
+	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
 }
 
@@ -300,20 +300,20 @@ BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CO
 													const double & z, const double & mag)
 {
 	_sort();
-	size_t R_i = R_limits().get_bin_index(R);
-	size_t m_i = m_limits().get_bin_index(m);
-	size_t z_i = z_limits().get_bin_index(z);
-	size_t mag_i = mag_limits().get_bin_index(mag);
+	ssize_t R_i = R_limits().get_bin_index(R);
+	ssize_t m_i = m_limits().get_bin_index(m);
+	ssize_t z_i = z_limits().get_bin_index(z);
+	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
 BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
 													const double & z, const double & mag)
 {
 	_sort();
-	size_t R_i = R_limits().get_bin_index(R);
-	size_t m_i = m_limits().get_bin_index(m);
-	size_t z_i = z_limits().get_bin_index(z);
-	size_t mag_i = mag_limits().get_bin_index(mag);
+	ssize_t R_i = R_limits().get_bin_index(R);
+	ssize_t m_i = m_limits().get_bin_index(m);
+	ssize_t z_i = z_limits().get_bin_index(z);
+	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_stderr();
 }
 #endif // Access by index

@@ -33,6 +33,7 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
 #include "brg/vector/elementwise_functions.hpp"
 
 #include "brg_lensing/magnification/count_fitting_results.hpp"
@@ -61,24 +62,25 @@ void brgastro::expected_count_fit_loader::_load()
 
 			_data_map_ = load_table_map<double>(ss);
 
-			assert(_data_map_.size()==num_columns);
-			assert(_data_map_.at("z_mid").size()>=2);
+			assert(ssize(_data_map_)==num_columns);
+			assert(ssize(_data_map_.at("z_mid"))>=2);
 
 			_loaded_ = true;
 		}
 	}
 
 }
-size_t brgastro::expected_count_fit_loader::_lower_z_index(double z)
+ssize_t brgastro::expected_count_fit_loader::_lower_z_index(double z)
 {
-	assert(_data_map_.at("z_mid").size()>=2);
+	auto size = ssize(_data_map_.at("z_mid"));
+	assert(size>=2);
 
-	for(size_t i=1; i<_data_map_.at("z_mid").size(); ++i)
+	for(ssize_t i=1; i<size; ++i)
 	{
 		if(z<_data_map_["z_mid"][i])
 			return i-1;
 	}
-	return _data_map_["z_mid"].size()-2;
+	return size-2;
 }
 
 std::vector<long double> brgastro::expected_count_fit_loader::get(long double z)
