@@ -37,21 +37,21 @@ namespace brgastro {
 // Recursive size
 #if(1)
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
 typename T::Index rsize(const T & v)
 {
 	return v.size();
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
 ssize_t rsize(const T & v)
 {
 	return 1;
 }
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value, char>::type = 0 >
 ssize_t rsize(const T &v)
 {
 	ssize_t result = 0;
@@ -66,21 +66,21 @@ ssize_t rsize(const T &v)
 // Sum
 #if (1)
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
 T sum(const T & v)
 {
 	return v;
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
 typename T::Scalar sum(const T & v)
 {
 	return v.sum();
 }
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value, char>::type = 0 >
 typename T::value_type sum(const T & v)
 {
 	typename T::value_type result = 0;
@@ -96,21 +96,21 @@ typename T::value_type sum(const T & v)
 // Product
 #if (1)
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
 typename T::Scalar product(const T & v)
 {
 	return v.prod();
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
 T product(const T v)
 {
 	return v;
 }
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value, char>::type = 0 >
 typename T::value_type product(const T &v)
 {
 	typename T::value_type result = 1;
@@ -126,21 +126,21 @@ typename T::value_type product(const T &v)
 // Mean
 #if (1)
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value, char>::type = 0 >
 typename T::value_type mean(const std::vector<T> &v)
 {
 	if(rsize(v)==0) return 0;
 	return sum(v)/rsize(v);
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
 typename T::Scalar mean(const T & v)
 {
 	return v.mean();
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
 T mean(const T & v)
 {
@@ -152,7 +152,7 @@ T mean(const T & v)
 // Standard Deviation
 #if (1)
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value, char>::type = 0 >
 typename T::value_type std(const T & v)
 {
 	if(rsize(v)<=1) return 0;
@@ -160,13 +160,13 @@ typename T::value_type std(const T & v)
 	return std::sqrt( subtract(sum( square(v) )/rsize(v), square(sum(v)/rsize(v)) ) );
 }
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value, char>::type = 0 >
 typename T::value_type stddev(const T & v)
 {
 	return std(v);
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
 typename T::Scalar std(const T & v)
 {
@@ -175,21 +175,21 @@ typename T::Scalar std(const T & v)
 	return std::sqrt( sum(v.square())/v.size() - square(v.sum()/v.size()) );
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
 typename T::Scalar stddev(const T & v)
 {
 	return std(v);
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
 T std(const T & v)
 {
 	return 0;
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
 T stddev(const T & v)
 {
@@ -201,7 +201,7 @@ T stddev(const T & v)
 // Sample standard error
 #if(1)
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value, char>::type = 0 >
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value, char>::type = 0 >
 typename T::value_type stderr(const T &v)
 {
 	auto size = rsize(v);
@@ -210,7 +210,7 @@ typename T::value_type stderr(const T &v)
 	return std(v)/std::sqrt(size-1);
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<brgastro::is_eigen_container<T>::value, char>::type = 0 >
 typename T::Scalar stderr(const T & v)
 {
@@ -219,7 +219,7 @@ typename T::Scalar stderr(const T & v)
 	return std(v)/std::sqrt(v.size()-1);
 }
 
-template< typename T, typename std::enable_if<!brgastro::is_const_container<T>::value, char>::type = 0,
+template< typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value, char>::type = 0,
 	typename std::enable_if<!brgastro::is_eigen_container<T>::value, char>::type = 0 >
 T stderr(const T &v)
 {
@@ -260,14 +260,14 @@ bool is_monotonically_increasing(const InputIterator &first, const InputIterator
 	return true;
 }
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value ||
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value ||
 	brgastro::is_eigen_container<T>::value, char>::type = 0 >
 bool is_monotonically_increasing(const T &v)
 {
 	return is_monotonically_increasing(begin(v),end(v));
 }
 
-template<typename T, typename std::enable_if<!(brgastro::is_const_container<T>::value ||
+template<typename T, typename std::enable_if<!(brgastro::is_stl_container<T>::value ||
 brgastro::is_eigen_container<T>::value), char>::type = 0 >
 bool is_monotonically_increasing(const T & v)
 {
@@ -309,14 +309,14 @@ bool is_monotonically_decreasing(const InputIterator &first, const InputIterator
 	return true;
 }
 
-template< typename T, typename std::enable_if<brgastro::is_const_container<T>::value ||
+template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::value ||
 	brgastro::is_eigen_container<T>::value, char>::type = 0 >
 bool is_monotonically_decreasing(const T &v)
 {
 	return is_monotonically_decreasing(begin(v),end(v));
 }
 
-template<typename T, typename std::enable_if<!(brgastro::is_const_container<T>::value ||
+template<typename T, typename std::enable_if<!(brgastro::is_stl_container<T>::value ||
 	brgastro::is_eigen_container<T>::value), char>::type = 0 >
 bool is_monotonically_decreasing(const T & v)
 {

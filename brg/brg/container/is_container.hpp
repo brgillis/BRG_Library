@@ -79,11 +79,8 @@ struct has_begin_end
 };
 
 template<typename T>
-struct is_const_container : std::integral_constant<bool, has_const_iterator<T>::value && has_begin_end<T>::beg_value && has_begin_end<T>::end_value>
-{ };
-
-template<typename T>
-struct is_container : std::integral_constant<bool, has_iterator<T>::value && has_begin_end<T>::beg_value && has_begin_end<T>::end_value>
+struct is_stl_container : std::integral_constant<bool, has_const_iterator<typename std::decay<T>::type>::value &&
+	has_begin_end<typename std::decay<T>::type>::beg_value && has_begin_end<typename std::decay<T>::type>::end_value>
 { };
 
 } // end namespace brgastro

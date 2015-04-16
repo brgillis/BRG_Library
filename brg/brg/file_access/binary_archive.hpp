@@ -43,13 +43,13 @@
 
 namespace brgastro {
 
-template<typename T, typename std::enable_if<!brgastro::is_const_container<T>::value,char>::type = 0>
+template<typename T, typename std::enable_if<!brgastro::is_stl_container<T>::value,char>::type = 0>
 void binary_save(boost::archive::binary_oarchive &ar, const T & obj)
 {
 	ar << obj;
 }
 
-template<typename T, typename std::enable_if<brgastro::is_const_container<T>::value,char>::type = 0,
+template<typename T, typename std::enable_if<brgastro::is_stl_container<T>::value,char>::type = 0,
 	typename std::enable_if<std::is_same<typename T::value_type,bool>::value,char>::type = 0>
 void binary_save(boost::archive::binary_oarchive &ar, const T & obj)
 {
@@ -86,7 +86,7 @@ void binary_save(boost::archive::binary_oarchive &ar, const T & obj)
 }
 
 // Vector overload
-template<typename T, typename std::enable_if<brgastro::is_const_container<T>::value,char>::type = 0,
+template<typename T, typename std::enable_if<brgastro::is_stl_container<T>::value,char>::type = 0,
 	typename std::enable_if<!std::is_same<typename T::value_type,bool>::value,char>::type = 0>
 void binary_save(boost::archive::binary_oarchive &ar, const std::vector<T> & obj)
 {
@@ -112,7 +112,7 @@ void binary_save(const std::string & filename, const T & obj)
 	binary_save(out,obj);
 }
 
-template<typename T, typename T_test=T, typename std::enable_if<!brgastro::is_const_container<T_test>::value,char>::type = 0 >
+template<typename T, typename T_test=T, typename std::enable_if<!brgastro::is_stl_container<T_test>::value,char>::type = 0 >
 T binary_load(boost::archive::binary_iarchive & ar)
 {
 	T obj;
@@ -121,7 +121,7 @@ T binary_load(boost::archive::binary_iarchive & ar)
 }
 
 // Vector<bool> overload
-template<typename T, typename T_test=T,  typename std::enable_if<brgastro::is_const_container<T_test>::value,char>::type = 0,
+template<typename T, typename T_test=T,  typename std::enable_if<brgastro::is_stl_container<T_test>::value,char>::type = 0,
 	typename std::enable_if<std::is_same<typename T_test::value_type,bool>::value,char>::type = 0 >
 T binary_load(boost::archive::binary_iarchive & ar)
 {
@@ -159,7 +159,7 @@ T binary_load(boost::archive::binary_iarchive & ar)
 }
 
 // Vector overload
-template<typename T, typename T_test=T,  typename std::enable_if<brgastro::is_const_container<T_test>::value,char>::type = 0,
+template<typename T, typename T_test=T,  typename std::enable_if<brgastro::is_stl_container<T_test>::value,char>::type = 0,
 	typename std::enable_if<!std::is_same<typename T_test::value_type,bool>::value,char>::type = 0 >
 T binary_load(boost::archive::binary_iarchive &ar)
 {

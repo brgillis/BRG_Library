@@ -332,10 +332,10 @@ public:
 		_base_.shrink_to_fit();
 	}
 
-	/// Reconstruct from a vector of the bin dles. Since some information is lost here,
+	/// Reconstruct from a vector of the bin middles. Since some information is lost here,
 	/// the method has to take some guesses.
 	template<typename To, typename Ao>
-	void reconstruct_from_bin_s(const std::vector<To,Ao> & vec)
+	void reconstruct_from_bin_mids(const std::vector<To,Ao> & vec)
 	{
 		if(vec.size()==1)
 		{
@@ -360,10 +360,10 @@ public:
 		_type_ = type::GENERAL;
 		return;
 	}
-	/// Reconstruct from a vector of the bin dles (move version). Since some information is lost here,
+	/// Reconstruct from a vector of the bin middles (move version). Since some information is lost here,
 	/// the method has to take some guesses.
 	template<typename To, typename Ao>
-	void reconstruct_from_bin_s(std::vector<To,Ao> && vec)
+	void reconstruct_from_bin_mids(std::vector<To,Ao> && vec)
 	{
 		if(vec.size()==1)
 		{

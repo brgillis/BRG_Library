@@ -38,7 +38,8 @@ namespace brgastro
 // TODO: Make this just test if is derived from Eigen::Base
 
 template<typename T>
-struct is_eigen_container : std::integral_constant<bool, std::is_base_of<Eigen::DenseBase<T>,T>::value>
+struct is_eigen_container : std::integral_constant<bool, std::is_base_of<Eigen::DenseBase<typename std::decay<T>::type>,
+	typename std::decay<T>::type>::value>
 { };
 
 } // end namespace brgastro

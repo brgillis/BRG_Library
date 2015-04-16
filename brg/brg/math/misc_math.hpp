@@ -35,6 +35,7 @@
 #include "brg/utility.hpp"
 
 #include "brg/container/is_container.hpp"
+#include "brg/container/is_eigen_container.hpp"
 
 namespace brgastro {
 
@@ -127,26 +128,33 @@ inline void fixbad( T & val )
 // type of number allowed (unit_obj if units are being used,
 // otherwise double).
 template< class T1, class T2,
-typename std::enable_if<!brgastro::is_const_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_const_container<T2>::value,char>::type = 0 >
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
 inline T1 min( T1 a, const T2 & b )
 {
 	return ( a < static_cast<T1>(b) ? a :  static_cast<T1>(b) );
 }
 template< class T1, class T2,
-typename std::enable_if<!brgastro::is_const_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_const_container<T2>::value,char>::type = 0 >
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
 inline T1 max( T1 a, const T2 & b )
 {
 	return ( a <  static_cast<T1>(b) ?  static_cast<T1>(b) : a );
 }
 template<  class T1, class T2, class T3,
-typename std::enable_if<!brgastro::is_const_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_const_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_const_container<T3>::value,char>::type = 0  >
-inline T2 bound( const T1 & lower_bound, T2 a, const T3 & upper_bound)
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T3>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T3>::value,char>::type = 0 >
+inline T2 bound( T1 && lower_bound, T2 && a, T3 && upper_bound)
 {
-	return brgastro::min( brgastro::max( a, lower_bound ) , upper_bound);
+	return brgastro::min( brgastro::max( std::forward<T2>(a), std::forward<T1>(lower_bound) ) , std::forward<T3>(upper_bound) );
 }
 
 // The below two variants return by reference, in case you
@@ -201,7 +209,7 @@ int round_int( T value, const double epsilon=std::numeric_limits<double>::epsilo
 
 // Inline square
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 T square(T v1)
 {
 	return v1*=v1;
@@ -209,7 +217,7 @@ T square(T v1)
 
 // Inline cube
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 T cube(T v1)
 {
 	return v1*=square(v1);
@@ -217,7 +225,7 @@ T cube(T v1)
 
 // Inline quart
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 T quart(T v1)
 {
 	return square(v1)*square(v1);
@@ -225,7 +233,7 @@ T quart(T v1)
 
 // Inline inverse
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 double inverse(const T & v1)
 {
 	return 1./v1;
@@ -237,7 +245,7 @@ inline long double inverse(const long double & v1)
 
 // Inline square
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 double inv_square(const T & v1)
 {
 	return inverse(square(v1));
@@ -249,7 +257,7 @@ inline long double inv_square(const long double & v1)
 
 // Inline cube
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 double inv_cube(const T & v1)
 {
 	return inverse(cube(v1));
@@ -261,7 +269,7 @@ inline long double inv_cube(const long double & v1)
 
 // Inline quart
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 double inv_quart(const T & v1)
 {
 	return inverse(quart(v1));
@@ -278,7 +286,7 @@ inline long double inv_quart(const long double & v1)
 // This version is optimized so that it won't check for the p==0 and p<0 cases, and generally
 // shouldn't be called directly
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 T _ipow( T v, int p )
 {
 	if(p==1) return v;
@@ -289,7 +297,7 @@ T _ipow( T v, int p )
 #endif
 
 template< typename T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 T ipow( T v, int p )
 {
 	if(p<0) return 1/_ipow(v,-p);
@@ -302,7 +310,7 @@ T ipow( T v, int p )
 
 // Returns 1 if a is positive, -1 if it is negative, and 0 if it is 0, NaN if it is NaN
 template< class T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,T>::type* = nullptr >
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
 inline short int sign( const T & a )
 {
 	if ( ( a == 0 ) || ( isnan( a ) ) )

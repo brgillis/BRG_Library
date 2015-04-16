@@ -567,8 +567,8 @@ public:
 
 	/// Copy/move from table_map
 	template< typename other_table_map_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<other_table_map_type>::type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<other_table_map_type>::type::mapped_type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<other_table_map_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<other_table_map_type>::type::mapped_type>::value,char>::type = 0>
 	explicit labeled_array(other_table_map_type && init_column_buffer)
 	: _column_buffer_(std::forward<other_table_map_type>(init_column_buffer))
 	{
@@ -818,7 +818,7 @@ public:
     template< typename new_column_type,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_column_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_column_type>::type>::value,char>::type = 0>
     void insert_col(new_column_type && new_column)
     {
     	_add_row_buffer_to_data_table();
@@ -828,7 +828,7 @@ public:
     template< typename new_column_type,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_column_type>::type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<!brgastro::is_const_container<typename brgastro::ct<new_column_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!brgastro::is_stl_container<typename brgastro::ct<new_column_type>::type>::value,char>::type = 0>
     void insert_col(new_column_type && new_column)
     {
     	// For pairs with a coercible second type
@@ -842,7 +842,7 @@ public:
 #if(1)
 
     template< typename new_columns_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void insert_cols(const new_columns_type & new_columns)
@@ -856,7 +856,7 @@ public:
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void insert_cols(new_columns_type && new_columns)
@@ -870,10 +870,10 @@ public:
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type::value_type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type::value_type>::value,char>::type = 0>
     void insert_cols(const new_columns_type & new_columns)
     {
     	_add_row_buffer_to_data_table();
@@ -885,10 +885,10 @@ public:
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
     void insert_cols(new_columns_type && new_columns)
     {
     	_add_row_buffer_to_data_table();
@@ -916,7 +916,7 @@ public:
     template< typename new_row_type,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_row_type>::type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_row_type>::type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_row_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_row_type>::type>::value,char>::type = 0>
     void insert_row(new_row_type && new_column)
     {
     	_add_column_buffer_to_data_table();
@@ -929,7 +929,7 @@ public:
 #if(1)
 
     template< typename new_rows_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void insert_rows(const new_rows_type & new_rows)
@@ -943,7 +943,7 @@ public:
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void insert_rows(new_rows_type && new_rows)
@@ -957,10 +957,10 @@ public:
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
     void insert_rows(const new_rows_type & new_rows)
     {
     	_add_column_buffer_to_data_table();
@@ -972,10 +972,10 @@ public:
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
     void insert_rows(new_rows_type && new_rows)
     {
     	_add_column_buffer_to_data_table();
@@ -1146,7 +1146,7 @@ public:
 
     template< typename new_rows_type,
 	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void set_rows(const new_rows_type & new_rows)
@@ -1162,7 +1162,7 @@ public:
 
     template< typename new_rows_type,
 	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void set_rows(new_rows_type && new_rows)
@@ -1178,10 +1178,10 @@ public:
 
     template< typename new_rows_type,
 	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
     void set_rows(const new_rows_type & new_rows)
     {
 		_clear_buffer();
@@ -1195,10 +1195,10 @@ public:
 
     template< typename new_rows_type,
 	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_rows_type>::type>::value,char>::type = 0,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
     void set_rows(new_rows_type && new_rows)
     {
 		_clear_buffer();
@@ -1222,7 +1222,7 @@ public:
 
     template< typename new_columns_type,
 	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void set_cols(const new_columns_type & new_columns)
@@ -1238,7 +1238,7 @@ public:
 
     template< typename new_columns_type,
 	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
 	typename std::enable_if<std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void set_cols(new_columns_type && new_columns)
@@ -1254,10 +1254,10 @@ public:
 
     template< typename new_columns_type,
 	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
     void set_cols(const new_columns_type & new_columns)
     {
 		_clear_buffer();
@@ -1271,10 +1271,10 @@ public:
 
     template< typename new_columns_type,
 	typename std::enable_if<!std::is_convertible<typename brgastro::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<new_columns_type>::type>::value,char>::type = 0,
 	typename std::enable_if<!(std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
 	std::is_convertible<typename brgastro::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<brgastro::is_const_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<brgastro::is_stl_container<typename brgastro::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
     void set_cols(new_columns_type && new_columns)
     {
 		_clear_buffer();

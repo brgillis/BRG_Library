@@ -36,8 +36,8 @@
 namespace brgastro {
 
 template<typename T, typename T_data=typename T::value_type,
-typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr,
-typename std::enable_if<!brgastro::is_const_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr>
+typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr,
+typename std::enable_if<!brgastro::is_stl_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr>
 void print_pixels(std::ostream & out_stream, const T & data)
 {
 	table_map_t<T_data> table;
@@ -51,8 +51,8 @@ void print_pixels(std::ostream & out_stream, const T & data)
 	print_table_map(out_stream,table);
 }
 template<typename T, typename T_data=typename T::value_type,
-typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr,
-typename std::enable_if<!brgastro::is_const_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr>
+typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr,
+typename std::enable_if<!brgastro::is_stl_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr>
 void print_pixels(const std::string & file_name, const T & data)
 {
 	std::ofstream fo;
@@ -61,9 +61,9 @@ void print_pixels(const std::string & file_name, const T & data)
 }
 
 template<typename T, typename T_data=typename T::value_type::value_type,
-typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr,
-typename std::enable_if<brgastro::is_const_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr,
-typename std::enable_if<!brgastro::is_const_container<typename T::value_type::value_type>::value,typename T::value_type::value_type>::type* = nullptr>
+typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr,
+typename std::enable_if<brgastro::is_stl_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr,
+typename std::enable_if<!brgastro::is_stl_container<typename T::value_type::value_type>::value,typename T::value_type::value_type>::type* = nullptr>
 void print_pixels(std::ostream & out_stream, const T & data)
 {
 	table_map_t<T_data> table;
@@ -81,9 +81,9 @@ void print_pixels(std::ostream & out_stream, const T & data)
 	print_table_map(out_stream,table);
 }
 template<typename T, typename T_data=typename T::value_type::value_type,
-typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr,
-typename std::enable_if<brgastro::is_const_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr,
-typename std::enable_if<!brgastro::is_const_container<typename T::value_type::value_type>::value,typename T::value_type::value_type>::type* = nullptr>
+typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr,
+typename std::enable_if<brgastro::is_stl_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr,
+typename std::enable_if<!brgastro::is_stl_container<typename T::value_type::value_type>::value,typename T::value_type::value_type>::type* = nullptr>
 void print_pixels(const std::string & file_name, const T & data)
 {
 	std::ofstream fo;
@@ -92,10 +92,10 @@ void print_pixels(const std::string & file_name, const T & data)
 }
 
 template<typename T, typename T_data=typename T::value_type::value_type::value_type,
-typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr,
-typename std::enable_if<brgastro::is_const_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr,
-typename std::enable_if<brgastro::is_const_container<typename T::value_type::value_type>::value,typename T::value_type::value_type>::type* = nullptr,
-typename std::enable_if<!brgastro::is_const_container<typename T::value_type::value_type::value_type>::value,typename T::value_type::value_type::value_type>::type* = nullptr>
+typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr,
+typename std::enable_if<brgastro::is_stl_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr,
+typename std::enable_if<brgastro::is_stl_container<typename T::value_type::value_type>::value,typename T::value_type::value_type>::type* = nullptr,
+typename std::enable_if<!brgastro::is_stl_container<typename T::value_type::value_type::value_type>::value,typename T::value_type::value_type::value_type>::type* = nullptr>
 void print_pixels(std::ostream & out_stream, const T & data)
 {
 	table_map_t<T_data> table;
@@ -117,10 +117,10 @@ void print_pixels(std::ostream & out_stream, const T & data)
 	print_table_map(out_stream,table);
 }
 template<typename T, typename T_data=typename T::value_type::value_type::value_type,
-typename std::enable_if<brgastro::is_const_container<T>::value,T>::type* = nullptr,
-typename std::enable_if<brgastro::is_const_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr,
-typename std::enable_if<brgastro::is_const_container<typename T::value_type::value_type>::value,typename T::value_type::value_type>::type* = nullptr,
-typename std::enable_if<!brgastro::is_const_container<typename T::value_type::value_type::value_type>::value,typename T::value_type::value_type::value_type>::type* = nullptr>
+typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr,
+typename std::enable_if<brgastro::is_stl_container<typename T::value_type>::value,typename T::value_type>::type* = nullptr,
+typename std::enable_if<brgastro::is_stl_container<typename T::value_type::value_type>::value,typename T::value_type::value_type>::type* = nullptr,
+typename std::enable_if<!brgastro::is_stl_container<typename T::value_type::value_type::value_type>::value,typename T::value_type::value_type::value_type>::type* = nullptr>
 void print_pixels(const std::string & file_name, const T & data)
 {
 	std::ofstream fo;

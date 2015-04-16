@@ -110,7 +110,7 @@ inline const T1 safe_quad_sub( const T1 & v1, const T2 & v2 )
 // Safe_d is used a bit differently: Put it around the denominator to make
 // sure you don't hit a divide-by-zero error.
 template< class T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T>::value,char>::type = 0,
 typename std::enable_if<!brgastro::is_eigen_container<T>::value,char>::type = 0>
 const T safe_d( const T & a )
 {
@@ -140,7 +140,7 @@ const T safe_d( const T & a )
 
 // Container specialization
 template< class T,
-typename std::enable_if<brgastro::is_const_container<T>::value,char>::type = 0>
+typename std::enable_if<brgastro::is_stl_container<T>::value,char>::type = 0>
 T safe_d( T array )
 {
 	for( auto & a : array)
@@ -188,7 +188,7 @@ T safe_d( T array )
 
 // Eigen-like container specialization
 template< class T,
-typename std::enable_if<!brgastro::is_const_container<T>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T>::value,char>::type = 0,
 typename std::enable_if<brgastro::is_eigen_container<T>::value,char>::type = 0>
 T safe_d( T array )
 {
