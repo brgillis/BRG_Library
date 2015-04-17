@@ -269,7 +269,7 @@ public:
 };
 
 template<typename name>
-class offset_WLsig_functor
+class offset_Delta_Sigma_functor
 {
 
 private:
@@ -302,13 +302,13 @@ public:
 	{
 		if ( _host_ptr_ == NULL )
 		{
-			throw std::runtime_error("ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n");
+			throw std::runtime_error("ERROR: Host must be assigned to offset_Delta_Sigma_functor before function can be called.\n");
 		}
 
-		return _host_ptr_->offset_WLsig( _R_, in_param, silent );
+		return _host_ptr_->offset_Delta_Sigma( _R_, in_param, silent );
 	}
 
-	offset_WLsig_functor( const name *init_host=NULL,
+	offset_Delta_Sigma_functor( const name *init_host=NULL,
 			CONST_BRG_DISTANCE_REF init_R = 0 )
 	{
 		_host_ptr_ = init_host;
@@ -318,7 +318,7 @@ public:
 };
 
 template<typename name>
-class quick_offset_WLsig_functor
+class quick_offset_Delta_Sigma_functor
 {
 
 private:
@@ -351,13 +351,13 @@ public:
 	{
 		if ( _host_ptr_ == NULL )
 		{
-			throw std::runtime_error("ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n");
+			throw std::runtime_error("ERROR: Host must be assigned to offset_Delta_Sigma_functor before function can be called.\n");
 		}
 
-		return _host_ptr_->quick_offset_WLsig( _R_, in_param, silent );
+		return _host_ptr_->quick_offset_Delta_Sigma( _R_, in_param, silent );
 	}
 
-	quick_offset_WLsig_functor( const name *init_host=NULL,
+	quick_offset_Delta_Sigma_functor( const name *init_host=NULL,
 			CONST_BRG_DISTANCE_REF init_R = 0 )
 	{
 		_host_ptr_ = init_host;
@@ -367,7 +367,7 @@ public:
 };
 
 template<typename name>
-class group_WLsig_weight_functor
+class group_Delta_Sigma_weight_functor
 {
 
 private:
@@ -400,7 +400,7 @@ public:
 	{
 		if ( _host_ptr_ == NULL )
 		{
-			throw std::runtime_error("ERROR: Host must be assigned to offset_WLsig_functor before function can be called.\n");
+			throw std::runtime_error("ERROR: Host must be assigned to offset_Delta_Sigma_functor before function can be called.\n");
 		}
 
 		if ( _c_ == 0 )
@@ -416,7 +416,7 @@ public:
 		}
 	}
 
-	group_WLsig_weight_functor( const name *init_host=NULL,
+	group_Delta_Sigma_weight_functor( const name *init_host=NULL,
 			const double init_c = -1 )
 	{
 		_host_ptr_ = init_host;
@@ -426,7 +426,7 @@ public:
 };
 
 template<typename name>
-class shifted_WLsig_weight_functor
+class shifted_Delta_Sigma_weight_functor
 {
 
 private:
@@ -451,7 +451,7 @@ public:
 		return in_param/square(_sigma_) * std::exp(-square(in_param)/(2*square(_sigma_)));
 	}
 
-	shifted_WLsig_weight_functor( CONST_BRG_DISTANCE_REF new_sigma=0 )
+	shifted_Delta_Sigma_weight_functor( CONST_BRG_DISTANCE_REF new_sigma=0 )
 	{
 		_sigma_ = new_sigma;
 	}
@@ -459,7 +459,7 @@ public:
 };
 
 template<typename name>
-class shifted_WLsig_circ_functor
+class shifted_Delta_Sigma_circ_functor
 {
 
 private:
@@ -514,17 +514,17 @@ public:
 
 		if(isbad(theta))
 		{
-			return _host_ptr_->WLsig(R_actual,silent) +
+			return _host_ptr_->Delta_Sigma(R_actual,silent) +
 				extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z());
 		}
 		else
 		{
-			return _host_ptr_->WLsig(R_actual,silent)*angle_factor +
+			return _host_ptr_->Delta_Sigma(R_actual,silent)*angle_factor +
 					extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z()); //TODO Should there be a factor of 1/2 here?
 		}
 	}
 
-	shifted_WLsig_circ_functor( const name *new_host=NULL,
+	shifted_Delta_Sigma_circ_functor( const name *new_host=NULL,
 			CONST_BRG_DISTANCE_REF new_R_shift=0, CONST_BRG_DISTANCE_REF new_R=0 )
 	{
 		_host_ptr_ = new_host;
@@ -535,7 +535,7 @@ public:
 };
 
 template<typename name>
-class shifted_WLsig_functor
+class shifted_Delta_Sigma_functor
 {
 
 private:
@@ -566,7 +566,7 @@ public:
 	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const
 	{
 		// in_param here will be R_shift
-		shifted_WLsig_circ_functor<name> func(_host_ptr_,in_param,_R_);
+		shifted_Delta_Sigma_circ_functor<name> func(_host_ptr_,in_param,_R_);
 
 		const double min_in_param = 0;
 		const double max_in_param = pi;
@@ -579,7 +579,7 @@ public:
 		return out_param /= pi;
 	}
 
-	shifted_WLsig_functor( const name *new_host=NULL,
+	shifted_Delta_Sigma_functor( const name *new_host=NULL,
 			CONST_BRG_DISTANCE_REF new_R=0 )
 	{
 		_host_ptr_ = new_host;

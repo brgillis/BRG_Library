@@ -40,7 +40,7 @@
 #include "brg_lensing/magnification/expected_count_loader.h"
 #include "brg_lensing/magnification/mag_global_values.h"
 
-#define USE_FIELD_WEIGHTING
+#undef USE_FIELD_WEIGHTING
 
 namespace brgastro {
 

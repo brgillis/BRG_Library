@@ -34,7 +34,7 @@
 #include <memory>
 #endif
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_lensing/source_obj.hpp"
 
