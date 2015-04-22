@@ -45,14 +45,14 @@ DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_sig_cache,
 
 // Initialisation for brgastro::tNFW_offset_sig_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_offset_sig_cache,
-	std::log(1e13*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e15)-std::log(1e13))/2,
+	std::log(1e13*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e13))/30,
 	0.1,1.5,0.4,
-	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100,
+	std::log(0.1*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.1))/1000,
 	std::log(0.01*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.01))/100);
 
 // Initialisation for brgastro::tNFW_group_sig_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_sig_cache,
-	std::log(1e13*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e15)-std::log(1e12))/2,
+	std::log(1e13*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e16)-std::log(1e13))/30,
 	0.1,1.5,0.4,
 	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100,
 	2.5,10.,2.5);
@@ -71,17 +71,17 @@ DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_Sigma_cache,
 
 // Initialisation for brgastro::tNFW_offset_Sigma_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_offset_Sigma_cache,
-	std::log(1e14*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e16)-std::log(1e14))/3,
+	std::log(1e13*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e13))/30,
 	0.1,1.5,0.4,
-	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100,
-	std::log(0.01*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.01))/100);
+	std::log(0.1*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.1))/1000,
+	std::log(0.1*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.01))/100);
 
 // Initialisation for brgastro::tNFW_group_Sigma_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_Sigma_cache,
-	std::log(1e14*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e16)-std::log(1e14))/3,
+	std::log(1e13*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e13))/30,
 	0.1,1.5,0.4,
-	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100,
-	2.5,10.,2.5);
+	std::log(0.1*unitconv::kpctom),std::log(4000*unitconv::kpctom),(std::log(4000)-std::log(0.1))/200,
+	2.5,5.0,2.5);
 
 // brgastro::tNFW_sig_cache class methods
 #if (1)
