@@ -27,6 +27,8 @@
 
 #include "brg/global.h"
 
+#include "brg/utility.hpp"
+
 #include "brg_physics/units/unit_obj.h"
 
 #include "point_mass_profile.h"

@@ -214,7 +214,7 @@ BRG_DISTANCE brgastro::tNFW_profile::rvir() const
 		_rvir_cache_ = 0;
 
 		// First, we try solving iteratively
-		_rvir_cache_ = solve_iterate( &it_solver, rvir0(), 1, 0.0001, 1000, true );
+		_rvir_cache_ = solve_iterate( &it_solver, rvir0(), 1, 0.0001, 1000 );
 		if ( ( _rvir_cache_ == 0 ) || ( isbad( _rvir_cache_ ) ) )
 		{
 			// Iteratively didn't work, so we go to the grid option

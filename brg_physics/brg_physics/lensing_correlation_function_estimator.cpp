@@ -33,6 +33,7 @@
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
 
 #include "lensing_correlation_function_estimator.h"
@@ -68,8 +69,8 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
 
 	// Set up a function to add to the correct bin of an array
 	auto increment_bin = [&] (Eigen::ArrayXd & array, unsigned & pair_counter,
-			const std::tuple<double,double,double> & p1,
-			const std::tuple<double,double,double> & p2)
+			const position & p1,
+			const position & p2)
 	{
 		double dz = std::get<2>(p2)-std::get<2>(p1);
 		if(dz<_z_buffer_) return;
@@ -125,8 +126,8 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
 	R1R2_counts /= R1R2_pairs;
 
 	// And calculate the correlation function
-	Eigen::ArrayXd result = (D1D2_counts*R1R2_counts)/
-			brgastro::safe_d(static_cast< Eigen::ArrayXd >(D1R2_counts*R1D2_counts))-1;
+//	Eigen::ArrayXd result = D1D2_counts/brgastro::safe_d(D1R2_counts)-1;
+	Eigen::ArrayXd result = (D1D2_counts-D1R2_counts-R1D2_counts+R1R2_counts) / brgastro::safe_d(R1R2_counts);
 	return result;
 }
 Eigen::ArrayXd lensing_correlation_function_estimator::calculate() const
@@ -151,8 +152,8 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate() const
 
 	// Set up a function to add to the correct bin of an array
 	auto increment_bin = [&] (Eigen::ArrayXd & array, long unsigned & pair_counter,
-			const std::tuple<double,double,double> & p1,
-			const std::tuple<double,double,double> & p2)
+			const position & p1,
+			const position & p2)
 	{
 		double dz = std::get<2>(p2)-std::get<2>(p1);
 		if(dz<_z_buffer_) return;
@@ -200,16 +201,40 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate() const
 	}
 
 	// Normalize by total number of pairs
+	Eigen::ArrayXd D1D2_sqrt_unnorm_counts = D1D2_counts.sqrt();
+
 	D1D2_counts /= D1D2_pairs;
 	D1R2_counts /= D1R2_pairs;
 	R1D2_counts /= R1D2_pairs;
 	R1R2_counts /= R1R2_pairs;
 
 	// And calculate the correlation function
-	_unweighted_cached_value_.resize(_r_bin_limits_.num_bins());
-	_unweighted_cached_value_ = (D1D2_counts*R1R2_counts)/
-			brgastro::safe_d(static_cast< Eigen::ArrayXd >(D1R2_counts*R1D2_counts)) - 1;
+//	_unweighted_cached_value_ = D1D2_counts/brgastro::safe_d(D1R2_counts) - 1;
+
+	_unweighted_cached_value_ = (D1D2_counts-D1R2_counts-R1D2_counts) / brgastro::safe_d(R1R2_counts) + 1;
+	_unweighted_cached_error_ = D1D2_counts/brgastro::safe_d<Eigen::ArrayXd>(D1D2_sqrt_unnorm_counts*R1R2_counts);
+
 	return _unweighted_cached_value_;
+}
+
+Eigen::ArrayXd lensing_correlation_function_estimator::weights() const
+{
+	if(!_set_up())
+		throw std::logic_error("Cannot get weights without data set up.\n");
+
+	if(_unweighted_cached_error_.size()==0) calculate();
+
+	return 1./_unweighted_cached_error_.square();
+}
+
+Eigen::ArrayXd lensing_correlation_function_estimator::errors() const
+{
+	if(!_set_up())
+		throw std::logic_error("Cannot get weights without data set up.\n");
+
+	if(_unweighted_cached_error_.size()==0) calculate();
+
+	return _unweighted_cached_error_;
 }
 
 Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const double & offset) const

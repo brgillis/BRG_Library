@@ -24,7 +24,7 @@
 #define _BRG_UNIT_CONVERSIONS_HPP_INCLUDED_
 
 namespace brgastro{ namespace unitconv {
-// All unit conversions are exact unless noted
+// All unit conversions are exact (to the limit of double variables) unless noted
 
 // Distance
 // Default unit: meter (m)
@@ -81,16 +81,16 @@ constexpr double daytos = hrtos * 24;
 constexpr double stoday = 1 / daytos;
 constexpr double weektos = daytos * 7;
 constexpr double stoweek = 1 / weektos;
-constexpr double yrtos = daytos * 365.24219; // Approximate tropical year
-constexpr double stoyr = 1 / yrtos; // Approximate
-constexpr double monthtos = yrtos / 12; // Mean month length for tropical year
-constexpr double stomonth = 1 / monthtos; // Approximate
-constexpr double kyrtos = yrtos * 1e3; // Approximate
-constexpr double stokyr = 1 / kyrtos; // Approximate
-constexpr double Myrtos = yrtos * 1e6; // Approximate
-constexpr double stoMyr = 1 / Myrtos; // Approximate
-constexpr double Gyrtos = yrtos * 1e9; // Approximate
-constexpr double stoGyr = 1 / Gyrtos; // Approximate
+constexpr double yrtos = daytos * 365.25; // Julian year - Astronomic definition (exact)
+constexpr double stoyr = 1 / yrtos;
+constexpr double monthtos = yrtos / 12; // Mean month length for Julian year
+constexpr double stomonth = 1 / monthtos;
+constexpr double kyrtos = yrtos * 1e3;
+constexpr double stokyr = 1 / kyrtos;
+constexpr double Myrtos = yrtos * 1e6;
+constexpr double stoMyr = 1 / Myrtos;
+constexpr double Gyrtos = yrtos * 1e9;
+constexpr double stoGyr = 1 / Gyrtos;
 
 // Velocity
 // Default units: meters per second (mps)
@@ -148,7 +148,7 @@ constexpr double radtoasec = 1 / asectorad;
 // Default unit: Coulomb (C)
 constexpr double CtoC = 1;
 constexpr double Ctoesu = 6.241509324e18; // Approximate
-constexpr double esutoC = 1 / Ctoesu;
+constexpr double esutoC = 1 / Ctoesu; // Approximate
 
 } } // namespace brgastro::unitconv
 

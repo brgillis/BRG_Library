@@ -32,7 +32,9 @@
 #include <memory>
 
 #include "brg/math/misc_math.hpp"
-#include "brg/physics/units/unit_conversions.hpp"
+#include "brg/utility.hpp"
+
+#include "brg_physics/units/unit_conversions.hpp"
 
 #include "unit_obj.h"
 
