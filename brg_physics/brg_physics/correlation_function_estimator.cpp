@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file correlation_function_estimator.cpp
+ @file lensing_correlation_function_estimator.cpp
  ------------------
 
  TODO <Insert file description here>
@@ -24,7 +24,7 @@
  \**********************************************************************/
 
 #include <functional>
-#include <utility>
+#include <tuple>
 #include <vector>
 
 #include <Eigen/Core>
@@ -33,13 +33,14 @@
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
+#include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
 
 #include "correlation_function_estimator.h"
 
 namespace brgastro {
 
-bool correlation_function_estimator::_set_up()
+bool correlation_function_estimator::_set_up() const
 {
 	return !( (_D1_pos_list_.empty()) || (_D2_pos_list_.empty())
 			|| (_R1_pos_list_.empty()) || (_R2_pos_list_.empty()));
@@ -48,7 +49,7 @@ bool correlation_function_estimator::_set_up()
 
 // Calculation functions
 Eigen::ArrayXd correlation_function_estimator::calculate_weighted(
-		const std::function<double(double)> & weight_function)
+		const std::function<double(double)> & weight_function) const
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
@@ -59,15 +60,23 @@ Eigen::ArrayXd correlation_function_estimator::calculate_weighted(
 	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
+	unsigned D1D2_pairs = 0;
+	unsigned D1R2_pairs = 0;
+	unsigned R1D2_pairs = 0;
+	unsigned R1R2_pairs = 0;
+
 	const double & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of an array
-	auto increment_bin = [&] (Eigen::ArrayXd & array, const std::pair<double,double> & p1,
-			const std::pair<double,double> & p2)
+	auto increment_bin = [&] (Eigen::ArrayXd & array, unsigned & pair_counter,
+			const position & p1,
+			const position & p2)
 	{
-		double dx = p1.first-p2.first;
+		++pair_counter;
+
+		double dx = std::get<0>(p1)-std::get<0>(p2);
 		if(std::fabs(dx)>max_r) return;
-		double dy = p1.second-p2.second;
+		double dy = std::get<1>(p1)-std::get<1>(p2);
 		if(std::fabs(dy)>max_r) return;
 
 		double r = brgastro::quad_add(dx,dy);
@@ -88,31 +97,37 @@ Eigen::ArrayXd correlation_function_estimator::calculate_weighted(
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			increment_bin(D1D2_counts,p1,p2);
+			increment_bin(D1D2_counts,D1D2_pairs,p1,p2);
 		}
 		for(const auto & p2 : _R2_pos_list_)
 		{
-			increment_bin(D1R2_counts,p1,p2);
+			increment_bin(D1R2_counts,D1R2_pairs,p1,p2);
 		}
 	}
 	for(const auto & p1 : _R1_pos_list_)
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			increment_bin(R1D2_counts,p1,p2);
+			increment_bin(R1D2_counts,R1D2_pairs,p1,p2);
 		}
 		for(const auto & p2 : _R2_pos_list_)
 		{
-			increment_bin(R1R2_counts,p1,p2);
+			increment_bin(R1R2_counts,R1R2_pairs,p1,p2);
 		}
 	}
 
+	// Normalize by total number of pairs
+	D1D2_counts /= D1D2_pairs;
+	D1R2_counts /= D1R2_pairs;
+	R1D2_counts /= R1D2_pairs;
+	R1R2_counts /= R1R2_pairs;
+
 	// And calculate the correlation function
-	Eigen::ArrayXd result = (D1D2_counts*R1R2_counts)/
-			brgastro::safe_d(static_cast< Eigen::ArrayXd >(D1R2_counts*R1D2_counts))-1;
+//	Eigen::ArrayXd result = D1D2_counts/brgastro::safe_d(D1R2_counts)-1;
+	Eigen::ArrayXd result = (D1D2_counts-D1R2_counts-R1D2_counts+R1R2_counts) / brgastro::safe_d(R1R2_counts);
 	return result;
 }
-Eigen::ArrayXd correlation_function_estimator::calculate()
+Eigen::ArrayXd correlation_function_estimator::calculate() const
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
@@ -125,16 +140,24 @@ Eigen::ArrayXd correlation_function_estimator::calculate()
 	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
+	long unsigned D1D2_pairs = 0;
+	long unsigned D1R2_pairs = 0;
+	long unsigned R1D2_pairs = 0;
+	long unsigned R1R2_pairs = 0;
+
 	const double & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of an array
-	auto increment_bin = [&] (Eigen::ArrayXd & array, const std::pair<double,double> & p1,
-			const std::pair<double,double> & p2)
+	auto increment_bin = [&] (Eigen::ArrayXd & array, long unsigned & pair_counter,
+			const position & p1,
+			const position & p2)
 	{
-		double dx = std::fabs(p1.first-p2.first);
-		if(dx>max_r) return;
-		double dy = std::fabs(p1.second-p2.second);
-		if(dy>max_r) return;
+		++pair_counter;
+
+		double dx = std::get<0>(p1)-std::get<0>(p2);
+		if(std::fabs(dx)>max_r) return;
+		double dy = std::get<1>(p1)-std::get<1>(p2);
+		if(std::fabs(dy)>max_r) return;
 
 		double r = brgastro::quad_add(dx,dy);
 
@@ -152,33 +175,63 @@ Eigen::ArrayXd correlation_function_estimator::calculate()
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			increment_bin(D1D2_counts,p1,p2);
+			increment_bin(D1D2_counts,D1D2_pairs,p1,p2);
 		}
 		for(const auto & p2 : _R2_pos_list_)
 		{
-			increment_bin(D1R2_counts,p1,p2);
+			increment_bin(D1R2_counts,D1R2_pairs,p1,p2);
 		}
 	}
 	for(const auto & p1 : _R1_pos_list_)
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			increment_bin(R1D2_counts,p1,p2);
+			increment_bin(R1D2_counts,R1D2_pairs,p1,p2);
 		}
 		for(const auto & p2 : _R2_pos_list_)
 		{
-			increment_bin(R1R2_counts,p1,p2);
+			increment_bin(R1R2_counts,R1R2_pairs,p1,p2);
 		}
 	}
 
+	// Normalize by total number of pairs
+	Eigen::ArrayXd D1D2_sqrt_unnorm_counts = D1D2_counts.sqrt();
+
+	D1D2_counts /= D1D2_pairs;
+	D1R2_counts /= D1R2_pairs;
+	R1D2_counts /= R1D2_pairs;
+	R1R2_counts /= R1R2_pairs;
+
 	// And calculate the correlation function
-	_unweighted_cached_value_.resize(_r_bin_limits_.num_bins());
-	_unweighted_cached_value_ = (D1D2_counts*R1R2_counts)/
-			brgastro::safe_d(static_cast< Eigen::ArrayXd >(D1R2_counts*R1D2_counts)) - 1;
+//	_unweighted_cached_value_ = D1D2_counts/brgastro::safe_d(D1R2_counts) - 1;
+
+	_unweighted_cached_value_ = (D1D2_counts-D1R2_counts-R1D2_counts) / brgastro::safe_d(R1R2_counts) + 1;
+	_unweighted_cached_error_ = D1D2_counts/brgastro::safe_d<Eigen::ArrayXd>(D1D2_sqrt_unnorm_counts*R1R2_counts);
+
 	return _unweighted_cached_value_;
 }
 
-Eigen::ArrayXd correlation_function_estimator::calculate_dipole(const double & offset)
+Eigen::ArrayXd correlation_function_estimator::weights() const
+{
+	if(!_set_up())
+		throw std::logic_error("Cannot get weights without data set up.\n");
+
+	if(_unweighted_cached_error_.size()==0) calculate();
+
+	return 1./_unweighted_cached_error_.square();
+}
+
+Eigen::ArrayXd correlation_function_estimator::errors() const
+{
+	if(!_set_up())
+		throw std::logic_error("Cannot get weights without data set up.\n");
+
+	if(_unweighted_cached_error_.size()==0) calculate();
+
+	return _unweighted_cached_error_;
+}
+
+Eigen::ArrayXd correlation_function_estimator::calculate_dipole(const double & offset) const
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
@@ -186,7 +239,7 @@ Eigen::ArrayXd correlation_function_estimator::calculate_dipole(const double & o
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-Eigen::ArrayXd correlation_function_estimator::calculate_quadrupole(const double & offset)
+Eigen::ArrayXd correlation_function_estimator::calculate_quadrupole(const double & offset) const
 {
 	auto weight_function = [&offset] (const double & theta)
 	{
@@ -194,7 +247,7 @@ Eigen::ArrayXd correlation_function_estimator::calculate_quadrupole(const double
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-Eigen::ArrayXd correlation_function_estimator::calculate_octopole(const double & offset)
+Eigen::ArrayXd correlation_function_estimator::calculate_octopole(const double & offset) const
 {
 	auto weight_function = [&offset] (const double & theta)
 	{

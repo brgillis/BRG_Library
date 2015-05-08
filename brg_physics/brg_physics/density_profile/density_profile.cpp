@@ -130,7 +130,7 @@ BRG_MASS brgastro::density_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 	brgastro::spherical_density_functor func( this );
 	BRG_UNITS min_in_params( 0 ), max_in_params( r_to_use ), out_params( 0 );
 	out_params = brgastro::integrate_Romberg( &func,min_in_params,
-			max_in_params, 0.00001, false, silent );
+			max_in_params, 0.00001, false );
 	return out_params;
 }
 

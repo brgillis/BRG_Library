@@ -46,7 +46,8 @@ namespace brgastro {
 class lensing_correlation_function_estimator {
 private:
 
-	typedef std::vector<std::tuple<double,double,double>> position_list;
+	typedef std::tuple<double,double,double,double> position;
+	typedef std::vector<position> position_list;
 
 	position_list _D1_pos_list_, _D2_pos_list_, _R1_pos_list_, _R2_pos_list_;
 
@@ -55,6 +56,7 @@ private:
 	double _z_buffer_;
 
 	mutable Eigen::ArrayXd _unweighted_cached_value_;
+	mutable Eigen::ArrayXd _unweighted_cached_error_;
 
 	bool _set_up() const;
 
@@ -117,6 +119,12 @@ public:
 #if(1)
 	/// Standard calculation function, using Hamilton estimator
 	Eigen::ArrayXd calculate() const;
+
+	/// Get bin weights for standard calculation function
+	Eigen::ArrayXd weights() const;
+
+	/// Get errors for standard calculation function
+	Eigen::ArrayXd errors() const;
 
 	/// Weighted calculation function, using a Hamilton-like estimator. This assumes the weight
 	/// function passed here has an expected value of zero.

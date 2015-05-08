@@ -22,8 +22,8 @@
 
 // body file: brg/physics/astro.cpp
 
-#ifndef __BRG_ASTRO_H_INCLUDED__
-#define __BRG_ASTRO_H_INCLUDED__
+#ifndef _BRG_ASTRO_H_INCLUDED_
+#define _BRG_ASTRO_H_INCLUDED_
 
 #include <cstdlib>
 #include <cmath>
@@ -55,15 +55,15 @@
 #if (1)
 #ifndef _BRG_PI_DEFINED_
 #define _BRG_PI_DEFINED_
-const double pi = 3.14159265358979323846;
+const double pi = M_PI;
 #endif
 
 
 namespace brgastro
 {
 
-#ifndef __PHYS_VARS_DEFINED__
-#define __PHYS_VARS_DEFINED__
+#ifndef _PHYS_VARS_DEFINED_
+#define _PHYS_VARS_DEFINED_
 
 #ifdef _BRG_USE_UNITS_
 const brgastro::unit_obj Gc(6.67384e-11,3,-2,-1,0,0); // In m^3 s^-2 kg^-1
@@ -78,8 +78,8 @@ const BRG_VELOCITY c = brgastro::unitconv::ctomps;
 
 // Cosmological Parameters
 #if (1)
-#ifndef __COSMO_VARS_DEFINED__
-#define __COSMO_VARS_DEFINED__
+#ifndef _COSMO_VARS_DEFINED_
+#define _COSMO_VARS_DEFINED_
 
 #ifdef _BRG_USE_UNITS_
 const brgastro::unit_obj H_0(70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom,0,-1,0,0,0,0); // So all results will implicitly be in h_70 units
@@ -101,8 +101,8 @@ const float n_s = 0.971;     // WMAP9 + priors
 
 // Default parameters
 #if (1)
-#ifndef __BRG_DEFAULT_ASTRO_VARS_DEFINED__
-#define __BRG_DEFAULT_ASTRO_VARS_DEFINED__
+#ifndef _BRG_DEFAULT_ASTRO_VARS_DEFINED_
+#define _BRG_DEFAULT_ASTRO_VARS_DEFINED_
 
 const float default_c = 6; // To help prevent crashes. Warning will be output
 const float default_tau_factor = 2;
