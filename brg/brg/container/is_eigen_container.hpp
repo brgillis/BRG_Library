@@ -32,14 +32,19 @@
 
 #include <Eigen/Core>
 
+#include "brg/container/is_container.hpp"
+
 namespace brgastro
 {
-
-// TODO: Make this just test if is derived from Eigen::Base
 
 template<typename T>
 struct is_eigen_container : std::integral_constant<bool, std::is_base_of<Eigen::DenseBase<typename std::decay<T>::type>,
 	typename std::decay<T>::type>::value>
+{ };
+
+template<typename T>
+struct is_stl_or_eigen_container : std::integral_constant<bool,
+	is_stl_container<T>::value || is_eigen_container<T>::value>
 { };
 
 } // end namespace brgastro
