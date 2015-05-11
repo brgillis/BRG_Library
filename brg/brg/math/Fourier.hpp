@@ -151,7 +151,10 @@ complex_array_type planned_Fourier_transform(array_type && vals,
 		// Use a temporary object so the values won't be overwritten when the plan is
 		// measured
 		#pragma openmp critical(make_fftw_plan)
-		plan = fftw_plan_dft_r2c_1d(N, array_type(N).data(), out.get(), FFTW_MEASURE);
+		{
+			fftw_wisdom_accumulator wisdom_accumulator;
+			plan = fftw_plan_dft_r2c_1d(N, array_type(N).data(), out.get(), FFTW_MEASURE);
+		}
 	}
 
 	// Execute the plan on the proper data
@@ -224,7 +227,10 @@ flt_array_type planned_inverse_Fourier_transform(array_type && vals,
 	if(!plan)
 	{
 		#pragma openmp critical(make_fftw_plan)
-		plan = fftw_plan_dft_c2r_1d(N, in.get(), out.get(), FFTW_MEASURE);
+		{
+			fftw_wisdom_accumulator wisdom_accumulator;
+			plan = fftw_plan_dft_c2r_1d(N, in.get(), out.get(), FFTW_MEASURE);
+		}
 	}
 
 	// Now fill in the array (this must be after the plan, as the plan may overwrite it)
