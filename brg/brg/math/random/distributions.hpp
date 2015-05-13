@@ -46,22 +46,22 @@ inline Tx erfc(Tx && x)
 }
 
 // Gaussian PDF
-template< typename Tx >
-inline const double Gaus_pdf( const Tx x )
-{
-	return Gaus_pdf(x,0.,1.);
-}
-template< typename Tx, typename Tmean >
-inline const double Gaus_pdf( const Tx x, const Tmean mean )
-{
-	return Gaus_pdf(x,mean,1.);
-}
 template< typename Tx, typename Tmean, typename Tstddev >
 inline const double Gaus_pdf( const Tx x, const Tmean mean,
 		const Tstddev std_dev )
 {
 	return std::exp( -square( x - mean ) / ( 2 * square(std_dev) ) )
 			/ ( std_dev * std::sqrt( 2 * pi ) );
+}
+template< typename Tx, typename Tmean >
+inline const double Gaus_pdf( const Tx x, const Tmean mean )
+{
+	return Gaus_pdf(x,mean,1.);
+}
+template< typename Tx >
+inline const double Gaus_pdf( const Tx x )
+{
+	return Gaus_pdf(x,0.,1.);
 }
 
 // Function to integrate a Gaussian from min to max
