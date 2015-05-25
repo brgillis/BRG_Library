@@ -1,12 +1,30 @@
-/*
- * Fourier.hpp
- *
- *  Created on: 11 May 2015
- *      Author: brg
- */
+/**********************************************************************\
+ @file transform.hpp
+ ------------------
 
-#ifndef BRG_MATH_FOURIER_HPP_
-#define BRG_MATH_FOURIER_HPP_
+ TODO <Insert file description here>
+
+ **********************************************************************
+
+ Copyright (C) 2015  Bryan R. Gillis
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+\**********************************************************************/
+
+#ifndef BRG_MATH_FOURIER_TRANSFORM_HPP_
+#define BRG_MATH_FOURIER_TRANSFORM_HPP_
 
 #include <complex>
 #include <memory>
@@ -22,134 +40,11 @@
 #include "brg/container/is_eigen_container.hpp"
 #include "brg/utility.hpp"
 
+#include "management.hpp"
+
 namespace brgastro {
 
 namespace Fourier {
-
-constexpr const char * default_fftw_wisdom_filename = ".fftw_wisdom";
-
-class my_fftw_plan
-{
-private:
-	fftw_plan _p_;
-public:
-	// Default constructor
-	my_fftw_plan() : _p_(nullptr) {}
-
-	// Construct from fftw_plan
-	my_fftw_plan(const fftw_plan & p) : _p_(p) {}
-
-	// Destructor/destroyer
-	~my_fftw_plan() { fftw_destroy_plan(_p_); }
-	void destroy()
-	{
-		fftw_destroy_plan(_p_);
-		_p_ = nullptr;
-	}
-
-	// Operator=
-	my_fftw_plan & operator=(const my_fftw_plan &) = delete;
-	my_fftw_plan & operator=(my_fftw_plan && other)
-	{
-		std::swap(_p_,other._p_);
-		return *this;
-	}
-
-	// Execute
-	void execute() {return fftw_execute(_p_);}
-
-	// Convert to fftw_plan
-	fftw_plan & get_plan() noexcept {return _p_;}
-	operator fftw_plan &() noexcept {return _p_;}
-};
-
-class fftw_wisdom_accumulator
-{
-private:
-	std::string _filename_;
-public:
-	fftw_wisdom_accumulator(std::string && filename)
-	: _filename_(std::move(filename))
-	{
-		// Load wisdom unless we have a null filename
-		if(_filename_.size()>0)
-		{
-			fftw_import_wisdom_from_filename(_filename_.c_str()); // Ignore failure
-		}
-	}
-	fftw_wisdom_accumulator(const std::string & filename)
-	: fftw_wisdom_accumulator(std::string(filename))
-	{
-	}
-	fftw_wisdom_accumulator()
-	: fftw_wisdom_accumulator(std::string(default_fftw_wisdom_filename))
-	{
-	}
-
-	void load(const std::string & filename)
-	{
-		short res;
-
-		#pragma omp critical(load_or_save_fftw_wisdom)
-		res = fftw_import_wisdom_from_filename(filename.c_str());
-
-		// Throw an exception if we couldn't load
-		if(!res)
-		{
-			throw std::runtime_error("Could not load wisdom from " + filename + ".");
-		}
-	}
-
-	void save(const std::string & filename)
-	{
-		short res;
-
-		#pragma omp critical(load_or_save_fftw_wisdom)
-		res = fftw_export_wisdom_to_filename(filename.c_str());
-
-		// Throw an exception if we couldn't load
-		if(!res)
-		{
-			throw std::runtime_error("Could not save wisdom to " + filename + ".");
-		}
-	}
-
-	~fftw_wisdom_accumulator()
-	{
-		// When this goes out of scope, save it unless it has a null filename
-		if(_filename_.size()>0)
-		{
-			#pragma omp critical(load_or_save_fftw_wisdom)
-			fftw_export_wisdom_to_filename(_filename_.c_str()); // Ignore failure
-		}
-	}
-};
-
-template< typename T >
-struct fftw_array_deleter
-{
-	void operator()(T* p)
-	{
-		fftw_free(p);
-	}
-};
-
-// Typedefs
-
-#if(1)
-
-typedef double flt_type;
-typedef Eigen::Array<flt_type,Eigen::Dynamic,1> flt_array_type;
-typedef Eigen::Map<flt_array_type> flt_array_map_type;
-
-typedef std::complex<flt_type> complex_type;
-typedef Eigen::Array<complex_type,Eigen::Dynamic,1> complex_array_type;
-typedef Eigen::Map<complex_array_type> complex_array_map_type;
-
-typedef std::unique_ptr<flt_type,fftw_array_deleter<flt_type>> fftw_flt_ptr;
-typedef std::unique_ptr<fftw_complex,fftw_array_deleter<fftw_complex>> fftw_complex_ptr;
-
-#endif
 
 // Fourier transform of discrete values
 #if(1)
@@ -161,7 +56,7 @@ complex_array_type Fourier_transform(const array_type & vals,
 	int N = ssize(vals);
 	fftw_complex_ptr out((fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N));
 
-	my_fftw_plan plan;
+	managed_fftw_plan plan;
 
 	// Check if we have any wisdom. If not, estimate. If so, measure.
 	if(!wisdom)
@@ -209,7 +104,7 @@ flt_array_type inverse_Fourier_transform(const array_type & vals,
 	fftw_complex_ptr in((fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N));
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
 
-	my_fftw_plan plan;
+	managed_fftw_plan plan;
 
 	// Check if we have any wisdom. If not, estimate. If so, measure.
 	if(!wisdom)
@@ -249,7 +144,7 @@ flt_array_type Fourier_sin_transform(const array_type & vals,
 	int N = ssize(vals);
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
 
-	my_fftw_plan plan;
+	managed_fftw_plan plan;
 
 	// Check if we have any wisdom. If not, estimate. If so, measure.
 	if(!wisdom)
@@ -293,7 +188,7 @@ flt_array_type inverse_Fourier_sin_transform(const array_type & vals,
 
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
 
-	my_fftw_plan plan;
+	managed_fftw_plan plan;
 
 	// Check if we have any wisdom. If not, estimate. If so, measure.
 	if(!wisdom)
@@ -337,7 +232,7 @@ flt_array_type spherical_Fourier_transform(array_type vals,
 
 	vals *= flt_array_type::LinSpaced(N,0.5,N-0.5);
 
-	my_fftw_plan plan;
+	managed_fftw_plan plan;
 
 	// Check if we have any wisdom. If not, estimate. If so, measure.
 	if(!wisdom)
@@ -383,7 +278,7 @@ flt_array_type inverse_spherical_Fourier_transform(array_type vals,
 
 	vals *= flt_array_type::LinSpaced(N,1,N);
 
-	my_fftw_plan plan;
+	managed_fftw_plan plan;
 
 	// Check if we have any wisdom. If not, estimate. If so, measure.
 	if(!wisdom)
@@ -463,14 +358,14 @@ flt_array_type spherical_Fourier_transform( const func_type & func,
 
 } // namespace Fourier
 
+// Pull out all defined methods from the Fourier namespace into the brgastro namespace
 using Fourier::Fourier_transform;
 using Fourier::inverse_Fourier_transform;
 using Fourier::Fourier_sin_transform;
 using Fourier::inverse_Fourier_sin_transform;
 using Fourier::spherical_Fourier_transform;
 using Fourier::inverse_spherical_Fourier_transform;
-using Fourier::fftw_wisdom_accumulator;
 
 } // namespace brgastro
 
-#endif /* BRG_MATH_FOURIER_HPP_ */
+#endif /* BRG_MATH_FOURIER_TRANSFORM_HPP_ */
