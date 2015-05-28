@@ -308,17 +308,24 @@ T ipow( T v, int p )
 	return v*tmp*tmp;
 }
 
-// Returns 1 if a is positive, -1 if it is negative, and 0 if it is 0, NaN if it is NaN
-template< class T,
+// Returns 1 if a is positive, -1 if it is negative, and 0 if it is 0
+
+template <typename T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-inline short int sign( const T & a )
-{
-	if ( ( a == 0 ) || ( isnan( a ) ) )
-		return a;
-	if ( a < 0 )
-		return -1;
-	else
-		return 1;
+inline constexpr short int sign(T x, std::false_type is_signed) {
+    return T(0) < x;
+}
+
+template <typename T,
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+inline constexpr short int sign(T x, std::true_type is_signed) {
+    return (T(0) < x) - (x < T(0));
+}
+
+template <typename T,
+typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+inline constexpr short int sign(T x) {
+    return sign(x, std::is_signed<T>());
 }
 
 // Add two or three values in quadrature.

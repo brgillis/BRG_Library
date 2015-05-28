@@ -26,7 +26,14 @@
 #ifndef BRG_MATH_FOURIER_MANAGEMENT_HPP_
 #define BRG_MATH_FOURIER_MANAGEMENT_HPP_
 
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
+#include <fftw3.h>
+
+#include "brg/utility.hpp"
 
 namespace brgastro {
 
@@ -164,12 +171,7 @@ struct fftw_array_deleter
 
 #if(1)
 
-typedef double flt_type;
-typedef Eigen::Array<flt_type,Eigen::Dynamic,1> flt_array_type;
 typedef Eigen::Map<flt_array_type> flt_array_map_type;
-
-typedef std::complex<flt_type> complex_type;
-typedef Eigen::Array<complex_type,Eigen::Dynamic,1> complex_array_type;
 typedef Eigen::Map<complex_array_type> complex_array_map_type;
 
 typedef std::unique_ptr<flt_type,fftw_array_deleter<flt_type>> fftw_flt_ptr;

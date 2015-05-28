@@ -64,6 +64,18 @@ inline const double Gaus_pdf( const Tx x )
 	return Gaus_pdf(x,0.,1.);
 }
 
+// Spherical Gaussian PDF
+template< typename Tr, typename Tstddev >
+inline const double spherical_Gaus_pdf( const Tr & r, const Tstddev & stddev )
+{
+	return std::exp(-square(r/stddev)/2.)/std::pow(2*pi*stddev*stddev,1.5);
+}
+template< typename Tr >
+inline const double spherical_Gaus_pdf( const Tr & r )
+{
+	return spherical_Gaus_pdf(r,1.);
+}
+
 // Function to integrate a Gaussian from min to max
 template< typename Tlo, typename Thi, typename Tmean, typename Tstddev >
 inline const double Gaus_int( const Tlo min, const Thi max)

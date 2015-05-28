@@ -24,6 +24,7 @@
 #define _BRG_UTILITY_HPP_INCLUDED_
 
 #include <cassert>
+#include <complex>
 #include <cstdlib>
 #include <iostream>
 #include <limits>
@@ -32,11 +33,46 @@
 #include <utility>
 #include <vector>
 
+#include <Eigen/Core>
+
 #include "global.h"
 
 
 namespace brgastro
 {
+
+// Classes, enums, and typedefs
+#if(1)
+
+// Standard typedefs
+#if(1)
+
+typedef double flt_type;
+typedef int int_type;
+typedef std::complex<flt_type> complex_type;
+
+typedef int size_type;
+
+typedef Eigen::Array<flt_type,Eigen::Dynamic,1> flt_array_type;
+typedef std::vector<flt_type> flt_vector_type;
+typedef Eigen::Array<complex_type,Eigen::Dynamic,1> complex_array_type;
+typedef std::vector<complex_type> complex_vector_type;
+
+#endif // Standard typedefs
+
+/// Error behavior enum
+enum class error_behavior
+{
+	THROW,
+	WARN,
+	LOG,
+	NOTHING
+};
+
+#endif
+
+// Functions
+#if(1)
 
 // Function to get the size of a container casted to a signed integer
 template<typename T>
@@ -122,6 +158,8 @@ inline void make_obj( BRG_UNIQUE_PTR<obj_type> & obj_pointer )
 	obj_pointer = BRG_UNIQUE_PTR<obj_type>(new obj_type);
 	set_zero(*obj_pointer);
 }
+
+#endif // Functions
 
 #endif // Ending functions
 

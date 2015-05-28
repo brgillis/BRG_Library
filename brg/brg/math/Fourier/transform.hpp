@@ -26,10 +26,6 @@
 #ifndef BRG_MATH_FOURIER_TRANSFORM_HPP_
 #define BRG_MATH_FOURIER_TRANSFORM_HPP_
 
-#include <complex>
-#include <memory>
-#include <stdexcept>
-#include <string>
 #include <type_traits>
 #include <utility>
 
@@ -51,7 +47,7 @@ namespace Fourier {
 template< typename array_type,
 typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
 complex_array_type Fourier_transform(const array_type & vals,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none )
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
 	int N = ssize(vals);
 	fftw_complex_ptr out((fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N));
@@ -97,7 +93,7 @@ complex_array_type Fourier_transform(const array_type & vals,
 template< typename array_type,
 typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
 flt_array_type inverse_Fourier_transform(const array_type & vals,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none )
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
 	int N = ssize(vals);
 
@@ -139,7 +135,7 @@ flt_array_type inverse_Fourier_transform(const array_type & vals,
 template< typename array_type,
 typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
 flt_array_type Fourier_sin_transform(const array_type & vals,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none )
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
 	int N = ssize(vals);
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
@@ -182,7 +178,7 @@ flt_array_type Fourier_sin_transform(const array_type & vals,
 template< typename array_type,
 typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
 flt_array_type inverse_Fourier_sin_transform(const array_type & vals,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none )
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
 	int N = ssize(vals);
 
@@ -225,7 +221,7 @@ flt_array_type inverse_Fourier_sin_transform(const array_type & vals,
 template< typename array_type,
 typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
 flt_array_type spherical_Fourier_transform(array_type vals,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none )
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
 	int N = ssize(vals);
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
@@ -269,7 +265,7 @@ flt_array_type spherical_Fourier_transform(array_type vals,
 template< typename array_type,
 typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
 flt_array_type inverse_spherical_Fourier_transform(array_type vals,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none )
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
 	int N = ssize(vals);
 
@@ -319,7 +315,7 @@ complex_array_type Fourier_transform( const func_type & func,
 		const flt_type & min = 0.,
 		const flt_type & max = 1.,
 		const int & samples = 1024,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none)
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none)
 {
 	flt_array_type vals = flt_array_type::LinSpaced(samples,min,max).unaryExpr(func);
 	return Fourier_transform(std::move(vals),wisdom);
@@ -330,7 +326,7 @@ typename std::enable_if<!brgastro::is_stl_or_eigen_container<func_type>::value,c
 flt_array_type Fourier_sin_transform( const func_type & func,
 		const flt_type & max = 1.,
 		const int & samples = 1024,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none)
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none)
 {
 	flt_array_type xvals = flt_array_type::LinSpaced(samples,0.,max) + max/(2*(samples-1));
 	flt_array_type vals = xvals.unaryExpr(func);
@@ -343,7 +339,7 @@ typename std::enable_if<!brgastro::is_stl_or_eigen_container<func_type>::value,c
 flt_array_type spherical_Fourier_transform( const func_type & func,
 		const flt_type & max = 1.,
 		const int & samples = 1024,
-		const boost::optional<fftw_wisdom_accumulator> & wisdom = boost::none)
+		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none)
 {
 	flt_array_type xvals = flt_array_type::LinSpaced(samples,0.,max) + max/(2*(samples-1));
 	flt_array_type vals = xvals * xvals.unaryExpr(func);
