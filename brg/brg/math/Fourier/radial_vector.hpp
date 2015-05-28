@@ -55,7 +55,7 @@ class radial_vector
 {
 private:
 
-	error_behavior _error_behavior_(error_behavior::THROW);
+	error_behavior _error_behavior_ = error_behavior::THROW;
 
 	size_type _N_; ///< The number of points in the array
 	flt_type _scale_; ///< The physical size of the array in real-space (_scale_/_N_ is the scale of one step)
@@ -164,7 +164,7 @@ private:
 		}
 
 		// Swap in the new r_array and uncache the k_array, and we're done
-		swap(*_r_array_,new_r_array);
+		std::swap(*_r_array_,new_r_array);
 		_k_array_ = boost::none;
 
 	}
@@ -210,7 +210,7 @@ private:
 		}
 
 		// Swap in the new k_array and uncache the r_array, and we're done
-		swap(*_k_array_,new_k_array);
+		std::swap(*_k_array_,new_k_array);
 		_r_array_ = boost::none;
 	}
 
@@ -305,39 +305,53 @@ public:
 
 	/// Copy/move from Eigen array - this loads into real-space array
 	template< typename To, typename Ts,
-		std::enable_if<std::is_same<std::decay<To>::type,flt_type>::value,char>::type = 0>
+		typename std::enable_if<std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
+		typename std::enable_if<std::is_convertible<Ts,flt_type>::value,char>::type = 0>
 	explicit radial_vector(To && other, Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
-	: _N_(other.size()), _scale_(std::forward<Ts>(scale)), _r_array_(std::forward<To>(other),
-			_wisdom_(wisdom))
+	: _N_(other.size()), _scale_(std::forward<Ts>(scale)), _r_array_(std::forward<To>(other))
 	{
+		_wisdom_ = std::move(wisdom);
 		assert(is_good());
 	}
 
 	/// Convert from Eigen-like array - this loads into real-space array
 	template< typename To, typename Ts,
-		std::enable_if<!std::is_same<std::decay<To>::type,flt_type>::value,char>::type = 0,
-		std::enable_if<std::is_convertible<To,flt_type>::value,char>::type = 0>
+		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
+		typename std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
+		typename std::enable_if<!std::is_convertible<Ts,flt_type>::value,char>::type = 0>
 	explicit radial_vector(const To & other, Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
-	: _N_(other.size()), _scale_(std::forward<Ts>(scale)), _r_array_(other),
-			_wisdom_(wisdom)
+	: _N_(other.size()), _scale_(std::forward<Ts>(scale)), _r_array_(other)
 	{
+		_wisdom_ = std::move(wisdom);
 		assert(is_good());
 	}
 
 	/// Convert from container - this loads into real-space array
 	template< typename To, typename Ts,
-		std::enable_if<!std::is_same<std::decay<To>::type,flt_type>::value,char>::type = 0,
-		std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
-		std::enable_if<brgastro::is_stl_or_eigen_container<To>::value,char>::type = 0>
+		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
+		typename std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
+		typename std::enable_if<brgastro::is_stl_or_eigen_container<To>::value,char>::type = 0>
 	explicit radial_vector(const To & other, Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
 	: _N_(other.size()), _scale_(std::forward<Ts>(scale)),
-	  _r_array_(brgastro::coerce<flt_array_type>(other)),
-			_wisdom_(wisdom)
+	  _r_array_(brgastro::coerce<flt_array_type>(other))
 	{
+		_wisdom_ = std::move(wisdom);
 		assert(is_good());
+	}
+
+	/// Set up with scale only
+	template< typename Ts,
+		typename std::enable_if<std::is_convertible<Ts,flt_type>::value,char>::type = 0,
+		typename std::enable_if<!brgastro::is_stl_or_eigen_container<Ts>::value,char>::type = 0>
+	explicit radial_vector(Ts && scale=1.,
+			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
+	: _N_(0), _scale_(std::forward<Ts>(scale))
+	{
+		_wisdom_ = std::move(wisdom);
+		assert(_scale_>0.);
 	}
 
 #endif // Constructors
@@ -368,7 +382,7 @@ public:
 
 	/// Copy/move from Eigen array - this loads into real-space array
 	template< typename To, typename Ts,
-		std::enable_if<std::is_same<std::decay<To>::type,flt_type>::value,char>::type = 0>
+		typename std::enable_if<std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0>
 	radial_vector & operator=(To && other)
 	{
 		_N_ = other.size();
@@ -381,9 +395,9 @@ public:
 
 	/// Convert from Eigen-like array - this loads into real-space array
 	template< typename To, typename Ts,
-		std::enable_if<!std::is_same<std::decay<To>::type,flt_type>::value,char>::type = 0,
-		std::enable_if<std::is_convertible<To,flt_type>::value,char>::type = 0>
-	radial_vector & operator=(const To & other, Ts && scale=1.)
+		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
+		typename std::enable_if<std::is_convertible<To,flt_type>::value,char>::type = 0>
+	radial_vector & operator=(const To & other)
 	{
 		_N_ = other.size();
 		// Don't change _scale_
@@ -395,10 +409,10 @@ public:
 
 	/// Convert from container - this loads into real-space array
 	template< typename To, typename Ts,
-		std::enable_if<!std::is_same<std::decay<To>::type,flt_type>::value,char>::type = 0,
-		std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
-		std::enable_if<brgastro::is_stl_or_eigen_container<To>::value,char>::type = 0>
-	radial_vector & operator=(const To & other, Ts && scale=1.)
+		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
+		typename std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
+		typename std::enable_if<brgastro::is_stl_or_eigen_container<To>::value,char>::type = 0>
+	radial_vector & operator=(const To & other)
 	{
 		_N_ = other.size();
 		// Don't change _scale_
@@ -556,19 +570,19 @@ public:
 
 	// Get min/max r and k for arbitrary scale and N
 #if(1)
-	static flt_type r_min(const flt_type & scale, const int_type & N) const
+	static flt_type r_min(const flt_type & scale, const int_type & N)
 	{
 		return scale/(2*N);
 	}
-	static flt_type r_max(const flt_type & scale, const int_type & N) const
+	static flt_type r_max(const flt_type & scale, const int_type & N)
 	{
 		return scale - r_min(scale,N);
 	}
-	static flt_type k_min(const flt_type & scale, const int_type & N) const
+	static flt_type k_min(const flt_type & scale, const int_type & N)
 	{
 		return 1./scale;
 	}
-	static flt_type k_max(const flt_type & scale, const int_type & N) const
+	static flt_type k_max(const flt_type & scale, const int_type & N)
 	{
 		return N/scale - k_min(scale,N);
 	}
@@ -577,6 +591,11 @@ public:
 };
 
 } // namespace Fourier
+
+// Pull the radial vector out into the brgastro namespace
+
+using Fourier::radial_vector;
+
 } // namespace brgastro
 
 #endif // BRG_MATH_FOURIER_RADIAL_VECTOR_HPP_

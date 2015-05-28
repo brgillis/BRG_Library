@@ -115,6 +115,23 @@ public:
 	{
 	}
 
+	// Make sure it's movable but not copyable
+
+	// Copy constructor
+	fftw_wisdom_accumulator(fftw_wisdom_accumulator && other)
+	{
+		std::swap(_filename_,other._filename_);
+	}
+	fftw_wisdom_accumulator(const fftw_wisdom_accumulator & other) = delete;
+
+	// Operator=
+	fftw_wisdom_accumulator & operator=(const fftw_wisdom_accumulator &) = delete;
+	fftw_wisdom_accumulator & operator=(fftw_wisdom_accumulator && other)
+	{
+		std::swap(_filename_,other._filename_);
+		return *this;
+	}
+
 	void load(const std::string & filename)
 	{
 		short res;
