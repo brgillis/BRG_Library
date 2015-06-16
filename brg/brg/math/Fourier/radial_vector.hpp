@@ -77,7 +77,7 @@ private:
 		_r_array_ = inverse_spherical_Fourier_transform(*_k_array_,_wisdom_);
 	}
 
-	// Rescaling functions
+	// Basic rescaling-related methods
 #if(1)
 
 	/// Determine whether we should be using the r or k array for rescaling
@@ -92,20 +92,20 @@ private:
 		flt_type r_min_old = r_min();
 		flt_type r_max_old = r_max();
 
-		flt_type r_min_new = r_max(new_scale,new_N);
+		flt_type r_min_new = r_min(new_scale,new_N);
 		flt_type r_max_new = r_max(new_scale,new_N);
 
 		flt_type k_min_old = k_min();
 		flt_type k_max_old = k_max();
 
-		flt_type k_min_new = k_max(new_scale,new_N);
+		flt_type k_min_new = k_min(new_scale,new_N);
 		flt_type k_max_new = k_max(new_scale,new_N);
 
 		// Determine which of the old/new min and max pairs are larger or smaller, as needed
 		flt_type larger_r_min = brgastro::max(r_min_old,r_min_new);
-		flt_type smaller_r_max = brgastro::max(r_max_old,r_max_new);
+		flt_type smaller_r_max = brgastro::min(r_max_old,r_max_new);
 		flt_type larger_k_min = brgastro::max(k_min_old,k_min_new);
-		flt_type smaller_k_max = brgastro::max(k_max_old,k_max_new);
+		flt_type smaller_k_max = brgastro::min(k_max_old,k_max_new);
 
 		// Get the coverage for r and k
 		flt_type r_coverage = (smaller_r_max-larger_r_min)/(r_max_new-r_min_new);
@@ -131,41 +131,20 @@ private:
 
 		// Cache the values of the new and old r_mins, r_maxes and r_steps
 		flt_type old_r_min = r_min();
-		flt_type old_r_max = r_max();
 		flt_type new_r_min = r_min(new_scale, new_N);
-		flt_type new_r_max = r_max(new_scale, new_N);
 
 		flt_type old_r_step = _scale_/_N_;
 		flt_type new_r_step = new_scale/new_N;
 
-		// Set up interpolators using the current data
+		// Get the new array
 		flt_array_type new_r_array = _interpolate_new_array(old_r_min,
-				old_r_step, old_r_max, new_N, new_r_min, new_r_step, *_r_array_);
-
-		// Check for a potential bad result, which would arise if the data wasn't converging to
-		// zero at the end and we're increasing the array size
-
-		// WARNING: Be careful when editing the conditions here. The conditions in _rescale_k_array
-		// must be edited as well to make we don't create an infinite loop
-		if((new_r_max>old_r_max) &&
-			(std::fabs(new_r_array[new_N-1])>std::fabs(new_r_array[new_N-2])))
-		{
-			// Check if using the k array instead would be possible
-			if(k_max(new_scale,new_N)<=k_max())
-			{
-				// This looks like a possible alternative. Do that instead.
-				_rescale_k_array(new_scale,new_N);
-			}
-			else
-			{
-				// Error handling
-				_divergent_data_error();
-			}
-		}
+				old_r_step, new_N, new_r_min, new_r_step, *_r_array_);
 
 		// Swap in the new r_array and uncache the k_array, and we're done
 		std::swap(*_r_array_,new_r_array);
 		_k_array_ = boost::none;
+		_scale_ = new_scale;
+		_N_ = new_N;
 
 	}
 
@@ -177,48 +156,30 @@ private:
 
 		// Cache the values of the new and old r_mins, r_maxes and r_steps
 		flt_type old_k_min = k_min();
-		flt_type old_k_max = k_max();
 		flt_type new_k_min = k_min(new_scale, new_N);
-		flt_type new_k_max = k_max(new_scale, new_N);
 
 		flt_type old_k_step = 1./_scale_;
 		flt_type new_k_step = 1./new_scale;
 
-		// Set up interpolators using the current data
+		// Get the new array
 		flt_array_type new_k_array = _interpolate_new_array(old_k_min,
-				old_k_step, old_k_max, new_N, new_k_min, new_k_step, *_k_array_);
-
-		// Check for a potential bad result, which would arise if the data wasn't converging to
-		// zero at the end and we're increasing the array size
-
-		// WARNING: Be careful when editing the conditions here. The conditions in _rescale_k_array
-		// must be edited as well to make we don't create an infinite loop
-		if((new_k_max>old_k_max) &&
-			(std::fabs(new_k_array[new_N-1])>std::fabs(new_k_array[new_N-2])))
-		{
-			// Check if using the k array instead would be possible
-			if(r_max(new_scale,new_N)<=r_max())
-			{
-				// This looks like a possible alternative. Do that instead.
-				_rescale_r_array(new_scale,new_N);
-			}
-			else
-			{
-				// Error handling
-				_divergent_data_error();
-			}
-		}
+				old_k_step, new_N, new_k_min, new_k_step, *_k_array_);
 
 		// Swap in the new k_array and uncache the r_array, and we're done
 		std::swap(*_k_array_,new_k_array);
 		_r_array_ = boost::none;
+		_scale_ = new_scale;
+		_N_ = new_N;
 	}
 
 	/// Interpolate a new, expanded or contracted array given an existing one and the dimensions of both
 	flt_array_type _interpolate_new_array(const flt_type & old_x_min,
-			const flt_type & old_x_step, const flt_type & old_x_max, const size_type & new_N,
+			const flt_type & old_x_step, const size_type & new_N,
 			const flt_type & new_x_min, const flt_type & new_x_step, const flt_array_type & x_array)
 	{
+		flt_type new_x_max = new_x_min + (new_N-1) * new_x_step;
+		flt_type old_x_max = old_x_min + (_N_-1) * old_x_step;
+
 		// Set up interpolators using the current data
 		interpolator linear_interpolator;
 		interpolator log_interpolator;
@@ -238,6 +199,41 @@ private:
 
 			log_interpolator.add_point(old_x_min + i * old_x_step, log_value);
 		}
+
+		// Make sure the log interpolator is decreasing at large x, if necessary
+		if(new_x_max>old_x_max)
+		{
+			if(log_interpolator(old_x_max) >
+				log_interpolator(old_x_max - old_x_step))
+			{
+				// If this is the case, it's increasing at the end. Let's try to fix it
+
+				// First, let's see if we can approximate the decay by using the max value of the
+				// log array
+				size_type max_i;
+				flt_type max_value = x_array.abs().maxCoeff(&max_i);
+
+				// Is this the final value?
+				if(max_i==_N_-1)
+				{
+					// If so, it's badly divergent, and we can't handle it
+					_divergent_data_error();
+				}
+				else
+				{
+					// It isn't, so we can use it to estimate the decay
+					flt_type decay_rate = (log_interpolator(old_x_max) - max_value)
+									/((_N_-1-max_i)*old_x_step);
+					assert(decay_rate<0);
+
+					// Add one more point to the log interpolator to make sure it decays at the end
+					log_interpolator.add_point(new_x_max,
+							log_interpolator(old_x_max) +
+							decay_rate*(new_x_max-old_x_max));
+				}
+			}
+		}
+
 		// Create the new r array, using the linear interpolator for all points less than the old max,
 		// and the log interpolator for all points greater
 		flt_array_type new_x_array(new_N);
@@ -255,7 +251,7 @@ private:
 
 				// Make sure we match the sign of the last value
 				short int sign = brgastro::sign(new_x_array[i - 1]);
-				new_x_array[i] = sign * log_interpolator(x);
+				new_x_array[i] = sign * std::exp(log_interpolator(x));
 			}
 		}
 		return new_x_array;
@@ -286,6 +282,27 @@ private:
 	}
 
 #endif // Rescaling functions
+
+	// Methods for rescaling to match up with another radial_vector
+#if(1)
+
+	bool _this_is_better_for_r_rescaling(const radial_vector & other)
+	{
+		return r_max() <= other.r_max();
+	}
+
+	bool _this_is_better_for_k_rescaling(const radial_vector & other)
+	{
+		return k_max() <= other.k_max();
+	}
+
+#endif // Methods for rescaling to match up with another radial_vector
+
+	/// Necessary factor to multiply by for convolution
+	flt_type _convolution_factor()
+	{
+		return 2*brgastro::cube(get_scale());
+	}
 
 public:
 
@@ -488,66 +505,6 @@ public:
 
 #endif
 
-	// Rescale
-#if(1)
-
-	/**
-	 * Rescale - change scale and conserving data so it represents the same
-	 * physical data as well as possible.
-	 */
-	void rescale( const flt_type & new_scale, size_type new_N=-1 )
-	{
-		// If new_N wasn't given or is invalid, don't change _N_
-		if(new_N<2) new_N = _N_;
-
-		// Check that there's actually a change
-		if((new_scale==_scale_) && (new_N==_N_)) return;
-
-		// Fork depending on whether we want to rescale using the
-		// r array or the k array
-		if(_use_r_array_for_rescale(new_scale,new_N))
-		{
-			_rescale_r_array(new_scale,new_N);
-		}
-		else
-		{
-			_rescale_k_array(new_scale,new_N);
-		}
-	}
-
-	void rescale_r_array( const flt_type & new_scale, size_type new_N )
-	{
-		if(new_N<2) new_N = _N_;
-
-		// Check that there's actually a change
-		if((new_scale==_scale_) && (new_N==_N_)) return;
-
-	}
-
-	void rescale_k_array( const flt_type & new_scale, size_type new_N )
-	{
-		if(new_N<2) new_N = _N_;
-
-		// Check that there's actually a change
-		if((new_scale==_scale_) && (new_N==_N_)) return;
-
-	}
-
-
-	/**
-	 * Get a rescaled copy of this. The rescale
-	 */
-	radial_vector get_rescaled( const flt_type & new_scale, size_type new_N=-1 )
-	{
-		radial_vector new_radial_vector(*this);
-
-		new_radial_vector.rescale(new_scale,new_N);
-
-		return new_radial_vector;
-	}
-
-#endif // Rescale
-
 	// Get min/max r and k
 #if(1)
 	flt_type r_min() const
@@ -588,6 +545,152 @@ public:
 	}
 #endif // Get min/max r and k for arbitrary scale and N
 
+	// Rescale
+#if(1)
+
+	/**
+	 * Rescale - change scale and conserving data so it represents the same
+	 * physical data as well as possible.
+	 */
+	void rescale( const flt_type & new_scale, size_type new_N=-1 )
+	{
+		// If new_N wasn't given or is invalid, don't change _N_
+		if(new_N<2) new_N = _N_;
+
+		// Check that there's actually a change
+		if((new_scale==_scale_) && (new_N==_N_)) return;
+
+		// Fork depending on whether we want to rescale using the
+		// r array or the k array
+		if(_use_r_array_for_rescale(new_scale,new_N))
+		{
+			_rescale_r_array(new_scale,new_N);
+		}
+		else
+		{
+			_rescale_k_array(new_scale,new_N);
+		}
+	}
+
+	void rescale_r_array( const flt_type & new_scale, size_type new_N )
+	{
+		if(new_N<2) new_N = _N_;
+
+		// Check that there's actually a change
+		if((new_scale==_scale_) && (new_N==_N_)) return;
+
+		_rescale_r_array(new_scale,new_N);
+
+	}
+
+	void rescale_k_array( const flt_type & new_scale, size_type new_N )
+	{
+		if(new_N<2) new_N = _N_;
+
+		// Check that there's actually a change
+		if((new_scale==_scale_) && (new_N==_N_)) return;
+
+		_rescale_k_array(new_scale,new_N);
+	}
+
+
+	/**
+	 * Get a rescaled copy of this. The rescale
+	 */
+	radial_vector get_rescaled( const flt_type & new_scale, size_type new_N=-1 )
+	{
+		radial_vector new_radial_vector(*this);
+
+		new_radial_vector.rescale(new_scale,new_N);
+
+		return new_radial_vector;
+	}
+
+#endif // Rescale
+
+	// Methods for rescaling to match up with another radial_vector
+#if(1)
+
+	void rescale_r_to_match(const radial_vector & other)
+	{
+		assert(is_good() && other.is_good());
+		rescale_r_array(other.get_scale(), other.get_N());
+	}
+
+	void rescale_k_to_match(const radial_vector & other)
+	{
+		assert(is_good() && other.is_good());
+		rescale_k_array(other.get_scale(), other.get_N());
+	}
+
+	void rescale_to_match(const radial_vector & other)
+	{
+		assert(is_good() && other.is_good());
+		rescale(other.get_scale(), other.get_N());
+	}
+
+	radial_vector get_rescaled_r_to_match(const radial_vector & other) const
+	{
+		radial_vector copy(*this);
+		copy.rescale_r_to_match(other);
+		return copy;
+	}
+
+	radial_vector get_rescaled_k_to_match(const radial_vector & other) const
+	{
+		radial_vector copy(*this);
+		copy.rescale_k_to_match(other);
+		return copy;
+	}
+
+	radial_vector get_rescaled_to_match(const radial_vector & other) const
+	{
+		radial_vector copy(*this);
+		copy.rescale_to_match(other);
+		return copy;
+	}
+
+#endif // Methods for rescaling to match up with another radial_vector
+
+	// Convolution methods
+#if(1)
+
+	void convolve_with(const radial_vector & other)
+	{
+		assert(is_good() && other.is_good());
+
+		// Make sure they're both of the same scale
+		if((get_scale()==other.get_scale()) && (get_N()==other.get_N()))
+		{
+			set_k_array(_convolution_factor() * get_k_array() * other.get_k_array());
+		}
+		else
+		{
+
+			if(_this_is_better_for_r_rescaling(other))
+			{
+				rescale_r_to_match(other);
+
+				set_k_array(_convolution_factor() * get_k_array() * other.get_k_array());
+			}
+			else
+			{
+				radial_vector rescaled_other(other.get_rescaled_r_to_match(*this));
+
+				set_k_array(_convolution_factor() * get_k_array() * rescaled_other.get_k_array());
+			}
+
+		}
+	}
+
+	radial_vector get_convolved_with(const radial_vector & other) const
+	{
+		radial_vector copy(*this);
+		copy.convolve_with(other);
+		return copy;
+	}
+
+#endif
 };
 
 } // namespace Fourier

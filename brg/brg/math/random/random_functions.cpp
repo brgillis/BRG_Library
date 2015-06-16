@@ -25,6 +25,8 @@
 
 #include <random>
 
-#include "random_functions.hpp"
+namespace brgastro {
 
-std::ranlux48 brgastro::rng;
+std::ranlux48 rng;
+
+}

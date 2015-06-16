@@ -253,7 +253,7 @@ flt_array_type spherical_Fourier_transform(array_type vals,
 		plan.execute(); // Execute before in is deallocated
 	}
 
-	flt_array_type result = flt_array_map_type(out.get(),N)/flt_array_type::LinSpaced(N,1,N);
+	flt_array_type result = flt_array_map_type(out.get(),N)/flt_array_type::LinSpaced(N,1,N)/square(N);
 
 	return result;
 }
@@ -299,7 +299,7 @@ flt_array_type inverse_spherical_Fourier_transform(array_type vals,
 		plan.execute(); // Execute before in is deallocated
 	}
 
-	flt_array_type result = flt_array_map_type(out.get(),N)/(2*N*flt_array_type::LinSpaced(N,0.5,N-0.5));
+	flt_array_type result = N*flt_array_map_type(out.get(),N)/(2*flt_array_type::LinSpaced(N,0.5,N-0.5));
 
 	return result;
 }

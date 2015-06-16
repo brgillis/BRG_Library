@@ -28,7 +28,7 @@
 #include <cmath>
 #include <random>
 
-#include "brg/global.h"
+#include "brg/common.h"
 #include "brg/math/misc_math.hpp"
 
 namespace brgastro
@@ -39,68 +39,75 @@ extern std::ranlux48 rng; // Initialised in random_functions.cpp
 /** Global function declarations **/
 #if (1)
 
-// Generates a random double between min and max
-template< typename T=double, typename T_gen=decltype(rng) >
+// Generates a random int_type between min and max, inclusive of min, exclusive of max
+template< typename T=int_type, typename T_in=int_type, typename T_gen=decltype(rng) >
+T irand( T_in && min, T_in && max, T_gen & gen=rng )
+{
+	return std::uniform_int_distribution<T>(std::forward<T_in>(min),std::forward<T_in>(max)-1)(gen);
+} // flt_type drand(flt_type min, flt_type max)
+
+// Generates a random flt_type between min and max
+template< typename T=flt_type, typename T_gen=decltype(rng) >
 T drand( T_gen & gen=rng )
 {
 	return std::uniform_real_distribution<T>()(gen);
 }
-template< typename T=double, typename T_in=double, typename T_gen=decltype(rng) >
+template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
 T drand( T_in && min, T_in && max, T_gen & gen=rng )
 {
 	return std::uniform_real_distribution<T>(std::forward<T_in>(min),std::forward<T_in>(max))(gen);
-} // double drand(double min, double max)
+} // flt_type drand(flt_type min, flt_type max)
 
 // Returns a random variable from a Gaussian distribution
-template< typename T=double, typename T_gen=decltype(rng) >
+template< typename T=flt_type, typename T_gen=decltype(rng) >
 T Gaus_rand( T_gen & gen=rng )
 {
 	return std::normal_distribution<T>()(gen);
-} // double Gaus_rand()
-template< typename T=double, typename T_in=double, typename T_gen=decltype(rng) >
+} // flt_type Gaus_rand()
+template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
 T Gaus_rand( T_in && mean, T_in && stddev = 1.0, T_gen & gen=rng )
 {
 	return std::normal_distribution<T>(std::forward<T_in>(mean),std::forward<T_in>(stddev))(gen);
 
-} // double Gaus_rand(double mean, double stddev)
+} // flt_type Gaus_rand(flt_type mean, flt_type stddev)
 
 // Returns a random variable from a Gaussian distribution in log space
 // Note that "mean" here is the desired mean, NOT the peak of the function (which differ in log space). If you want to use
 // the peak, simply use the standard Gaus_rand version instead.
-template< typename T=double, typename T_gen=decltype(rng) >
+template< typename T=flt_type, typename T_gen=decltype(rng) >
 T log10Gaus_rand( T_gen & gen=rng )
 {
-	const double fact = std::exp( -square( std::log( 10. ) ) / 2 );
+	const flt_type fact = std::exp( -square( std::log( 10. ) ) / 2 );
 
 	return ( fact * std::pow(10., Gaus_rand<T>(gen) ) );
-} // double log10Gaus_rand()
-template< typename T=double, typename T_in=double, typename T_gen=decltype(rng) >
+} // flt_type log10Gaus_rand()
+template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
 T log10Gaus_rand( T_in && mean, T_in && stddev = 1., T_gen & gen=rng )
 {
-	const double fact = std::exp( -square( stddev*std::log(10.) ) / 2 );
+	const flt_type fact = std::exp( -square( stddev*std::log(10.) ) / 2 );
 
 	return ( fact * std::pow(10., Gaus_rand<T,T_in>(std::forward<T_in>(mean),std::forward<T_in>(stddev),gen) ) );
-} // double log10Gaus_rand(double mean, double stddev)
+} // flt_type log10Gaus_rand(flt_type mean, flt_type stddev)
 
 // Returns a random variable from a Rayleigh distribution
-template< typename T=double, typename T_gen=decltype(rng) >
+template< typename T=flt_type, typename T_gen=decltype(rng) >
 T Rayleigh_rand( T_gen & gen=rng )
 {
 	return std::sqrt(-2.*std::log(drand<T>(gen)));
 }
-template< typename T=double, typename T_in=double, typename T_gen=decltype(rng) >
+template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
 T Rayleigh_rand( T_in && sigma, T_gen & gen=rng )
 {
 	return std::forward<T_in>(sigma)*Rayleigh_rand(gen);
 }
 
 // Returns a Poisson random variable.
-template< typename T=int, typename T_gen=decltype(rng) >
+template< typename T=int_type, typename T_gen=decltype(rng) >
 T Pois_rand( T_gen & gen=rng )
 {
 	return std::poisson_distribution<T>()(gen);
 } // T Pois_rand( T_gen & gen=rng )
-template< typename T=int, typename T_in=double, typename T_gen=decltype(rng) >
+template< typename T=int_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
 T Pois_rand( T_in && lambda=1., T_gen & gen=rng )
 {
 	return std::poisson_distribution<T>(std::forward<T_in>(lambda))(gen);
