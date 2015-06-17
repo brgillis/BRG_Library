@@ -27,7 +27,7 @@
 
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/sky_obj/galaxy.h"
 #include "brg_physics/sky_obj/sky_obj.h"
@@ -55,8 +55,8 @@ private:
 public:
 	// Public member variables
 
-	double z_phot, z_phot_err;
-	double odds;
+	flt_type z_phot, z_phot_err;
+	flt_type odds;
 
 	size_t BCG_index;
 
@@ -68,8 +68,8 @@ public:
 
 	// Constructor
 	galaxy_group( size_t init_num_members = 0 );
-	galaxy_group( double init_mass, double init_z, double init_c = -1,
-			double init_tau = -1 );
+	galaxy_group( flt_type init_mass, flt_type init_z, flt_type init_c = -1,
+			flt_type init_tau = -1 );
 
 	// Copy constructor
 	//group( const group &other ); // Implicit is fine
@@ -95,7 +95,7 @@ public:
 	{
 		return 0; // TODO: Should be combine magnitude of member galaxies
 	}
-	double mag() const
+	flt_type mag() const
 	{
 		return 0; // TODO: Should be combine magnitude of member galaxies
 	}

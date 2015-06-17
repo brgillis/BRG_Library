@@ -25,7 +25,7 @@
 
 #include <cstdlib>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/density_profile/density_profile.h"
 #include "brg_physics/density_profile/tNFW_profile.h"
@@ -45,7 +45,7 @@ public:
 	{
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param,	const bool silent = false ) const
+	BRG_UNITS operator()( const BRG_UNITS & in_param,	const bool silent = false ) const
 	{
 		if(in_param<=0)
 		{
@@ -71,7 +71,7 @@ public:
 	{
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const
+	BRG_UNITS operator()( const BRG_UNITS &  in_param, const bool silent = false ) const
 	{
 		return std::fabs(virial_density_factor*_halo_->rho_crit()-_halo_->enc_dens(in_param));
 	}

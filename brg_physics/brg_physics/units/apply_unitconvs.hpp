@@ -30,7 +30,7 @@
 #include <string>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/container/table_typedefs.hpp"
 #include "brg/math/misc_math.hpp"
@@ -49,7 +49,7 @@ namespace brgastro
  * @param u_map
  * @return
  */
-inline table_map_t<double> get_table_after_unitconv(table_map_t<double> data_map,
+inline table_map_t<flt_type> get_table_after_unitconv(table_map_t<flt_type> data_map,
 		const unitconv_map & u_map)
 {
 	for(auto u_it=u_map.begin(); u_it!=u_map.end(); ++u_it)
@@ -59,7 +59,7 @@ inline table_map_t<double> get_table_after_unitconv(table_map_t<double> data_map
 		if(d_it!=data_map.end())
 		{
 			// It's in the table, so multiply its associated vector by the inverse unit conversion
-			double factor = 1./(u_it->second);
+			flt_type factor = 1./(u_it->second);
 			if(isbad(factor)) factor = 1; // To catch user mistakes
 			d_it->second = multiply(d_it->second,factor);
 		}
@@ -75,9 +75,9 @@ inline table_map_t<double> get_table_after_unitconv(table_map_t<double> data_map
  * @return
  */
 template<typename T>
-table_map_t<double> get_table_after_unitconv(const table_map_t<T> & data_map, const unitconv_map & u_map)
+table_map_t<flt_type> get_table_after_unitconv(const table_map_t<T> & data_map, const unitconv_map & u_map)
 {
-	table_map_t<double> result_map;
+	table_map_t<flt_type> result_map;
 
 	for(auto it=data_map.begin(); it!=data_map.end(); ++it)
 	{

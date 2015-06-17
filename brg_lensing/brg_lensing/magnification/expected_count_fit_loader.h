@@ -32,7 +32,7 @@
 #include <string>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/container/table_typedefs.hpp"
 
@@ -43,13 +43,13 @@ namespace brgastro {
  */
 class expected_count_fit_loader {
 	static bool _loaded_;
-	static brgastro::table_map_t<double> _data_map_;
+	static brgastro::table_map_t<flt_type> _data_map_;
 
 	static void _load();
-	static ssize_t _lower_z_index(double z);
+	static ssize_t _lower_z_index(flt_type z);
 public:
 
-	static std::vector<long double> get(long double z);
+	static std::vector<long_flt_type> get(long_flt_type z);
 	static void unload();
 };
 

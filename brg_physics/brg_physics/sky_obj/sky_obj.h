@@ -25,7 +25,7 @@
 #ifndef _BRG_SKY_OBJ_H_
 #define _BRG_SKY_OBJ_H_
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/astro.h"
 #include "brg_physics/sky_obj/position_grid_cache.h"
@@ -49,9 +49,9 @@ private:
 #if (1)
 	std::string _ID_; // Name for it or ID number
 
-	int _index_; // Position in an array
+	int_type _index_; // Position in an array
 
-	double _weight_;
+	flt_type _weight_;
 
 	BRG_ANGLE _ra_, _ra_err_, _dec_, _dec_err_;
 #endif
@@ -60,8 +60,8 @@ public:
 	// Public member functions
 
 	// Constructor
-	sky_obj( CONST_BRG_ANGLE_REF init_ra = 0, CONST_BRG_ANGLE_REF init_dec = 0, double init_z = 0,
-			CONST_BRG_ANGLE_REF init_ra_err = 0, CONST_BRG_ANGLE_REF init_dec_err = 0, double init_z_err =
+	sky_obj( const BRG_ANGLE & init_ra = 0, const BRG_ANGLE & init_dec = 0, flt_type init_z = 0,
+			const BRG_ANGLE & init_ra_err = 0, const BRG_ANGLE & init_dec_err = 0, flt_type init_z_err =
 			0 ); // Normal constructor
 
 	//sky_obj(const sky_obj & other_sky_obj); // Copy constructor (Default is fine for us)
@@ -74,51 +74,51 @@ public:
 	virtual void partial_clear(); // Resets all variables which can't be initialized
 
 #if (1) // Set functions
-	virtual void set_ra( CONST_BRG_ANGLE_REF new_ra );
-	virtual void set_dec( CONST_BRG_ANGLE_REF new_dec );
-	void set_ra_err( CONST_BRG_ANGLE_REF new_ra_err );
-	void set_dec_err( CONST_BRG_ANGLE_REF new_dec_err );
-	virtual void set_ra_dec( CONST_BRG_ANGLE_REF new_ra,
-			CONST_BRG_ANGLE_REF new_dec ); // Sets ra and dec
-	virtual void set_ra_dec_z( CONST_BRG_ANGLE_REF new_ra,
-			CONST_BRG_ANGLE_REF new_dec, const double new_z ); // Sets all values
-	virtual void set_ra_dec_z_err( CONST_BRG_ANGLE_REF new_ra,
-			CONST_BRG_ANGLE_REF new_dec, const double new_z,
-			CONST_BRG_ANGLE_REF new_ra_err, CONST_BRG_ANGLE_REF new_dec_err,
-			const double new_z_err ); // Sets all values and error
-	virtual void set_ra_dec_err( CONST_BRG_ANGLE_REF new_ra,
-			CONST_BRG_ANGLE_REF new_dec, CONST_BRG_ANGLE_REF new_ra_err,
-			CONST_BRG_ANGLE_REF new_dec_err ); // Sets ra and dec and error
+	virtual void set_ra( const BRG_ANGLE & new_ra );
+	virtual void set_dec( const BRG_ANGLE & new_dec );
+	void set_ra_err( const BRG_ANGLE & new_ra_err );
+	void set_dec_err( const BRG_ANGLE & new_dec_err );
+	virtual void set_ra_dec( const BRG_ANGLE & new_ra,
+			const BRG_ANGLE & new_dec ); // Sets ra and dec
+	virtual void set_ra_dec_z( const BRG_ANGLE & new_ra,
+			const BRG_ANGLE & new_dec, const flt_type new_z ); // Sets all values
+	virtual void set_ra_dec_z_err( const BRG_ANGLE & new_ra,
+			const BRG_ANGLE & new_dec, const flt_type new_z,
+			const BRG_ANGLE & new_ra_err, const BRG_ANGLE & new_dec_err,
+			const flt_type new_z_err ); // Sets all values and error
+	virtual void set_ra_dec_err( const BRG_ANGLE & new_ra,
+			const BRG_ANGLE & new_dec, const BRG_ANGLE & new_ra_err,
+			const BRG_ANGLE & new_dec_err ); // Sets ra and dec and error
 
-	void set_weight( const double new_weight );
-	void set_index( const int new_index );
+	void set_weight( const flt_type new_weight );
+	void set_index( const int_type new_index );
 	void set_ID( const std::string &new_ID );
 #endif // end set functions
 
 #if (1) //Get functions
 
-	CONST_BRG_ANGLE_REF ra() const
+	const BRG_ANGLE & ra() const
 	{
 		return _ra_;
 	}
-	CONST_BRG_ANGLE_REF dec() const
+	const BRG_ANGLE & dec() const
 	{
 		return _dec_;
 	}
-	CONST_BRG_ANGLE_REF ra_err() const
+	const BRG_ANGLE & ra_err() const
 	{
 		return _ra_err_;
 	}
-	CONST_BRG_ANGLE_REF dec_err() const
+	const BRG_ANGLE & dec_err() const
 	{
 		return _dec_err_;
 	}
 
-	const double weight() const
+	const flt_type weight() const
 	{
 		return _weight_;
 	}
-	const int index() const
+	const int_type index() const
 	{
 		return _index_;
 	}
@@ -133,7 +133,7 @@ public:
 #if (1)
 
 	virtual BRG_MASS m() const = 0;
-	virtual double mag() const = 0;
+	virtual flt_type mag() const = 0;
 
 #endif
 
@@ -147,7 +147,7 @@ public:
 // class sky_obj
 
 BRG_DISTANCE dfa( const sky_obj *obj1, const sky_obj *obj2,
-		const double z = -1 );
+		const flt_type z = -1 );
 
 BRG_ANGLE skydist2d( const sky_obj *obj1, const sky_obj *obj2 );
 

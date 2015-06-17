@@ -27,7 +27,7 @@
 
 #include <string>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/cache/cache.hpp"
 #include "brg/math/cache/cache_2d.hpp"
@@ -67,7 +67,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param ) const;
+	const flt_type _calculate( const flt_type in_param ) const;
 
 public:
 
@@ -106,7 +106,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2 ) const;
 
 public:
 
@@ -144,7 +144,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_params ) const;
+	const flt_type _calculate( const flt_type in_params ) const;
 
 public:
 

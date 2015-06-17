@@ -20,15 +20,15 @@
 
 \**********************************************************************/
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "galaxy.h"
 
 // brgastro::galaxy class methods
 #if (1)
-brgastro::galaxy::galaxy( CONST_BRG_ANGLE_REF init_ra, CONST_BRG_ANGLE_REF init_dec, double init_z,
-		CONST_BRG_ANGLE_REF init_ra_err, CONST_BRG_ANGLE_REF init_dec_err, double init_z_err,
-		CONST_BRG_MASS_REF init_stellar_mass, double init_mag, double init_mag_err )
+brgastro::galaxy::galaxy( const BRG_ANGLE & init_ra, const BRG_ANGLE & init_dec, flt_type init_z,
+		const BRG_ANGLE & init_ra_err, const BRG_ANGLE & init_dec_err, flt_type init_z_err,
+		const BRG_MASS & init_stellar_mass, flt_type init_mag, flt_type init_mag_err )
 :	sky_obj(init_ra,init_dec,init_z,init_ra_err,init_dec_err,init_z_err),
  	stellar_mass(init_stellar_mass),
  	umag(init_mag), umag_err(init_mag_err),

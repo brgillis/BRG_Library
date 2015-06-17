@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/utility.hpp"
 #include "brg/vector/manipulations.hpp"
@@ -45,7 +45,7 @@
 // Initialisation of static vars
 #if (1)
 bool brgastro::shifting_loader::_loaded_(false);
-std::vector< std::vector<double> > brgastro::shifting_loader::_data_;
+std::vector< std::vector<flt_type> > brgastro::shifting_loader::_data_;
 #endif
 
 void brgastro::shifting_loader::_load()
@@ -58,7 +58,7 @@ void brgastro::shifting_loader::_load()
 		{
 			std::stringstream ss(corr_alph_data);
 
-			_data_ = load_table<double>(ss);
+			_data_ = load_table<flt_type>(ss);
 
 			_data_ = reverse_vertical(_data_);
 
@@ -70,7 +70,7 @@ void brgastro::shifting_loader::_load()
 	}
 
 }
-ssize_t brgastro::shifting_loader::_lower_theta_index(double theta)
+ssize_t brgastro::shifting_loader::_lower_theta_index(flt_type theta)
 {
 	if(!_loaded_) _load();
 
@@ -83,7 +83,7 @@ ssize_t brgastro::shifting_loader::_lower_theta_index(double theta)
 	}
 	return size-1;
 }
-ssize_t brgastro::shifting_loader::_lower_z_index(double z)
+ssize_t brgastro::shifting_loader::_lower_z_index(flt_type z)
 {
 	assert(_zvals_size_>=2);
 
@@ -95,21 +95,21 @@ ssize_t brgastro::shifting_loader::_lower_z_index(double z)
 	return _zvals_size_-1;
 }
 
-double brgastro::shifting_loader::get(double t, double z)
+flt_type brgastro::shifting_loader::get(flt_type t, flt_type z)
 {
 	if(!_loaded_) _load();
 
 	const ssize_t ti = _lower_theta_index(t);
 	const ssize_t zi = _lower_z_index(z);
 
-	const double tlo = _data_[0][ti];
-	const double thi = _data_[0][ti+1];
-	const double zlo = _zvals_[zi];
-	const double zhi = _zvals_[zi+1];
+	const flt_type tlo = _data_[0][ti];
+	const flt_type thi = _data_[0][ti+1];
+	const flt_type zlo = _zvals_[zi];
+	const flt_type zhi = _zvals_[zi+1];
 
-	const double weight = (thi-tlo)*(zhi-zlo);
+	const flt_type weight = (thi-tlo)*(zhi-zlo);
 
-	double result = 0;
+	flt_type result = 0;
 
 	result += _data_[zi+1][ti]*(zhi-z)*(thi-t);
 	result += _data_[zi+1][ti+1]*(zhi-z)*(t-tlo);

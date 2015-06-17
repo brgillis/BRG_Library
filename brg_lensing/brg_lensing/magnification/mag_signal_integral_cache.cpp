@@ -25,7 +25,7 @@
 
 #include <cstdlib>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/calculus/integrate.hpp"
 
@@ -41,11 +41,11 @@ DEFINE_BRG_CACHE_STATIC_VARS( mag_signal_integral_cache,
 
 // brgastro::mag_signal_integral_cache class methods
 #if (1)
-const double brgastro::mag_signal_integral_cache::_calculate( const double in_param_1 ) const
+const flt_type brgastro::mag_signal_integral_cache::_calculate( const flt_type in_param_1 ) const
 {
 	mu_signal_integration_functor func(in_param_1);
 
-	return integrate_Romberg<decltype(func),long double>(&func,brgastro::mag_m_min,brgastro::mag_m_max,
+	return integrate_Romberg<decltype(func),long_flt_type>(&func,brgastro::mag_m_min,brgastro::mag_m_max,
 		0.000001);
 }
 void brgastro::mag_signal_integral_cache::_load_cache_dependencies() const

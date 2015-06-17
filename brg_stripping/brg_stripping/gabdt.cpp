@@ -28,9 +28,10 @@
 #include "brg/global.h"
 
 #include "brg/math/calculus/differentiate.hpp"
+#include "brg/utility.hpp"
+#include "brg/vector/make_vector.hpp"
 #include "brg_physics/density_profile/density_profile.h"
 #include "brg_physics/units/unit_obj.h"
-#include "brg/vector/make_vector.hpp"
 
 #include "gabdt.h"
 
@@ -275,10 +276,7 @@ std::vector< BRG_UNITS > brgastro::gabdt_functor::operator()(
 {
 	std::vector< BRG_UNITS > out_params(3,0);
 
-	if ( in_params.size() != 3 )
-	{
-		throw std::runtime_error("ERROR: in_params.size() and num_in_params must == 3 in gabdt_functor.\n");
-	}
+	assert( in_params.size() == 3 );
 	double R = dist3d( in_params[0], in_params[1], in_params[2] );
 
 	size_t num_out_params = 3;

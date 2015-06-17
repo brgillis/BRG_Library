@@ -20,7 +20,7 @@
 
 \**********************************************************************/
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #ifdef _BRG_USE_UNITS_
 
@@ -48,7 +48,7 @@ using std::stringstream;
 // Full functions (brgastro::unit_obj)
 //-------------------------
 
-brgastro::unit_obj::unit_obj(double init__value_, float d_units_power, float t_units_power, float m_units_power,
+brgastro::unit_obj::unit_obj(flt_type init__value_, float d_units_power, float t_units_power, float m_units_power,
 		float T_units_power, float a_units_power, float c_units_power)
 {
 	_fix_unit_powers_ = false;
@@ -57,10 +57,10 @@ brgastro::unit_obj::unit_obj(double init__value_, float d_units_power, float t_u
 	set(init__value_,d_units_power,t_units_power,m_units_power,
 			T_units_power,a_units_power,c_units_power);
 }
-brgastro::unit_obj::unit_obj(double init__value_,
-		double d_units, float d_units_power, double t_units, float t_units_power,
-		double m_units, float m_units_power, double T_units, float T_units_power,
-		double a_units, float a_units_power, double c_units, float c_units_power)
+brgastro::unit_obj::unit_obj(flt_type init__value_,
+		flt_type d_units, float d_units_power, flt_type t_units, float t_units_power,
+		flt_type m_units, float m_units_power, flt_type T_units, float T_units_power,
+		flt_type a_units, float a_units_power, flt_type c_units, float c_units_power)
 {
 	_fix_unit_powers_ = false;
 	_unit_powers_.resize(NUM_UNIT_TYPES,0);
@@ -140,7 +140,7 @@ void brgastro::unit_obj::set_unit_powers(std::vector<float> new__unit_powers_)
 	}
 }
 // Set _value_ue in default or specified units
-void brgastro::unit_obj::set_value(double init__value_, double conv_factor)
+void brgastro::unit_obj::set_value(flt_type init__value_, flt_type conv_factor)
 {
 	_value_ = init__value_*conv_factor;
 }
@@ -148,23 +148,23 @@ void brgastro::unit_obj::set_value(double init__value_, double conv_factor)
 // IMPORTANT: Always use the unitconv::pctom (units used here to default) form for units)
 // EXAMPLE 1: To load 4 kpc, use set_value_ue(4, kpctom, 0, 0, 0, 0, 0)
 // EXAMPLE 2: To load 1 m/s^2, use set_value_ue(1, mtom, stos, 0, 0, 0, 0) (the function will automatically figure out powers from the unit)
-void brgastro::unit_obj::set_value(double new__value_, double d_units, double t_units, double m_units, double T_units,
-		double a_units, double c_units)
+void brgastro::unit_obj::set_value(flt_type new__value_, flt_type d_units, flt_type t_units, flt_type m_units, flt_type T_units,
+		flt_type a_units, flt_type c_units)
 {
 	// Check if any units were given as 0. If so, change them to 1 so we can multiply
-	double d_units_use = ( d_units == 0 ? 1 : d_units);
-	double t_units_use = ( t_units == 0 ? 1 : t_units);
-	double m_units_use = ( m_units == 0 ? 1 : m_units);
-	double T_units_use = ( T_units == 0 ? 1 : T_units);
-	double a_units_use = ( a_units == 0 ? 1 : a_units);
-	double c_units_use = ( c_units == 0 ? 1 : c_units);
+	flt_type d_units_use = ( d_units == 0 ? 1 : d_units);
+	flt_type t_units_use = ( t_units == 0 ? 1 : t_units);
+	flt_type m_units_use = ( m_units == 0 ? 1 : m_units);
+	flt_type T_units_use = ( T_units == 0 ? 1 : T_units);
+	flt_type a_units_use = ( a_units == 0 ? 1 : a_units);
+	flt_type c_units_use = ( c_units == 0 ? 1 : c_units);
 	_value_ = new__value_ * std::pow(d_units_use,_unit_powers_[DIST_UNIT_INDEX]) * std::pow(t_units_use,_unit_powers_[TIME_UNIT_INDEX]) *
 	std::pow(m_units_use,_unit_powers_[MASS_UNIT_INDEX]) * std::pow(T_units_use,_unit_powers_[TEMP_UNIT_INDEX]) * std::pow(a_units_use,_unit_powers_[ANGL_UNIT_INDEX]) *
 	std::pow(c_units_use,_unit_powers_[CHRG_UNIT_INDEX]);
 }
 
 // Set _value_ue and changes units - used by overloaded operators mostly
-void brgastro::unit_obj::set(double new__value_, const std::vector<float> & new__unit_powers_)
+void brgastro::unit_obj::set(flt_type new__value_, const std::vector<float> & new__unit_powers_)
 {
 	if(new__unit_powers_.size() != NUM_UNIT_TYPES)
 		throw std::logic_error("Invalide unit powers vector size.");
@@ -193,7 +193,7 @@ void brgastro::unit_obj::set(double new__value_, const std::vector<float> & new_
 	}
 	return;
 }
-void brgastro::unit_obj::set(double new__value_, float dp, float tp, float mp, float Tp, float ap, float cp)
+void brgastro::unit_obj::set(flt_type new__value_, float dp, float tp, float mp, float Tp, float ap, float cp)
 {
 	return set(new__value_, 1, dp, 1, tp, 1, mp, 1, Tp, 1, ap, 1, cp);
 }
@@ -202,9 +202,9 @@ void brgastro::unit_obj::set(double new__value_, float dp, float tp, float mp, f
 // IMPORTANT: Always use the unitconv::pctom (units used here to default) form for units)
 // EXAMPLE 1: To load 4 kpc, use set_value_ue(4, kpctom, 1, 0, 0, 0, 0, 0, 0, 0, 0)
 // EXAMPLE 2: To load 1 m/s^2, use set_value_ue(1, mtom, 1, stos, -2, 0, 0, 0, 0, 0, 0)
-void brgastro::unit_obj::set(double new__value_, double d_units, float d_units_power, double t_units,
-		float t_units_power, double m_units, float m_units_power, double T_units,
-		float T_units_power, double a_units, float a_units_power, double c_units,
+void brgastro::unit_obj::set(flt_type new__value_, flt_type d_units, float d_units_power, flt_type t_units,
+		float t_units_power, flt_type m_units, float m_units_power, flt_type T_units,
+		float T_units_power, flt_type a_units, float a_units_power, flt_type c_units,
 		float c_units_power)
 {
 	if(_fix_unit_powers_==false)
@@ -234,25 +234,25 @@ void brgastro::unit_obj::set(double new__value_, double d_units, float d_units_p
 #endif
 
 	// Check if any units were given as 0. If so, change them to 1 so we can multiply safely
-	double d_units_use = ( d_units == 0 ? 1 : d_units);
-	double t_units_use = ( t_units == 0 ? 1 : t_units);
-	double m_units_use = ( m_units == 0 ? 1 : m_units);
-	double T_units_use = ( T_units == 0 ? 1 : T_units);
-	double a_units_use = ( a_units == 0 ? 1 : a_units);
-	double c_units_use = ( c_units == 0 ? 1 : c_units);
+	flt_type d_units_use = ( d_units == 0 ? 1 : d_units);
+	flt_type t_units_use = ( t_units == 0 ? 1 : t_units);
+	flt_type m_units_use = ( m_units == 0 ? 1 : m_units);
+	flt_type T_units_use = ( T_units == 0 ? 1 : T_units);
+	flt_type a_units_use = ( a_units == 0 ? 1 : a_units);
+	flt_type c_units_use = ( c_units == 0 ? 1 : c_units);
 	_value_ = new__value_ * std::pow(d_units_use,_unit_powers_[DIST_UNIT_INDEX]) * std::pow(t_units_use,_unit_powers_[TIME_UNIT_INDEX]) *
 	std::pow(m_units_use,_unit_powers_[MASS_UNIT_INDEX]) * std::pow(T_units_use,_unit_powers_[TEMP_UNIT_INDEX]) * std::pow(a_units_use,_unit_powers_[ANGL_UNIT_INDEX]) *
 	std::pow(c_units_use,_unit_powers_[CHRG_UNIT_INDEX]);
 }
 
 // Get _value_ue in default units
-double brgastro::unit_obj::get_value() const
+flt_type brgastro::unit_obj::get_value() const
 {
 	return _value_;
 }
 
-double brgastro::unit_obj::get_value(double d_units, double t_units, double m_units, double T_units, double a_units,
-		double c_units) const
+flt_type brgastro::unit_obj::get_value(flt_type d_units, flt_type t_units, flt_type m_units, flt_type T_units, flt_type a_units,
+		flt_type c_units) const
 {
 	// Get _value_ue in specified units
 	// IMPORTANT: Always use the unitconv::pctom (units used here to default) form for units)
@@ -260,21 +260,21 @@ double brgastro::unit_obj::get_value(double d_units, double t_units, double m_un
 	// EXAMPLE 2: To load 1 m/s^2, use set_value_ue(1, mtom, stos, 0, 0, 0) (the function will automatically figure out powers from the unit)
 
 	// Check if any units were given as 0. If so, change them to 1 so we can multiply
-	double d_units_use = ( d_units == 0 ? 1 : d_units);
-	double t_units_use = ( t_units == 0 ? 1 : t_units);
-	double m_units_use = ( m_units == 0 ? 1 : m_units);
-	double T_units_use = ( T_units == 0 ? 1 : T_units);
-	double a_units_use = ( a_units == 0 ? 1 : a_units);
-	double c_units_use = ( c_units == 0 ? 1 : c_units);
+	flt_type d_units_use = ( d_units == 0 ? 1 : d_units);
+	flt_type t_units_use = ( t_units == 0 ? 1 : t_units);
+	flt_type m_units_use = ( m_units == 0 ? 1 : m_units);
+	flt_type T_units_use = ( T_units == 0 ? 1 : T_units);
+	flt_type a_units_use = ( a_units == 0 ? 1 : a_units);
+	flt_type c_units_use = ( c_units == 0 ? 1 : c_units);
 	return(_value_ * std::pow(d_units_use,-_unit_powers_[DIST_UNIT_INDEX]) * std::pow(t_units_use,-_unit_powers_[TIME_UNIT_INDEX]) *
 			std::pow(m_units_use,-_unit_powers_[MASS_UNIT_INDEX]) * std::pow(T_units_use,-_unit_powers_[TEMP_UNIT_INDEX]) * std::pow(a_units_use,-_unit_powers_[ANGL_UNIT_INDEX]) *
 			std::pow(c_units_use,-_unit_powers_[CHRG_UNIT_INDEX]));
 	// Note the negative sign for powers here, to flip the sign on the unit conversion for output
 }
 
-double brgastro::unit_obj::get_value(double d_units, float d_units_power, double t_units, float t_units_power,
-		double m_units, float m_units_power, double T_units, float T_units_power,
-		double a_units, float a_units_power, double c_units, float c_units_power) const
+flt_type brgastro::unit_obj::get_value(flt_type d_units, float d_units_power, flt_type t_units, float t_units_power,
+		flt_type m_units, float m_units_power, flt_type T_units, float T_units_power,
+		flt_type a_units, float a_units_power, flt_type c_units, float c_units_power) const
 {
 	// Get _value_ue in specified units, overriding units of variable
 	// IMPORTANT: Always use the unitconv::mtopc (units used here to default) form for units)
@@ -282,12 +282,12 @@ double brgastro::unit_obj::get_value(double d_units, float d_units_power, double
 	// EXAMPLE 2: To load 1 m/s^2, use set_value_ue(1, mtom, 1, stos, -2, 0, 0, 0, 0, 0, 0)
 
 	// Check if any units were given as 0. If so, change them to 1 so we can multiply
-	double d_units_use = ( d_units == 0 ? 1 : d_units);
-	double t_units_use = ( t_units == 0 ? 1 : t_units);
-	double m_units_use = ( m_units == 0 ? 1 : m_units);
-	double T_units_use = ( T_units == 0 ? 1 : T_units);
-	double a_units_use = ( a_units == 0 ? 1 : a_units);
-	double c_units_use = ( c_units == 0 ? 1 : c_units);
+	flt_type d_units_use = ( d_units == 0 ? 1 : d_units);
+	flt_type t_units_use = ( t_units == 0 ? 1 : t_units);
+	flt_type m_units_use = ( m_units == 0 ? 1 : m_units);
+	flt_type T_units_use = ( T_units == 0 ? 1 : T_units);
+	flt_type a_units_use = ( a_units == 0 ? 1 : a_units);
+	flt_type c_units_use = ( c_units == 0 ? 1 : c_units);
 	return(_value_ * std::pow(d_units_use,-d_units_power) * std::pow(t_units_use,-t_units_power) *
 			std::pow(m_units_use,-m_units_power) * std::pow(T_units_use,-T_units_power) * std::pow(a_units_use,-a_units_power) *
 			std::pow(c_units_use,-c_units_power));
@@ -390,186 +390,186 @@ std::string brgastro::unit_obj::get_string() const
 }
 
 // distance Units
-double brgastro::unit_obj::m() const
+flt_type brgastro::unit_obj::m() const
 {
 	return _value_;
 }
 
-double brgastro::unit_obj::mm() const
+flt_type brgastro::unit_obj::mm() const
 {
 	return _value_*std::pow(unitconv::mtomm,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::um() const
+flt_type brgastro::unit_obj::um() const
 {
 	return _value_*std::pow(unitconv::mtoum,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::nm() const
+flt_type brgastro::unit_obj::nm() const
 {
 	return _value_*std::pow(unitconv::mtonm,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::cm() const
+flt_type brgastro::unit_obj::cm() const
 {
 	return _value_*std::pow(unitconv::mtocm,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::angstrom() const
+flt_type brgastro::unit_obj::angstrom() const
 {
 	return _value_*std::pow(unitconv::mtoangstrom,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::km() const
+flt_type brgastro::unit_obj::km() const
 {
 	return _value_*std::pow(unitconv::mtokm,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::ltyr() const
+flt_type brgastro::unit_obj::ltyr() const
 {
 	return _value_*std::pow(unitconv::mtoltyr,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::pc() const
+flt_type brgastro::unit_obj::pc() const
 {
 	return _value_*std::pow(unitconv::mtopc,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::kpc() const
+flt_type brgastro::unit_obj::kpc() const
 {
 	return _value_*std::pow(unitconv::mtokpc,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::Mpc() const
+flt_type brgastro::unit_obj::Mpc() const
 {
 	return _value_*std::pow(unitconv::mtoMpc,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::mi() const
+flt_type brgastro::unit_obj::mi() const
 {
 	return _value_*std::pow(unitconv::mtomi,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::Mmi() const
+flt_type brgastro::unit_obj::Mmi() const
 {
 	return _value_*std::pow(unitconv::mtoMmi,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::ft() const
+flt_type brgastro::unit_obj::ft() const
 {
 	return _value_*std::pow(unitconv::mtoft,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::yd() const
+flt_type brgastro::unit_obj::yd() const
 {
 	return _value_*std::pow(unitconv::mtoyd,_unit_powers_[DIST_UNIT_INDEX]);
 }
 
 // Time units
 
-double brgastro::unit_obj::s() const
+flt_type brgastro::unit_obj::s() const
 {
 	return _value_;
 }
 
-double brgastro::unit_obj::ms() const
+flt_type brgastro::unit_obj::ms() const
 {
 	return _value_*std::pow(unitconv::stoms,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::cs() const
+flt_type brgastro::unit_obj::cs() const
 {
 	return _value_*std::pow(unitconv::stocs,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::ns() const
+flt_type brgastro::unit_obj::ns() const
 {
 	return _value_*std::pow(unitconv::stons,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::us() const
+flt_type brgastro::unit_obj::us() const
 {
 	return _value_*std::pow(unitconv::stous,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::min() const
+flt_type brgastro::unit_obj::min() const
 {
 	return _value_*std::pow(unitconv::stomin,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::hr() const
+flt_type brgastro::unit_obj::hr() const
 {
 	return _value_*std::pow(unitconv::stohr,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::day() const
+flt_type brgastro::unit_obj::day() const
 {
 	return _value_*std::pow(unitconv::stoday,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::week() const
+flt_type brgastro::unit_obj::week() const
 {
 	return _value_*std::pow(unitconv::stoweek,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::month() const
+flt_type brgastro::unit_obj::month() const
 {
 	return _value_*std::pow(unitconv::stomonth,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::yr() const
+flt_type brgastro::unit_obj::yr() const
 {
 	return _value_*std::pow(unitconv::stoyr,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::kyr() const
+flt_type brgastro::unit_obj::kyr() const
 {
 	return _value_*std::pow(unitconv::stokyr,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::Myr() const
+flt_type brgastro::unit_obj::Myr() const
 {
 	return _value_*std::pow(unitconv::stoMyr,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::Gyr() const
+flt_type brgastro::unit_obj::Gyr() const
 {
 	return _value_*std::pow(unitconv::stoGyr,_unit_powers_[TIME_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::kg() const
+flt_type brgastro::unit_obj::kg() const
 {
 	return _value_;
 }
 
-double brgastro::unit_obj::gm() const
+flt_type brgastro::unit_obj::gm() const
 {
 	return _value_*std::pow(unitconv::kgtogm,_unit_powers_[MASS_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::Mearth() const
+flt_type brgastro::unit_obj::Mearth() const
 {
 	return _value_*std::pow(unitconv::kgtoMearth,_unit_powers_[MASS_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::Msun() const
+flt_type brgastro::unit_obj::Msun() const
 {
 	return _value_*std::pow(unitconv::kgtoMsun,_unit_powers_[MASS_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::ttMsun() const
+flt_type brgastro::unit_obj::ttMsun() const
 {
 	return _value_*std::pow(unitconv::kgtottMsun,_unit_powers_[MASS_UNIT_INDEX]);
 }
 
 // Temperature
 
-double brgastro::unit_obj::K() const
+flt_type brgastro::unit_obj::K() const
 {
 	return _value_;
 }
 
-double brgastro::unit_obj::degC() const
+flt_type brgastro::unit_obj::degC() const
 {
 	// Check if this is a pure unit_temperature. If so, do proper conversion. Otherwise just scale
 	for(size_t i=0; i<NUM_UNIT_TYPES; i++)
@@ -586,12 +586,12 @@ double brgastro::unit_obj::degC() const
 	return _value_*KtodegC+ABS_ZERO_C;
 }
 
-double brgastro::unit_obj::degR() const
+flt_type brgastro::unit_obj::degR() const
 {
 	return _value_*std::pow(unitconv::KtodegR,_unit_powers_[TEMP_UNIT_INDEX]);
 }
 
-double brgastro::unit_obj::degF() const
+flt_type brgastro::unit_obj::degF() const
 {
 	// Check if this is a pure unit_temperature. If so, do proper conversion. Otherwise just scale
 	for(size_t i=0; i<NUM_UNIT_TYPES; i++)
@@ -610,50 +610,50 @@ double brgastro::unit_obj::degF() const
 
 // Velocity
 
-double brgastro::unit_obj::mps() const
+flt_type brgastro::unit_obj::mps() const
 {
 	return _value_;
 }
 
-double brgastro::unit_obj::kmps() const
+flt_type brgastro::unit_obj::kmps() const
 {
 	return _value_*mpstokmps;
 }
 
-double brgastro::unit_obj::c() const
+flt_type brgastro::unit_obj::c() const
 {
 	return _value_*mpstoc;
 }
 
-double brgastro::unit_obj::miphr() const
+flt_type brgastro::unit_obj::miphr() const
 {
 	return _value_*mpstomiphr;
 }
 
-double brgastro::unit_obj::kpcpGyr() const
+flt_type brgastro::unit_obj::kpcpGyr() const
 {
 	return _value_*mtokpc/stoGyr;
 }
 
 // Acceleration
 
-double brgastro::unit_obj::kmpspGyr() const
+flt_type brgastro::unit_obj::kmpspGyr() const
 {
 	return _value_*unitconv::mtokm/unitconv::stos/unitconv::stoGyr;
 }
-double brgastro::unit_obj::kpcpGyr2() const
+flt_type brgastro::unit_obj::kpcpGyr2() const
 {
 	return _value_*unitconv::mtokpc/unitconv::stoGyr/unitconv::stoGyr;
 }
 
 // Charge
 
-double brgastro::unit_obj::C() const
+flt_type brgastro::unit_obj::C() const
 {
 	return _value_;
 }
 
-double brgastro::unit_obj::esu() const
+flt_type brgastro::unit_obj::esu() const
 {
 	return _value_*std::pow(unitconv::Ctoesu,_unit_powers_[CHRG_UNIT_INDEX]);
 }
@@ -722,37 +722,37 @@ brgastro::unit_obj & brgastro::unit_obj::operator=(const brgastro::unit_obj &old
 	}
 	return *this;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator=(int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator=(int_type new__value_ue)
 {
 	_value_ = new__value_ue;
 	return *this;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator=(long int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator=(long int_type new__value_ue)
 {
 	_value_ = new__value_ue;
 	return *this;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator=(unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator=(int_type new__value_ue)
 {
 	_value_ = new__value_ue;
 	return *this;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator=(short unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator=(int_type new__value_ue)
 {
 	_value_ = new__value_ue;
 	return *this;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator=(long unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator=(long_int_type new__value_ue)
 {
 	_value_ = new__value_ue;
 	return *this;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator=(double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator=(flt_type new__value_ue)
 {
 	_value_ = new__value_ue;
 	return *this;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator=(long double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator=(long_flt_type new__value_ue)
 {
 	_value_ = new__value_ue;
 	return *this;
@@ -821,23 +821,23 @@ brgastro::unit_obj brgastro::unit_obj::operator+(const brgastro::unit_obj &other
 	result += other_unit_obj;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator+=(double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator+=(flt_type new__value_ue)
 {
 	_value_ += new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator+(double new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator+(flt_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result += new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator+=(long double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator+=(long_flt_type new__value_ue)
 {
 	_value_ += new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator+(long double new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator+(long_flt_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result += new__value_ue;
@@ -854,56 +854,56 @@ brgastro::unit_obj brgastro::unit_obj::operator+(float new__value_ue) const
 	result += new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator+=(int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator+=(int_type new__value_ue)
 {
 	_value_ += new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator+(int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator+(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result += new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator+=(long int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator+=(long int_type new__value_ue)
 {
 	_value_ += new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator+(long int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator+(long int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result += new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator+=(unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator+=(int_type new__value_ue)
 {
 	_value_ += new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator+(unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator+(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result += new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator+=(short unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator+=(int_type new__value_ue)
 {
 	_value_ += new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator+(short unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator+(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result += new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator+=(long unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator+=(long_int_type new__value_ue)
 {
 	_value_ += new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator+(long unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator+(long_int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result += new__value_ue;
@@ -968,23 +968,23 @@ brgastro::unit_obj brgastro::unit_obj::operator-(const brgastro::unit_obj &other
 	result -= other_unit_obj;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator-=(double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator-=(flt_type new__value_ue)
 {
 	_value_ -= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator-(double new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator-(flt_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result -= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator-=(long double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator-=(long_flt_type new__value_ue)
 {
 	_value_ -= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator-(long double new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator-(long_flt_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result -= new__value_ue;
@@ -1001,56 +1001,56 @@ brgastro::unit_obj brgastro::unit_obj::operator-(float new__value_ue) const
 	result -= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator-=(int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator-=(int_type new__value_ue)
 {
 	_value_ -= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator-(int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator-(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result -= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator-=(long int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator-=(long int_type new__value_ue)
 {
 	_value_ -= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator-(long int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator-(long int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result -= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator-=(unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator-=(int_type new__value_ue)
 {
 	_value_ -= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator-(unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator-(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result -= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator-=(short unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator-=(int_type new__value_ue)
 {
 	_value_ -= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator-(short unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator-(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result -= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator-=(long unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator-=(long_int_type new__value_ue)
 {
 	_value_ -= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator-(long unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator-(long_int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result -= new__value_ue;
@@ -1073,23 +1073,23 @@ brgastro::unit_obj brgastro::unit_obj::operator*(const brgastro::unit_obj &other
 	result *= other_unit_obj;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator*=(double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator*=(flt_type new__value_ue)
 {
 	_value_ *= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator*(double new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator*(flt_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result *= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator*=(long double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator*=(long_flt_type new__value_ue)
 {
 	_value_ *= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator*(long double new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator*(long_flt_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result *= new__value_ue;
@@ -1106,56 +1106,56 @@ brgastro::unit_obj brgastro::unit_obj::operator*(float new__value_ue) const
 	result *= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator*=(int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator*=(int_type new__value_ue)
 {
 	_value_ *= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator*(int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator*(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result *= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator*=(long int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator*=(long int_type new__value_ue)
 {
 	_value_ *= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator*(long int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator*(long int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result *= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator*=(unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator*=(int_type new__value_ue)
 {
 	_value_ *= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator*(unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator*(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result *= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator*=(short unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator*=(int_type new__value_ue)
 {
 	_value_ *= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator*(short unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator*(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result *= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator*=(long unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator*=(long_int_type new__value_ue)
 {
 	_value_ *= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator*(long unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator*(long_int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result *= new__value_ue;
@@ -1178,23 +1178,23 @@ brgastro::unit_obj brgastro::unit_obj::operator/(const brgastro::unit_obj &other
 	result /= other_unit_obj;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator/=(double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator/=(flt_type new__value_ue)
 {
 	_value_ /= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator/(double new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator/(flt_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result /= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator/=(long double new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator/=(long_flt_type new__value_ue)
 {
 	_value_ /= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator/(long double new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator/(long_flt_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result /= new__value_ue;
@@ -1211,56 +1211,56 @@ brgastro::unit_obj brgastro::unit_obj::operator/(float new__value_ue) const
 	result /= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator/=(int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator/=(int_type new__value_ue)
 {
 	_value_ /= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator/(int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator/(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result /= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator/=(long int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator/=(long int_type new__value_ue)
 {
 	_value_ /= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator/(long int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator/(long int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result /= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator/=(unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator/=(int_type new__value_ue)
 {
 	_value_ /= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator/(unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator/(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result /= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator/=(short unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator/=(int_type new__value_ue)
 {
 	_value_ /= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator/(short unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator/(int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result /= new__value_ue;
 	return result;
 }
-brgastro::unit_obj & brgastro::unit_obj::operator/=(long unsigned int new__value_ue)
+brgastro::unit_obj & brgastro::unit_obj::operator/=(long_int_type new__value_ue)
 {
 	_value_ /= new__value_ue;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator/(long unsigned int new__value_ue) const
+brgastro::unit_obj brgastro::unit_obj::operator/(long_int_type new__value_ue) const
 {
 	brgastro::unit_obj result = brgastro::unit_obj(*this,true);
 	result /= new__value_ue;
@@ -1271,7 +1271,7 @@ brgastro::unit_obj & brgastro::unit_obj::operator++()   //Prefix
 	_value_ += 1;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator++(int)   //Postfix
+brgastro::unit_obj brgastro::unit_obj::operator++(int_type)   //Postfix
 {
 	brgastro::unit_obj obj_copy = brgastro::unit_obj(*this);
 	_value_ += 1;
@@ -1282,7 +1282,7 @@ brgastro::unit_obj & brgastro::unit_obj::operator--()   //Prefix
 	_value_ -= 1;
 	return *this;
 }
-brgastro::unit_obj brgastro::unit_obj::operator--(int)   //Postfix
+brgastro::unit_obj brgastro::unit_obj::operator--(int_type)   //Postfix
 {
 	brgastro::unit_obj obj_copy = brgastro::unit_obj(*this);
 	_value_ -= 1;
@@ -1297,31 +1297,31 @@ bool brgastro::unit_obj::operator<(const brgastro::unit_obj & other_unit_obj) co
 {
 	return (_value_ < other_unit_obj._value_);
 }
-bool brgastro::unit_obj::operator<(int comp__value_) const
+bool brgastro::unit_obj::operator<(int_type comp__value_) const
 {
 	return (_value_ < comp__value_);
 }
-bool brgastro::unit_obj::operator<(long int comp__value_) const
+bool brgastro::unit_obj::operator<(long int_type comp__value_) const
 {
 	return (_value_ < comp__value_);
 }
-bool brgastro::unit_obj::operator<(unsigned int comp__value_) const
+bool brgastro::unit_obj::operator<(int_type comp__value_) const
 {
 	return (_value_ < comp__value_);
 }
-bool brgastro::unit_obj::operator<(short unsigned int comp__value_) const
+bool brgastro::unit_obj::operator<(int_type comp__value_) const
 {
 	return (_value_ < comp__value_);
 }
-bool brgastro::unit_obj::operator<(long unsigned int comp__value_) const
+bool brgastro::unit_obj::operator<(long_int_type comp__value_) const
 {
 	return (_value_ < comp__value_);
 }
-bool brgastro::unit_obj::operator<(double comp__value_) const
+bool brgastro::unit_obj::operator<(flt_type comp__value_) const
 {
 	return (_value_ < comp__value_);
 }
-bool brgastro::unit_obj::operator<(long double comp__value_) const
+bool brgastro::unit_obj::operator<(long_flt_type comp__value_) const
 {
 	return (_value_ < comp__value_);
 }
@@ -1333,31 +1333,31 @@ bool brgastro::unit_obj::operator>(const brgastro::unit_obj & other_unit_obj) co
 {
 	return (_value_ > other_unit_obj._value_);
 }
-bool brgastro::unit_obj::operator>(int comp__value_) const
+bool brgastro::unit_obj::operator>(int_type comp__value_) const
 {
 	return (_value_ > comp__value_);
 }
-bool brgastro::unit_obj::operator>(long int comp__value_) const
+bool brgastro::unit_obj::operator>(long int_type comp__value_) const
 {
 	return (_value_ > comp__value_);
 }
-bool brgastro::unit_obj::operator>(unsigned int comp__value_) const
+bool brgastro::unit_obj::operator>(int_type comp__value_) const
 {
 	return (_value_ > comp__value_);
 }
-bool brgastro::unit_obj::operator>(short unsigned int comp__value_) const
+bool brgastro::unit_obj::operator>(int_type comp__value_) const
 {
 	return (_value_ > comp__value_);
 }
-bool brgastro::unit_obj::operator>(long unsigned int comp__value_) const
+bool brgastro::unit_obj::operator>(long_int_type comp__value_) const
 {
 	return (_value_ > comp__value_);
 }
-bool brgastro::unit_obj::operator>(double comp__value_) const
+bool brgastro::unit_obj::operator>(flt_type comp__value_) const
 {
 	return (_value_ > comp__value_);
 }
-bool brgastro::unit_obj::operator>(long double comp__value_) const
+bool brgastro::unit_obj::operator>(long_flt_type comp__value_) const
 {
 	return (_value_ > comp__value_);
 }
@@ -1369,31 +1369,31 @@ bool brgastro::unit_obj::operator==(const brgastro::unit_obj & other_unit_obj) c
 {
 	return (_value_ == other_unit_obj._value_);
 }
-bool brgastro::unit_obj::operator==(int comp__value_) const
+bool brgastro::unit_obj::operator==(int_type comp__value_) const
 {
 	return (_value_ == comp__value_);
 }
-bool brgastro::unit_obj::operator==(long int comp__value_) const
+bool brgastro::unit_obj::operator==(long int_type comp__value_) const
 {
 	return (_value_ == comp__value_);
 }
-bool brgastro::unit_obj::operator==(unsigned int comp__value_) const
+bool brgastro::unit_obj::operator==(int_type comp__value_) const
 {
 	return (_value_ == comp__value_);
 }
-bool brgastro::unit_obj::operator==(short unsigned int comp__value_) const
+bool brgastro::unit_obj::operator==(int_type comp__value_) const
 {
 	return (_value_ == comp__value_);
 }
-bool brgastro::unit_obj::operator==(long unsigned int comp__value_) const
+bool brgastro::unit_obj::operator==(long_int_type comp__value_) const
 {
 	return (_value_ == comp__value_);
 }
-bool brgastro::unit_obj::operator==(double comp__value_) const
+bool brgastro::unit_obj::operator==(flt_type comp__value_) const
 {
 	return (_value_ == comp__value_);
 }
-bool brgastro::unit_obj::operator==(long double comp__value_) const
+bool brgastro::unit_obj::operator==(long_flt_type comp__value_) const
 {
 	return (_value_ == comp__value_);
 }
@@ -1405,31 +1405,31 @@ bool brgastro::unit_obj::operator<=(const brgastro::unit_obj & other_unit_obj) c
 {
 	return (_value_ <= other_unit_obj._value_);
 }
-bool brgastro::unit_obj::operator<=(int comp__value_) const
+bool brgastro::unit_obj::operator<=(int_type comp__value_) const
 {
 	return (_value_ <= comp__value_);
 }
-bool brgastro::unit_obj::operator<=(long int comp__value_) const
+bool brgastro::unit_obj::operator<=(long int_type comp__value_) const
 {
 	return (_value_ <= comp__value_);
 }
-bool brgastro::unit_obj::operator<=(unsigned int comp__value_) const
+bool brgastro::unit_obj::operator<=(int_type comp__value_) const
 {
 	return (_value_ <= comp__value_);
 }
-bool brgastro::unit_obj::operator<=(short unsigned int comp__value_) const
+bool brgastro::unit_obj::operator<=(int_type comp__value_) const
 {
 	return (_value_ <= comp__value_);
 }
-bool brgastro::unit_obj::operator<=(long unsigned int comp__value_) const
+bool brgastro::unit_obj::operator<=(long_int_type comp__value_) const
 {
 	return (_value_ <= comp__value_);
 }
-bool brgastro::unit_obj::operator<=(double comp__value_) const
+bool brgastro::unit_obj::operator<=(flt_type comp__value_) const
 {
 	return (_value_ <= comp__value_);
 }
-bool brgastro::unit_obj::operator<=(long double comp__value_) const
+bool brgastro::unit_obj::operator<=(long_flt_type comp__value_) const
 {
 	return (_value_ <= comp__value_);
 }
@@ -1441,31 +1441,31 @@ bool brgastro::unit_obj::operator>=(const brgastro::unit_obj & other_unit_obj) c
 {
 	return (_value_ >= other_unit_obj._value_);
 }
-bool brgastro::unit_obj::operator>=(int comp__value_) const
+bool brgastro::unit_obj::operator>=(int_type comp__value_) const
 {
 	return (_value_ >= comp__value_);
 }
-bool brgastro::unit_obj::operator>=(long int comp__value_) const
+bool brgastro::unit_obj::operator>=(long int_type comp__value_) const
 {
 	return (_value_ >= comp__value_);
 }
-bool brgastro::unit_obj::operator>=(unsigned int comp__value_) const
+bool brgastro::unit_obj::operator>=(int_type comp__value_) const
 {
 	return (_value_ >= comp__value_);
 }
-bool brgastro::unit_obj::operator>=(short unsigned int comp__value_) const
+bool brgastro::unit_obj::operator>=(int_type comp__value_) const
 {
 	return (_value_ >= comp__value_);
 }
-bool brgastro::unit_obj::operator>=(long unsigned int comp__value_) const
+bool brgastro::unit_obj::operator>=(long_int_type comp__value_) const
 {
 	return (_value_ >= comp__value_);
 }
-bool brgastro::unit_obj::operator>=(double comp__value_) const
+bool brgastro::unit_obj::operator>=(flt_type comp__value_) const
 {
 	return (_value_ >= comp__value_);
 }
-bool brgastro::unit_obj::operator>=(long double comp__value_) const
+bool brgastro::unit_obj::operator>=(long_flt_type comp__value_) const
 {
 	return (_value_ >= comp__value_);
 }
@@ -1477,31 +1477,31 @@ bool brgastro::unit_obj::operator!=(const brgastro::unit_obj & other_unit_obj) c
 {
 	return (_value_ != other_unit_obj._value_);
 }
-bool brgastro::unit_obj::operator!=(int comp__value_) const
+bool brgastro::unit_obj::operator!=(int_type comp__value_) const
 {
 	return (_value_ != comp__value_);
 }
-bool brgastro::unit_obj::operator!=(long int comp__value_) const
+bool brgastro::unit_obj::operator!=(long int_type comp__value_) const
 {
 	return (_value_ != comp__value_);
 }
-bool brgastro::unit_obj::operator!=(unsigned int comp__value_) const
+bool brgastro::unit_obj::operator!=(int_type comp__value_) const
 {
 	return (_value_ != comp__value_);
 }
-bool brgastro::unit_obj::operator!=(short unsigned int comp__value_) const
+bool brgastro::unit_obj::operator!=(int_type comp__value_) const
 {
 	return (_value_ != comp__value_);
 }
-bool brgastro::unit_obj::operator!=(long unsigned int comp__value_) const
+bool brgastro::unit_obj::operator!=(long_int_type comp__value_) const
 {
 	return (_value_ != comp__value_);
 }
-bool brgastro::unit_obj::operator!=(double comp__value_) const
+bool brgastro::unit_obj::operator!=(flt_type comp__value_) const
 {
 	return (_value_ != comp__value_);
 }
-bool brgastro::unit_obj::operator!=(long double comp__value_) const
+bool brgastro::unit_obj::operator!=(long_flt_type comp__value_) const
 {
 	return (_value_ != comp__value_);
 }
@@ -1510,26 +1510,26 @@ bool brgastro::unit_obj::operator!=(float comp__value_) const
 	return (_value_ != comp__value_);
 }
 
-brgastro::unit_obj::operator double() const
+brgastro::unit_obj::operator flt_type() const
 {
 	return _value_;
 }
 
 // Overloaded operators relating to unit_objs
 
-brgastro::unit_obj operator+(int lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator+(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs+lhs;
 }
-brgastro::unit_obj operator+(long int lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator+(long int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs+lhs;
 }
-brgastro::unit_obj operator+(double lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator+(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs+lhs;
 }
-brgastro::unit_obj operator+(long double lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator+(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs+lhs;
 }
@@ -1537,19 +1537,19 @@ brgastro::unit_obj operator+(float lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs+lhs;
 }
-brgastro::unit_obj operator-(int lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator-(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return -(rhs-lhs);
 }
-brgastro::unit_obj operator-(long int lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator-(long int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return -(rhs-lhs);
 }
-brgastro::unit_obj operator-(double lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator-(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return -(rhs-lhs);
 }
-brgastro::unit_obj operator-(long double lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator-(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return -(rhs-lhs);
 }
@@ -1557,19 +1557,19 @@ brgastro::unit_obj operator-(float lhs, const brgastro::unit_obj & rhs)
 {
 	return -(rhs-lhs);
 }
-brgastro::unit_obj operator*(int lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator*(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs*lhs;
 }
-brgastro::unit_obj operator*(long int lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator*(long int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs*lhs;
 }
-brgastro::unit_obj operator*(double lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator*(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs*lhs;
 }
-brgastro::unit_obj operator*(long double lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator*(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs*lhs;
 }
@@ -1577,19 +1577,19 @@ brgastro::unit_obj operator*(float lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs*lhs;
 }
-brgastro::unit_obj operator/(int lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator/(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return brgastro::unit_obj(lhs)/rhs;
 }
-brgastro::unit_obj operator/(long int lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator/(long int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return brgastro::unit_obj(lhs)/rhs;
 }
-brgastro::unit_obj operator/(double lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator/(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return brgastro::unit_obj(lhs)/rhs;
 }
-brgastro::unit_obj operator/(long double lhs, const brgastro::unit_obj & rhs)
+brgastro::unit_obj operator/(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return brgastro::unit_obj(lhs)/rhs;
 }
@@ -1598,11 +1598,11 @@ brgastro::unit_obj operator/(float lhs, const brgastro::unit_obj & rhs)
 	return brgastro::unit_obj(lhs)/rhs;
 }
 
-bool operator<(double lhs, const brgastro::unit_obj & rhs)
+bool operator<(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs > lhs;
 }
-bool operator<(long double lhs, const brgastro::unit_obj & rhs)
+bool operator<(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs > lhs;
 }
@@ -1610,27 +1610,27 @@ bool operator<(float lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs > lhs;
 }
-bool operator<(int lhs, const brgastro::unit_obj & rhs)
+bool operator<(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs > lhs;
 }
-bool operator<(unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator<(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs > lhs;
 }
-bool operator<(short unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator<(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs > lhs;
 }
-bool operator<(long unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator<(long_int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs > lhs;
 }
-bool operator>(double lhs, const brgastro::unit_obj & rhs)
+bool operator>(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs < lhs;
 }
-bool operator>(long double lhs, const brgastro::unit_obj & rhs)
+bool operator>(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs < lhs;
 }
@@ -1638,27 +1638,27 @@ bool operator>(float lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs < lhs;
 }
-bool operator>(int lhs, const brgastro::unit_obj & rhs)
+bool operator>(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs < lhs;
 }
-bool operator>(unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator>(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs < lhs;
 }
-bool operator>(short unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator>(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs < lhs;
 }
-bool operator>(long unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator>(long_int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs < lhs;
 }
-bool operator<=(double lhs, const brgastro::unit_obj & rhs)
+bool operator<=(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs >= lhs;
 }
-bool operator<=(long double lhs, const brgastro::unit_obj & rhs)
+bool operator<=(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs >= lhs;
 }
@@ -1666,27 +1666,27 @@ bool operator<=(float lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs >= lhs;
 }
-bool operator<=(int lhs, const brgastro::unit_obj & rhs)
+bool operator<=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs >= lhs;
 }
-bool operator<=(unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator<=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs >= lhs;
 }
-bool operator<=(short unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator<=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs >= lhs;
 }
-bool operator<=(long unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator<=(long_int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs >= lhs;
 }
-bool operator>=(double lhs, const brgastro::unit_obj & rhs)
+bool operator>=(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs <= lhs;
 }
-bool operator>=(long double lhs, const brgastro::unit_obj & rhs)
+bool operator>=(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs <= lhs;
 }
@@ -1694,27 +1694,27 @@ bool operator>=(float lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs <= lhs;
 }
-bool operator>=(int lhs, const brgastro::unit_obj & rhs)
+bool operator>=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs <= lhs;
 }
-bool operator>=(unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator>=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs <= lhs;
 }
-bool operator>=(short unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator>=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs <= lhs;
 }
-bool operator>=(long unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator>=(long_int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs <= lhs;
 }
-bool operator==(double lhs, const brgastro::unit_obj & rhs)
+bool operator==(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs == lhs;
 }
-bool operator==(long double lhs, const brgastro::unit_obj & rhs)
+bool operator==(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs == lhs;
 }
@@ -1722,27 +1722,27 @@ bool operator==(float lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs == lhs;
 }
-bool operator==(int lhs, const brgastro::unit_obj & rhs)
+bool operator==(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs == lhs;
 }
-bool operator==(unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator==(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs == lhs;
 }
-bool operator==(short unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator==(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs == lhs;
 }
-bool operator==(long unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator==(long_int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs == lhs;
 }
-bool operator!=(double lhs, const brgastro::unit_obj & rhs)
+bool operator!=(flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs != lhs;
 }
-bool operator!=(long double lhs, const brgastro::unit_obj & rhs)
+bool operator!=(long_flt_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs != lhs;
 }
@@ -1750,19 +1750,19 @@ bool operator!=(float lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs != lhs;
 }
-bool operator!=(int lhs, const brgastro::unit_obj & rhs)
+bool operator!=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs != lhs;
 }
-bool operator!=(unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator!=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs != lhs;
 }
-bool operator!=(short unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator!=(int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs != lhs;
 }
-bool operator!=(long unsigned int lhs, const brgastro::unit_obj & rhs)
+bool operator!=(long_int_type lhs, const brgastro::unit_obj & rhs)
 {
 	return rhs != lhs;
 }
@@ -1773,7 +1773,7 @@ std::ostream & operator<< (std::ostream &out, brgastro::unit_obj &obj)
 	return out;
 }
 
-brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, double rhs)
+brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, flt_type rhs)
 {
 	brgastro::unit_obj result = brgastro::unit_obj(lhs);
 	result.set_value(std::pow(lhs.get_value(),rhs));
@@ -1781,7 +1781,7 @@ brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, double rhs)
 	result.round_powers();
 	return result;
 }
-brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, long double rhs)
+brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, long_flt_type rhs)
 {
 	brgastro::unit_obj result = brgastro::unit_obj(lhs);
 	result.set_value(std::pow(lhs.get_value(),rhs));
@@ -1797,7 +1797,7 @@ brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, float rhs)
 	result.round_powers();
 	return result;
 }
-brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, int rhs)
+brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, int_type rhs)
 {
 	brgastro::unit_obj result = brgastro::unit_obj(lhs);
 	result.set_value(std::pow(lhs.get_value(),rhs));
@@ -1805,7 +1805,7 @@ brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, int rhs)
 	result.round_powers();
 	return result;
 }
-brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, unsigned int rhs)
+brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, int_type rhs)
 {
 	brgastro::unit_obj result = brgastro::unit_obj(lhs);
 	result.set_value(std::pow(lhs.get_value(),rhs));
@@ -1813,7 +1813,7 @@ brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, unsigned int rhs)
 	result.round_powers();
 	return result;
 }
-brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, short unsigned int rhs)
+brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, int_type rhs)
 {
 	brgastro::unit_obj result = brgastro::unit_obj(lhs);
 	result.set_value(std::pow(lhs.get_value(),rhs));
@@ -1821,7 +1821,7 @@ brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, short unsigned int r
 	result.round_powers();
 	return result;
 }
-brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, long unsigned int rhs)
+brgastro::unit_obj std::pow(const brgastro::unit_obj & lhs, long_int_type rhs)
 {
 	brgastro::unit_obj result = brgastro::unit_obj(lhs);
 	result.set_value(std::pow(lhs.get_value(),rhs));
@@ -1854,7 +1854,7 @@ brgastro::unit_distance::unit_distance()
 	_fix_unit_powers_ = true;
 }
 
-brgastro::unit_distance::unit_distance(double init__value_, double conv_factor)
+brgastro::unit_distance::unit_distance(flt_type init__value_, flt_type conv_factor)
 {
 	_unit_powers_.resize(NUM_UNIT_TYPES,0);
 	_unit_powers_[DIST_UNIT_INDEX] = 1;
@@ -1879,7 +1879,7 @@ brgastro::unit_time::unit_time()
 	_fix_unit_powers_ = true;
 }
 
-brgastro::unit_time::unit_time(double init__value_, double conv_factor)
+brgastro::unit_time::unit_time(flt_type init__value_, flt_type conv_factor)
 {
 	_unit_powers_.resize(NUM_UNIT_TYPES,0);
 	_unit_powers_[TIME_UNIT_INDEX] = 1;
@@ -1906,7 +1906,7 @@ brgastro::unit_velocity::unit_velocity()
 	_fix_unit_powers_ = true;
 }
 
-brgastro::unit_velocity::unit_velocity(double init__value_, double conv_factor)
+brgastro::unit_velocity::unit_velocity(flt_type init__value_, flt_type conv_factor)
 {
 	_unit_powers_.resize(NUM_UNIT_TYPES,0);
 	_unit_powers_[DIST_UNIT_INDEX] = 1;
@@ -1935,7 +1935,7 @@ brgastro::unit_mass::unit_mass()
 	_fix_unit_powers_ = true;
 }
 
-brgastro::unit_mass::unit_mass(double init__value_, double conv_factor)
+brgastro::unit_mass::unit_mass(flt_type init__value_, flt_type conv_factor)
 {
 	_unit_powers_.resize(NUM_UNIT_TYPES,0);
 	_unit_powers_[MASS_UNIT_INDEX] = 1;
@@ -1962,7 +1962,7 @@ brgastro::unit_temperature::unit_temperature()
 	_fix_unit_powers_ = true;
 }
 
-brgastro::unit_temperature::unit_temperature(double init__value_, double conv_factor)
+brgastro::unit_temperature::unit_temperature(flt_type init__value_, flt_type conv_factor)
 {
 	_unit_powers_.resize(NUM_UNIT_TYPES,0);
 	_unit_powers_[TEMP_UNIT_INDEX] = 1;
@@ -1978,22 +1978,22 @@ brgastro::unit_temperature::unit_temperature(const brgastro::unit_obj & other_un
 	_fix_unit_powers_ = true;
 }
 
-double brgastro::unit_temperature::K() const
+flt_type brgastro::unit_temperature::K() const
 {
 	return _value_;
 }
 
-double brgastro::unit_temperature::C() const
+flt_type brgastro::unit_temperature::C() const
 {
 	return _value_+ABS_ZERO_C;
 }
 
-double brgastro::unit_temperature::R() const
+flt_type brgastro::unit_temperature::R() const
 {
 	return _value_*KtodegR;
 }
 
-double brgastro::unit_temperature::F() const
+flt_type brgastro::unit_temperature::F() const
 {
 	return _value_*KtodegR+ABS_ZERO_F;
 }
@@ -2006,7 +2006,7 @@ brgastro::unit_angle::unit_angle()
 	_value_ = 0;
 	_fix_unit_powers_ = true;
 }
-brgastro::unit_angle::unit_angle(double init__value_, double conv_factor)
+brgastro::unit_angle::unit_angle(flt_type init__value_, flt_type conv_factor)
 {
 	_unit_powers_.resize(NUM_UNIT_TYPES,0);
 	_unit_powers_[ANGL_UNIT_INDEX] = 1;
@@ -2029,7 +2029,7 @@ brgastro::unit_charge::unit_charge()
 	_value_ = 0;
 	_fix_unit_powers_ = true;
 }
-brgastro::unit_charge::unit_charge(double init__value_, double conv_factor)
+brgastro::unit_charge::unit_charge(flt_type init__value_, flt_type conv_factor)
 {
 	_unit_powers_.resize(NUM_UNIT_TYPES,0);
 	_unit_powers_[ANGL_UNIT_INDEX] = 1;

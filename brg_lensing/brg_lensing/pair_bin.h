@@ -43,7 +43,7 @@
 #include "brg/math/statistics/mean_weight.hpp"
 #include "brg/math/statistics/statistic_extractors.hpp"
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/statistics/error_of_weighted_mean.hpp"
 #include "brg/utility.hpp"
@@ -63,24 +63,24 @@ struct lens_id
 {
 	ssize_t id;
 	BRG_MASS m;
-	double z;
-	double mag;
-	double weight;
+	flt_type z;
+	flt_type mag;
+	flt_type weight;
 
 	// Data on the unmasked fraction of annuli
 #if(1)
 
 	brgastro::limit_vector<BRG_DISTANCE> unmasked_frac_bin_limits;
-	std::vector<double> unmasked_fracs;
+	std::vector<flt_type> unmasked_fracs;
 
-	double unmasked_frac(const BRG_DISTANCE & R_proj) const;
+	flt_type unmasked_frac(const BRG_DISTANCE & R_proj) const;
 
 #endif
 
-	lens_id(const ssize_t & id, const BRG_MASS & m, const double & z, const double & mag,
+	lens_id(const ssize_t & id, const BRG_MASS & m, const flt_type & z, const flt_type & mag,
 			const std::vector<BRG_DISTANCE> & unmasked_frac_bin_limits,
-			const std::vector<double> & unmasked_fracs,
-			const double & weight=1)
+			const std::vector<flt_type> & unmasked_fracs,
+			const flt_type & weight=1)
 	: id(id),
 	  m(m),
 	  z(z),
@@ -105,7 +105,7 @@ private:
 				boost::accumulators::tag::count,
 				boost::accumulators::tag::weighted_mean,
 				boost::accumulators::tag::mean_weight >,
-				double >;
+				flt_type >;
 	template <typename T>
 	using stat_vec_t = boost::accumulators::accumulator_set<T,
 			boost::accumulators::stats<
@@ -115,7 +115,7 @@ private:
 				boost::accumulators::tag::weighted_mean,
 				boost::accumulators::tag::weighted_moment<2>,
 				boost::accumulators::tag::weighted_variance >,
-				double >;
+				flt_type >;
 
 	// Pair data
 #if(1)
@@ -124,28 +124,28 @@ private:
 
 	bin_stat_vec_t<BRG_MASS> _magf_lens_m_values_;
 	bin_stat_vec_t<BRG_MASS> _shear_lens_m_values_;
-	bin_stat_vec_t<double> _magf_lens_z_values_;
-	bin_stat_vec_t<double> _shear_lens_z_values_;
-	bin_stat_vec_t<double> _magf_lens_mag_values_;
-	bin_stat_vec_t<double> _shear_lens_mag_values_;
+	bin_stat_vec_t<flt_type> _magf_lens_z_values_;
+	bin_stat_vec_t<flt_type> _shear_lens_z_values_;
+	bin_stat_vec_t<flt_type> _magf_lens_mag_values_;
+	bin_stat_vec_t<flt_type> _shear_lens_mag_values_;
 
-	bin_stat_vec_t<double> _magf_source_z_values_;
-	bin_stat_vec_t<double> _shear_source_z_values_;
+	bin_stat_vec_t<flt_type> _magf_source_z_values_;
+	bin_stat_vec_t<flt_type> _shear_source_z_values_;
 
-	bin_stat_vec_t<double> _magf_unmasked_fracs_;
-	bin_stat_vec_t<double> _mu_obs_values_;
+	bin_stat_vec_t<flt_type> _magf_unmasked_fracs_;
+	bin_stat_vec_t<flt_type> _mu_obs_values_;
 
 	stat_vec_t<BRG_UNITS> _delta_Sigma_t_values_;
 	stat_vec_t<BRG_UNITS> _delta_Sigma_x_values_;
 
 	boost::container::flat_set<ssize_t> _distinct_lens_ids_;
-	boost::container::flat_map<ssize_t,double> _lens_weights_;
+	boost::container::flat_map<ssize_t,flt_type> _lens_weights_;
 
-	mutable double _mu_hat_cached_value_;
-	mutable double _mu_W_cached_value_;
+	mutable flt_type _mu_hat_cached_value_;
+	mutable flt_type _mu_W_cached_value_;
 
-	double _z_buffer_;
-	static constexpr double _z_buffer_default_value_ = 0.1;
+	flt_type _z_buffer_;
+	static constexpr flt_type _z_buffer_default_value_ = 0.1;
 
 #endif // Pair data
 
@@ -156,11 +156,11 @@ public:
 
 	// Constructors and destructor
 #if(1)
-	pair_bin( CONST_BRG_DISTANCE_REF init_R_min=0, CONST_BRG_DISTANCE_REF init_R_max=0,
-			CONST_BRG_MASS_REF init_m_min=0, CONST_BRG_MASS_REF init_m_max=0,
-			const double & init_z_min=0, const double & init_z_max=0,
-			const double & init_mag_min=0, const double & init_mag_max=0,
-			const double & init_z_buffer=_z_buffer_default_value_);
+	pair_bin( const BRG_DISTANCE & init_R_min=0, const BRG_DISTANCE & init_R_max=0,
+			const BRG_MASS & init_m_min=0, const BRG_MASS & init_m_max=0,
+			const flt_type & init_z_min=0, const flt_type & init_z_max=0,
+			const flt_type & init_mag_min=0, const flt_type & init_mag_max=0,
+			const flt_type & init_z_buffer=_z_buffer_default_value_);
 	virtual ~pair_bin()
 	{
 	}
@@ -168,11 +168,11 @@ public:
 
 	// Setting and accessing z_buffer
 #if(1)
-	void set_z_buffer(const double & new_z_buffer)
+	void set_z_buffer(const flt_type & new_z_buffer)
 	{
 		_z_buffer_ = new_z_buffer;
 	}
-	double z_buffer() const
+	flt_type z_buffer() const
 	{
 		return _z_buffer_;
 	}
@@ -201,32 +201,32 @@ public:
 	{
 		return extract_count(_magf_R_values_);
 	}
-	virtual double effective_pair_count() const override
+	virtual flt_type effective_pair_count() const override
 	{
 		return shear_effective_pair_count();
 	}
-	virtual double shear_effective_pair_count() const override
+	virtual flt_type shear_effective_pair_count() const override
 	{
 		return safe_extract_effective_count(_delta_Sigma_t_values_);
 	}
-	virtual double sum_of_weights() const override
+	virtual flt_type sum_of_weights() const override
 	{
 		return shear_sum_of_weights();
 	}
-	virtual double shear_sum_of_weights() const override
+	virtual flt_type shear_sum_of_weights() const override
 	{
 		return safe_extract_sum_of_weights(_delta_Sigma_t_values_);
 	}
-	virtual double magf_sum_of_weights() const override;
-	virtual double sum_of_square_weights() const override
+	virtual flt_type magf_sum_of_weights() const override;
+	virtual flt_type sum_of_square_weights() const override
 	{
 		return shear_sum_of_square_weights();
 	}
-	virtual double shear_sum_of_square_weights() const override
+	virtual flt_type shear_sum_of_square_weights() const override
 	{
 		return safe_extract_sum_of_square_weights(_delta_Sigma_t_values_);
 	}
-	virtual double magf_sum_of_square_weights() const override;
+	virtual flt_type magf_sum_of_square_weights() const override;
 	virtual ssize_t num_lenses() const override
 	{
 		return magf_num_lenses();
@@ -266,46 +266,46 @@ public:
 		return safe_extract_weighted_mean(_magf_lens_m_values_);
 	}
 
-	virtual double lens_z_mean() const override
+	virtual flt_type lens_z_mean() const override
 	{
 		return shear_lens_z_mean();
 	}
-	virtual double shear_lens_z_mean() const override
+	virtual flt_type shear_lens_z_mean() const override
 	{
 		return safe_extract_weighted_mean(_shear_lens_z_values_);
 	}
-	virtual double magf_lens_z_mean() const override
+	virtual flt_type magf_lens_z_mean() const override
 	{
 		return safe_extract_weighted_mean(_magf_lens_z_values_);
 	}
 
-	virtual double lens_mag_mean() const override
+	virtual flt_type lens_mag_mean() const override
 	{
 		return shear_lens_mag_mean();
 	}
-	virtual double shear_lens_mag_mean() const override
+	virtual flt_type shear_lens_mag_mean() const override
 	{
 		return safe_extract_weighted_mean(_shear_lens_mag_values_);
 	}
-	virtual double magf_lens_mag_mean() const override
+	virtual flt_type magf_lens_mag_mean() const override
 	{
 		return safe_extract_weighted_mean(_magf_lens_mag_values_);
 	}
 
-	virtual double source_z_mean() const override
+	virtual flt_type source_z_mean() const override
 	{
 		return shear_source_z_mean();
 	}
-	virtual double shear_source_z_mean() const override
+	virtual flt_type shear_source_z_mean() const override
 	{
 		return safe_extract_weighted_mean(_shear_source_z_values_);
 	}
-	virtual double magf_source_z_mean() const override
+	virtual flt_type magf_source_z_mean() const override
 	{
 		return safe_extract_weighted_mean(_magf_source_z_values_);
 	}
 
-	double unmasked_frac() const
+	flt_type unmasked_frac() const
 	{
 		return safe_extract_weighted_mean(_magf_unmasked_fracs_);
 	}
@@ -329,9 +329,9 @@ public:
 	virtual BRG_UNITS delta_Sigma_t_stderr() const override;
 	virtual BRG_UNITS delta_Sigma_x_stderr() const override;
 
-	virtual double mu_hat() const override;
-	virtual double mu_square_hat() const override;
-	virtual double mu_W() const override;
+	virtual flt_type mu_hat() const override;
+	virtual flt_type mu_square_hat() const override;
+	virtual flt_type mu_W() const override;
 
 #endif
 };

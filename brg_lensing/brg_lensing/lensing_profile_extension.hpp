@@ -66,7 +66,7 @@ private:
 		if ( R_to_use == 0 )
 		{
 			// In this case, we might be integrating over a singularity, so the trapezoid method is safer
-			const int num_steps = 10000;
+			const int_type num_steps = 10000;
 
 			if ( brgastro::integrate_trapezoid( &func, min_in_params,
 					max_in_params, num_steps, out_params ) )

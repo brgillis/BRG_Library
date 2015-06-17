@@ -27,11 +27,13 @@
 
 #include "brg/global.h"
 
-#include "brg/file_access/ascii_table.h"
+#include "brg/file_access/ascii_table.hpp"
 
 #include "brg/math/interpolator/interpolator.h"
 #include "brg/math/interpolator/interpolator_derivative.h"
 #include "brg/math/solvers/solvers.hpp"
+
+#include "brg/utility.hpp"
 
 #include "gabdt.h"
 #include "solve_rt_functors.h"
@@ -113,7 +115,7 @@ BRG_DISTANCE brgastro::stripping_orbit_segment::_get_rt( const density_profile *
 	old_rt = satellite->rt();
 
 	// First, we try solving iteratively
-	new_rt = solve_iterate( &rt_it_solver, old_rt, 1, 0.0001, 1000, true );
+	new_rt = solve_iterate( &rt_it_solver, old_rt, 1, 0.0001, 1000 );
 	if ( ( new_rt == 0 ) || ( isbad( new_rt ) ) )
 	{
 		// Iteratively didn't work, so we go to the grid option
@@ -388,7 +390,7 @@ brgastro::stripping_orbit_segment & brgastro::stripping_orbit_segment::operator=
 
 brgastro::stripping_orbit_segment::stripping_orbit_segment(
 		const density_profile *init_init_host,
-		const density_profile *init_init_satellite, const size_t init_resolution )
+		const density_profile *init_init_satellite, const ssize_t init_resolution )
 {
 	_init();
 	_init_host_ptr_ = init_init_host;
@@ -525,7 +527,7 @@ void brgastro::stripping_orbit_segment::clear_calcs() const
 
 // Setting integration parameters
 #if(1)
-void brgastro::stripping_orbit_segment::set_resolution( const size_t new_resolution,
+void brgastro::stripping_orbit_segment::set_resolution( const ssize_t new_resolution,
 		const bool silent )
 {
 	// Check if anything is actually changing here
@@ -863,22 +865,22 @@ void brgastro::stripping_orbit_segment::add_host_parameter_point(
 		const std::vector< BRG_UNITS > & parameters, CONST_BRG_TIME_REF t,
 		const bool silent )
 {
-	const size_t num_parameters = parameters.size();
+	const ssize_t num_parameters = ssize(parameters);
 
-	if ( _host_parameter_splines_.size() == 0 )
+	if ( ssize(_host_parameter_splines_) == 0 )
 		_host_parameter_splines_.resize( num_parameters );
 
-	if ( _host_parameter_splines_.size() != num_parameters )
+	if ( ssize(_host_parameter_splines_) != num_parameters )
 	{
 		throw std::logic_error("All parameter lists passed to stripping_orbit_segment must have same size.");
 	}
 
-	for ( size_t i = 0; i < num_parameters; i++ )
+	for ( ssize_t i = 0; i < num_parameters; i++ )
 	{
 		_host_parameter_splines_[i].add_point( t, parameters[i] );
 	}
 
-	if ( _host_parameter_splines_[0].size() >= 2 )
+	if ( ssize(_host_parameter_splines_[0]) >= 2 )
 		_evolving_host_ = true;
 	if ( t < _t_min_natural_value_ )
 		_t_min_natural_value_ = t;
@@ -886,7 +888,7 @@ void brgastro::stripping_orbit_segment::add_host_parameter_point(
 		_t_max_natural_value_ = t;
 }
 
-void brgastro::stripping_orbit_segment::_reserve( const size_t n,
+void brgastro::stripping_orbit_segment::_reserve( const ssize_t n,
 		const bool silent ) const
 {
 	if ( n < 1 )
@@ -1023,7 +1025,7 @@ void brgastro::stripping_orbit_segment::set_t_max(
 void brgastro::stripping_orbit_segment::reset_t_min()
 {
 	_t_min_natural_value_ = std::numeric_limits<double>::max();
-	for ( size_t i = 0; i < _x_spline_.size(); i++ )
+	for ( ssize_t i = 0; i < ssize(_x_spline_); i++ )
 	{
 		if ( _x_spline_.sorted_data().at( i ).first < _t_min_natural_value_ )
 			_t_min_natural_value_ = _x_spline_.sorted_data().at( i ).first;
@@ -1034,7 +1036,7 @@ void brgastro::stripping_orbit_segment::reset_t_min()
 void brgastro::stripping_orbit_segment::reset_t_max()
 {
 	_t_max_natural_value_ = ( -std::numeric_limits<double>::max() );
-	for ( size_t i = 0; i < _x_spline_.size(); i++ )
+	for ( ssize_t i = 0; i < ssize(_x_spline_); i++ )
 	{
 		if ( _x_spline_.sorted_data().at( i ).first > _t_max_natural_value_ )
 			_t_max_natural_value_ = _x_spline_.sorted_data().at( i ).first;
@@ -1098,21 +1100,21 @@ void brgastro::stripping_orbit_segment::clear_init_host()
 	_calculated_ = false;
 }
 
-size_t brgastro::stripping_orbit_segment::length() const
+ssize_t brgastro::stripping_orbit_segment::length() const
 {
-	size_t result = std::numeric_limits<size_t>::max();
-	if ( _x_spline_.size() < result )
-		result = _x_spline_.size();
-	if ( _y_spline_.size() < result )
-		result = _y_spline_.size();
-	if ( _z_spline_.size() < result )
-		result = _z_spline_.size();
-	if ( _vx_spline_.size() < result )
-		result = _x_spline_.size();
-	if ( _vy_spline_.size() < result )
-		result = _y_spline_.size();
-	if ( _vz_spline_.size() < result )
-		result = _z_spline_.size();
+	ssize_t result = std::numeric_limits<ssize_t>::max();
+	if ( ssize(_x_spline_) < result )
+		result = ssize(_x_spline_);
+	if ( ssize(_y_spline_) < result )
+		result = ssize(_y_spline_);
+	if ( ssize(_z_spline_) < result )
+		result = ssize(_z_spline_);
+	if ( ssize(_vx_spline_) < result )
+		result = ssize(_x_spline_);
+	if ( ssize(_vy_spline_) < result )
+		result = ssize(_y_spline_);
+	if ( ssize(_vz_spline_) < result )
+		result = ssize(_z_spline_);
 	return result;
 }
 
@@ -1287,7 +1289,7 @@ void brgastro::stripping_orbit_segment::calc( const bool silent ) const
 			// Update host for this timestep if necessary
 			if ( _evolving_host_ )
 			{
-				num_host_parameters = _host_parameter_splines_.size();
+				num_host_parameters = ssize(_host_parameter_splines_);
 				host_parameters.resize( num_host_parameters );
 				for ( int i = 0; i < num_host_parameters; i++ )
 				{
@@ -1397,14 +1399,14 @@ void brgastro::stripping_orbit_segment::calc( const bool silent ) const
 void brgastro::stripping_orbit_segment::set_satellite_output_parameters(
 		const std::vector< bool > & new_satellite_output_parameters )
 {
-	assert(_init_satellite_ptr_->num_parameters()==new_satellite_output_parameters.size());
+	assert(_init_satellite_ptr_->num_parameters()==ssize(new_satellite_output_parameters));
 
 	_satellite_output_parameters_ = new_satellite_output_parameters;
 }
 void brgastro::stripping_orbit_segment::set_satellite_parameter_unitconvs(
 		const std::vector< double > &new_satellite_parameter_unitconvs )
 {
-	assert(_init_satellite_ptr_->num_parameters()==new_satellite_parameter_unitconvs.size());
+	assert(_init_satellite_ptr_->num_parameters()==ssize(new_satellite_parameter_unitconvs));
 
 	_satellite_parameter_unitconvs_ = new_satellite_parameter_unitconvs;
 }
@@ -1412,14 +1414,14 @@ void brgastro::stripping_orbit_segment::set_satellite_parameter_unitconvs(
 void brgastro::stripping_orbit_segment::set_host_output_parameters(
 		const std::vector< bool > & new_host_output_parameters )
 {
-	assert(_init_host_ptr_->num_parameters()==new_host_output_parameters.size());
+	assert(_init_host_ptr_->num_parameters()==ssize(new_host_output_parameters));
 
 	_host_output_parameters_ = new_host_output_parameters;
 }
 void brgastro::stripping_orbit_segment::set_host_parameter_unitconvs(
 		const std::vector< double > & new_host_parameter_unitconvs )
 {
-	assert(_init_host_ptr_->num_parameters()==new_host_parameter_unitconvs.size());
+	assert(_init_host_ptr_->num_parameters()==ssize(new_host_parameter_unitconvs));
 
 	_host_parameter_unitconvs_ = new_host_parameter_unitconvs;
 }
@@ -1446,10 +1448,10 @@ void brgastro::stripping_orbit_segment::print_full_data(
 		std::ostream *out, const bool include_header,
 		const double m_ret_multiplier, const double m_vir_ret_multiplier, const bool silent ) const
 {
-	const size_t num_columns_base = 18;
-	size_t num_extra_satellite_columns = 0;
-	size_t num_extra_host_columns = 0;
-	size_t num_rows = 0;
+	const ssize_t num_columns_base = 18;
+	ssize_t num_extra_satellite_columns = 0;
+	ssize_t num_extra_host_columns = 0;
+	ssize_t num_rows = 0;
 	std::vector< std::string > header;
 	std::vector< std::vector< std::string > > data;
 	std::stringstream ss;
@@ -1468,16 +1470,16 @@ void brgastro::stripping_orbit_segment::print_full_data(
 		}
 	}
 
-	num_rows = _phase_output_list_.size();
+	num_rows = ssize(_phase_output_list_);
 	if(_bad_result_ || _likely_disrupted_)
 	{
 		// Check how many rows we can actually output
-		num_rows = min(num_rows,_m_ret_list_.size());
-		num_rows = min(num_rows,_m_vir_ret_list_.size());
-		num_rows = min(num_rows,_rt_list_.size());
-		num_rows = min(num_rows,_rt_ratio_list_.size());
-		num_rows = min(num_rows,_host_parameter_data_.size());
-		num_rows = min(num_rows,_satellite_parameter_data_.size());
+		num_rows = min(num_rows,ssize(_m_ret_list_));
+		num_rows = min(num_rows,ssize(_m_vir_ret_list_));
+		num_rows = min(num_rows,ssize(_rt_list_));
+		num_rows = min(num_rows,ssize(_rt_ratio_list_));
+		num_rows = min(num_rows,ssize(_host_parameter_data_));
+		num_rows = min(num_rows,ssize(_satellite_parameter_data_));
 	}
 	if ( num_rows < 2 )
 	{
@@ -1487,17 +1489,17 @@ void brgastro::stripping_orbit_segment::print_full_data(
 	// Check that vectors for density_profile params are sane.
 	// If so, set up extra columns. If not, no extra columns.
 	num_extra_satellite_columns = 0;
-	if ( !( ( _satellite_output_parameters_.size() == 0 )
-			&& ( _satellite_parameter_unitconvs_.size() == 0 ) ) )
+	if ( !( ( ssize(_satellite_output_parameters_) == 0 )
+			&& ( ssize(_satellite_parameter_unitconvs_) == 0 ) ) )
 	{
 		// If output_parameter_unitconvs was never initialized, set it to all 1
-		if ( _satellite_parameter_unitconvs_.size() == 0 )
+		if ( ssize(_satellite_parameter_unitconvs_) == 0 )
 			_satellite_parameter_unitconvs_.resize(
-					_satellite_output_parameters_.size(), 1 );
+				ssize(_satellite_output_parameters_), 1 );
 
 		// Check both vectors are the same size
-		if ( _satellite_output_parameters_.size()
-				!= _satellite_parameter_unitconvs_.size() )
+		if ( ssize(_satellite_output_parameters_)
+				!= ssize(_satellite_parameter_unitconvs_) )
 		{
 			if ( !silent )
 				std::cerr
@@ -1509,8 +1511,8 @@ void brgastro::stripping_orbit_segment::print_full_data(
 			// Count up extra columns to print out
 			try
 			{
-				for ( size_t i = 0;
-						i < _satellite_output_parameters_.size(); i++ )
+				for ( ssize_t i = 0;
+						i < ssize(_satellite_output_parameters_); i++ )
 				{
 					if ( _satellite_output_parameters_.at( i ) )
 						num_extra_satellite_columns++;
@@ -1530,17 +1532,17 @@ void brgastro::stripping_orbit_segment::print_full_data(
 
 	// As before, for host now
 	num_extra_host_columns = 0;
-	if ( !( ( _host_output_parameters_.size() == 0 )
-			&& ( _host_parameter_unitconvs_.size() == 0 ) ) )
+	if ( !( ( ssize(_host_output_parameters_) == 0 )
+			&& ( ssize(_host_parameter_unitconvs_) == 0 ) ) )
 	{
 		// If output_parameter_unitconvs was never initialized, set it to all 1
-		if ( _host_parameter_unitconvs_.size() == 0 )
-			_host_parameter_unitconvs_.resize( _host_output_parameters_.size(),
+		if ( ssize(_host_parameter_unitconvs_) == 0 )
+			_host_parameter_unitconvs_.resize( ssize(_host_output_parameters_),
 					1 );
 
 		// Check both vectors are the same size
-		if ( _host_output_parameters_.size()
-				!= _host_parameter_unitconvs_.size() )
+		if ( ssize(_host_output_parameters_)
+				!= ssize(_host_parameter_unitconvs_) )
 		{
 			if ( !silent )
 				std::cerr
@@ -1552,7 +1554,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 			// Count up extra columns to print out
 			try
 			{
-				for ( size_t i = 0; i < _host_output_parameters_.size();
+				for ( ssize_t i = 0; i < ssize(_host_output_parameters_);
 						i++ )
 				{
 					if ( _host_output_parameters_.at( i ) )
@@ -1603,7 +1605,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 
 		parameter_names = _current_satellite_ptr_->get_parameter_names(  );
 
-		for ( size_t i = 0; i < _satellite_output_parameters_.size();
+		for ( ssize_t i = 0; i < ssize(_satellite_output_parameters_);
 				i++ )
 		{
 			if ( _satellite_output_parameters_.at( i ) )
@@ -1632,7 +1634,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 
 		parameter_names = _current_host_ptr_->get_parameter_names(  );
 
-		for ( size_t i = 0; i < _host_output_parameters_.size(); i++ )
+		for ( ssize_t i = 0; i < ssize(_host_output_parameters_); i++ )
 		{
 			if ( _host_output_parameters_.at( i ) )
 			{
@@ -1685,7 +1687,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 		std::swap(t_max_to_use,t_min_to_use);
 	}
 
-	for ( size_t i = 0; i < num_rows; i++ )
+	for ( ssize_t i = 0; i < num_rows; i++ )
 	{
 		data[0][i] = "";
 		ss.str( "" );
@@ -1782,7 +1784,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 		if ( num_extra_satellite_columns > 0 )
 		{
 			int extra_column_counter = 0;
-			for ( size_t j = 0; j < _satellite_output_parameters_.size();
+			for ( ssize_t j = 0; j < ssize(_satellite_output_parameters_);
 					j++ )
 			{
 				if ( _satellite_output_parameters_.at( j ) )
@@ -1813,7 +1815,7 @@ void brgastro::stripping_orbit_segment::print_full_data(
 		if ( num_extra_host_columns > 0 )
 		{
 			int extra_column_counter = 0;
-			for ( size_t j = 0; j < _host_output_parameters_.size();
+			for ( ssize_t j = 0; j < ssize(_host_output_parameters_);
 					j++ )
 			{
 				if ( _host_output_parameters_.at( j ) )
@@ -1973,7 +1975,7 @@ void brgastro::stripping_orbit_segment::_pass_interpolation_type() const
 	_vx_spline_.set_interpolation_type(type_to_pass);
 	_vy_spline_.set_interpolation_type(type_to_pass);
 	_vz_spline_.set_interpolation_type(type_to_pass);
-	for(size_t i=0; i<_host_parameter_splines_.size(); i++)
+	for(ssize_t i=0; i<ssize(_host_parameter_splines_); i++)
 	{
 		_host_parameter_splines_[i].set_interpolation_type(type_to_pass);
 	}
@@ -1988,7 +1990,7 @@ BRG_MASS & m_ret, const bool silent ) const
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2001,7 +2003,7 @@ int brgastro::stripping_orbit_segment::get_final_frac_m_ret( double & frac_m_ret
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2015,7 +2017,7 @@ int brgastro::stripping_orbit_segment::get_m_ret_points(
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2029,7 +2031,7 @@ BRG_MASS & m_ret, const bool silent ) const
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2042,7 +2044,7 @@ int brgastro::stripping_orbit_segment::get_final_frac_m_vir_ret( double & frac_m
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2056,7 +2058,7 @@ int brgastro::stripping_orbit_segment::get_m_vir_ret_points(
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2070,7 +2072,7 @@ long double & sum_deltarho, const bool silent ) const
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2084,7 +2086,7 @@ int brgastro::stripping_orbit_segment::get_final_sum_deltarho(
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2098,7 +2100,7 @@ int brgastro::stripping_orbit_segment::get_final_sum_gabdt(
 	}
 	catch(const std::runtime_error &e)
 	{
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2109,7 +2111,7 @@ int brgastro::stripping_orbit_segment::clone_final_satellite(
 	if(!_satellite_loaded_)
 	{
 		final_satellite_clone = new tNFW_profile();
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	try
 	{
@@ -2118,7 +2120,7 @@ int brgastro::stripping_orbit_segment::clone_final_satellite(
 	catch(const std::runtime_error &e)
 	{
 		final_satellite_clone = _init_satellite_ptr_->density_profile_clone();
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2129,7 +2131,7 @@ int brgastro::stripping_orbit_segment::clone_final_host(
 	if(!_host_loaded_)
 	{
 		final_host_clone = new tNFW_profile();
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	try
 	{
@@ -2138,7 +2140,7 @@ int brgastro::stripping_orbit_segment::clone_final_host(
 	catch(const std::runtime_error &e)
 	{
 		final_host_clone = _init_host_ptr_->density_profile_clone();
-		return UNSPECIFIED_ERROR;
+		return 1;
 	}
 	return 0;
 }
@@ -2162,7 +2164,7 @@ std::vector< std::pair<double,double> > brgastro::stripping_orbit_segment::m_ret
 	if(!_calculated_) calc();
 
 	std::vector< std::pair<double,double> > result;
-	for(size_t i = 0; i<_phase_output_list_.size(); i++)
+	for(ssize_t i = 0; i<ssize(_phase_output_list_); i++)
 	{
 		result.push_back( std::make_pair(
 				_phase_output_list_[i].t,
@@ -2188,7 +2190,7 @@ std::vector< std::pair<double,double> > brgastro::stripping_orbit_segment::m_vir
 	if(!_calculated_) calc();
 
 	std::vector< std::pair<double,double> > result;
-	for(size_t i = 0; i<_phase_output_list_.size(); i++)
+	for(ssize_t i = 0; i<ssize(_phase_output_list_); i++)
 	{
 		result.push_back( std::make_pair(
 				_phase_output_list_[i].t,

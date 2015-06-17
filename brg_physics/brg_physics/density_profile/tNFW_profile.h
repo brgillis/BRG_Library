@@ -29,7 +29,7 @@
 #include <cstdlib>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/utility.hpp"
 #include "brg_physics/units/unit_obj.h"
@@ -62,7 +62,7 @@ private:
 	BRG_MASS _mvir0_;
 	mutable BRG_DISTANCE _rvir_cache_;
 	mutable bool _rvir_cached_;
-	double _c_, _tau_;
+	flt_type _c_, _tau_;
 
 #endif // end private member variables
 
@@ -70,39 +70,39 @@ protected:
 
 	void _uncache_mass();
 
-	double _taufm( const double mratio, double precision = 0.00001,
+	flt_type _taufm( const flt_type mratio, flt_type precision = 0.00001,
 			const bool silent = false ) const; // tau from Mtot/Mvir
-	double _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
+	flt_type _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
 	{
 		return ( 200. / 3. ) * cube( _c_ )
 				/ ( std::log( 1 + _c_ ) - _c_ / ( 1 + _c_ ) );
 	}
 
 	// Functions relating to tNFW profiles
-	double _cfm( const BRG_MASS mass, const double z=0 ) const // Concentration from mass relationship, from Neto
+	flt_type _cfm( const BRG_MASS mass, const flt_type z=0 ) const // Concentration from mass relationship, from Neto
 	{
 		return 4.67 * std::pow( mass * unitconv::kgtottMsun / ( 1e4 ), -0.11 );
 	}
-	double _cfm() const // Concentration from mass relationship, from Neto
+	flt_type _cfm() const // Concentration from mass relationship, from Neto
 	{
 		return _cfm(_mvir0_,z());
 	}
-	double _mftau( const double tau, const double conc ) const // Mtot/Mvir from tau
+	flt_type _mftau( const flt_type tau, const flt_type conc ) const // Mtot/Mvir from tau
 	{
 		if(tau<=0) return 0;
-		double M0oM200 = 1 / ( std::log( 1 + conc ) - conc / ( 1 + conc ) );
-		double tautau = tau*tau;
-		double result =
+		flt_type M0oM200 = 1 / ( std::log( 1 + conc ) - conc / ( 1 + conc ) );
+		flt_type tautau = tau*tau;
+		flt_type result =
 				M0oM200 * tautau / square( tautau + 1 )
 						* ( ( tautau - 1 ) * std::log( tau ) + tau * pi
 								- ( tautau + 1 ) );
 		return result;
 	}
-	double _mftau( const double tau ) const // Mtot/Mvir from tau
+	flt_type _mftau( const flt_type tau ) const // Mtot/Mvir from tau
 	{
 		return _mftau(tau,_c_);
 	}
-	double _mftau() const // Mtot/Mvir from tau
+	flt_type _mftau() const // Mtot/Mvir from tau
 	{
 		return _mftau(_tau_,_c_);
 	}
@@ -112,8 +112,8 @@ public:
 #if (1) // Constructors
 	tNFW_profile();
 
-	explicit tNFW_profile( CONST_BRG_MASS_REF init_mvir0, const double init_z = 0,
-			const double init_c = -1, const double init_tau = -1 );
+	explicit tNFW_profile( const BRG_MASS & init_mvir0, const flt_type init_z = 0,
+			const flt_type init_c = -1, const flt_type init_tau = -1 );
 
 #endif // End constructors
 
@@ -122,21 +122,21 @@ public:
 
 #if (1) // Set functions
 
-	void set_mvir( CONST_BRG_MASS_REF new_halo_mass, const bool silent =
+	void set_mvir( const BRG_MASS & new_halo_mass, const bool silent =
 			false );
 	void set_parameters( const std::vector< BRG_UNITS > & new_parameters,
 			const bool silent = false );
 
-	void set_z( const double new_z );
-	void set_tau( const double new_halo_tau, const bool silent = false );
-	void set_c( const double new_halo_c, const bool silent = false );
+	void set_z( const flt_type new_z );
+	void set_tau( const flt_type new_halo_tau, const bool silent = false );
+	void set_c( const flt_type new_halo_c, const bool silent = false );
 
 #endif // End set functions
 
 #if (1) //Basic get functions
 
 	BRG_MASS mvir() const;
-	CONST_BRG_MASS_REF mvir0() const;
+	const BRG_MASS & mvir0() const;
 
 	BRG_MASS mtot() const;
 
@@ -148,14 +148,14 @@ public:
 	BRG_VELOCITY vvir() const;
 	BRG_VELOCITY vvir0() const;
 
-	double c() const;
-	double tau() const;
+	flt_type c() const;
+	flt_type tau() const;
 #endif // end basic get functions
 
 #if (1) // advanced get functions
 
-	BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const;
-	BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r,
+	BRG_UNITS dens( const BRG_DISTANCE & r ) const;
+	BRG_MASS enc_mass( const BRG_DISTANCE & r,
 			const bool silent = false ) const;
 	size_t num_parameters() const
 	{
@@ -168,7 +168,7 @@ public:
 
 #if (1) // Other operations
 
-	virtual void truncate_to_fraction( const double fraction,
+	virtual void truncate_to_fraction( const flt_type fraction,
 			const bool silent = false );
 	virtual redshift_obj *redshift_obj_clone() const
 	{

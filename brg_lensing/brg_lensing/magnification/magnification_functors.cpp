@@ -23,7 +23,7 @@
 
 \**********************************************************************/
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 
@@ -34,24 +34,24 @@
 
 namespace brgastro {
 
-constexpr double test_fudge_factor = 1;
+constexpr flt_type test_fudge_factor = 1;
 
-BRG_UNITS mag_expected_count_functor::operator() (const long double & m, bool silent) const
+BRG_UNITS mag_expected_count_functor::operator() (const long_flt_type & m, bool silent) const
 {
 	return expected_count_cache().get(m,_z_mean_);
 }
 
-BRG_UNITS mu_signal_integration_functor::operator() (const long double & m, bool silent) const
+BRG_UNITS mu_signal_integration_functor::operator() (const long_flt_type & m, bool silent) const
 {
-	long double alpha = magnification_alpha(m,_z_mean_);
-	long double count = test_fudge_factor*expected_count_cache().get(m,_z_mean_);
+	long_flt_type alpha = magnification_alpha(m,_z_mean_);
+	long_flt_type count = test_fudge_factor*expected_count_cache().get(m,_z_mean_);
 	return count*(alpha-1);
 }
 
-BRG_UNITS mu_weight_integration_functor::operator() (const long double & m, bool silent) const
+BRG_UNITS mu_weight_integration_functor::operator() (const long_flt_type & m, bool silent) const
 {
-	long double alpha = magnification_alpha(m,_z_mean_);
-	long double count = test_fudge_factor*expected_count_cache().get(m,_z_mean_);
+	long_flt_type alpha = magnification_alpha(m,_z_mean_);
+	long_flt_type count = test_fudge_factor*expected_count_cache().get(m,_z_mean_);
 	return count*square(alpha-1);
 }
 

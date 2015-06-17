@@ -32,7 +32,7 @@
 #include <boost/accumulators/statistics/variance.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/calculus/integrate.hpp"
 #include "brg/math/statistics/statistic_extractors.hpp"
@@ -55,23 +55,23 @@
 
 namespace brgastro {
 
-constexpr double pair_bin::_z_buffer_default_value_;
+constexpr flt_type pair_bin::_z_buffer_default_value_;
 
 void pair_bin::_uncache_values()
 {
-	_mu_hat_cached_value_ = std::numeric_limits<double>::infinity();
-	_mu_W_cached_value_ = std::numeric_limits<double>::infinity();
+	_mu_hat_cached_value_ = std::numeric_limits<flt_type>::infinity();
+	_mu_W_cached_value_ = std::numeric_limits<flt_type>::infinity();
 }
 
-pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF init_R_max,
-		CONST_BRG_MASS_REF init_m_min, CONST_BRG_MASS_REF init_m_max,
-		const double & init_z_min, const double & init_z_max,
-		const double & init_mag_min, const double & init_mag_max,
-		const double & init_z_buffer)
+pair_bin::pair_bin( const BRG_DISTANCE & init_R_min, const BRG_DISTANCE & init_R_max,
+		const BRG_MASS & init_m_min, const BRG_MASS & init_m_max,
+		const flt_type & init_z_min, const flt_type & init_z_max,
+		const flt_type & init_mag_min, const flt_type & init_mag_max,
+		const flt_type & init_z_buffer)
 :	pair_bin_summary(init_R_min,init_R_max,init_m_min,init_m_max,
 		init_z_min,init_z_max,init_mag_min,init_mag_max),
-	_mu_hat_cached_value_(std::numeric_limits<double>::infinity()),
-	_mu_W_cached_value_(std::numeric_limits<double>::infinity()),
+	_mu_hat_cached_value_(std::numeric_limits<flt_type>::infinity()),
+	_mu_W_cached_value_(std::numeric_limits<flt_type>::infinity()),
 	_z_buffer_(init_z_buffer)
 {
 }
@@ -81,8 +81,8 @@ pair_bin::pair_bin( CONST_BRG_DISTANCE_REF init_R_min, CONST_BRG_DISTANCE_REF in
 
 void pair_bin::add_pair( const lens_source_pair & new_pair)
 {
-	const double & shear_weight = new_pair.shear_weight();
-	const double & mag_weight = new_pair.mag_weight();
+	const flt_type & shear_weight = new_pair.shear_weight();
+	const flt_type & mag_weight = new_pair.mag_weight();
 
 	// Shear first
 	if(shear_weight>0)
@@ -125,14 +125,14 @@ void pair_bin::add_lens( const lens_id & lens )
 		_magf_lens_mag_values_(lens.mag, boost::accumulators::weight = lens.weight);
 		_magf_lens_z_values_(lens.z, boost::accumulators::weight = lens.weight);
 
-		double unmasked_frac = lens.unmasked_frac(R_amid());
+		flt_type unmasked_frac = lens.unmasked_frac(R_amid());
 		_magf_unmasked_fracs_(unmasked_frac, boost::accumulators::weight = lens.weight);
 
 		// Get the new weight from the lens's individual weight and its unmasked area
-		double area = pi*(square(afd(R_max(),lens.z))-square(afd(R_min(),lens.z)));
-		double unmasked_area = unmasked_frac*area;
+		flt_type area = pi*(square(afd(R_max(),lens.z))-square(afd(R_min(),lens.z)));
+		flt_type unmasked_area = unmasked_frac*area;
 
-		double mu_W = unmasked_area*mag_weight_integral_cache().get(lens.z+_z_buffer_);
+		flt_type mu_W = unmasked_area*mag_weight_integral_cache().get(lens.z+_z_buffer_);
 
 		brgastro::fixbad(mu_W);
 
@@ -173,9 +173,9 @@ void pair_bin::clear()
 // Calculations on stored values
 #if (1)
 
-double pair_bin::magf_sum_of_weights() const
+flt_type pair_bin::magf_sum_of_weights() const
 {
-	double res = 0;
+	flt_type res = 0;
 	for(const auto & id : _distinct_lens_ids_)
 	{
 		res += _lens_weights_.at(id);
@@ -183,9 +183,9 @@ double pair_bin::magf_sum_of_weights() const
 	return res;
 }
 
-double pair_bin::magf_sum_of_square_weights() const
+flt_type pair_bin::magf_sum_of_square_weights() const
 {
-	double res = 0;
+	flt_type res = 0;
 	for(const auto & id : _distinct_lens_ids_)
 	{
 		res += square(_lens_weights_.at(id));
@@ -195,7 +195,7 @@ double pair_bin::magf_sum_of_square_weights() const
 
 BRG_UNITS pair_bin::area() const
 {
-	double mean_frac = unmasked_frac();
+	flt_type mean_frac = unmasked_frac();
 	BRG_UNITS mean_area = pi*(square(afd(R_max(),magf_lens_z_mean()))-square(afd(R_min(),magf_lens_z_mean())));
 
 	BRG_UNITS result = mean_frac*magf_num_lenses()*mean_area;
@@ -244,24 +244,24 @@ BRG_UNITS pair_bin::delta_Sigma_x_stderr() const
 // Magnification calculations
 #if(1)
 
-double pair_bin::mu_W() const
+flt_type pair_bin::mu_W() const
 {
-	if(_mu_W_cached_value_==std::numeric_limits<double>::infinity())
+	if(_mu_W_cached_value_==std::numeric_limits<flt_type>::infinity())
 	{
 		_mu_W_cached_value_ = area()*mag_weight_integral_cache().get(magf_lens_z_mean()+_z_buffer_);
 	}
 	return _mu_W_cached_value_;
 }
 
-double pair_bin::mu_hat() const
+flt_type pair_bin::mu_hat() const
 {
-	if(_mu_hat_cached_value_==std::numeric_limits<double>::infinity())
+	if(_mu_hat_cached_value_==std::numeric_limits<flt_type>::infinity())
 	{
 		// Not cached, so calculate and cache it
 
-		const double mu_observed = extract_weighted_sum(_mu_obs_values_)/(extract_mean_weight(_mu_obs_values_)*mu_W());
+		const flt_type mu_observed = extract_weighted_sum(_mu_obs_values_)/(extract_mean_weight(_mu_obs_values_)*mu_W());
 
-		const double mu_base = area()*mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_)/mu_W();
+		const flt_type mu_base = area()*mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_)/mu_W();
 
 		_mu_hat_cached_value_ = 1.+mu_observed-mu_base;
 
@@ -275,7 +275,7 @@ double pair_bin::mu_hat() const
 
 }
 
-double pair_bin::mu_square_hat() const
+flt_type pair_bin::mu_square_hat() const
 {
 	return square(mu_hat());
 }

@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/units/unit_obj.h"
 #include "brg/utility.hpp"
@@ -38,7 +38,7 @@ void brgastro::accel_functor::set_host_ptr(
 	_host_ptr_ = new_host;
 }
 
-BRG_UNITS brgastro::accel_functor::operator()( CONST_BRG_UNITS_REF  in_param,
+BRG_UNITS brgastro::accel_functor::operator()( const BRG_UNITS &  in_param,
 		const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
@@ -69,7 +69,7 @@ void brgastro::spherical_density_functor::set_host_ptr(
 }
 
 BRG_UNITS brgastro::spherical_density_functor::operator()(
-		CONST_BRG_UNITS_REF  in_param, const bool silent ) const
+		const BRG_UNITS &  in_param, const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
@@ -105,7 +105,7 @@ void brgastro::solve_rhm_functor::set_target_mass(
 	_target_mass_ = new_target_mass;
 }
 
-BRG_UNITS brgastro::solve_rhm_functor::operator()( CONST_BRG_UNITS_REF  in_param,
+BRG_UNITS brgastro::solve_rhm_functor::operator()( const BRG_UNITS &  in_param,
 		const bool silent ) const
 {
 	if ( _host_ptr_ == NULL )

@@ -30,7 +30,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/file_access/ascii_table_map.hpp"
 #include "brg/math/misc_math.hpp"
@@ -48,10 +48,10 @@ namespace brgastro {
 #if (1)
 bool expected_count_loader::_loaded_(false);
 
-brgastro::limit_vector<double> expected_count_loader::_z_limits_;
-std::vector<brgastro::limit_vector<double>> expected_count_loader::_mag_limits_;
-std::vector<std::vector<double>> expected_count_loader::_smoothed_count_;
-std::vector<std::vector<double>> expected_count_loader::_smoothed_count_derivative_;
+brgastro::limit_vector<flt_type> expected_count_loader::_z_limits_;
+std::vector<brgastro::limit_vector<flt_type>> expected_count_loader::_mag_limits_;
+std::vector<std::vector<flt_type>> expected_count_loader::_smoothed_count_;
+std::vector<std::vector<flt_type>> expected_count_loader::_smoothed_count_derivative_;
 
 std::string expected_count_loader::_filename_base_("/disk2/brg/git/CFHTLenS_cat/Data/magnitude_hist_gz");
 std::string expected_count_loader::_filename_tail_(".dat");
@@ -76,7 +76,7 @@ void expected_count_loader::_load()
 	if(!_loaded_)
 	{
 
-		_z_limits_.reconstruct(limit_vector<double>::type::LINEAR, mag_z_min, mag_z_max, round_int((mag_z_max-mag_z_min)/mag_z_step));
+		_z_limits_.reconstruct(limit_vector<flt_type>::type::LINEAR, mag_z_min, mag_z_max, round_int((mag_z_max-mag_z_min)/mag_z_step));
 
 		// Resize arrays as necessary
 		size_t num_z_bins = _z_limits_.num_bins();
@@ -88,14 +88,14 @@ void expected_count_loader::_load()
 		// Loop over z, loading in all files
 		for(size_t z_i=0; z_i<num_z_bins; ++z_i)
 		{
-			const unsigned short z1000(brgastro::round_int(1000*_z_limits_.lower_limit(z_i)));
+			const int_type z1000(brgastro::round_int(1000*_z_limits_.lower_limit(z_i)));
 			const std::string filename(_filename_base_ + boost::lexical_cast<std::string>(z1000)
 					+ _filename_tail_);
 
 			try
 			{
-				auto table_map = brgastro::load_table_map<double>(filename);
-				std::vector<double> temp_mag_limits = table_map.at("mag_bin_lower");
+				auto table_map = brgastro::load_table_map<flt_type>(filename);
+				std::vector<flt_type> temp_mag_limits = table_map.at("mag_bin_lower");
 				_smoothed_count_[z_i] = table_map.at(COUNT_COLUMN);
 				_smoothed_count_derivative_[z_i] = table_map.at("smoothed_alpha");
 
@@ -113,7 +113,7 @@ void expected_count_loader::_load()
 			}
 
 			// Normalize by magnitude bin size
-			double bin_size = _mag_limits_[z_i].at(1)-_mag_limits_[z_i].at(0);
+			flt_type bin_size = _mag_limits_[z_i].at(1)-_mag_limits_[z_i].at(0);
 			_smoothed_count_[z_i] = brgastro::divide(_smoothed_count_[z_i],bin_size);
 
 		} // Loop over z, loading in all files
@@ -126,8 +126,8 @@ void expected_count_loader::_load()
 } // void expected_count_loader::_load()
 
 
-double expected_count_loader::_get_interp(const double & mag, const double & z,
-		const std::vector<std::vector<double>> & table, const double & default_result)
+flt_type expected_count_loader::_get_interp(const flt_type & mag, const flt_type & z,
+		const std::vector<std::vector<flt_type>> & table, const flt_type & default_result)
 {
 	// Load if necessary
 	_load();
@@ -135,20 +135,20 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 	ssize_t z_i = _z_limits_.get_bin_index(z);
 
 	if(z_i>=_z_limits_.num_bins()-1) z_i=_z_limits_.num_bins()-2;
-	const double & z_lo = _z_limits_.lower_limit(z_i);
-	const double & z_hi = _z_limits_.upper_limit(z_i);
+	const flt_type & z_lo = _z_limits_.lower_limit(z_i);
+	const flt_type & z_hi = _z_limits_.upper_limit(z_i);
 
-	double tot_weight;
-	double temp_result;
+	flt_type tot_weight;
+	flt_type temp_result;
 
 	// Get the interpolated value at both the lower redshift and the higher
 
 	// At the lower redshift first
-	double lo_result;
+	flt_type lo_result;
 	lo_result = _mag_limits_[z_i].interpolate_bins(mag,table[z_i]);
 
 	// At the higher redshift now
-	double hi_result;
+	flt_type hi_result;
 	hi_result = _mag_limits_[z_i+1].interpolate_bins(mag,table[z_i+1]);
 
 	// And now interpolate between these results
@@ -160,11 +160,11 @@ double expected_count_loader::_get_interp(const double & mag, const double & z,
 	temp_result += hi_result * (z-z_lo);
 	return temp_result / tot_weight;
 
-} // double expected_count_loader::_get_interp(...)
+} // flt_type expected_count_loader::_get_interp(...)
 
 // Setting parameters for where the data can be loaded from
 #if(1)
-void expected_count_loader::set_z_limits(const std::vector<double> & new_limits_vector)
+void expected_count_loader::set_z_limits(const std::vector<flt_type> & new_limits_vector)
 {
 	if(!is_monotonically_increasing(new_limits_vector))
 	{
@@ -172,7 +172,7 @@ void expected_count_loader::set_z_limits(const std::vector<double> & new_limits_
 	}
 	_z_limits_ = new_limits_vector;
 }
-void expected_count_loader::set_z_limits(std::vector<double> && new_limits_vector)
+void expected_count_loader::set_z_limits(std::vector<flt_type> && new_limits_vector)
 {
 	if(!is_monotonically_increasing(new_limits_vector))
 	{
@@ -201,11 +201,11 @@ void expected_count_loader::set_filename_tail(std::string && new_filename_tail)
 // Access data
 #if(1)
 
-double expected_count_loader::get_count(const double & mag, const double & z)
+flt_type expected_count_loader::get_count(const flt_type & mag, const flt_type & z)
 {
 	return _get_interp(mag,z,_smoothed_count_,0.);
 }
-double expected_count_loader::get_derivative(const double & mag, const double & z)
+flt_type expected_count_loader::get_derivative(const flt_type & mag, const flt_type & z)
 {
 	return _get_interp(mag,z,_smoothed_count_derivative_,1.);
 }

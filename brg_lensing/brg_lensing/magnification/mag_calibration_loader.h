@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 namespace brgastro {
 
@@ -40,8 +40,8 @@ namespace brgastro {
  */
 class mag_calibration_loader {
 	static bool _loaded_;
-	static std::vector<double> _z_mins_;
-	static std::vector<double> _calibration_values_;
+	static std::vector<flt_type> _z_mins_;
+	static std::vector<flt_type> _calibration_values_;
 	static std::string _filename_;
 
 	static void _load();
@@ -49,13 +49,13 @@ public:
 
 	// Setting parameters for where the data is stored
 #if(1)
-	static void set_z_mins(const std::vector<double> & new_limits_vector);
-	static void set_z_mins(std::vector<double> && new_limits_vector);
+	static void set_z_mins(const std::vector<flt_type> & new_limits_vector);
+	static void set_z_mins(std::vector<flt_type> && new_limits_vector);
 	static void set_filename(const std::string & new_filename);
 	static void set_filename(std::string && new_filename);
 #endif
 
-	static double get(const double & z);
+	static flt_type get(const flt_type & z);
 
 	static void unload();
 };

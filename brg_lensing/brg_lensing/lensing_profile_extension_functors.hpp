@@ -25,7 +25,7 @@
 #ifndef _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 #define _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/calculus/integrate.hpp"
 
@@ -61,7 +61,7 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_offset_R( CONST_BRG_DISTANCE_REF new_offset_R )
+	void set_offset_R( const BRG_DISTANCE & new_offset_R )
 	{
 		_offset_R_ = new_offset_R;
 	}
@@ -70,7 +70,7 @@ public:
 		return _offset_R_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param,
+	BRG_UNITS operator()( const BRG_UNITS & in_param,
 			const bool silent = false ) const
 	{
 		if ( _host_ptr_ == NULL )
@@ -82,7 +82,7 @@ public:
 	}
 
 	projected_density_functor( const name *init_host=NULL,
-			CONST_BRG_DISTANCE_REF init_offset_R=0 )
+			const BRG_DISTANCE & init_offset_R=0 )
 	{
 		set_host_ptr( init_host );
 		set_offset_R( init_offset_R );
@@ -118,7 +118,7 @@ public:
 		return _host_ptr_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const
+	BRG_UNITS operator()( const BRG_UNITS & in_param, const bool silent = false ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
@@ -154,25 +154,25 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R0( CONST_BRG_DISTANCE_REF new_R0 )
+	void set_R0( const BRG_DISTANCE & new_R0 )
 	{
 		_R0_ = new_R0;
 	}
-	CONST_BRG_DISTANCE_REF  R0()
+	const BRG_DISTANCE &  R0()
 	{
 		return _R0_;
 	}
 
-	void set_R( CONST_BRG_DISTANCE_REF new_R )
+	void set_R( const BRG_DISTANCE & new_R )
 	{
 		_R_ = new_R;
 	}
-	CONST_BRG_DISTANCE_REF  R()
+	const BRG_DISTANCE &  R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+	BRG_UNITS operator()( const BRG_UNITS &  in_param,
 			const bool silent = false ) const
 	{
 		if ( _host_ptr_ == NULL )
@@ -186,7 +186,7 @@ public:
 	}
 
 	offset_ring_dens_functor( const name *new_host=NULL,
-			CONST_BRG_DISTANCE_REF new_R_0 = 0, CONST_BRG_DISTANCE_REF new_R = 0 )
+			const BRG_DISTANCE & new_R_0 = 0, const BRG_DISTANCE & new_R = 0 )
 	{
 		_host_ptr_ = new_host;
 		_R_ = new_R;
@@ -202,7 +202,7 @@ private:
 	const name *_host_ptr_;
 	BRG_DISTANCE _R0_, _R_;
 
-	BRG_DISTANCE _arc_length_in_circle( CONST_BRG_DISTANCE_REF R2 ) const
+	BRG_DISTANCE _arc_length_in_circle( const BRG_DISTANCE & R2 ) const
 	{
 		// Check for complete enclosure
 		if( _R0_ + R2 <= _R_)
@@ -228,25 +228,25 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R0( CONST_BRG_DISTANCE_REF new_R0 )
+	void set_R0( const BRG_DISTANCE & new_R0 )
 	{
 		_R0_ = new_R0;
 	}
-	CONST_BRG_DISTANCE_REF R0()
+	const BRG_DISTANCE & R0()
 	{
 		return _R0_;
 	}
 
-	void set_R( CONST_BRG_DISTANCE_REF new_R )
+	void set_R( const BRG_DISTANCE & new_R )
 	{
 		_R_ = new_R;
 	}
-	CONST_BRG_DISTANCE_REF R()
+	const BRG_DISTANCE & R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param,
+	BRG_UNITS operator()( const BRG_UNITS & in_param,
 			const bool silent = false ) const
 	{
 		if ( _host_ptr_ == NULL )
@@ -260,7 +260,7 @@ public:
 	}
 
 	offset_circ_dens_functor( const name *new_host=NULL,
-			CONST_BRG_DISTANCE_REF new_R0 = 0, CONST_BRG_DISTANCE_REF new_R = 0  )
+			const BRG_DISTANCE & new_R0 = 0, const BRG_DISTANCE & new_R = 0  )
 	{
 		_host_ptr_ = new_host;
 		_R0_ = new_R0;
@@ -288,16 +288,16 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R( CONST_BRG_DISTANCE_REF new_R )
+	void set_R( const BRG_DISTANCE & new_R )
 	{
 		_R_ = new_R;
 	}
-	CONST_BRG_DISTANCE_REF  R()
+	const BRG_DISTANCE &  R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+	BRG_UNITS operator()( const BRG_UNITS &  in_param,
 			const bool silent = false ) const
 	{
 		if ( _host_ptr_ == NULL )
@@ -309,7 +309,7 @@ public:
 	}
 
 	offset_Delta_Sigma_functor( const name *init_host=NULL,
-			CONST_BRG_DISTANCE_REF init_R = 0 )
+			const BRG_DISTANCE & init_R = 0 )
 	{
 		_host_ptr_ = init_host;
 		_R_ = init_R;
@@ -337,16 +337,16 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R( CONST_BRG_DISTANCE_REF new_R )
+	void set_R( const BRG_DISTANCE & new_R )
 	{
 		_R_ = new_R;
 	}
-	CONST_BRG_DISTANCE_REF  R()
+	const BRG_DISTANCE &  R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+	BRG_UNITS operator()( const BRG_UNITS &  in_param,
 			const bool silent = false ) const
 	{
 		if ( _host_ptr_ == NULL )
@@ -358,7 +358,7 @@ public:
 	}
 
 	quick_offset_Delta_Sigma_functor( const name *init_host=NULL,
-			CONST_BRG_DISTANCE_REF init_R = 0 )
+			const BRG_DISTANCE & init_R = 0 )
 	{
 		_host_ptr_ = init_host;
 		_R_ = init_R;
@@ -373,7 +373,7 @@ class group_Delta_Sigma_weight_functor
 private:
 
 	const name *_host_ptr_;
-	double _c_;
+	flt_type _c_;
 
 public:
 
@@ -386,16 +386,16 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_c( const double new_c )
+	void set_c( const flt_type new_c )
 	{
 		_c_ = new_c;
 	}
-	const double c()
+	const flt_type c()
 	{
 		return _c_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+	BRG_UNITS operator()( const BRG_UNITS &  in_param,
 			const bool silent = false ) const
 	{
 		if ( _host_ptr_ == NULL )
@@ -417,7 +417,7 @@ public:
 	}
 
 	group_Delta_Sigma_weight_functor( const name *init_host=NULL,
-			const double init_c = -1 )
+			const flt_type init_c = -1 )
 	{
 		_host_ptr_ = init_host;
 		_c_ = init_c;
@@ -435,23 +435,23 @@ private:
 
 public:
 
-	void set_sigma( CONST_BRG_DISTANCE_REF new_sigma )
+	void set_sigma( const BRG_DISTANCE & new_sigma )
 	{
 		_sigma_ = new_sigma;
 	}
-	CONST_BRG_DISTANCE_REF sigma()
+	const BRG_DISTANCE & sigma()
 	{
 		return _sigma_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param,
+	BRG_UNITS operator()( const BRG_UNITS &  in_param,
 			const bool silent = false ) const
 	{
 		// The output here is the height of a Rayleigh distribution at in_param
 		return in_param/square(_sigma_) * std::exp(-square(in_param)/(2*square(_sigma_)));
 	}
 
-	shifted_Delta_Sigma_weight_functor( CONST_BRG_DISTANCE_REF new_sigma=0 )
+	shifted_Delta_Sigma_weight_functor( const BRG_DISTANCE & new_sigma=0 )
 	{
 		_sigma_ = new_sigma;
 	}
@@ -478,34 +478,34 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R_shift( CONST_BRG_DISTANCE_REF new_R_shift )
+	void set_R_shift( const BRG_DISTANCE & new_R_shift )
 	{
 		_R_shift_ = new_R_shift;
 	}
-	CONST_BRG_DISTANCE_REF R_shift()
+	const BRG_DISTANCE & R_shift()
 	{
 		return _R_shift_;
 	}
 
-	void set_R( CONST_BRG_DISTANCE_REF new_R )
+	void set_R( const BRG_DISTANCE & new_R )
 	{
 		_R_ = new_R;
 	}
-	CONST_BRG_DISTANCE_REF R()
+	const BRG_DISTANCE & R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const
+	BRG_UNITS operator()( const BRG_UNITS &  in_param, const bool silent = false ) const
 	{
 		// in_param here will be angle theta in radians
 
 		const BRG_DISTANCE R_actual(lc_add(_R_, _R_shift_, in_param));
 
 		const BRG_ANGLE theta(asin(_R_shift_/R_actual * sin(in_param)));
-		const double angle_factor = cos(theta);
+		const flt_type angle_factor = cos(theta);
 
-		double extra_shear_factor;
+		flt_type extra_shear_factor;
 		if(_R_shift_==0)
 			extra_shear_factor = 0;
 		else
@@ -525,7 +525,7 @@ public:
 	}
 
 	shifted_Delta_Sigma_circ_functor( const name *new_host=NULL,
-			CONST_BRG_DISTANCE_REF new_R_shift=0, CONST_BRG_DISTANCE_REF new_R=0 )
+			const BRG_DISTANCE & new_R_shift=0, const BRG_DISTANCE & new_R=0 )
 	{
 		_host_ptr_ = new_host;
 		_R_shift_ = new_R_shift;
@@ -554,23 +554,23 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R( CONST_BRG_DISTANCE_REF new_R )
+	void set_R( const BRG_DISTANCE & new_R )
 	{
 		_R_ = new_R;
 	}
-	CONST_BRG_DISTANCE_REF R()
+	const BRG_DISTANCE & R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const
+	BRG_UNITS operator()( const BRG_UNITS & in_param, const bool silent = false ) const
 	{
 		// in_param here will be R_shift
 		shifted_Delta_Sigma_circ_functor<name> func(_host_ptr_,in_param,_R_);
 
-		const double min_in_param = 0;
-		const double max_in_param = pi;
-		const double precision = 0.000001;
+		const flt_type min_in_param = 0;
+		const flt_type max_in_param = pi;
+		const flt_type precision = 0.000001;
 		BRG_UNITS out_param(0);
 
 		out_param = brgastro::integrate_Romberg( &func, min_in_param, max_in_param,
@@ -580,7 +580,7 @@ public:
 	}
 
 	shifted_Delta_Sigma_functor( const name *new_host=NULL,
-			CONST_BRG_DISTANCE_REF new_R=0 )
+			const BRG_DISTANCE & new_R=0 )
 	{
 		_host_ptr_ = new_host;
 		_R_ = new_R;

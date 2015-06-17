@@ -24,7 +24,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/sky_obj/galaxy.h"
 
@@ -113,7 +113,7 @@ void brgastro::galaxy_group::set_member_index( size_t member_index,
 }
 void brgastro::galaxy_group::add_member( galaxy * new_member, const bool silent )
 {
-	int new_num_members = num_members + 1;
+	int_type new_num_members = num_members + 1;
 	resize( new_num_members );
 	members[new_num_members - 1] = new_member;
 	member_indices[new_num_members - 1] = new_member->index();

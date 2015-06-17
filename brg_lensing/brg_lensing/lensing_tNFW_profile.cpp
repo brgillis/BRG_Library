@@ -22,70 +22,70 @@
 
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_lensing/lensing_tNFW_caches.h"
 
 #include "lensing_tNFW_profile.h"
 
-const double min_x = 0.000001;
+const flt_type min_x = 0.000001;
 
-const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_WLsig( CONST_BRG_DISTANCE_REF r,
+const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_Delta_Sigma( const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_sig_cache().get( std::log(mvir0()), z(), std::log(r), silent );
 	return result;
 }
-const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_offset_WLsig(
-		CONST_BRG_DISTANCE_REF r, CONST_BRG_DISTANCE_REF offset_r,
+const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_offset_Delta_Sigma(
+		const BRG_DISTANCE & r, const BRG_DISTANCE & offset_r,
 		const bool silent ) const
 {
-	if(offset_r<=0) return WLsig(r,silent);
+	if(offset_r<=0) return Delta_Sigma(r,silent);
 	BRG_UNITS result = brgastro::tNFW_offset_sig_cache().get( std::log(mvir0()), z(), std::log(r),
 			std::log(offset_r), silent );
 	return result;
 }
-const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_group_WLsig(
-		CONST_BRG_DISTANCE_REF r, const double & group_c, const bool silent ) const
+const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_group_Delta_Sigma(
+		const BRG_DISTANCE & r, const flt_type & group_c, const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_group_sig_cache().get( std::log(mvir0()), z(), std::log(r),
 			group_c, silent );
 	return result;
 }
-const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_shifted_WLsig(
-		CONST_BRG_DISTANCE_REF R, const bool silent ) const
+const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_shifted_Delta_Sigma(
+		const BRG_DISTANCE & R, const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_shifted_sig_cache().get( std::log(mvir0()), z(), std::log(R),
 			silent );
 	return result;
 }
-const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_Sigma( CONST_BRG_DISTANCE_REF r,
+const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_Sigma( const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_Sigma_cache().get( std::log(mvir0()), z(), std::log(r), silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_offset_Sigma(
-		CONST_BRG_DISTANCE_REF r, CONST_BRG_DISTANCE_REF offset_r,
+		const BRG_DISTANCE & r, const BRG_DISTANCE & offset_r,
 		const bool silent ) const
 {
-	if(offset_r<=0) return WLsig(r,silent);
+	if(offset_r<=0) return Delta_Sigma(r,silent);
 	BRG_UNITS result = brgastro::tNFW_offset_Sigma_cache().get( std::log(mvir0()), z(), std::log(r),
 			std::log(offset_r), silent );
 	return result;
 }
 const BRG_UNITS brgastro::lensing_tNFW_profile::_quick_group_Sigma(
-		CONST_BRG_DISTANCE_REF r, const double & group_c, const bool silent ) const
+		const BRG_DISTANCE & r, const flt_type & group_c, const bool silent ) const
 {
 	BRG_UNITS result = brgastro::tNFW_group_Sigma_cache().get( std::log(mvir0()), z(), std::log(r),
 			group_c, silent );
 	return result;
 }
-const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_dens( CONST_BRG_DISTANCE_REF r,
+const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_dens( const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	BRG_UNITS result, rho_c_t_4pi;
-	double d_c, x, tau_use, fx, lx;
+	flt_type d_c, x, tau_use, fx, lx;
 
 	if ( tau() <= 0 )
 		tau_use = default_tau_factor * c();
@@ -95,10 +95,10 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_dens( CONST_BRG_DISTANCE_R
 	d_c = _delta_c();
 	rho_c_t_4pi = 3. * square(H()) / ( 2. * Gc );
 	x = max(r / rs(),min_x);
-	double xx = x*x;
-	double tautau = tau_use*tau_use;
-	double tautaup1 = tautau + 1.;
-	double sqrt_tautaupxx = std::sqrt(tautau + xx);
+	flt_type xx = x*x;
+	flt_type tautau = tau_use*tau_use;
+	flt_type tautaup1 = tautau + 1.;
+	flt_type sqrt_tautaupxx = std::sqrt(tautau + xx);
 
 	if ( x == 1. )
 		fx = 1.;
@@ -128,12 +128,12 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_dens( CONST_BRG_DISTANCE_R
 												* sqrt_tautaupxx ) );
 	return result;
 }
-const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_enc_dens( CONST_BRG_DISTANCE_REF r,
+const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_enc_dens( const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	BRG_UNITS result, rho_c_t_4pi;
 	//Takes M in kg, r in kpc
-	long double d_c, x, tau_use, fx, lx;
+	long_flt_type d_c, x, tau_use, fx, lx;
 	if ( tau() <= 0 )
 		tau_use = default_tau_factor * c();
 	else
@@ -142,10 +142,10 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_enc_dens( CONST_BRG_DISTAN
 	d_c = _delta_c();
 	rho_c_t_4pi = 3. * square(H()) / ( 2. * Gc );
 	x = max(r / rs(),min_x);
-	long double xx = x*x;
-	long double tautau = tau_use*tau_use;
-	long double tautaup1 = tautau + 1.;
-	long double sqrt_tautaupxx = std::sqrt(tautau + xx);
+	long_flt_type xx = x*x;
+	long_flt_type tautau = tau_use*tau_use;
+	long_flt_type tautaup1 = tautau + 1.;
+	long_flt_type sqrt_tautaupxx = std::sqrt(tautau + xx);
 
 	if ( x == 1. )
 		fx = 1.;
@@ -154,7 +154,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_enc_dens( CONST_BRG_DISTAN
 	else
 		fx = -std::log( 1 / x - std::sqrt( 1 / ( xx ) - 1 ) ) / std::sqrt( 1 - xx );
 	lx = std::log( x / ( sqrt_tautaupxx + tau_use ) );
-	double log_tau = std::log(tau_use);
+	flt_type log_tau = std::log(tau_use);
 
 	result = ( rs() * d_c * rho_c_t_4pi ) * tautau
 					/ ( pi * xx * tautaup1 * tautaup1 )
@@ -166,7 +166,7 @@ const BRG_UNITS brgastro::lensing_tNFW_profile::_proj_enc_dens( CONST_BRG_DISTAN
 											/ tau_use - pi ) );
 	return result;
 }
-const BRG_MASS brgastro::lensing_tNFW_profile::_proj_enc_mass( CONST_BRG_DISTANCE_REF r,
+const BRG_MASS brgastro::lensing_tNFW_profile::_proj_enc_mass( const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	return proj_enc_dens( r, silent ) * pi * r * r;

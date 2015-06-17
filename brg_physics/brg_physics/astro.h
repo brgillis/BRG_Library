@@ -31,7 +31,7 @@
 #include <string>
 #include <sstream>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/units/unit_conversions.hpp"
 #include "brg_physics/units/unit_obj.h"
@@ -55,7 +55,7 @@
 #if (1)
 #ifndef _BRG_PI_DEFINED_
 #define _BRG_PI_DEFINED_
-const double pi = M_PI;
+const flt_type pi = M_PI;
 #endif
 
 
@@ -84,7 +84,7 @@ const BRG_VELOCITY c = brgastro::unitconv::ctomps;
 #ifdef _BRG_USE_UNITS_
 const brgastro::unit_obj H_0(70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom,0,-1,0,0,0,0); // So all results will implicitly be in h_70 units
 #else
-const double H_0 = 70 * brgastro::unitconv::kmtom / brgastro::unitconv::stos / brgastro::unitconv::Mpctom; // So all results will implicitly be in h_70 units
+const flt_type H_0 = 70 * brgastro::unitconv::kmtom / brgastro::unitconv::stos / brgastro::unitconv::Mpctom; // So all results will implicitly be in h_70 units
 #endif
 
 const float Omega_m = 0.288; // WMAP9 + priors
@@ -120,45 +120,45 @@ const float default_tau_factor = 2;
 
  \**********************************************************************/
 
-BRG_UNITS H( const double z );
+BRG_UNITS H( const flt_type z );
 
 // Functions to get transverse distance (in m) from angle (in rad) or vice-versa
-BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF da, const double z );
-BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
-		const double z );
-BRG_DISTANCE dfa( CONST_BRG_ANGLE_REF a1x, CONST_BRG_ANGLE_REF a1y,
-		CONST_BRG_ANGLE_REF a2x, CONST_BRG_ANGLE_REF a2y, const double z );
+BRG_DISTANCE dfa( const BRG_ANGLE & da, const flt_type z );
+BRG_DISTANCE dfa( const BRG_ANGLE & a1, const BRG_ANGLE & a2,
+		const flt_type z );
+BRG_DISTANCE dfa( const BRG_ANGLE & a1x, const BRG_ANGLE & a1y,
+		const BRG_ANGLE & a2x, const BRG_ANGLE & a2y, const flt_type z );
 
-BRG_ANGLE afd( CONST_BRG_DISTANCE_REF dd, const double z );
-BRG_ANGLE afd( CONST_BRG_DISTANCE_REF d1, CONST_BRG_DISTANCE_REF d2,
-		const double z );
-BRG_ANGLE afd( CONST_BRG_DISTANCE_REF d1x, CONST_BRG_DISTANCE_REF d1y,
-		CONST_BRG_DISTANCE_REF d2x, CONST_BRG_DISTANCE_REF d2y, const double z );
+BRG_ANGLE afd( const BRG_DISTANCE & dd, const flt_type z );
+BRG_ANGLE afd( const BRG_DISTANCE & d1, const BRG_DISTANCE & d2,
+		const flt_type z );
+BRG_ANGLE afd( const BRG_DISTANCE & d1x, const BRG_DISTANCE & d1y,
+		const BRG_DISTANCE & d2x, const BRG_DISTANCE & d2y, const flt_type z );
 
 // Functions to work between redshift, scale factor, and time (in s, with zero = present day)
-double zfa( const double a );
-double afz( const double z );
+flt_type zfa( const flt_type a );
+flt_type afz( const flt_type z );
 
-BRG_TIME tfz( const double z );
-BRG_TIME tfa( const double z );
-double zft( CONST_BRG_TIME_REF t );
-double aft( CONST_BRG_TIME_REF t );
+BRG_TIME tfz( const flt_type z );
+BRG_TIME tfa( const flt_type z );
+flt_type zft( const BRG_TIME & t );
+flt_type aft( const BRG_TIME & t );
 
 // Functions to integrate out distances
-double integrate_add( const double z1, const double z2 );
-double integrate_cmd( const double z1, const double z2 );
-double integrate_Ld( const double z1, const double z2 );
-double integrate_ltd( const double z1, const double z2 );
-double integrate_add( const double z );
-double integrate_cmd( const double z );
-double integrate_Ld( const double z );
-double integrate_ltd( const double z );
-double integrate_distance( const double z1, const double z2,
-		const int mode, const int resolution = 10000 );
+flt_type integrate_add( const flt_type z1, const flt_type z2 );
+flt_type integrate_cmd( const flt_type z1, const flt_type z2 );
+flt_type integrate_Ld( const flt_type z1, const flt_type z2 );
+flt_type integrate_ltd( const flt_type z1, const flt_type z2 );
+flt_type integrate_add( const flt_type z );
+flt_type integrate_cmd( const flt_type z );
+flt_type integrate_Ld( const flt_type z );
+flt_type integrate_ltd( const flt_type z );
+flt_type integrate_distance( const flt_type z1, const flt_type z2,
+		const int_type mode, const int_type resolution = 10000 );
 
 // Lensing functions
-BRG_DISTANCE ad_distance( double z1, double z2 = 0 );
-BRG_UNITS sigma_crit( const double z_lens, const double z_source );
+BRG_DISTANCE ad_distance( flt_type z1, flt_type z2 = 0 );
+BRG_UNITS sigma_crit( const flt_type z_lens, const flt_type z_source );
 
 // Like dist2d, but using corrections for spherical geometry
 template< typename Tr1, typename Td1, typename Tr2, typename Td2 >
@@ -191,13 +191,13 @@ class redshift_obj
 
 	 **********************************/
 private:
-	double _z_, _z_err_;
+	flt_type _z_, _z_err_;
 	mutable BRG_UNITS _H_cache_;
 	mutable bool _H_cached_;
 public:
 
 	// Constructor
-	redshift_obj( const double init_z = 0, const double init_z_err = 0 )
+	redshift_obj( const flt_type init_z = 0, const flt_type init_z_err = 0 )
 	{
 		_z_ = init_z;
 		_z_err_ = init_z_err;
@@ -215,12 +215,12 @@ public:
 
 	// Set functions
 #if (1)
-	virtual void set_z( const double new_z ) // Sets z
+	virtual void set_z( const flt_type new_z ) // Sets z
 	{
 		_z_ = new_z;
 		_H_cached_ = false;
 	}
-	virtual void set_z_err( const double new_z_err ) // Sets z error
+	virtual void set_z_err( const flt_type new_z_err ) // Sets z error
 	{
 		_z_err_ = new_z_err;
 	}
@@ -228,15 +228,15 @@ public:
 
 	// Get functions
 #if (1)
-	double z() const
+	flt_type z() const
 	{
 		return _z_;
 	}
-	double z_err() const
+	flt_type z_err() const
 	{
 		return _z_err_;
 	}
-	int z_grid() const;
+	int_type z_grid() const;
 #endif
 
 	// Astro calculations

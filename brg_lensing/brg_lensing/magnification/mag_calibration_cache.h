@@ -30,7 +30,7 @@
 
 #include <string>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/cache/cache.hpp"
 
@@ -64,7 +64,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1 ) const;
+	const flt_type _calculate( const flt_type in_param_1 ) const;
 
 public:
 	mag_calibration_cache()

@@ -23,7 +23,7 @@
 
 \**********************************************************************/
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/calculus/differentiate.hpp"
 
@@ -33,13 +33,13 @@
 
 namespace brgastro {
 
-double magnification_alpha(const double & m, const double & z)
+flt_type magnification_alpha(const flt_type & m, const flt_type & z)
 {
 	//return 2;
 
 	if(expected_count_cache().get(m,z)<=0) return 1.; // 1 corresponds to a flat profile, so this is appropriate for zero counts
 
-	double result = expected_count_derivative_cache().get(m,z);
+	flt_type result = expected_count_derivative_cache().get(m,z);
 
 	return result;
 }

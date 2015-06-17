@@ -28,7 +28,7 @@
 #include <string>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/cache/cache_3d.hpp"
 #include "brg/math/cache/cache_4d.hpp"
@@ -63,8 +63,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2,
-			const double in_param_3 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2,
+			const flt_type in_param_3 ) const;
 
 public:
 
@@ -99,8 +99,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2,
-			const double in_param_3, const double in_param_4 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2,
+			const flt_type in_param_3, const flt_type in_param_4 ) const;
 
 public:
 
@@ -141,8 +141,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2,
-			const double in_param_3, const double in_param_4 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2,
+			const flt_type in_param_3, const flt_type in_param_4 ) const;
 
 public:
 
@@ -183,8 +183,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2,
-			const double in_param_3 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2,
+			const flt_type in_param_3 ) const;
 
 public:
 
@@ -218,8 +218,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2,
-			const double in_param_3 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2,
+			const flt_type in_param_3 ) const;
 
 public:
 
@@ -254,8 +254,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2,
-			const double in_param_3, const double in_param_4 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2,
+			const flt_type in_param_3, const flt_type in_param_4 ) const;
 
 public:
 
@@ -296,8 +296,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2,
-			const double in_param_3, const double in_param_4 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2,
+			const flt_type in_param_3, const flt_type in_param_4 ) const;
 
 public:
 

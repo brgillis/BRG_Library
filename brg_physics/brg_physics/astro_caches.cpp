@@ -25,7 +25,7 @@
 #include <exception>
 #include <string>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/cache/cache.hpp"
 #include "brg/math/cache/cache_2d.hpp"
@@ -55,7 +55,7 @@ DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
 
 // brgastro::dfa_cache class methods
 #if (1)
-const double brgastro::dfa_cache::_calculate( const double in_params ) const
+const flt_type brgastro::dfa_cache::_calculate( const flt_type in_params ) const
 {
 	return brgastro::integrate_add( 0, in_params );
 }
@@ -63,12 +63,12 @@ const double brgastro::dfa_cache::_calculate( const double in_params ) const
 #endif // end brgastro::dfa_cache functions
 
 // brgastro::add_cache class methods
-const double brgastro::add_cache::_calculate( const double in_param_1, const double in_param_2) const
+const flt_type brgastro::add_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2) const
 {
 	return brgastro::integrate_add(in_param_1,in_param_2);
 }
 
-const double brgastro::tfa_cache::_calculate( const double in_params ) const
+const flt_type brgastro::tfa_cache::_calculate( const flt_type in_params ) const
 {
 	return -brgastro::integrate_ltd( 0, brgastro::zfa( in_params ) ) / c;
 }

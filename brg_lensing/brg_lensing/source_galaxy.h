@@ -42,9 +42,9 @@ public:
 
 	// Constructors and destructors
 #if(1)
-	source_galaxy( CONST_BRG_ANGLE_REF init_ra = 0, CONST_BRG_ANGLE_REF init_dec = 0, const double & init_z = 0,
-			const double & init_gamma_1 = 0, const double & init_gamma_2 = 0, const double & init_kappa = 0,
-			CONST_BRG_MASS_REF init_mstar = 0, const double & init_mag = 0, const double & init_weight = 1)
+	source_galaxy( const BRG_ANGLE & init_ra = 0, const BRG_ANGLE & init_dec = 0, const flt_type & init_z = 0,
+			const flt_type & init_gamma_1 = 0, const flt_type & init_gamma_2 = 0, const flt_type & init_kappa = 0,
+			const BRG_MASS & init_mstar = 0, const flt_type & init_mag = 0, const flt_type & init_weight = 1)
 	: sky_obj(init_ra,init_dec,init_z),
 	  source_obj(init_ra, init_dec, init_z,
 	  			init_gamma_1, init_gamma_2, init_kappa),
@@ -64,7 +64,7 @@ public:
 	{
 		return galaxy::m();
 	}
-	double mag() const
+	flt_type mag() const
 	{
 		return galaxy::mag();
 	}

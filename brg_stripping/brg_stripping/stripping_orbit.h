@@ -103,7 +103,7 @@ private:
 #if(1)
 	/** Default number of steps for which stripping is calculated. Implemented in
 	 *  brg_orbit.cpp. */
-	static size_t _default_spline_resolution_;
+	static ssize_t _default_spline_resolution_;
 
 	/// Default interpolation method. Implemented in brg_orbit.cpp.
 	static allowed_interpolation_type _default_interpolation_type_;
@@ -127,7 +127,7 @@ private:
 #if(1)
 	/// Estimated number of steps for which stripping is calculated. The actual number of steps
 	/// will depend on the adaptive step size calculations, and will usually be larger than this.
-	size_t _base_resolution_;
+	ssize_t _base_resolution_;
 
 	/// Interpolation method for this orbit
 	allowed_interpolation_type _interpolation_type_;
@@ -183,7 +183,7 @@ private:
 	// Global info for the orbit
 #if(1)
 
-	mutable size_t _num_segments_; ///< Number of segments the orbit is split up into.
+	mutable ssize_t _num_segments_; ///< Number of segments the orbit is split up into.
 
 	//@{
 	/// The values of t_min/max based only on the points passed to the orbit.
@@ -324,7 +324,7 @@ private:
 			brgastro::stripping_orbit_segment & segment,
 			brgastro::density_profile *segment_init_satellite=NULL,
 			brgastro::density_profile *segment_init_host=NULL,
-			size_t resolution=0) const;
+			ssize_t resolution=0) const;
 
 	/**
 	 * Calculate if necessary, then return an iterator to the final good segment.
@@ -403,8 +403,8 @@ public:
 	 * override_current==true.
 	 */
 
-	static void set_default_resolution( const size_t new_default_spline_resolution);
-	void set_default_resolution( const size_t new_default_spline_resolution,
+	static void set_default_resolution( const ssize_t new_default_spline_resolution);
+	void set_default_resolution( const ssize_t new_default_spline_resolution,
 			const bool override_current,
 			const bool silent=false );
 	static void set_default_interpolation_type(
@@ -493,7 +493,7 @@ public:
 	 * @param new_spline_resolution The new resolution.
 	 * @param silent Whether or not to suppress error messages.
 	 */
-	void set_resolution( const size_t new_spline_resolution,
+	void set_resolution( const ssize_t new_spline_resolution,
 			const bool silent=false );
 	/**
 	 * Set the type of interpolation to be used for all interpolators, using the
@@ -996,14 +996,14 @@ public:
 #if(1)
 	//@{
 	/// Accessors to default integration parameters.
-	static const size_t default_spline_resolution() {return _default_spline_resolution_;}
-	static const allowed_interpolation_type default_interpolation_type()
+	static const ssize_t & default_spline_resolution() noexcept {return _default_spline_resolution_;}
+	static const allowed_interpolation_type & default_interpolation_type() noexcept
 		{return _default_interpolation_type_;}
-	static BRG_VELOCITY  default_v_0() {return _default_v_0_;}
-	static BRG_DISTANCE  default_r_0() {return _default_r_0_;}
-	static const double  default_step_length_power() {return _default_step_length_power_;}
-	static const double  default_step_factor_max() {return _default_step_factor_max_;}
-	static const double  default_step_factor_min() {return _default_step_factor_min_;}
+	static BRG_VELOCITY & default_v_0() noexcept {return _default_v_0_;}
+	static BRG_DISTANCE & default_r_0() noexcept {return _default_r_0_;}
+	static const double & default_step_length_power() noexcept {return _default_step_length_power_;}
+	static const double & default_step_factor_max() noexcept {return _default_step_factor_max_;}
+	static const double & default_step_factor_min() noexcept {return _default_step_factor_min_;}
 	//@}
 #endif
 
@@ -1011,12 +1011,12 @@ public:
 #if(1)
 	//@{
 	/// Accessors to default tuning parameters.
-	static const double  default_tidal_stripping_amplification() {return _default_tidal_stripping_amplification_;}
-	static const double  default_tidal_stripping_deceleration() {return _default_tidal_stripping_deceleration_;}
-	static const double  default_tidal_stripping_radialness() {return _default_tidal_stripping_radialness_;}
-	static const double  default_tidal_shocking_amplification() {return _default_tidal_shocking_amplification_;}
-	static const double  default_tidal_shocking_persistance() {return _default_tidal_shocking_persistance_;}
-	static const double  default_tidal_shocking_power() {return _default_tidal_shocking_power_;}
+	static const double & default_tidal_stripping_amplification() noexcept {return _default_tidal_stripping_amplification_;}
+	static const double & default_tidal_stripping_deceleration() noexcept {return _default_tidal_stripping_deceleration_;}
+	static const double & default_tidal_stripping_radialness() noexcept {return _default_tidal_stripping_radialness_;}
+	static const double & default_tidal_shocking_amplification() noexcept {return _default_tidal_shocking_amplification_;}
+	static const double & default_tidal_shocking_persistance() noexcept {return _default_tidal_shocking_persistance_;}
+	static const double & default_tidal_shocking_power() noexcept {return _default_tidal_shocking_power_;}
 	//@}
 #endif
 
@@ -1025,14 +1025,14 @@ public:
 #if(1)
 	//@{
 	/// Accessors to integration parameters for this orbit.
-	const size_t spline_resolution() const {return _base_resolution_;}
-	const allowed_interpolation_type interpolation_type()
+	const ssize_t & spline_resolution() const noexcept {return _base_resolution_;}
+	const allowed_interpolation_type & interpolation_type() const noexcept
 		{return _interpolation_type_;}
-	BRG_VELOCITY v_0() const {return _v_0_;}
-	BRG_DISTANCE r_0() const {return _r_0_;}
-	const double step_length_power() const {return _step_length_power_;}
-	const double step_factor_max() const {return _step_factor_max_;}
-	const double step_factor_min() const {return _step_factor_min_;}
+	const BRG_VELOCITY & v_0() const noexcept {return _v_0_;}
+	const BRG_DISTANCE & r_0() const noexcept {return _r_0_;}
+	const double & step_length_power() const noexcept {return _step_length_power_;}
+	const double & step_factor_max() const noexcept {return _step_factor_max_;}
+	const double & step_factor_min() const noexcept {return _step_factor_min_;}
 	//@}
 #endif
 
@@ -1040,28 +1040,28 @@ public:
 #if(1)
 	//@{
 	/// Accessors to tuning parameters for this orbit.
-	const double tidal_stripping_amplification() const {return _tidal_stripping_amplification_;}
-	const double tidal_stripping_deceleration() const {return _tidal_stripping_deceleration_;}
-	const double tidal_stripping_radialness() const {return _tidal_stripping_radialness_;}
-	const double tidal_shocking_amplification() const {return _tidal_shocking_amplification_;}
-	const double tidal_shocking_persistance() const {return _tidal_shocking_persistance_;}
-	const double tidal_shocking_power() const {return _tidal_shocking_power_;}
+	const double & tidal_stripping_amplification() const noexcept {return _tidal_stripping_amplification_;}
+	const double & tidal_stripping_deceleration() const noexcept {return _tidal_stripping_deceleration_;}
+	const double & tidal_stripping_radialness() const noexcept {return _tidal_stripping_radialness_;}
+	const double & tidal_shocking_amplification() const noexcept {return _tidal_shocking_amplification_;}
+	const double & tidal_shocking_persistance() const noexcept {return _tidal_shocking_persistance_;}
+	const double & tidal_shocking_power() const noexcept {return _tidal_shocking_power_;}
 	//@}
 #endif
 
 	/// Accessor to the number of segments this orbit has.
-	const size_t num_segments() const {return _num_segments_;}
+	const ssize_t & num_segments() const noexcept {return _num_segments_;}
 
 	/// Accessor to what t_min would be if not overridden.
-	BRG_TIME t_min_natural_value() const {return _t_min_natural_value_;}
+	const BRG_TIME & t_min_natural_value() const noexcept {return _t_min_natural_value_;}
 	/// Accessor to what t_max would be if not overridden.
-	BRG_TIME t_max_natural_value() const {return _t_max_natural_value_;}
+	const BRG_TIME & t_max_natural_value() const noexcept {return _t_max_natural_value_;}
 	/// Accessor to the override value of t_min
-	BRG_TIME t_min_override_value() const {return _t_min_override_value_;}
+	const BRG_TIME & t_min_override_value() const noexcept {return _t_min_override_value_;}
 	/// Accessor to the override value of t_max
-	BRG_TIME t_max_override_value() const {return _t_max_override_value_;}
+	const BRG_TIME & t_max_override_value() const noexcept {return _t_max_override_value_;}
 	/// Accessor to the current value of t_min
-	BRG_TIME t_min() const
+	const BRG_TIME t_min() const
 	{
 		if(_override_t_min_)
 			return _t_min_override_value_;
@@ -1077,60 +1077,60 @@ public:
 			return _t_max_natural_value_;
 	}
 	/// Accessor to whether or not to use a user-defined value of t_min
-	const bool override_t_min() const {return _override_t_min_;}
+	const bool override_t_min() const noexcept {return _override_t_min_;}
 	/// Accessor to whether or not to use a user-defined value of t_max
-	const bool override_t_max() const {return _override_t_max_;}
+	const bool override_t_max() const noexcept {return _override_t_max_;}
 
 	/// Accessor to vector of satellite halo parameter unit conversion factors
-	std::vector< double > satellite_parameter_unitconvs() const {return _satellite_parameter_unitconvs_;}
+	const std::vector< double > & satellite_parameter_unitconvs() const noexcept {return _satellite_parameter_unitconvs_;}
 	/// Accessor to vector of host halo parameter unit conversion factors
-	std::vector< double > host_parameter_unitconvs() const {return _host_parameter_unitconvs_;}
+	const std::vector< double > & host_parameter_unitconvs() const noexcept {return _host_parameter_unitconvs_;}
 	/// Accessor to vector of which satellite halo parameters to output
-	std::vector< bool > satellite_output_parameters() const {return _satellite_output_parameters_;}
+	const std::vector< bool > & satellite_output_parameters() const noexcept {return _satellite_output_parameters_;}
 	/// Accessor to vector of which host halo parameters to output
-	std::vector< bool > host_output_parameters() const {return _host_output_parameters_;}
+	const std::vector< bool > & host_output_parameters() const noexcept {return _host_output_parameters_;}
 
 	//@{
 	/// Accessors to stored data on points passed to the orbit.
-	std::vector< std::pair< double, double > > x_spline_points() const {return _x_points_;}
-	std::vector< std::pair< double, double > > y_spline_points() const {return _y_points_;}
-	std::vector< std::pair< double, double > > z_spline_points() const {return _z_points_;}
-	std::vector< std::pair< double, double > > vx_spline_points() const {return _vx_points_;}
-	std::vector< std::pair< double, double > > vy_spline_points() const {return _vy_points_;}
-	std::vector< std::pair< double, double > > vz_spline_points() const {return _vz_points_;}
-	std::vector< double > vx_spline_unknown_points() const {return _vx_unknown_points_;}
-	std::vector< double > vy_spline_unknown_points() const {return _vy_unknown_points_;}
-	std::vector< double > vz_spline_unknown_points() const {return _vz_unknown_points_;}
-	std::vector< std::pair< double, double > > test_mass_spline_points() const
+	const std::vector< std::pair< double, double > > & x_spline_points() const noexcept {return _x_points_;}
+	const std::vector< std::pair< double, double > > & y_spline_points() const noexcept {return _y_points_;}
+	const std::vector< std::pair< double, double > > & z_spline_points() const noexcept {return _z_points_;}
+	const std::vector< std::pair< double, double > > & vx_spline_points() const noexcept {return _vx_points_;}
+	const std::vector< std::pair< double, double > > & vy_spline_points() const noexcept {return _vy_points_;}
+	const std::vector< std::pair< double, double > > & vz_spline_points() const noexcept {return _vz_points_;}
+	const std::vector< double > & vx_spline_unknown_points() const noexcept {return _vx_unknown_points_;}
+	const std::vector< double > & vy_spline_unknown_points() const noexcept {return _vy_unknown_points_;}
+	const std::vector< double > & vz_spline_unknown_points() const noexcept {return _vz_unknown_points_;}
+	const std::vector< std::pair< double, double > > & test_mass_spline_points() const noexcept
 			{return _test_mass_points_;}
-	std::vector< std::pair< double, std::vector< BRG_UNITS > > > host_parameter_spline_points() const
+	const std::vector< std::pair< double, std::vector< BRG_UNITS > > > & host_parameter_spline_points() const noexcept
 			{return _host_parameter_points_;}
 	//@}
 
 	/// Accessor to the list of discontinuity times
-	std::vector< BRG_TIME > discontinuity_times() const {return _discontinuity_times_;}
+	const std::vector< BRG_TIME > discontinuity_times() const noexcept {return _discontinuity_times_;}
 
 	/// Accessor to initial satellite halo pointer
-	const density_profile * init_satellite_ptr() const {return _init_satellite_ptr_;}
+	const density_profile * init_satellite_ptr() const noexcept {return _init_satellite_ptr_;}
 	/// Accessor to initial host halo pointer
-	const density_profile * init_host_ptr() const {return _init_host_ptr_;}
+	const density_profile * init_host_ptr() const noexcept {return _init_host_ptr_;}
 
 	/// Accessor to whether or not to record full data
-	const bool record_full_data() const {return _record_full_data_;}
+	const bool & record_full_data() const noexcept {return _record_full_data_;}
 	/// Accessor to whether or not the host is changing over time
-	const bool host_is_evolving() const {return _host_is_evolving_;}
+	const bool & host_is_evolving() const noexcept {return _host_is_evolving_;}
 	/// Accessor to whether or not the satellite is loaded
-	const bool satellite_loaded() const {return _satellite_loaded_;}
+	const bool & satellite_loaded() const noexcept {return _satellite_loaded_;}
 	/// Accessor to whether or not the host is loaded
-	const bool host_loaded() const {return _host_loaded_;}
+	const bool & host_loaded() const noexcept {return _host_loaded_;}
 	/// Accessor to whether or not the orbit has been calculated
-	const bool calculated() const {return _calculated_;}
+	const bool & calculated() const noexcept {return _calculated_;}
 	/// Accessor to whether or not there was some error in calculation
-	const bool bad_result() const {return _bad_result_;}
+	const bool & bad_result() const noexcept {return _bad_result_;}
 	/// Accessor to whether or not the orbit is using an internal initial host halo
-	const bool using_private_init_satellite() const {return _using_private_init_satellite_;}
+	const bool & using_private_init_satellite() const noexcept {return _using_private_init_satellite_;}
 	/// Accessor to whether or not the orbit is using an internal initial satellite halo
-	const bool using_private_init_host() const {return _using_private_init_host_;}
+	const bool & using_private_init_host() const noexcept {return _using_private_init_host_;}
 
 	/// Accessor to the orbit's private initial satellite halo
 	tNFW_profile private_tNFW_init_satellite() const {return _private_tNFW_init_satellite_;}

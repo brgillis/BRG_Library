@@ -39,7 +39,7 @@
 #include <boost/container/flat_set.hpp>
 #include <boost/optional.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_lensing/pair_bin.h"
 #include "brg_lensing/pair_bins_summary.h"
@@ -63,8 +63,8 @@ struct lens_id_lt
 class pair_binner: public pair_bins_summary {
 private:
 
-	double _z_buffer_;
-	static constexpr double _default_z_buffer_ = 0.1;
+	flt_type _z_buffer_;
+	static constexpr flt_type _default_z_buffer_ = 0.1;
 
 	// Data to be sorted into bins
 #if(1)
@@ -88,7 +88,7 @@ private:
 #if(1)
 
 	std::vector<BRG_DISTANCE> _unmasked_frac_bin_limits_;
-	std::vector<double> _unmasked_fracs_;
+	std::vector<flt_type> _unmasked_fracs_;
 
 #endif
 
@@ -111,9 +111,9 @@ public:
 
 	// Set limits by vectors
 	pair_binner(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
-			brgastro::limit_vector< BRG_MASS > m_bin_limits=brgastro::limit_vector<double>(),
-			brgastro::limit_vector< double > z_bin_limits=brgastro::limit_vector<double>(),
-			brgastro::limit_vector< double > mag_bin_limits=brgastro::limit_vector<double>())
+			brgastro::limit_vector< BRG_MASS > m_bin_limits=brgastro::limit_vector<flt_type>(),
+			brgastro::limit_vector< flt_type > z_bin_limits=brgastro::limit_vector<flt_type>(),
+			brgastro::limit_vector< flt_type > mag_bin_limits=brgastro::limit_vector<flt_type>())
 	:	pair_bins_summary(R_bin_limits,m_bin_limits,z_bin_limits,mag_bin_limits),
 		_z_buffer_(_default_z_buffer_),
 	 	_sorted_(false)
@@ -121,18 +121,18 @@ public:
 	}
 
 	// Set limits by min, max, and step
-	pair_binner(CONST_BRG_DISTANCE_REF R_min,
-				CONST_BRG_DISTANCE_REF R_max,
-				CONST_BRG_DISTANCE_REF R_step,
-				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
-				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
-				CONST_BRG_MASS_REF m_step=std::numeric_limits<double>::infinity(),
-				double z_min=-std::numeric_limits<double>::infinity(),
-				double z_max=std::numeric_limits<double>::infinity(),
-				double z_step=std::numeric_limits<double>::infinity(),
-				double mag_min=-std::numeric_limits<double>::infinity(),
-				double mag_max=std::numeric_limits<double>::infinity(),
-				double mag_step=std::numeric_limits<double>::infinity())
+	pair_binner(const BRG_DISTANCE & R_min,
+				const BRG_DISTANCE & R_max,
+				const BRG_DISTANCE & R_step,
+				const BRG_MASS & m_min=-std::numeric_limits<flt_type>::infinity(),
+				const BRG_MASS & m_max=std::numeric_limits<flt_type>::infinity(),
+				const BRG_MASS & m_step=std::numeric_limits<flt_type>::infinity(),
+				flt_type z_min=-std::numeric_limits<flt_type>::infinity(),
+				flt_type z_max=std::numeric_limits<flt_type>::infinity(),
+				flt_type z_step=std::numeric_limits<flt_type>::infinity(),
+				flt_type mag_min=-std::numeric_limits<flt_type>::infinity(),
+				flt_type mag_max=std::numeric_limits<flt_type>::infinity(),
+				flt_type mag_step=std::numeric_limits<flt_type>::infinity())
 	:	pair_bins_summary(R_min,R_max,R_step,m_min,m_max,m_step,z_min,z_max,z_step,
 			mag_min,mag_max,mag_step),
 			_z_buffer_(_default_z_buffer_),
@@ -147,11 +147,11 @@ public:
 
 	// Setting and accessing z_buffer
 #if(1)
-	void set_z_buffer(const double & new_z_buffer)
+	void set_z_buffer(const flt_type & new_z_buffer)
 	{
 		_z_buffer_ = new_z_buffer;
 	}
-	double z_buffer() const
+	flt_type z_buffer() const
 	{
 		return _z_buffer_;
 	}
@@ -162,8 +162,8 @@ public:
 
 	bool binnable( const galaxy & lens) const;
 	void add_pair( const lens_source_pair & new_pair);
-	void add_lens_id( const ssize_t & new_lens_id, const BRG_MASS & m, const double & z,
-			const double & mag, const double & weight=1);
+	void add_lens_id( const ssize_t & new_lens_id, const BRG_MASS & m, const flt_type & z,
+			const flt_type & mag, const flt_type & weight=1);
 	void clear();
 	void empty();
 	void sort() const;
@@ -198,20 +198,20 @@ public:
 
 	// Access by position
 #if(1)
-	BRG_UNITS delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-										   const double & z, const double & mag);
-	BRG_UNITS delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-										   const double & z, const double & mag);
+	BRG_UNITS delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+										   const flt_type & z, const flt_type & mag);
+	BRG_UNITS delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+										   const flt_type & z, const flt_type & mag);
 
-	BRG_UNITS delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-										   const double & z, const double & mag);
-	BRG_UNITS delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-										   const double & z, const double & mag);
+	BRG_UNITS delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+										   const flt_type & z, const flt_type & mag);
+	BRG_UNITS delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+										   const flt_type & z, const flt_type & mag);
 
-	BRG_UNITS delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-										   const double & z, const double & mag);
-	BRG_UNITS delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-										   const double & z, const double & mag);
+	BRG_UNITS delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+										   const flt_type & z, const flt_type & mag);
+	BRG_UNITS delta_Sigma_x_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+										   const flt_type & z, const flt_type & mag);
 #endif // Access by index
 
 #endif // Accessing summary data for bins

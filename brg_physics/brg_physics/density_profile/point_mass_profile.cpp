@@ -25,7 +25,7 @@
 #include <iostream>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/utility.hpp"
 
@@ -43,7 +43,7 @@ brgastro::point_mass_profile::point_mass_profile()
 }
 
 brgastro::point_mass_profile::point_mass_profile( const BRG_MASS init_mass,
-		const double init_z )
+		const flt_type init_z )
 {
 	set_mvir( init_mass );
 	set_z( init_z );
@@ -59,7 +59,7 @@ brgastro::point_mass_profile::~point_mass_profile()
 #if (1) // Set functions
 
 void brgastro::point_mass_profile::set_mvir(
-		CONST_BRG_MASS_REF new_halo_mass, bool silent )
+		const BRG_MASS & new_halo_mass, bool silent )
 {
 	_mass_ = new_halo_mass;
 }
@@ -105,26 +105,26 @@ BRG_DISTANCE brgastro::point_mass_profile::rt(
 }
 
 BRG_UNITS brgastro::point_mass_profile::dens(
-		CONST_BRG_DISTANCE_REF r ) const
+		const BRG_DISTANCE & r ) const
 {
 #ifdef _BRG_USE_UNITS_
 	BRG_UNITS result(0,-3,0,1,0,0,0);
 #else
-	double result = 0;
+	flt_type result = 0;
 #endif
 
-	result = ( r == 0 ? std::numeric_limits<double>::max() : 0 );
+	result = ( r == 0 ? std::numeric_limits<flt_type>::max() : 0 );
 
 	return result;
 }
 BRG_UNITS brgastro::point_mass_profile::enc_dens(
-		CONST_BRG_DISTANCE_REF r,
+		const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	return enc_mass( r ) / ( 4. / 3. * pi * cube( r ) );
 }
 BRG_MASS brgastro::point_mass_profile::enc_mass(
-		CONST_BRG_DISTANCE_REF r,
+		const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	return _mass_;
@@ -149,7 +149,7 @@ std::vector< std::string > brgastro::point_mass_profile::get_parameter_names(
 	return parameter_names;
 }
 
-void brgastro::point_mass_profile::truncate_to_fraction( const double f,
+void brgastro::point_mass_profile::truncate_to_fraction( const flt_type f,
 		const bool silent )
 {
 	if ( ( f <= 0 ) || ( isbad( f ) ) )

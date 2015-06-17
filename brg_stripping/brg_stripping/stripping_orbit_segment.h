@@ -59,7 +59,7 @@ private:
 
 	// Integration parameters
 #if(1)
-	size_t _spline_resolution_;
+	ssize_t _spline_resolution_;
 
 	// Interpolation method
 	stripping_orbit::allowed_interpolation_type _interpolation_type_;
@@ -128,7 +128,7 @@ private:
 	mutable std::vector< brgastro::phase > _phase_list_, _phase_output_list_;
 
 	// Output-modifying parameters
-	size_t _num_parameters_;
+	ssize_t _num_parameters_;
 	mutable std::vector< double > _satellite_parameter_unitconvs_,
 			_host_parameter_unitconvs_;
 	std::vector< bool > _satellite_output_parameters_,
@@ -136,7 +136,7 @@ private:
 
 	// Private functions
 	void _init();
-	void _reserve( const size_t n, const bool silent = false ) const;
+	void _reserve( const ssize_t n, const bool silent = false ) const;
 	BRG_UNITS _delta_rho( const int index, const double x,
 			CONST_BRG_TIME_REF t_step, const bool silent = false ) const;
 	const double _step_length_factor( CONST_BRG_VELOCITY_REF  v, CONST_BRG_DISTANCE_REF  r ) const;
@@ -168,7 +168,7 @@ public:
 			stripping_orbit_segment other );
 	stripping_orbit_segment( const density_profile *host,
 			const density_profile *satellite,
-			const size_t init_resolution = 200 );
+			const ssize_t init_resolution = 200 );
 	virtual ~stripping_orbit_segment();
 	stripping_orbit_segment *stripping_orbit_spline_clone() const;
 
@@ -211,7 +211,7 @@ public:
 
 	// Setting integration parameters
 #if(1)
-	void set_resolution( const size_t new_spline_resolution,
+	void set_resolution( const ssize_t new_spline_resolution,
 			const bool silent=false );
 	void set_interpolation_type( const stripping_orbit::allowed_interpolation_type new_type,
 			const bool silent=false );
@@ -298,14 +298,14 @@ public:
 			const bool silent = false ) const;
 
 	// Get current state of object
-	size_t length() const;
+	ssize_t length() const;
 
 	// Accessors
 #if(1)
 
 	// Integration parameters
 #if(1)
-	size_t spline_resolution() const {return _spline_resolution_;}
+	ssize_t spline_resolution() const {return _spline_resolution_;}
 	stripping_orbit::allowed_interpolation_type interpolation_type()
 		{return _interpolation_type_;}
 	BRG_VELOCITY v_0() const {return _v_0_;}

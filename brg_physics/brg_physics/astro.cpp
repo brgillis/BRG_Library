@@ -24,7 +24,7 @@
 #include <iostream>
 #include <string>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/cache/cache.hpp"
 #include "brg/math/cache/cache_2d.hpp"
@@ -65,11 +65,11 @@ BRG_UNITS brgastro::redshift_obj::rho_crit() const
 /** Global Function Definitions **/
 #if (1)
 
-BRG_UNITS brgastro::H( const double test_z )
+BRG_UNITS brgastro::H( const flt_type test_z )
 {
 	// Friedmann equation, assuming omega = -1
 	if(test_z==0) return H_0;
-	double zp1 = 1.+test_z;
+	flt_type zp1 = 1.+test_z;
 	return H_0
 			* std::sqrt( Omega_r * quart( zp1 )
 							+ Omega_m * cube( zp1 )
@@ -84,58 +84,58 @@ BRG_UNITS brgastro::H( const double test_z )
 // dfa and afd functions
 #if (1)
 
-BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF da, const double z )
+BRG_DISTANCE brgastro::dfa( const BRG_ANGLE & da, const flt_type z )
 {
 	return da * dfa_cache().get( z );
 }
-BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF a1, CONST_BRG_ANGLE_REF a2,
-		const double z )
+BRG_DISTANCE brgastro::dfa( const BRG_ANGLE & a1, const BRG_ANGLE & a2,
+		const flt_type z )
 {
 	return brgastro::dfa( a2 - a1, z );
 }
-BRG_DISTANCE brgastro::dfa( CONST_BRG_ANGLE_REF a1x, CONST_BRG_ANGLE_REF a1y,
-		CONST_BRG_ANGLE_REF a2x, CONST_BRG_ANGLE_REF a2y, const double z )
+BRG_DISTANCE brgastro::dfa( const BRG_ANGLE & a1x, const BRG_ANGLE & a1y,
+		const BRG_ANGLE & a2x, const BRG_ANGLE & a2y, const flt_type z )
 {
 	return brgastro::dfa( skydist2d( a1x, a1y, a2x, a2y ), z );
 }
-BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF dd, const double z )
+BRG_ANGLE brgastro::afd( const BRG_DISTANCE & dd, const flt_type z )
 {
 	return dd / safe_d( dfa_cache().get( z ) );
 }
-BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF d1, CONST_BRG_DISTANCE_REF d2,
-		const double z )
+BRG_ANGLE brgastro::afd( const BRG_DISTANCE & d1, const BRG_DISTANCE & d2,
+		const flt_type z )
 {
 	return brgastro::afd( fabs( d2 - d1 ), z );
 }
-BRG_ANGLE brgastro::afd( CONST_BRG_DISTANCE_REF d1x,
-		CONST_BRG_DISTANCE_REF d1y, CONST_BRG_DISTANCE_REF d2x,
-		CONST_BRG_DISTANCE_REF d2y, const double z )
+BRG_ANGLE brgastro::afd( const BRG_DISTANCE & d1x,
+		const BRG_DISTANCE & d1y, const BRG_DISTANCE & d2x,
+		const BRG_DISTANCE & d2y, const flt_type z )
 {
 	return brgastro::afd( dist2d( d1x, d1y, d2x, d2y ), z );
 }
 
-double brgastro::zfa( const double a )
+flt_type brgastro::zfa( const flt_type a )
 {
 	return 1. / safe_d( a ) - 1.;
 }
-double brgastro::afz( const double z )
+flt_type brgastro::afz( const flt_type z )
 {
 	return 1. / safe_d( 1 + z );
 }
 
-BRG_TIME brgastro::tfz( const double z )
+BRG_TIME brgastro::tfz( const flt_type z )
 {
 	return brgastro::tfa( afz( z ) );
 }
-BRG_TIME brgastro::tfa( const double a )
+BRG_TIME brgastro::tfa( const flt_type a )
 {
 	return tfa_cache().get( a );
 }
-double brgastro::zft( CONST_BRG_TIME_REF t )
+flt_type brgastro::zft( const BRG_TIME & t )
 {
 	return brgastro::zfa( brgastro::aft( t ) );
 }
-double brgastro::aft( CONST_BRG_TIME_REF t )
+flt_type brgastro::aft( const BRG_TIME & t )
 {
 	brgastro::tfa_cache cache;
 	return cache.inverse_get( t );
@@ -145,54 +145,54 @@ double brgastro::aft( CONST_BRG_TIME_REF t )
 
 // Functions to integrate out distances
 #if (1)
-double brgastro::integrate_add( const double z1, const double z2 )
+flt_type brgastro::integrate_add( const flt_type z1, const flt_type z2 )
 {
 	return brgastro::integrate_distance( z1, z2, 0, 100000 );
 }
-double brgastro::integrate_cmd( const double z1, const double z2 )
+flt_type brgastro::integrate_cmd( const flt_type z1, const flt_type z2 )
 {
 	return brgastro::integrate_distance( z1, z2, 1, 10000000 );
 }
-double brgastro::integrate_Ld( const double z1, const double z2 )
+flt_type brgastro::integrate_Ld( const flt_type z1, const flt_type z2 )
 {
 	return brgastro::integrate_distance( z1, z2, 2, 10000000 );
 }
-double brgastro::integrate_ltd( const double z1, const double z2 )
+flt_type brgastro::integrate_ltd( const flt_type z1, const flt_type z2 )
 {
 	return brgastro::integrate_distance( z1, z2, 3, 10000000 );
 }
-double brgastro::integrate_add( const double z )
+flt_type brgastro::integrate_add( const flt_type z )
 {
 	return brgastro::integrate_distance( 0, z, 0, 100000 );
 }
-double brgastro::integrate_cmd( const double z )
+flt_type brgastro::integrate_cmd( const flt_type z )
 {
 	return brgastro::integrate_distance( 0, z, 1, 10000000 );
 }
-double brgastro::integrate_Ld( const double z )
+flt_type brgastro::integrate_Ld( const flt_type z )
 {
 	return brgastro::integrate_distance( 0, z, 2, 10000000 );
 }
-double brgastro::integrate_ltd( const double z )
+flt_type brgastro::integrate_ltd( const flt_type z )
 {
 	return brgastro::integrate_distance( 0, z, 3, 10000000 );
 }
-double brgastro::integrate_distance( const double z1_init,
-		const double z2_init, const int mode, const int n )
+flt_type brgastro::integrate_distance( const flt_type z1_init,
+		const flt_type z2_init, const int_type mode, const int_type n )
 {
 	// Function that will help calculate cosmic distances, thanks to Richard Powell - http://www.atlasoftheuniverse.com/
 	// NOTE: Will return a negative value if z2 < z1. This is by design.
 
-	double OK0;
-	double OM0 = Omega_m, OR0 = Omega_r, OL0 = Omega_l;
-	double OM, OR, OL, OK;
-	double z1 = z1_init, z2 = z2_init;
-	double HD; //Hubble distance in billions of lightyears
-	double z, a, a1, a2, adot, h1;
-	double DC = std::numeric_limits<double>::max(), DCC = 0, DT = std::numeric_limits<double>::max(), DTT = 0, DM;
-	//double age, size;
-	int i;
-	short int sign = 1;
+	flt_type OK0;
+	flt_type OM0 = Omega_m, OR0 = Omega_r, OL0 = Omega_l;
+	flt_type OM, OR, OL, OK;
+	flt_type z1 = z1_init, z2 = z2_init;
+	flt_type HD; //Hubble distance in billions of lightyears
+	flt_type z, a, a1, a2, adot, h1;
+	flt_type DC = std::numeric_limits<flt_type>::max(), DCC = 0, DT = std::numeric_limits<flt_type>::max(), DTT = 0, DM;
+	//flt_type age, size;
+	int_type i;
+	short_int_type sign = 1;
 
 	if(z1==z2) return 0;
 
@@ -281,15 +281,15 @@ double brgastro::integrate_distance( const double z1_init,
 // Other functions
 #if (1)
 
-BRG_DISTANCE brgastro::ad_distance( double z1, double z2 )
+BRG_DISTANCE brgastro::ad_distance( flt_type z1, flt_type z2 )
 {
 	if ( z2 < z1 )
 		std::swap( z1, z2 );
 	return brgastro::add_cache().get( z1, z2 );
 }
 
-BRG_UNITS brgastro::sigma_crit( const double z_lens,
-		const double z_source )
+BRG_UNITS brgastro::sigma_crit( const flt_type z_lens,
+		const flt_type z_source )
 {
 	return square( c ) / ( 4. * pi * Gc )
 			* brgastro::ad_distance( 0, z_source )

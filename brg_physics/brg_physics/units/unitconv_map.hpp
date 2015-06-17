@@ -36,7 +36,7 @@
 namespace brgastro
 {
 
-typedef std::map<std::string,double> unitconv_map;
+typedef std::map<std::string,flt_type> unitconv_map;
 
 } // namespace brgastro
 

@@ -28,7 +28,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
@@ -39,7 +39,7 @@ namespace brgastro {
 
 #ifndef _BRG_VIRIAL_DENSITY_FACTOR_DEFFED_
 #define _BRG_VIRIAL_DENSITY_FACTOR_DEFFED_
-const double virial_density_factor = 200;
+const flt_type virial_density_factor = 200;
 #endif
 
 class density_profile: public virtual redshift_obj
@@ -113,7 +113,7 @@ public:
 #if (1) // Pure virtual functions (must be implemented by any derived classes)
 
 	virtual BRG_MASS mvir() const =0; // Virial mass (exact definition can be chosen per profile)
-	virtual BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const =0; // Local density at radius r
+	virtual BRG_UNITS dens( const BRG_DISTANCE & r ) const =0; // Local density at radius r
 
 	virtual density_profile *density_profile_clone() const =0; // Creates a clone of this
 #endif
@@ -122,25 +122,25 @@ public:
 
 #if (1) // Set functions - will return 1 if profile doesn't support this method of setting
 	// All take values in default unit set (m, s, kg, K, rad, C)
-	virtual void set_mvir( CONST_BRG_MASS_REF new_mvir, const bool silent = false )
+	virtual void set_mvir( const BRG_MASS & new_mvir, const bool silent = false )
 	{
 		throw std::logic_error("density_profile::set_mvir(...) must be overloaded to be used.\n");
 	}
-	virtual void set_vvir( CONST_BRG_VELOCITY_REF new_vvir, const bool silent =
+	virtual void set_vvir( const BRG_VELOCITY & new_vvir, const bool silent =
 			false )
 	{
 		throw std::logic_error("density_profile::set_vvir(...) must be overloaded to be used.\n");
 	}
-	virtual void set_rvir( CONST_BRG_DISTANCE_REF new_rvir, const bool silent =
+	virtual void set_rvir( const BRG_DISTANCE & new_rvir, const bool silent =
 			false )
 	{
 		throw std::logic_error("density_profile::set_rvir(...) must be overloaded to be used.\n");
 	}
-	virtual void set_rs( CONST_BRG_DISTANCE_REF new_rs, const bool silent = false ) // Scale radius
+	virtual void set_rs( const BRG_DISTANCE & new_rs, const bool silent = false ) // Scale radius
 	{
 		throw std::logic_error("density_profile::set_rs(...) must be overloaded to be used.\n");
 	}
-	virtual void set_rt( CONST_BRG_DISTANCE_REF new_rt, const bool silent = false ) // Tidal/truncation radius
+	virtual void set_rt( const BRG_DISTANCE & new_rt, const bool silent = false ) // Tidal/truncation radius
 	{
 		throw std::logic_error("density_profile::set_rt(...) must be overloaded to be used.\n");
 	}
@@ -148,21 +148,21 @@ public:
 	{
 		throw std::logic_error("density_profile::set_parameters(...) must be overloaded to be used.\n");
 	}
-	virtual void set_tau( const double new_tau, const bool silent = false ) // Truncation parameter
+	virtual void set_tau( const flt_type new_tau, const bool silent = false ) // Truncation parameter
 	{
 		throw std::logic_error("density_profile::set_tau(...) must be overloaded to be used.\n");
 	}
-	virtual void set_c( const double new_c, const bool silent = false ) // Concentration
+	virtual void set_c( const flt_type new_c, const bool silent = false ) // Concentration
 	{
 		throw std::logic_error("density_profile::set_c(...) must be overloaded to be used.\n");
 	}
-	void override_rhmvir( CONST_BRG_DISTANCE_REF new_rhmvir, bool silent =
+	void override_rhmvir( const BRG_DISTANCE & new_rhmvir, bool silent =
 			false )
 	{
 		_rhmvir_cache_ = new_rhmvir;
 		hmvir_cached = true;
 	}
-	void override_rhmtot( CONST_BRG_DISTANCE_REF new_rhmtot, bool silent =
+	void override_rhmtot( const BRG_DISTANCE & new_rhmtot, bool silent =
 			false )
 	{
 		_rhmtot_cache_ = new_rhmtot;
@@ -204,7 +204,7 @@ public:
 #endif // end Virtual functions which must be overwritten if they're going to be used
 
 #if (1) // Virtual functions which should be overwritten if at all possible and if they'll be used
-	virtual BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r, const bool silent =
+	virtual BRG_MASS enc_mass( const BRG_DISTANCE & r, const bool silent =
 			true ) const; // Mass enclosed with sphere of radius r
 #endif
 
@@ -229,7 +229,7 @@ public:
 	{
 		return ( _hm_type_ == 0 ? hmvir() : hmtot() );
 	}
-	virtual BRG_UNITS enc_dens( CONST_BRG_DISTANCE_REF r,
+	virtual BRG_UNITS enc_dens( const BRG_DISTANCE & r,
 			const bool silent = false ) const // Mean density enclosed with sphere of radius r
 	{
 		BRG_DISTANCE r_to_use = max( std::fabs( r ), SMALL_FACTOR );
@@ -283,14 +283,14 @@ public:
 		return 2 * pi * rt( silent ) / safe_d(vt( silent ));
 	}
 
-	void set_hm_type( int new_hm_type ) // Whether default half-mass is half virial, half total, or something else
+	void set_hm_type( int_type new_hm_type ) // Whether default half-mass is half virial, half total, or something else
 	{
 		_hm_type_ = new_hm_type;
 	}
 
 #if (1) // advanced get functions
 
-	BRG_UNITS accel( CONST_BRG_DISTANCE_REF r,
+	BRG_UNITS accel( const BRG_DISTANCE & r,
 			const bool silent = false ) const // Gravitational acceleration at radius r
 	{
 		if(r==0)
@@ -298,7 +298,7 @@ public:
 		else
 			return -Gc * enc_mass( r, silent ) / square( r );
 	}
-	virtual BRG_UNITS Daccel( CONST_BRG_DISTANCE_REF r, const bool silent =
+	virtual BRG_UNITS Daccel( const BRG_DISTANCE & r, const bool silent =
 			false ) const; // Derivative of acceleration at radius r
 
 #endif // end advanced get functions
@@ -307,7 +307,7 @@ public:
 
 #if (1) // Other operations
 
-	virtual void truncate_to_fraction( const double fraction,
+	virtual void truncate_to_fraction( const flt_type fraction,
 			bool silent = false ) // Adjusts parameters of this class to decrease the mass to fraction of its previous mass. Must be defined for each child
 	{
 		throw std::logic_error("density_profile::truncate_to_fraction() must be overloaded to be used.\n");
@@ -320,8 +320,8 @@ public:
 
 // Function to estimate orbital period from current position and velocity in a density profile
 // Note that this is merely an estimate from analogy to calculations in a Keplerian potential
-BRG_TIME period( const density_profile *host, CONST_BRG_DISTANCE_REF r,
-		CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt = 0 );
+BRG_TIME period( const density_profile *host, const BRG_DISTANCE & r,
+		const BRG_VELOCITY & vr, const BRG_VELOCITY & vt = 0 );
 
 } // end namespace brgastro
 

@@ -30,7 +30,7 @@
 
 #include <string>
 
-#include "brg/global.h"
+#include "brg/common.h"
 #include "brg/math/cache/cache_2d.hpp"
 
 #include "brg_physics/units/unit_obj.h"
@@ -66,7 +66,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const double _calculate( const double in_param_1, const double in_param_2 ) const;
+	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2 ) const;
 
 public:
 	shifting_cache()

@@ -25,7 +25,7 @@
 #ifndef _BRG_DENSITY_PROFILE_FUNCTORS_H_
 #define _BRG_DENSITY_PROFILE_FUNCTORS_H_
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/density_profile/density_profile.h"
 #include "brg_physics/units/unit_obj.h"
@@ -53,7 +53,7 @@ public:
 		return _host_ptr_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
+	BRG_UNITS operator()( const BRG_UNITS &  in_param, const bool silent = false ) const;
 
 	accel_functor();
 	accel_functor( const density_profile *init_host_ptr );
@@ -91,7 +91,7 @@ public:
 		return _target_mass_;
 	}
 
-	BRG_UNITS operator ()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
+	BRG_UNITS operator ()( const BRG_UNITS & in_param, const bool silent = false ) const;
 
 	solve_rhm_functor();
 	solve_rhm_functor( const density_profile *init_host,
@@ -122,7 +122,7 @@ public:
 		return _host_ptr_;
 	}
 
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
+	BRG_UNITS operator()( const BRG_UNITS & in_param, const bool silent = false ) const;
 
 	spherical_density_functor();
 	spherical_density_functor( const density_profile *init_host );

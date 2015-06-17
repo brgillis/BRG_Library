@@ -38,15 +38,15 @@ namespace brgastro {
 class source_obj: public virtual sky_obj {
 private:
 
-	double _gamma_1_, _gamma_2_; // Gamma components in ra/dec coordinates
-	double _kappa_; // Convergence
+	flt_type _gamma_1_, _gamma_2_; // Gamma components in ra/dec coordinates
+	flt_type _kappa_; // Convergence
 
 public:
 
 	// Constructors and destructor
 #if(1)
-	source_obj( CONST_BRG_ANGLE_REF init_ra = 0, CONST_BRG_ANGLE_REF init_dec = 0, double init_z = 0,
-			double init_gamma_1 = 0, double init_gamma_2 = 0, double init_kappa = 0 )
+	source_obj( const BRG_ANGLE & init_ra = 0, const BRG_ANGLE & init_dec = 0, flt_type init_z = 0,
+			flt_type init_gamma_1 = 0, flt_type init_gamma_2 = 0, flt_type init_kappa = 0 )
 	: sky_obj(init_ra,init_dec,init_z),
 	  _gamma_1_(init_gamma_1),
 	  _gamma_2_(init_gamma_2),
@@ -64,15 +64,15 @@ public:
 	// Accessors
 #if (1)
 
-	double gamma_1() const
+	flt_type gamma_1() const
 	{
 		return _gamma_1_;
 	}
-	double gamma_2() const
+	flt_type gamma_2() const
 	{
 		return _gamma_2_;
 	}
-	double kappa() const
+	flt_type kappa() const
 	{
 		return _kappa_;
 	}
@@ -82,15 +82,15 @@ public:
 	// Setters
 #if (1)
 
-	void set_gamma_1(double new_gamma_1)
+	void set_gamma_1(flt_type new_gamma_1)
 	{
 		_gamma_1_ = new_gamma_1;
 	}
-	void set_gamma_2(double new_gamma_2)
+	void set_gamma_2(flt_type new_gamma_2)
 	{
 		_gamma_2_ = new_gamma_2;
 	}
-	void set_kappa(double new_kappa)
+	void set_kappa(flt_type new_kappa)
 	{
 		_kappa_ = new_kappa;
 	}

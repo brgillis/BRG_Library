@@ -20,7 +20,7 @@
 
 \**********************************************************************/
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/astro_caches.h"
 #include "brg_physics/astro.h"
@@ -30,9 +30,9 @@
 // brgastro::sky_obj class methods
 #if (1)
 
-brgastro::sky_obj::sky_obj( CONST_BRG_ANGLE_REF init_ra, CONST_BRG_ANGLE_REF init_dec,
-		const double init_z, CONST_BRG_ANGLE_REF init_ra_err,
-		CONST_BRG_ANGLE_REF init_dec_err, const double init_z_err )
+brgastro::sky_obj::sky_obj( const BRG_ANGLE & init_ra, const BRG_ANGLE & init_dec,
+		const flt_type init_z, const BRG_ANGLE & init_ra_err,
+		const BRG_ANGLE & init_dec_err, const flt_type init_z_err )
 {
 	partial_clear();
 	set_ra_dec_z_err( init_ra, init_dec, init_z, init_ra_err, init_dec_err,
@@ -52,39 +52,39 @@ void brgastro::sky_obj::partial_clear()
 	_weight_ = 1;
 }
 
-void brgastro::sky_obj::set_ra( CONST_BRG_ANGLE_REF new_ra )
+void brgastro::sky_obj::set_ra( const BRG_ANGLE & new_ra )
 {
 	_ra_ = new_ra;
 }
-void brgastro::sky_obj::set_ra_err( CONST_BRG_ANGLE_REF new_ra_err )
+void brgastro::sky_obj::set_ra_err( const BRG_ANGLE & new_ra_err )
 {
 	_ra_err_ = new_ra_err;
 }
-void brgastro::sky_obj::set_dec( CONST_BRG_ANGLE_REF new_dec )
+void brgastro::sky_obj::set_dec( const BRG_ANGLE & new_dec )
 {
 	_dec_ = new_dec;
 }
-void brgastro::sky_obj::set_dec_err( CONST_BRG_ANGLE_REF new_dec_err )
+void brgastro::sky_obj::set_dec_err( const BRG_ANGLE & new_dec_err )
 {
 	_dec_err_ = new_dec_err;
 }
-void brgastro::sky_obj::set_ra_dec( CONST_BRG_ANGLE_REF new_ra,
-		CONST_BRG_ANGLE_REF new_dec )
+void brgastro::sky_obj::set_ra_dec( const BRG_ANGLE & new_ra,
+		const BRG_ANGLE & new_dec )
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
 }
-void brgastro::sky_obj::set_ra_dec_z( CONST_BRG_ANGLE_REF new_ra,
-		CONST_BRG_ANGLE_REF new_dec, const double new_z )
+void brgastro::sky_obj::set_ra_dec_z( const BRG_ANGLE & new_ra,
+		const BRG_ANGLE & new_dec, const flt_type new_z )
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
 	set_z( new_z );
 }
-void brgastro::sky_obj::set_ra_dec_z_err( CONST_BRG_ANGLE_REF new_ra,
-		CONST_BRG_ANGLE_REF new_dec, const double new_z,
-		CONST_BRG_ANGLE_REF new_ra_err, CONST_BRG_ANGLE_REF new_dec_err,
-		const double new_z_err )
+void brgastro::sky_obj::set_ra_dec_z_err( const BRG_ANGLE & new_ra,
+		const BRG_ANGLE & new_dec, const flt_type new_z,
+		const BRG_ANGLE & new_ra_err, const BRG_ANGLE & new_dec_err,
+		const flt_type new_z_err )
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
@@ -93,20 +93,20 @@ void brgastro::sky_obj::set_ra_dec_z_err( CONST_BRG_ANGLE_REF new_ra,
 	set_dec_err( new_dec_err );
 	set_z_err( new_z_err );
 }
-void brgastro::sky_obj::set_ra_dec_err( CONST_BRG_ANGLE_REF new_ra,
-		CONST_BRG_ANGLE_REF new_dec, CONST_BRG_ANGLE_REF new_ra_err,
-		CONST_BRG_ANGLE_REF new_dec_err )
+void brgastro::sky_obj::set_ra_dec_err( const BRG_ANGLE & new_ra,
+		const BRG_ANGLE & new_dec, const BRG_ANGLE & new_ra_err,
+		const BRG_ANGLE & new_dec_err )
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
 	set_ra_err( new_ra_err );
 	set_dec_err( new_dec_err );
 }
-void brgastro::sky_obj::set_weight( const double new_weight )
+void brgastro::sky_obj::set_weight( const flt_type new_weight )
 {
 	_weight_ = new_weight;
 }
-void brgastro::sky_obj::set_index( const int new_index )
+void brgastro::sky_obj::set_index( const int_type new_index )
 {
 	_index_ = new_index;
 }
@@ -118,9 +118,9 @@ void brgastro::sky_obj::set_ID( const std::string &new_ID )
 #endif // end brgastro::sky_obj class methods
 
 BRG_DISTANCE brgastro::dfa( const brgastro::sky_obj *obj1,
-		const brgastro::sky_obj *obj2, const double z )
+		const brgastro::sky_obj *obj2, const flt_type z )
 {
-	double z_to_use;
+	flt_type z_to_use;
 	if ( z == -1 )
 		z_to_use = obj1->z();
 	else

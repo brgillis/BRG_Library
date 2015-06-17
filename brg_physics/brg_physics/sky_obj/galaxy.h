@@ -25,7 +25,7 @@
 #ifndef _BRG_GALAXY_H_
 #define _BRG_GALAXY_H_
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/sky_obj/sky_obj.h"
 
@@ -54,26 +54,26 @@ public:
 	// Public member variables
 
 	BRG_MASS stellar_mass;
-	double umag, umag_err;
-	double gmag, gmag_err;
-	double rmag, rmag_err;
-	double imag, imag_err;
-	double zmag, zmag_err;
+	flt_type umag, umag_err;
+	flt_type gmag, gmag_err;
+	flt_type rmag, rmag_err;
+	flt_type imag, imag_err;
+	flt_type zmag, zmag_err;
 
-	double z_phot, z_phot_err;
-	double odds;
-	double phot_template;
+	flt_type z_phot, z_phot_err;
+	flt_type odds;
+	flt_type phot_template;
 
 	galaxy_group *host_group; // Pointer to group this galaxy resides within
-	int host_group_index;
+	int_type host_group_index;
 
 	// Public member functions
 
 	// Constructors
-	galaxy( CONST_BRG_ANGLE_REF init_ra = 0, CONST_BRG_ANGLE_REF init_dec = 0, double init_z = 0,
-			CONST_BRG_ANGLE_REF init_ra_err = 0, CONST_BRG_ANGLE_REF init_dec_err = 0, double init_z_err =
-			0, CONST_BRG_MASS_REF init_stellar_mass=0,
-			double init_mag=0, double init_mag_err=0 );
+	galaxy( const BRG_ANGLE & init_ra = 0, const BRG_ANGLE & init_dec = 0, flt_type init_z = 0,
+			const BRG_ANGLE & init_ra_err = 0, const BRG_ANGLE & init_dec_err = 0, flt_type init_z_err =
+			0, const BRG_MASS & init_stellar_mass=0,
+			flt_type init_mag=0, flt_type init_mag_err=0 );
 
 	// Copy constructor
 	//galaxy(const galaxy other_galaxy); // Implicit is fine for us
@@ -89,7 +89,7 @@ public:
 	{
 		return stellar_mass;
 	}
-	double mag() const
+	flt_type mag() const
 	{
 		return imag;
 	}

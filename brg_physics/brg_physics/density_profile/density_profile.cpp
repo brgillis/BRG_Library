@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/calculus/integrate.hpp"
 #include "brg/math/solvers/solvers.hpp"
@@ -33,7 +33,7 @@
 
 // brgastro::density_profile class methods
 #if (1)
-BRG_UNITS brgastro::density_profile::Daccel( CONST_BRG_DISTANCE_REF r,
+BRG_UNITS brgastro::density_profile::Daccel( const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	BRG_DISTANCE dr;
@@ -52,7 +52,7 @@ BRG_DISTANCE brgastro::density_profile::rhmtot( const bool silent ) const
 		return _rhmtot_cache_;
 
 	// Not cached, so we'll have to calculate it
-	double target_mass = hmtot();
+	flt_type target_mass = hmtot();
 	solve_rhm_functor func( this, target_mass );
 	solve_rhm_functor *func_ptr = &func;
 
@@ -91,7 +91,7 @@ BRG_DISTANCE brgastro::density_profile::rhmvir( const bool silent ) const
 		return _rhmvir_cache_;
 
 	// Not cached, so we'll have to calculate it
-	double target_mass = hmvir();
+	flt_type target_mass = hmvir();
 	solve_rhm_functor func( this, target_mass );
 	solve_rhm_functor *func_ptr = &func;
 
@@ -121,7 +121,7 @@ BRG_DISTANCE brgastro::density_profile::rhmvir( const bool silent ) const
 	return _rhmvir_cache_;
 }
 
-BRG_MASS brgastro::density_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
+BRG_MASS brgastro::density_profile::enc_mass( const BRG_DISTANCE & r,
 		const bool silent ) const
 {
 	if ( r == 0 )
@@ -137,7 +137,7 @@ BRG_MASS brgastro::density_profile::enc_mass( CONST_BRG_DISTANCE_REF r,
 #endif
 
 BRG_TIME brgastro::period( const brgastro::density_profile *host,
-		CONST_BRG_DISTANCE_REF r, CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt )
+		const BRG_DISTANCE & r, const BRG_VELOCITY & vr, const BRG_VELOCITY & vt )
 {
 	BRG_UNITS mu = host->enc_mass( r ) * Gc;
 	BRG_VELOCITY v = quad_add( vr, vt );

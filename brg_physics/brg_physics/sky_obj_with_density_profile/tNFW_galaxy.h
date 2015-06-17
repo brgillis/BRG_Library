@@ -25,7 +25,7 @@
 #ifndef _BRG_TNFW_GALAXY_H_
 #define _BRG_TNFW_GALAXY_H_
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/density_profile/density_profile.h"
 #include "brg_physics/density_profile/tNFW_profile.h"

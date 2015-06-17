@@ -31,11 +31,11 @@
 #ifndef _BRG_MAGNIFICATION_ALPHA_H_INCLUDED_
 #define _BRG_MAGNIFICATION_ALPHA_H_INCLUDED_
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 namespace brgastro {
 
-double magnification_alpha(const double & m, const double & z);
+flt_type magnification_alpha(const flt_type & m, const flt_type & z);
 
 } // namespace brgastro
 

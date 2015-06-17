@@ -33,7 +33,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 #include "brg/utility.hpp"
@@ -95,65 +95,65 @@ void pair_bins_summary::_set_m_limits(brgastro::limit_vector< BRG_MASS > m_bin_l
 {
 	_m_bin_limits_ = m_bin_limits;
 }
-void pair_bins_summary::_set_z_limits(brgastro::limit_vector< double > z_bin_limits)
+void pair_bins_summary::_set_z_limits(brgastro::limit_vector< flt_type > z_bin_limits)
 {
 	_z_bin_limits_ = z_bin_limits;
 }
-void pair_bins_summary::_set_mag_limits(brgastro::limit_vector< double > mag_bin_limits)
+void pair_bins_summary::_set_mag_limits(brgastro::limit_vector< flt_type > mag_bin_limits)
 {
 	_mag_bin_limits_ = mag_bin_limits;
 }
 
 // Set specific limits through a linear spacing
-void pair_bins_summary::_set_linear_R_limits(CONST_BRG_DISTANCE_REF R_min,
-		CONST_BRG_DISTANCE_REF R_max,
+void pair_bins_summary::_set_linear_R_limits(const BRG_DISTANCE & R_min,
+		const BRG_DISTANCE & R_max,
 		const ssize_t & R_bins)
 {
-	_R_bin_limits_.reconstruct(brgastro::limit_vector<double>::type::LINEAR, R_min, R_max, R_bins);
+	_R_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LINEAR, R_min, R_max, R_bins);
 }
-void pair_bins_summary::_set_linear_m_limits(CONST_BRG_MASS_REF m_min,
-		CONST_BRG_MASS_REF m_max,
+void pair_bins_summary::_set_linear_m_limits(const BRG_MASS & m_min,
+		const BRG_MASS & m_max,
 		const ssize_t & m_bins)
 {
-	_m_bin_limits_.reconstruct(brgastro::limit_vector<double>::type::LINEAR, m_min, m_max, m_bins);
+	_m_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LINEAR, m_min, m_max, m_bins);
 }
-void pair_bins_summary::_set_linear_z_limits(const double & z_min,
-		const double & z_max,
+void pair_bins_summary::_set_linear_z_limits(const flt_type & z_min,
+		const flt_type & z_max,
 		const ssize_t & z_bins)
 {
-	_z_bin_limits_.reconstruct(brgastro::limit_vector<double>::type::LINEAR, z_min, z_max, z_bins);
+	_z_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LINEAR, z_min, z_max, z_bins);
 }
-void pair_bins_summary::_set_linear_mag_limits(const double & mag_min,
-		const double & mag_max,
+void pair_bins_summary::_set_linear_mag_limits(const flt_type & mag_min,
+		const flt_type & mag_max,
 		const ssize_t & mag_bins)
 {
-	_mag_bin_limits_.reconstruct(brgastro::limit_vector<double>::type::LINEAR, mag_min, mag_max, mag_bins);
+	_mag_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LINEAR, mag_min, mag_max, mag_bins);
 }
 
 // Set specific limits through a log spacing
-void pair_bins_summary::_set_log_R_limits(CONST_BRG_DISTANCE_REF R_min,
-		CONST_BRG_DISTANCE_REF R_max,
+void pair_bins_summary::_set_log_R_limits(const BRG_DISTANCE & R_min,
+		const BRG_DISTANCE & R_max,
 		const ssize_t & R_num_bins)
 {
-	_R_bin_limits_.reconstruct(brgastro::limit_vector<double>::type::LOG, R_min, R_max, R_num_bins);
+	_R_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LOG, R_min, R_max, R_num_bins);
 }
-void pair_bins_summary::_set_log_m_limits(CONST_BRG_MASS_REF m_min,
-		CONST_BRG_MASS_REF m_max,
+void pair_bins_summary::_set_log_m_limits(const BRG_MASS & m_min,
+		const BRG_MASS & m_max,
 		const ssize_t & m_num_bins)
 {
-	_m_bin_limits_.reconstruct(brgastro::limit_vector<double>::type::LOG, m_min, m_max, m_num_bins);
+	_m_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LOG, m_min, m_max, m_num_bins);
 }
-void pair_bins_summary::_set_log_z_limits(const double & z_min,
-		const double & z_max,
+void pair_bins_summary::_set_log_z_limits(const flt_type & z_min,
+		const flt_type & z_max,
 		const ssize_t & z_num_bins)
 {
-	_z_bin_limits_.reconstruct(brgastro::limit_vector<double>::type::LOG, z_min, z_max, z_num_bins);
+	_z_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LOG, z_min, z_max, z_num_bins);
 }
-void pair_bins_summary::_set_log_mag_limits(const double & mag_min,
-		const double & mag_max,
+void pair_bins_summary::_set_log_mag_limits(const flt_type & mag_min,
+		const flt_type & mag_max,
 		const ssize_t & mag_num_bins)
 {
-	_mag_bin_limits_.reconstruct(brgastro::limit_vector<double>::type::LOG, mag_min, mag_max, mag_num_bins);
+	_mag_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LOG, mag_min, mag_max, mag_num_bins);
 }
 
 // Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
@@ -198,8 +198,8 @@ void pair_bins_summary::_reconstruct() const
 // Set limits by vectors
 pair_bins_summary::pair_bins_summary(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
 		brgastro::limit_vector< BRG_MASS > m_bin_limits,
-		brgastro::limit_vector< double > z_bin_limits,
-		brgastro::limit_vector< double > mag_bin_limits)
+		brgastro::limit_vector< flt_type > z_bin_limits,
+		brgastro::limit_vector< flt_type > mag_bin_limits)
 :	_R_bin_limits_(R_bin_limits),
  	_m_bin_limits_(m_bin_limits),
  	_z_bin_limits_(z_bin_limits),
@@ -210,22 +210,22 @@ pair_bins_summary::pair_bins_summary(brgastro::limit_vector< BRG_DISTANCE > R_bi
 }
 
 // Set limits by min, max, and step
-pair_bins_summary::pair_bins_summary(CONST_BRG_DISTANCE_REF R_min,
-				CONST_BRG_DISTANCE_REF R_max,
+pair_bins_summary::pair_bins_summary(const BRG_DISTANCE & R_min,
+				const BRG_DISTANCE & R_max,
 				const ssize_t & R_bins,
-				CONST_BRG_MASS_REF m_min,
-				CONST_BRG_MASS_REF m_max,
+				const BRG_MASS & m_min,
+				const BRG_MASS & m_max,
 				const ssize_t & m_bins,
-				const double & z_min,
-				const double & z_max,
+				const flt_type & z_min,
+				const flt_type & z_max,
 				const ssize_t & z_bins,
-				const double & mag_min,
-				const double & mag_max,
+				const flt_type & mag_min,
+				const flt_type & mag_max,
 				const ssize_t & mag_bins)
 :	_R_bin_limits_(brgastro::limit_vector<BRG_DISTANCE>::type::LINEAR,R_min,R_max,R_bins),
  	_m_bin_limits_(brgastro::limit_vector<BRG_MASS>::type::LINEAR,m_min,m_max,m_bins),
- 	_z_bin_limits_(brgastro::limit_vector<double>::type::LINEAR,z_min,z_max,z_bins),
- 	_mag_bin_limits_(brgastro::limit_vector<double>::type::LINEAR,mag_min,mag_max,mag_bins),
+ 	_z_bin_limits_(brgastro::limit_vector<flt_type>::type::LINEAR,z_min,z_max,z_bins),
+ 	_mag_bin_limits_(brgastro::limit_vector<flt_type>::type::LINEAR,mag_min,mag_max,mag_bins),
  	_valid_limits_(false)
 {
 	_check_limits();
@@ -273,41 +273,41 @@ void pair_bins_summary::set_m_limits(brgastro::limit_vector< BRG_MASS > m_bin_li
 	_set_m_limits(m_bin_limits);
 	_check_limits();
 }
-void pair_bins_summary::set_z_limits(brgastro::limit_vector< double > z_bin_limits)
+void pair_bins_summary::set_z_limits(brgastro::limit_vector< flt_type > z_bin_limits)
 {
 	_set_z_limits(z_bin_limits);
 	_check_limits();
 }
-void pair_bins_summary::set_mag_limits(brgastro::limit_vector< double > mag_bin_limits)
+void pair_bins_summary::set_mag_limits(brgastro::limit_vector< flt_type > mag_bin_limits)
 {
 	_set_mag_limits(mag_bin_limits);
 	_check_limits();
 }
 
 // Set specific limits through a linear spacing
-void pair_bins_summary::set_linear_R_limits(CONST_BRG_DISTANCE_REF R_min,
-		CONST_BRG_DISTANCE_REF R_max,
+void pair_bins_summary::set_linear_R_limits(const BRG_DISTANCE & R_min,
+		const BRG_DISTANCE & R_max,
 		const ssize_t & R_bins)
 {
 	_set_linear_R_limits(R_min,R_max,R_bins);
 	_check_limits();
 }
-void pair_bins_summary::set_linear_m_limits(CONST_BRG_MASS_REF m_min,
-		CONST_BRG_MASS_REF m_max,
+void pair_bins_summary::set_linear_m_limits(const BRG_MASS & m_min,
+		const BRG_MASS & m_max,
 		const ssize_t & m_bins)
 {
 	_set_linear_m_limits(m_min,m_max,m_bins);
 	_check_limits();
 }
-void pair_bins_summary::set_linear_z_limits(const double & z_min,
-		const double & z_max,
+void pair_bins_summary::set_linear_z_limits(const flt_type & z_min,
+		const flt_type & z_max,
 		const ssize_t & z_bins)
 {
 	_set_linear_z_limits(z_min,z_max,z_bins);
 	_check_limits();
 }
-void pair_bins_summary::set_linear_mag_limits(const double & mag_min,
-		const double & mag_max,
+void pair_bins_summary::set_linear_mag_limits(const flt_type & mag_min,
+		const flt_type & mag_max,
 		const ssize_t & mag_bins)
 {
 	_set_linear_mag_limits(mag_min,mag_max,mag_bins);
@@ -315,29 +315,29 @@ void pair_bins_summary::set_linear_mag_limits(const double & mag_min,
 }
 
 // Set specific limits through a log spacing
-void pair_bins_summary::set_log_R_limits(CONST_BRG_DISTANCE_REF R_min,
-		CONST_BRG_DISTANCE_REF R_max,
+void pair_bins_summary::set_log_R_limits(const BRG_DISTANCE & R_min,
+		const BRG_DISTANCE & R_max,
 		const ssize_t & R_num_bins)
 {
 	_set_log_R_limits(R_min,R_max,R_num_bins);
 	_check_limits();
 }
-void pair_bins_summary::set_log_m_limits(CONST_BRG_MASS_REF m_min,
-		CONST_BRG_MASS_REF m_max,
+void pair_bins_summary::set_log_m_limits(const BRG_MASS & m_min,
+		const BRG_MASS & m_max,
 		const ssize_t & m_num_bins)
 {
 	_set_log_m_limits(m_min,m_max,m_num_bins);
 	_check_limits();
 }
-void pair_bins_summary::set_log_z_limits(const double & z_min,
-		const double & z_max,
+void pair_bins_summary::set_log_z_limits(const flt_type & z_min,
+		const flt_type & z_max,
 		const ssize_t & z_num_bins)
 {
 	_set_log_z_limits(z_min,z_max,z_num_bins);
 	_check_limits();
 }
-void pair_bins_summary::set_log_mag_limits(const double & mag_min,
-		const double & mag_max,
+void pair_bins_summary::set_log_mag_limits(const flt_type & mag_min,
+		const flt_type & mag_max,
 		const ssize_t & mag_num_bins)
 {
 	_set_log_mag_limits(mag_min,mag_max,mag_num_bins);
@@ -368,8 +368,8 @@ void pair_bins_summary::clear_mag_limits()
 
 void pair_bins_summary::set_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
 		brgastro::limit_vector< BRG_MASS > m_bin_limits,
-		brgastro::limit_vector< double > z_bin_limits,
-		brgastro::limit_vector< double > mag_bin_limits)
+		brgastro::limit_vector< flt_type > z_bin_limits,
+		brgastro::limit_vector< flt_type > mag_bin_limits)
 {
 	_set_R_limits(R_bin_limits);
 	_set_m_limits(m_bin_limits);
@@ -378,17 +378,17 @@ void pair_bins_summary::set_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_
 	_check_limits();
 }
 
-void pair_bins_summary::set_linear_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
+void pair_bins_summary::set_linear_limits(const BRG_DISTANCE & R_min,
+			const BRG_DISTANCE & R_max,
 			const ssize_t & R_bins,
-			CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
+			const BRG_MASS & m_min,
+			const BRG_MASS & m_max,
 			const ssize_t & m_bins,
-			const double & z_min,
-			const double & z_max,
+			const flt_type & z_min,
+			const flt_type & z_max,
 			const ssize_t & z_bins,
-			const double & mag_min,
-			const double & mag_max,
+			const flt_type & mag_min,
+			const flt_type & mag_max,
 			const ssize_t & mag_bins)
 {
 	_set_linear_R_limits(R_min,R_max,R_bins);
@@ -398,17 +398,17 @@ void pair_bins_summary::set_linear_limits(CONST_BRG_DISTANCE_REF R_min,
 	_check_limits();
 }
 
-void pair_bins_summary::set_log_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
+void pair_bins_summary::set_log_limits(const BRG_DISTANCE & R_min,
+			const BRG_DISTANCE & R_max,
 			const ssize_t & R_num_bins,
-			CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
+			const BRG_MASS & m_min,
+			const BRG_MASS & m_max,
 			const ssize_t & m_num_bins,
-			const double & z_min,
-			const double & z_max,
+			const flt_type & z_min,
+			const flt_type & z_max,
 			const ssize_t & z_num_bins,
-			const double & mag_min,
-			const double & mag_max,
+			const flt_type & mag_min,
+			const flt_type & mag_max,
 			const ssize_t & mag_num_bins)
 {
 	_set_log_R_limits(R_min,R_max,R_num_bins);
@@ -479,8 +479,8 @@ BRG_UNITS pair_bins_summary::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m
 
 // Access by position
 #if(1)
-BRG_UNITS pair_bins_summary::delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag) const
+BRG_UNITS pair_bins_summary::delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
 	ssize_t m_i = _m_bin_limits_.get_bin_index(m);
@@ -488,8 +488,8 @@ BRG_UNITS pair_bins_summary::delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R
 	ssize_t mag_i = _mag_bin_limits_.get_bin_index(mag);
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag) const
+BRG_UNITS pair_bins_summary::delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
 	ssize_t m_i = _m_bin_limits_.get_bin_index(m);
@@ -498,8 +498,8 @@ BRG_UNITS pair_bins_summary::delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
 }
 
-BRG_UNITS pair_bins_summary::delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag) const
+BRG_UNITS pair_bins_summary::delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
 	ssize_t m_i = _m_bin_limits_.get_bin_index(m);
@@ -507,8 +507,8 @@ BRG_UNITS pair_bins_summary::delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R,
 	ssize_t mag_i = _mag_bin_limits_.get_bin_index(mag);
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag) const
+BRG_UNITS pair_bins_summary::delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
 	ssize_t m_i = _m_bin_limits_.get_bin_index(m);
@@ -517,8 +517,8 @@ BRG_UNITS pair_bins_summary::delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R,
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
 }
 
-BRG_UNITS pair_bins_summary::delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag) const
+BRG_UNITS pair_bins_summary::delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
 	ssize_t m_i = _m_bin_limits_.get_bin_index(m);
@@ -526,8 +526,8 @@ BRG_UNITS pair_bins_summary::delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF
 	ssize_t mag_i = _mag_bin_limits_.get_bin_index(mag);
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-		double z, double mag) const
+BRG_UNITS pair_bins_summary::delta_Sigma_x_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
 	ssize_t m_i = _m_bin_limits_.get_bin_index(m);
@@ -545,7 +545,7 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 {
 
 	// Set up the data and header to be printed
-	table_t<double> data;
+	table_t<flt_type> data;
 	header_t header;
 
 	header.push_back("R_min");
@@ -634,7 +634,7 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 				{
 
 					// Check if this bin is good
-					if(bin.shear_effective_pair_count()>=std::numeric_limits<double>::max()) continue;
+					if(bin.shear_effective_pair_count()>=std::numeric_limits<flt_type>::max()) continue;
 					if(isbad(bin.shear_effective_pair_count())) continue;
 					// It's possible we'll get bins with no shear information like this, but this
 					// prunes out at least those without any info
@@ -719,10 +719,10 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 
 	assert(ssize(data.back())==ssize(data.front())); // Check we didn't miss a column to add to the table
 
-	table_map_t<double> table_map = get_table_after_unitconv(make_table_map(data,header),u_map);
+	table_map_t<flt_type> table_map = get_table_after_unitconv(make_table_map(data,header),u_map);
 
 	// And now print it out
-	print_table_map<double>(out,table_map);
+	print_table_map<flt_type>(out,table_map);
 
 }
 void pair_bins_summary::print_bin_data(const std::string & file_name,

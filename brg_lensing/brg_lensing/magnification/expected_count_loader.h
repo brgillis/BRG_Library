@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/vector/limit_vector.hpp"
 
@@ -42,29 +42,29 @@ namespace brgastro {
  */
 class expected_count_loader {
 	static bool _loaded_;
-	static brgastro::limit_vector<double> _z_limits_;
-	static std::vector<brgastro::limit_vector<double>> _mag_limits_;
-	static std::vector<std::vector<double>>_smoothed_count_, _smoothed_count_derivative_;
+	static brgastro::limit_vector<flt_type> _z_limits_;
+	static std::vector<brgastro::limit_vector<flt_type>> _mag_limits_;
+	static std::vector<std::vector<flt_type>>_smoothed_count_, _smoothed_count_derivative_;
 	static std::string _filename_base_, _filename_tail_;
 
 	static void _load();
-	static double _get_interp(const double & mag, const double & z,
-			const std::vector<std::vector<double>> & table,
-			const double & def=0);
+	static flt_type _get_interp(const flt_type & mag, const flt_type & z,
+			const std::vector<std::vector<flt_type>> & table,
+			const flt_type & def=0);
 public:
 
 	// Setting parameters for where the data is stored
 #if(1)
-	static void set_z_limits(const std::vector<double> & new_limits_vector);
-	static void set_z_limits(std::vector<double> && new_limits_vector);
+	static void set_z_limits(const std::vector<flt_type> & new_limits_vector);
+	static void set_z_limits(std::vector<flt_type> && new_limits_vector);
 	static void set_filename_base(const std::string & new_filename_base);
 	static void set_filename_base(std::string && new_filename_base);
 	static void set_filename_tail(const std::string & new_filename_tail);
 	static void set_filename_tail(std::string && new_filename_tail);
 #endif
 
-	static double get_count(const double & mag, const double & z);
-	static double get_derivative(const double & mag, const double & z);
+	static flt_type get_count(const flt_type & mag, const flt_type & z);
+	static flt_type get_derivative(const flt_type & mag, const flt_type & z);
 
 	static void unload();
 };

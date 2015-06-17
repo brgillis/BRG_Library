@@ -27,7 +27,7 @@
 
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg_physics/density_profile/density_profile.h"
 #include "brg_physics/units/unit_obj.h"
@@ -65,7 +65,7 @@ public:
 #if (1) // Constructors
 	point_mass_profile();
 
-	point_mass_profile( const BRG_MASS init_mass, const double init_z );
+	point_mass_profile( const BRG_MASS init_mass, const flt_type init_z );
 
 #endif // End constructors
 
@@ -73,7 +73,7 @@ public:
 	~point_mass_profile();
 
 #if (1) // Set functions
-	virtual void set_mvir( CONST_BRG_MASS_REF new_halo_mass, bool silent =
+	virtual void set_mvir( const BRG_MASS & new_halo_mass, bool silent =
 			false );
 	virtual void set_parameters( const std::vector< BRG_UNITS > &new_parameters,
 			bool silent = false );
@@ -94,10 +94,10 @@ public:
 #endif // end basic get functions
 
 #if (1) // advanced get functions
-	BRG_UNITS dens( CONST_BRG_DISTANCE_REF r ) const;
-	BRG_UNITS enc_dens( CONST_BRG_DISTANCE_REF r,
+	BRG_UNITS dens( const BRG_DISTANCE & r ) const;
+	BRG_UNITS enc_dens( const BRG_DISTANCE & r,
 			const bool silent = false ) const;
-	BRG_MASS enc_mass( CONST_BRG_DISTANCE_REF r, const bool silent =
+	BRG_MASS enc_mass( const BRG_DISTANCE & r, const bool silent =
 				true ) const; // Mass enclosed with sphere of radius r
 	size_t num_parameters() const
 	{
@@ -110,7 +110,7 @@ public:
 
 #if (1) // Other operations
 
-	void truncate_to_fraction( const double fraction,
+	void truncate_to_fraction( const flt_type fraction,
 			bool silent = false );
 	virtual redshift_obj *redshift_obj_clone() const
 	{

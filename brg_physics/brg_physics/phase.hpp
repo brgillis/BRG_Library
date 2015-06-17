@@ -23,7 +23,7 @@
 #ifndef _BRG_PHASE_HPP_INCLUDED_
 #define _BRG_PHASE_HPP_INCLUDED_
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #ifdef _BRG_USE_UNITS_
 #include "brg/physics/units/unit_obj.h"
@@ -56,9 +56,9 @@ struct phase
 	BRG_VELOCITY vx, vy, vz;
 
 	BRG_TIME t;
-	phase( CONST_BRG_DISTANCE_REF init_x = 0, CONST_BRG_DISTANCE_REF init_y = 0,
-			CONST_BRG_DISTANCE_REF init_z = 0, CONST_BRG_VELOCITY_REF init_vx = 0,
-			CONST_BRG_VELOCITY_REF init_vy = 0, CONST_BRG_VELOCITY_REF init_vz = 0,
+	phase( const BRG_DISTANCE & init_x = 0, const BRG_DISTANCE & init_y = 0,
+			const BRG_DISTANCE & init_z = 0, const BRG_VELOCITY & init_vx = 0,
+			const BRG_VELOCITY & init_vy = 0, const BRG_VELOCITY & init_vz = 0,
 	BRG_TIME init_t = 0 )
 	{
 		x = init_x;
@@ -69,9 +69,9 @@ struct phase
 		vz = init_vz;
 		t = init_t;
 	}
-	const int set_phase( CONST_BRG_DISTANCE_REF init_x = 0, CONST_BRG_DISTANCE_REF init_y = 0,
-			CONST_BRG_DISTANCE_REF init_z = 0, CONST_BRG_VELOCITY_REF init_vx = 0,
-			CONST_BRG_VELOCITY_REF init_vy = 0, CONST_BRG_VELOCITY_REF init_vz = 0,
+	const int_type set_phase( const BRG_DISTANCE & init_x = 0, const BRG_DISTANCE & init_y = 0,
+			const BRG_DISTANCE & init_z = 0, const BRG_VELOCITY & init_vx = 0,
+			const BRG_VELOCITY & init_vy = 0, const BRG_VELOCITY & init_vz = 0,
 	BRG_TIME init_t = 0 )
 	{
 		x = init_x;

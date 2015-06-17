@@ -35,7 +35,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/container/table_typedefs.hpp"
 #include "brg/vector/summary_functions.hpp"
@@ -59,8 +59,8 @@ private:
 
 	BRG_DISTANCE _R_min_, _R_max_;
 	BRG_MASS _m_min_, _m_max_;
-	double _z_min_, _z_max_;
-	double _mag_min_, _mag_max_;
+	flt_type _z_min_, _z_max_;
+	flt_type _mag_min_, _mag_max_;
 
 #endif // Bin limits
 
@@ -75,23 +75,23 @@ private:
 
 	BRG_MASS _shear_lens_m_mean_;
 	BRG_MASS _magf_lens_m_mean_;
-	double _shear_lens_z_mean_;
-	double _magf_lens_z_mean_;
-	double _shear_lens_mag_mean_;
-	double _magf_lens_mag_mean_;
+	flt_type _shear_lens_z_mean_;
+	flt_type _magf_lens_z_mean_;
+	flt_type _shear_lens_mag_mean_;
+	flt_type _magf_lens_mag_mean_;
 
-	double _shear_source_z_mean_;
-	double _magf_source_z_mean_;
+	flt_type _shear_source_z_mean_;
+	flt_type _magf_source_z_mean_;
 
-	double _shear_sum_of_weights_;
-	double _magf_sum_of_weights_;
-	double _shear_sum_of_square_weights_;
-	double _magf_sum_of_square_weights_;
+	flt_type _shear_sum_of_weights_;
+	flt_type _magf_sum_of_weights_;
+	flt_type _shear_sum_of_square_weights_;
+	flt_type _magf_sum_of_square_weights_;
 	BRG_UNITS _delta_Sigma_t_mean_, _delta_Sigma_x_mean_;
 	BRG_UNITS _delta_Sigma_t_mean_square_, _delta_Sigma_x_mean_square_;
 
-	double _mu_hat_;
-	double _mu_square_hat_;
+	flt_type _mu_hat_;
+	flt_type _mu_square_hat_;
 	BRG_UNITS _area_;
 	ssize_t _magf_lens_count_;
 
@@ -101,7 +101,7 @@ private:
 #if(1)
 	friend class boost::serialization::access;
 	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version)
+	void serialize(Archive & ar, const int_type version)
 	{
 		ar & _R_min_ & _R_max_;
 		ar & _m_min_ & _m_max_;
@@ -138,22 +138,22 @@ private:
 	}
 #endif
 
-	double _magf_gamma_t_mean() const;
-	double _magf_gamma_t_mean_square() const;
-	double _magf_gamma_x_mean() const;
-	double _magf_gamma_x_mean_square() const;
-	double _magf_gamma_mean() const;
-	double _magf_gamma_mean_square() const;
+	flt_type _magf_gamma_t_mean() const;
+	flt_type _magf_gamma_t_mean_square() const;
+	flt_type _magf_gamma_x_mean() const;
+	flt_type _magf_gamma_x_mean_square() const;
+	flt_type _magf_gamma_mean() const;
+	flt_type _magf_gamma_mean_square() const;
 
-	double _magf_gamma_t_stderr() const;
-	double _magf_gamma_t_square_stderr() const;
-	double _magf_gamma_x_stderr() const;
-	double _magf_gamma_x_square_stderr() const;
-	double _magf_gamma_stderr() const;
-	double _magf_gamma_square_stderr() const;
+	flt_type _magf_gamma_t_stderr() const;
+	flt_type _magf_gamma_t_square_stderr() const;
+	flt_type _magf_gamma_x_stderr() const;
+	flt_type _magf_gamma_x_square_stderr() const;
+	flt_type _magf_gamma_stderr() const;
+	flt_type _magf_gamma_square_stderr() const;
 
-	lensing_tNFW_profile _shear_model_profile(const double & MLratio = 50.) const;
-	lensing_tNFW_profile _magf_model_profile(const double & MLratio = 50.) const;
+	lensing_tNFW_profile _shear_model_profile(const flt_type & MLratio = 50.) const;
+	lensing_tNFW_profile _magf_model_profile(const flt_type & MLratio = 50.) const;
 
 protected:
 
@@ -165,10 +165,10 @@ public:
 
 	// Constructors and destructor
 #if(1)
-	pair_bin_summary( CONST_BRG_DISTANCE_REF init_R_min=0, CONST_BRG_DISTANCE_REF init_R_max=0,
-			CONST_BRG_MASS_REF init_m_min=0, CONST_BRG_MASS_REF init_m_max=0,
-			const double & init_z_min=0, const double & init_z_max=0,
-			const double & init_mag_min=0, const double & init_mag_max=0 );
+	pair_bin_summary( const BRG_DISTANCE & init_R_min=0, const BRG_DISTANCE & init_R_max=0,
+			const BRG_MASS & init_m_min=0, const BRG_MASS & init_m_max=0,
+			const flt_type & init_z_min=0, const flt_type & init_z_max=0,
+			const flt_type & init_mag_min=0, const flt_type & init_mag_max=0 );
 	pair_bin_summary( const pair_bin & bin);
 	pair_bin_summary( std::istream & in );
 	pair_bin_summary( std::string & filename );
@@ -255,37 +255,37 @@ public:
 		return _magf_pair_count_;
 	}
 	// Effective count
-	virtual double effective_pair_count() const
+	virtual flt_type effective_pair_count() const
 	{
 		return shear_effective_pair_count();
 	}
-	virtual double shear_effective_pair_count() const
+	virtual flt_type shear_effective_pair_count() const
 	{
 		return square(shear_sum_of_weights())/shear_sum_of_square_weights();
 	}
 	// Sum of weights
-	virtual double sum_of_weights() const
+	virtual flt_type sum_of_weights() const
 	{
 		return _shear_sum_of_weights_;
 	}
-	virtual double shear_sum_of_weights() const
+	virtual flt_type shear_sum_of_weights() const
 	{
 		return _shear_sum_of_weights_;
 	}
-	virtual double magf_sum_of_weights() const
+	virtual flt_type magf_sum_of_weights() const
 	{
 		return _magf_sum_of_weights_;
 	}
 	// Sum of square weights
-	virtual double sum_of_square_weights() const
+	virtual flt_type sum_of_square_weights() const
 	{
 		return _shear_sum_of_square_weights_;
 	}
-	virtual double shear_sum_of_square_weights() const
+	virtual flt_type shear_sum_of_square_weights() const
 	{
 		return _shear_sum_of_square_weights_;
 	}
-	virtual double magf_sum_of_square_weights() const
+	virtual flt_type magf_sum_of_square_weights() const
 	{
 		return _magf_sum_of_square_weights_;
 	}
@@ -295,11 +295,11 @@ public:
 	// Limits and means accessors
 #if(1)
 
-	CONST_BRG_DISTANCE_REF R_min() const
+	const BRG_DISTANCE & R_min() const
 	{
 		return _R_min_;
 	}
-	CONST_BRG_DISTANCE_REF R_max() const
+	const BRG_DISTANCE & R_max() const
 	{
 		return _R_max_;
 	}
@@ -326,11 +326,11 @@ public:
 		return _magf_R_mean_;
 	}
 
-	CONST_BRG_MASS_REF m_min() const
+	const BRG_MASS & m_min() const
 	{
 		return _m_min_;
 	}
-	CONST_BRG_MASS_REF m_max() const
+	const BRG_MASS & m_max() const
 	{
 		return _m_max_;
 	}
@@ -351,66 +351,66 @@ public:
 		return _magf_lens_m_mean_;
 	}
 
-	double z_min() const
+	flt_type z_min() const
 	{
 		return _z_min_;
 	}
-	double z_max() const
+	flt_type z_max() const
 	{
 		return _z_max_;
 	}
-	double z_mid() const
+	flt_type z_mid() const
 	{
 		return (_z_max_+_z_min_)/2.;
 	}
-	virtual double lens_z_mean() const
+	virtual flt_type lens_z_mean() const
 	{
 		return shear_lens_z_mean();
 	}
-	virtual double shear_lens_z_mean() const
+	virtual flt_type shear_lens_z_mean() const
 	{
 		return _shear_lens_z_mean_;
 	}
-	virtual double magf_lens_z_mean() const
+	virtual flt_type magf_lens_z_mean() const
 	{
 		return _magf_lens_z_mean_;
 	}
 
-	virtual double source_z_mean() const
+	virtual flt_type source_z_mean() const
 	{
 		return shear_source_z_mean();
 	}
-	virtual double shear_source_z_mean() const
+	virtual flt_type shear_source_z_mean() const
 	{
 		return _shear_source_z_mean_;
 	}
-	virtual double magf_source_z_mean() const
+	virtual flt_type magf_source_z_mean() const
 	{
 		return _magf_source_z_mean_;
 	}
 
-	double mag_min() const
+	flt_type mag_min() const
 	{
 		return _mag_min_;
 	}
-	double mag_max() const
+	flt_type mag_max() const
 	{
 		return _mag_max_;
 	}
-	double mag_mid() const
+	flt_type mag_mid() const
 	{
 		return (_mag_max_+_mag_min_)/2.;
 	}
 
-	virtual double lens_mag_mean() const
+	virtual flt_type lens_mag_mean() const
 	{
 		return shear_lens_mag_mean();
 	}
-	virtual double shear_lens_mag_mean() const
+	virtual flt_type shear_lens_mag_mean() const
 	{
 		return _shear_lens_mag_mean_;
 	}
-	virtual double magf_lens_mag_mean() const
+	virtual flt_type magf_lens_mag_mean() const
 	{
 		return _magf_lens_mag_mean_;
 	}
@@ -449,24 +449,24 @@ public:
 	virtual BRG_UNITS delta_Sigma_t_stderr() const;
 	virtual BRG_UNITS delta_Sigma_x_stderr() const;
 
-	double gamma_t_mean() const;
-	double gamma_x_mean() const;
-	double gamma_mean() const;
-	double gamma_mean_square() const;
+	flt_type gamma_t_mean() const;
+	flt_type gamma_x_mean() const;
+	flt_type gamma_mean() const;
+	flt_type gamma_mean_square() const;
 
-	double gamma_t_stderr() const;
-	double gamma_x_stderr() const;
-	double gamma_stderr() const;
-	double gamma_square_stderr() const;
+	flt_type gamma_t_stderr() const;
+	flt_type gamma_x_stderr() const;
+	flt_type gamma_stderr() const;
+	flt_type gamma_square_stderr() const;
 
-	BRG_UNITS model_delta_Sigma_t(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
-	double model_gamma_t(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	BRG_UNITS model_delta_Sigma_t(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	flt_type model_gamma_t(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
 
-	BRG_UNITS model_1h_delta_Sigma_t(const double & MLratio_1h = 50.) const;
-	double model_1h_gamma_t(const double & MLratio_1h = 50.) const;
+	BRG_UNITS model_1h_delta_Sigma_t(const flt_type & MLratio_1h = 50.) const;
+	flt_type model_1h_gamma_t(const flt_type & MLratio_1h = 50.) const;
 
-	BRG_UNITS model_offset_delta_Sigma_t(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
-	double model_offset_gamma_t(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	BRG_UNITS model_offset_delta_Sigma_t(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	flt_type model_offset_gamma_t(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
 
 #endif // Shear
 
@@ -482,7 +482,7 @@ public:
 	{
 		return _magf_lens_count_;
 	}
-	virtual double magf_effective_num_lenses() const
+	virtual flt_type magf_effective_num_lenses() const
 	{
 		return square(magf_sum_of_weights())/magf_sum_of_square_weights();
 	}
@@ -490,37 +490,37 @@ public:
 	{
 		return _magf_lens_count_;
 	}
-	virtual double mu_hat() const
+	virtual flt_type mu_hat() const
 	{
 		return _mu_hat_;
 	}
-	virtual double mu_square_hat() const
+	virtual flt_type mu_square_hat() const
 	{
 		return _mu_square_hat_;
 	}
-	virtual double mu_W() const
+	virtual flt_type mu_W() const
 	{
 		return magf_sum_of_weights();
 	}
-	double mu_std() const;
-	double mu_stderr() const;
-	double kappa() const;
-	double kappa_stderr() const;
+	flt_type mu_std() const;
+	flt_type mu_stderr() const;
+	flt_type kappa() const;
+	flt_type kappa_stderr() const;
 
 	BRG_UNITS Sigma() const;
 	BRG_UNITS Sigma_stderr() const;
 
-	double model_mu(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
-	double model_kappa(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
-	BRG_UNITS model_Sigma(const double & MLratio_1h = 50., CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	flt_type model_mu(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	flt_type model_kappa(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	BRG_UNITS model_Sigma(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
 
-	double model_1h_mu(const double & MLratio_1h = 50.) const;
-	double model_1h_kappa(const double & MLratio_1h = 50.) const;
-	BRG_UNITS model_1h_Sigma(const double & MLratio_1h = 50.) const;
+	flt_type model_1h_mu(const flt_type & MLratio_1h = 50.) const;
+	flt_type model_1h_kappa(const flt_type & MLratio_1h = 50.) const;
+	BRG_UNITS model_1h_Sigma(const flt_type & MLratio_1h = 50.) const;
 
-	double model_offset_mu(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
-	double model_offset_kappa(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
-	BRG_UNITS model_offset_Sigma(CONST_BRG_MASS_REF mean_group_mass = 1e14*unitconv::Msuntokg, const double & sat_frac = 0.2) const;
+	flt_type model_offset_mu(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	flt_type model_offset_kappa(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	BRG_UNITS model_offset_Sigma(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
 
 #endif // Magnification
 

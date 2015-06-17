@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/utility.hpp"
 #include "brg/vector/elementwise_functions.hpp"
@@ -45,10 +45,10 @@
 // Initialisation of static vars
 #if (1)
 bool brgastro::expected_count_fit_loader::_loaded_(false);
-brgastro::table_map_t<double> brgastro::expected_count_fit_loader::_data_map_;
+brgastro::table_map_t<flt_type> brgastro::expected_count_fit_loader::_data_map_;
 #endif
 
-const double num_columns=8;
+const flt_type num_columns=8;
 
 void brgastro::expected_count_fit_loader::_load()
 {
@@ -60,7 +60,7 @@ void brgastro::expected_count_fit_loader::_load()
 		{
 			std::stringstream ss(count_fitting_result_data);
 
-			_data_map_ = load_table_map<double>(ss);
+			_data_map_ = load_table_map<flt_type>(ss);
 
 			assert(ssize(_data_map_)==num_columns);
 			assert(ssize(_data_map_.at("z_mid"))>=2);
@@ -70,7 +70,7 @@ void brgastro::expected_count_fit_loader::_load()
 	}
 
 }
-ssize_t brgastro::expected_count_fit_loader::_lower_z_index(double z)
+ssize_t brgastro::expected_count_fit_loader::_lower_z_index(flt_type z)
 {
 	auto size = ssize(_data_map_.at("z_mid"));
 	assert(size>=2);
@@ -83,18 +83,18 @@ ssize_t brgastro::expected_count_fit_loader::_lower_z_index(double z)
 	return size-2;
 }
 
-std::vector<long double> brgastro::expected_count_fit_loader::get(long double z)
+std::vector<long_flt_type> brgastro::expected_count_fit_loader::get(long_flt_type z)
 {
 	if(!_loaded_) _load();
 
 	const size_t zi = _lower_z_index(z);
 
-	const long double zlo = _data_map_["z_mid"][zi];
-	const long double zhi = _data_map_["z_mid"][zi+1];
+	const long_flt_type zlo = _data_map_["z_mid"][zi];
+	const long_flt_type zhi = _data_map_["z_mid"][zi+1];
 
-	const long double weight = zhi-zlo;
+	const long_flt_type weight = zhi-zlo;
 
-	std::vector<long double> r_lo, r_hi;
+	std::vector<long_flt_type> r_lo, r_hi;
 
 #ifdef _BRG_USE_UNITS_
 	r_lo.push_back(unit_obj(_data_map_["N_scale"].at(zi)*(zhi-z),0,0,0,0,-2));

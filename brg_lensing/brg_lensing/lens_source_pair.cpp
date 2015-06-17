@@ -32,7 +32,7 @@
 #include <memory>
 #endif
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 
@@ -47,10 +47,10 @@ namespace brgastro {
 
 #if(1) // Private methods
 
-void lens_source_pair::_calc_gamma(const double gamma_1, const double gamma_2) const
+void lens_source_pair::_calc_gamma(const flt_type gamma_1, const flt_type gamma_2) const
 {
-	double rot_cos = cos(-2*_theta_);
-	double rot_sin = sin(-2*_theta_);
+	flt_type rot_cos = cos(-2*_theta_);
+	flt_type rot_sin = sin(-2*_theta_);
 	_gamma_t_ = -(rot_cos*gamma_1-rot_sin*gamma_2);
 	_gamma_x_ = rot_sin*gamma_1+rot_cos*gamma_2;
 }
@@ -112,7 +112,7 @@ lens_source_pair::lens_source_pair()
 {
 }
 lens_source_pair::lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr,
-		double init_weight_pair, bool make_clones)
+		flt_type init_weight_pair, bool make_clones)
 :	_using_lens_clone_(make_clones),
  	_using_source_clone_(make_clones),
  	_init_lens_ptr_(lens_ptr),
@@ -183,7 +183,7 @@ void lens_source_pair::set_source( const source_obj *source_ptr, const bool make
 
 // Set pair weight
 #if(1)
-void lens_source_pair::set_weight_pair( double new_weight_pair )
+void lens_source_pair::set_weight_pair( flt_type new_weight_pair )
 {
 	_weight_pair_ = new_weight_pair;
 }
@@ -219,20 +219,20 @@ const source_obj *lens_source_pair::source() const
 // Access to stored values
 #if(1)
 
-const double & lens_source_pair::z_lens() const
+const flt_type & lens_source_pair::z_lens() const
 {
 	_conditional_store_data();
 	return _z_lens_;
 }
-const double & lens_source_pair::z_source() const
+const flt_type & lens_source_pair::z_source() const
 {
 	_conditional_store_data();
 	return _z_source_;
 }
-double lens_source_pair::z_diff() const
+flt_type lens_source_pair::z_diff() const
 {
 	_conditional_store_data();
-	return _z_source_-_z_lens_+std::numeric_limits<double>::epsilon();
+	return _z_source_-_z_lens_+std::numeric_limits<flt_type>::epsilon();
 }
 const BRG_MASS & lens_source_pair::m_lens() const
 {
@@ -244,37 +244,37 @@ const size_t & lens_source_pair::id_lens() const
 	_conditional_store_data();
 	return _id_lens_;
 }
-const double & lens_source_pair::mag_lens() const
+const flt_type & lens_source_pair::mag_lens() const
 {
 	_conditional_store_data();
 	return _mag_lens_;
 }
-const double & lens_source_pair::mag_source() const
+const flt_type & lens_source_pair::mag_source() const
 {
 	_conditional_store_data();
 	return _mag_source_;
 }
-const double & lens_source_pair::weight_lens() const
+const flt_type & lens_source_pair::weight_lens() const
 {
 	_conditional_store_data();
 	return _weight_lens_;
 }
-const double & lens_source_pair::weight_source() const
+const flt_type & lens_source_pair::weight_source() const
 {
 	_conditional_store_data();
 	return _weight_source_;
 }
-const double & lens_source_pair::weight_pair() const
+const flt_type & lens_source_pair::weight_pair() const
 {
 	_conditional_store_data();
 	return _weight_pair_;
 }
-double lens_source_pair::shear_weight() const
+flt_type lens_source_pair::shear_weight() const
 {
 	_conditional_store_data();
 	return _weight_lens_*_weight_source_*_weight_pair_;
 }
-double lens_source_pair::mag_weight() const
+flt_type lens_source_pair::mag_weight() const
 {
 	_conditional_store_data();
 	return _weight_lens_*_weight_pair_;
@@ -289,12 +289,12 @@ const BRG_ANGLE & lens_source_pair::theta() const
 	_conditional_store_data();
 	return _theta_;
 }
-const double & lens_source_pair::gamma_t() const
+const flt_type & lens_source_pair::gamma_t() const
 {
 	_conditional_store_data();
 	return _gamma_t_;
 }
-const double & lens_source_pair::gamma_x() const
+const flt_type & lens_source_pair::gamma_x() const
 {
 	_conditional_store_data();
 	return _gamma_x_;

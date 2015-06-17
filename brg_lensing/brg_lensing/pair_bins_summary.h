@@ -35,7 +35,7 @@
 
 #include <boost/serialization/vector.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/vector/limit_vector.hpp"
 
@@ -59,8 +59,8 @@ private:
 
 	brgastro::limit_vector< BRG_DISTANCE > _R_bin_limits_;
 	brgastro::limit_vector< BRG_MASS > _m_bin_limits_;
-	brgastro::limit_vector< double > _z_bin_limits_;
-	brgastro::limit_vector< double > _mag_bin_limits_;
+	brgastro::limit_vector< flt_type > _z_bin_limits_;
+	brgastro::limit_vector< flt_type > _mag_bin_limits_;
 
 	bool _valid_limits_;
 
@@ -80,35 +80,35 @@ private:
 	// Set specific limits through a limits vector
 	void _set_R_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits);
 	void _set_m_limits(brgastro::limit_vector< BRG_MASS > m_bin_limits);
-	void _set_z_limits(brgastro::limit_vector< double > z_bin_limits);
-	void _set_mag_limits(brgastro::limit_vector< double > mag_bin_limits);
+	void _set_z_limits(brgastro::limit_vector< flt_type > z_bin_limits);
+	void _set_mag_limits(brgastro::limit_vector< flt_type > mag_bin_limits);
 
 	// Set specific limits through a linear spacing
-	void _set_linear_R_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
+	void _set_linear_R_limits(const BRG_DISTANCE & R_min,
+			const BRG_DISTANCE & R_max,
 			const ssize_t & R_bins);
-	void _set_linear_m_limits(CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
+	void _set_linear_m_limits(const BRG_MASS & m_min,
+			const BRG_MASS & m_max,
 			const ssize_t & m_bins);
-	void _set_linear_z_limits(const double & z_min,
-			const double & z_max,
+	void _set_linear_z_limits(const flt_type & z_min,
+			const flt_type & z_max,
 			const ssize_t & z_bins);
-	void _set_linear_mag_limits(const double & mag_min,
-			const double & mag_max,
+	void _set_linear_mag_limits(const flt_type & mag_min,
+			const flt_type & mag_max,
 			const ssize_t & maag_bins);
 
 	// Set specific limits through a log spacing
-	void _set_log_R_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
+	void _set_log_R_limits(const BRG_DISTANCE & R_min,
+			const BRG_DISTANCE & R_max,
 			const ssize_t & R_num_bins=1);
-	void _set_log_m_limits(CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
+	void _set_log_m_limits(const BRG_MASS & m_min,
+			const BRG_MASS & m_max,
 			const ssize_t & m_num_bins=1);
-	void _set_log_z_limits(const double & z_min,
-			const double & z_max,
+	void _set_log_z_limits(const flt_type & z_min,
+			const flt_type & z_max,
 			const ssize_t & z_num_bins=1);
-	void _set_log_mag_limits(const double & mag_min,
-			const double & mag_max,
+	void _set_log_mag_limits(const flt_type & mag_min,
+			const flt_type & mag_max,
 			const ssize_t & mag_num_bins=1);
 
 	// Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
@@ -123,7 +123,7 @@ private:
 #if(1)
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
+    void serialize(Archive & ar, const int_type version)
     {
     	ar & _R_bin_limits_;
     	ar & _m_bin_limits_;
@@ -160,22 +160,22 @@ public:
 
 	// Set limits by vectors
 	pair_bins_summary(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
-			brgastro::limit_vector< BRG_MASS > m_bin_limits=std::vector<double>(),
-			brgastro::limit_vector< double > z_bin_limits=std::vector<double>(),
-			brgastro::limit_vector< double > mag_bin_limits=std::vector<double>());
+			brgastro::limit_vector< BRG_MASS > m_bin_limits=std::vector<flt_type>(),
+			brgastro::limit_vector< flt_type > z_bin_limits=std::vector<flt_type>(),
+			brgastro::limit_vector< flt_type > mag_bin_limits=std::vector<flt_type>());
 
 	// Set limits by min, max, and step
-	pair_bins_summary(CONST_BRG_DISTANCE_REF R_min,
-				CONST_BRG_DISTANCE_REF R_max,
+	pair_bins_summary(const BRG_DISTANCE & R_min,
+				const BRG_DISTANCE & R_max,
 				const ssize_t & R_bins=1,
-				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
-				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
+				const BRG_MASS & m_min=-std::numeric_limits<flt_type>::infinity(),
+				const BRG_MASS & m_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & m_bins=1,
-				const double & z_min=-std::numeric_limits<double>::infinity(),
-				const double & z_max=std::numeric_limits<double>::infinity(),
+				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
+				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & z_bins=1,
-				const double & mag_min=-std::numeric_limits<double>::infinity(),
-				const double & mag_max=std::numeric_limits<double>::infinity(),
+				const flt_type & mag_min=-std::numeric_limits<flt_type>::infinity(),
+				const flt_type & mag_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & mag_bins=1);
 
 	// Load from archive
@@ -201,35 +201,35 @@ public:
 	// Set specific limits through a limits vector
 	void set_R_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits);
 	void set_m_limits(brgastro::limit_vector< BRG_MASS > m_bin_limits);
-	void set_z_limits(brgastro::limit_vector< double > z_bin_limits);
-	void set_mag_limits(brgastro::limit_vector< double > mag_bin_limits);
+	void set_z_limits(brgastro::limit_vector< flt_type > z_bin_limits);
+	void set_mag_limits(brgastro::limit_vector< flt_type > mag_bin_limits);
 
 	// Set specific limits through a linear spacing
-	void set_linear_R_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
+	void set_linear_R_limits(const BRG_DISTANCE & R_min,
+			const BRG_DISTANCE & R_max,
 			const ssize_t & R_bins);
-	void set_linear_m_limits(CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
+	void set_linear_m_limits(const BRG_MASS & m_min,
+			const BRG_MASS & m_max,
 			const ssize_t & m_bins);
-	void set_linear_z_limits(const double & z_min,
-			const double & z_max,
+	void set_linear_z_limits(const flt_type & z_min,
+			const flt_type & z_max,
 			const ssize_t & z_bins);
-	void set_linear_mag_limits(const double & mag_min,
-			const double & mag_max,
+	void set_linear_mag_limits(const flt_type & mag_min,
+			const flt_type & mag_max,
 			const ssize_t & mag_bins);
 
 	// Set specific limits through a log spacing
-	void set_log_R_limits(CONST_BRG_DISTANCE_REF R_min,
-			CONST_BRG_DISTANCE_REF R_max,
+	void set_log_R_limits(const BRG_DISTANCE & R_min,
+			const BRG_DISTANCE & R_max,
 			const ssize_t & R_num_bins=1);
-	void set_log_m_limits(CONST_BRG_MASS_REF m_min,
-			CONST_BRG_MASS_REF m_max,
+	void set_log_m_limits(const BRG_MASS & m_min,
+			const BRG_MASS & m_max,
 			const ssize_t & m_num_bins=1);
-	void set_log_z_limits(const double & z_min,
-			const double & z_max,
+	void set_log_z_limits(const flt_type & z_min,
+			const flt_type & z_max,
 			const ssize_t & z_num_bins=1);
-	void set_log_mag_limits(const double & mag_min,
-			const double & mag_max,
+	void set_log_mag_limits(const flt_type & mag_min,
+			const flt_type & mag_max,
 			const ssize_t & mag_num_bins=1);
 
 	// Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
@@ -239,34 +239,34 @@ public:
 	void clear_mag_limits();
 
 	void set_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
-			brgastro::limit_vector< BRG_MASS > m_bin_limits=std::vector<double>(),
-			brgastro::limit_vector< double > z_bin_limits=std::vector<double>(),
-			brgastro::limit_vector< double > mag_bin_limits=std::vector<double>());
+			brgastro::limit_vector< BRG_MASS > m_bin_limits=std::vector<flt_type>(),
+			brgastro::limit_vector< flt_type > z_bin_limits=std::vector<flt_type>(),
+			brgastro::limit_vector< flt_type > mag_bin_limits=std::vector<flt_type>());
 
-	void set_linear_limits(CONST_BRG_DISTANCE_REF R_min,
-				CONST_BRG_DISTANCE_REF R_max,
+	void set_linear_limits(const BRG_DISTANCE & R_min,
+				const BRG_DISTANCE & R_max,
 				const ssize_t & R_num_bins=1,
-				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
-				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
+				const BRG_MASS & m_min=-std::numeric_limits<flt_type>::infinity(),
+				const BRG_MASS & m_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & m_num_bins=1,
-				const double & z_min=-std::numeric_limits<double>::infinity(),
-				const double & z_max=std::numeric_limits<double>::infinity(),
+				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
+				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & z_num_bins=1,
-				const double & mag_min=-std::numeric_limits<double>::infinity(),
-				const double & mag_max=std::numeric_limits<double>::infinity(),
+				const flt_type & mag_min=-std::numeric_limits<flt_type>::infinity(),
+				const flt_type & mag_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & mag_num_bins=1);
 
-	void set_log_limits(CONST_BRG_DISTANCE_REF R_min,
-				CONST_BRG_DISTANCE_REF R_max,
+	void set_log_limits(const BRG_DISTANCE & R_min,
+				const BRG_DISTANCE & R_max,
 				const ssize_t & R_num_bins=1,
-				CONST_BRG_MASS_REF m_min=-std::numeric_limits<double>::infinity(),
-				CONST_BRG_MASS_REF m_max=std::numeric_limits<double>::infinity(),
+				const BRG_MASS & m_min=-std::numeric_limits<flt_type>::infinity(),
+				const BRG_MASS & m_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & m_num_bins=1,
-				const double & z_min=-std::numeric_limits<double>::infinity(),
-				const double & z_max=std::numeric_limits<double>::infinity(),
+				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
+				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & z_num_bins=1,
-				const double & mag_min=-std::numeric_limits<double>::infinity(),
-				const double & mag_max=std::numeric_limits<double>::infinity(),
+				const flt_type & mag_min=-std::numeric_limits<flt_type>::infinity(),
+				const flt_type & mag_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & mag_num_bins=1);
 
 #endif // Set/change limits
@@ -285,11 +285,11 @@ public:
 	{
 		return _m_bin_limits_;
 	}
-	const brgastro::limit_vector< double > & z_limits() const
+	const brgastro::limit_vector< flt_type > & z_limits() const
 	{
 		return _z_bin_limits_;
 	}
-	const brgastro::limit_vector< double > & mag_limits() const
+	const brgastro::limit_vector< flt_type > & mag_limits() const
 	{
 		return _mag_bin_limits_;
 	}
@@ -336,20 +336,20 @@ public:
 
 	// Access by position
 #if(1)
-	virtual BRG_UNITS delta_Sigma_t_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag) const;
-	virtual BRG_UNITS delta_Sigma_x_mean_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag) const;
+	virtual BRG_UNITS delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+			flt_type z, flt_type mag) const;
+	virtual BRG_UNITS delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+			flt_type z, flt_type mag) const;
 
-	virtual BRG_UNITS delta_Sigma_t_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag) const;
-	virtual BRG_UNITS delta_Sigma_x_std_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag) const;
+	virtual BRG_UNITS delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+			flt_type z, flt_type mag) const;
+	virtual BRG_UNITS delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+			flt_type z, flt_type mag) const;
 
-	virtual BRG_UNITS delta_Sigma_t_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag) const;
-	virtual BRG_UNITS delta_Sigma_x_stderr_for_bin(CONST_BRG_DISTANCE_REF R, CONST_BRG_MASS_REF m,
-			double z, double mag) const;
+	virtual BRG_UNITS delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+			flt_type z, flt_type mag) const;
+	virtual BRG_UNITS delta_Sigma_x_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+			flt_type z, flt_type mag) const;
 #endif // Access by index
 
 #endif // Accessing summary data for bins

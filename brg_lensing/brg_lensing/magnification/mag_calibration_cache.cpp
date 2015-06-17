@@ -25,7 +25,7 @@
 
 #include <cstdlib>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 
@@ -41,7 +41,7 @@ DEFINE_BRG_CACHE_STATIC_VARS( mag_calibration_cache,
 
 // brgastro::mag_calibration_cache class methods
 #if (1)
-const double brgastro::mag_calibration_cache::_calculate( const double in_param_1 ) const
+const flt_type brgastro::mag_calibration_cache::_calculate( const flt_type in_param_1 ) const
 {
 	return mag_calibration_loader::get(in_param_1);
 }
