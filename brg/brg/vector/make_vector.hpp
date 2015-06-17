@@ -31,7 +31,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/container/coerce.hpp"
 #include "brg/utility.hpp"
@@ -72,7 +72,7 @@ void make_vector_default( container & vec, const typename container::size_type &
 
 #if(1) // Using the shape of another vector
 
-template<unsigned short d, typename container, typename other_container>
+template<int_type d, typename container, typename other_container>
 struct vector_defaulter
 {
 	vector_defaulter(container & vec, const other_container & other_vec)
@@ -110,7 +110,7 @@ struct vector_defaulter<0,container,other_container>
 	}
 };
 
-template<unsigned short d, typename container, typename value_type, typename other_container>
+template<int_type d, typename container, typename value_type, typename other_container>
 void make_vector_default( container & vec, const value_type & val, const other_container & other_vec)
 {
 	vector_defaulter<d,container,other_container>(vec,other_vec);
@@ -151,7 +151,7 @@ void make_vector_zeroes( container & vec, const typename container::size_type & 
 
 #if(1) // Using the shape of another vector
 
-template<unsigned short d, typename container, typename other_container>
+template<int_type d, typename container, typename other_container>
 struct vector_zeroer
 {
 	vector_zeroer(container & vec, const other_container & other_vec)
@@ -193,7 +193,7 @@ struct vector_zeroer<0,container,other_container>
 	}
 };
 
-template<unsigned short d, typename container, typename value_type, typename other_container>
+template<int_type d, typename container, typename value_type, typename other_container>
 void make_vector_zeroes( container & vec, const value_type & val, const other_container & other_vec)
 {
 	vector_zeroer<d,container,other_container>(vec,other_vec);
@@ -231,7 +231,7 @@ void make_vector_value( container & vec, const val_type & val, const typename co
 
 #if(1) // Using the shape of another vector
 
-template<unsigned short d, typename container, typename value_type, typename other_container>
+template<int_type d, typename container, typename value_type, typename other_container>
 struct vector_valuer
 {
 	vector_valuer(container & vec, const value_type & val, const other_container & other_vec)
@@ -264,7 +264,7 @@ struct vector_valuer<0,container,value_type,other_container>
 	}
 };
 
-template<unsigned short d, typename container, typename value_type, typename other_container>
+template<int_type d, typename container, typename value_type, typename other_container>
 void make_vector_value( container & vec, const value_type & val, const other_container & other_vec)
 {
 	vector_valuer<d,container,value_type,other_container>(vec,val,other_vec);
@@ -318,7 +318,7 @@ void make_vector_function( container & vec, const func_type & func, const typena
 
 #if(1) // Using the shape of another vector
 
-template<unsigned short d, typename container, typename func_type, typename other_container>
+template<int_type d, typename container, typename func_type, typename other_container>
 struct vector_functioner
 {
 	template<typename... Args>
@@ -358,7 +358,7 @@ struct vector_functioner<0,container,func_type,other_container>
 	}
 };
 
-template<unsigned short d, typename container, typename func_type, typename other_container>
+template<int_type d, typename container, typename func_type, typename other_container>
 void make_vector_function( container & vec, const func_type & func, const other_container & other_vec)
 {
 	vector_functioner<d,container,func_type,other_container>(vec,func,other_vec);
@@ -371,7 +371,7 @@ void make_vector_function( container & vec, const func_type & func, const other_
 // Coerce from another container
 #if(1)
 
-template<unsigned short d, typename container, typename other_container>
+template<int_type d, typename container, typename other_container>
 void make_vector_coerce(container & vec, const other_container & other_vec)
 {
 	assignment_coercer<d,container>(vec,other_vec);

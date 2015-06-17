@@ -31,9 +31,10 @@
 #include <map>
 #include <vector>
 
-#include <Eigen/Core> // Just for RowMajor and ColMajor tags
 
-#include "brg/global.h"
+#include "brg/common.h"
+
+#include "brg/Eigen.hpp" // Just for RowMajor and ColMajor tags
 
 #include "brg/container/table_typedefs.hpp"
 #include "brg/file_access/ascii_table.hpp"

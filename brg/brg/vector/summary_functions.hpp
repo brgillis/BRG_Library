@@ -25,7 +25,7 @@
 
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/container/is_container.hpp"
 #include "brg/container/is_eigen_container.hpp"
@@ -114,7 +114,7 @@ template< typename T, typename std::enable_if<brgastro::is_stl_container<T>::val
 typename T::value_type product(const T &v)
 {
 	typename T::value_type result = 1;
-	for(unsigned int i = 0; i < v.size(); i++)
+	for(int_type i = 0; i < v.size(); i++)
 	{
 		result *= v[i];
 	}
@@ -327,12 +327,11 @@ bool is_monotonically_decreasing(const T & v)
 
 // all_true
 #if (1)
-inline bool all_true(const std::vector<bool> & v)
+inline bool all_true(const std::vector<bool> & vec)
 {
-	for(unsigned int i=0; i < v.size(); i++)
-	{
-		if(!(v[i])) return false;
-	}
+	for(const auto & v : vec)
+		if(!v) return false;
+
 	return true;
 }
 
@@ -344,12 +343,10 @@ constexpr inline bool all_true(bool v)
 
 // all_false
 #if (1)
-inline bool all_false(const std::vector<bool> & v)
+inline bool all_false(const std::vector<bool> & vec)
 {
-	for(unsigned int i=0; i < v.size(); i++)
-	{
-		if(v[i]) return false;
-	}
+	for(const auto & v : vec)
+		if(v) return false;
 	return true;
 }
 

@@ -34,7 +34,7 @@
 #include <boost/accumulators/statistics/count.hpp>
 #include <boost/accumulators/statistics/sum.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/statistics/sum_of_square_weights.hpp"
@@ -47,7 +47,7 @@ template<typename Sample>
 struct effective_count_accumulator
 : accumulator_base
 {
-  typedef double result_type;
+  typedef flt_type result_type;
 
   effective_count_accumulator(dont_care)
   {

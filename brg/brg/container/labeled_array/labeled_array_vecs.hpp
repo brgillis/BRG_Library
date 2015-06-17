@@ -41,7 +41,7 @@ template<typename labeled_array_type,
 typename T_vec_type, typename T_const_vec_type,
 typename T_reference, typename T_const_reference,
 typename T_iterator, typename T_const_iterator,
-int T_direction_tag=forward_tag>
+int_type T_direction_tag=forward_tag>
 class labeled_array_vecs
 {
 private:
@@ -136,73 +136,73 @@ public:
 	// Iterator methods (forward tag version)
 #if(1)
 	/// begin (const)
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, const_iterator>::type begin() const noexcept
 	{
 		return _cbegin();
 	}
 	/// begin
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, iterator>::type begin() noexcept
 	{
 		return _begin();
 	}
 	/// end (const)
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, const_iterator>::type end() const noexcept
 	{
 		return _cend();
 	}
 	/// end
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, iterator>::type end() noexcept
 	{
 		return _end();
 	}
 	/// rbegin (const)
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, const_reverse_iterator>::type rbegin() const noexcept
 	{
 		return _crbegin();
 	}
 	/// rbegin
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, reverse_iterator>::type rbegin() noexcept
 	{
 		return _rbegin();
 	}
 	/// rend (const)
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, const_reverse_iterator>::type rend() const noexcept
 	{
 		return _crend();
 	}
 	/// rend
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, reverse_iterator>::type rend() noexcept
 	{
 		return _rend();
 	}
 	/// cbegin
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, const_iterator>::type cbegin() const noexcept
 	{
 		return _cbegin();
 	}
 	/// cend
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, const_iterator>::type cend() const noexcept
 	{
 		return _cend();
 	}
 	/// crbegin
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, const_reverse_iterator>::type crbegin() const noexcept
 	{
 		return _crbegin();
 	}
 	/// crend
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==forward_tag, const_reverse_iterator>::type crend() const noexcept
 	{
 		return _crend();
@@ -213,73 +213,73 @@ public:
 	// Iterator methods (reverse tag version)
 #if(1)
 	/// begin (const)
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, const_reverse_iterator>::type begin() const noexcept
 	{
 		return _crbegin();
 	}
 	/// begin
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, reverse_iterator>::type begin() noexcept
 	{
 		return _rbegin();
 	}
 	/// end (const)
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, const_reverse_iterator>::type end() const noexcept
 	{
 		return _crend();
 	}
 	/// end
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, reverse_iterator>::type end() noexcept
 	{
 		return _rend();
 	}
 	/// rbegin (const)
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, const_iterator>::type rbegin() const noexcept
 	{
 		return _cbegin();
 	}
 	/// rbegin
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, iterator>::type rbegin() noexcept
 	{
 		return _begin();
 	}
 	/// rend (const)
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, const_iterator>::type rend() const noexcept
 	{
 		return _cend();
 	}
 	/// rend
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, iterator>::type rend() noexcept
 	{
 		return _end();
 	}
 	/// cbegin
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, const_reverse_iterator>::type cbegin() const noexcept
 	{
 		return _crbegin();
 	}
 	/// cend
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, const_reverse_iterator>::type cend() const noexcept
 	{
 		return _crend();
 	}
 	/// crbegin
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, const_iterator>::type crbegin() const noexcept
 	{
 		return _cbegin();
 	}
 	/// crend
-	template<int direction_tag=T_direction_tag>
+	template<int_type direction_tag=T_direction_tag>
 	typename std::enable_if<direction_tag==reverse_tag, const_iterator>::type crend() const noexcept
 	{
 		return _cend();
@@ -387,7 +387,7 @@ public:
 #if (1)
 
 	/// Cast non-const version to const version
-	template <typename other_vec_type, typename other_reference, typename other_iterator, int other_direction_tag,
+	template <typename other_vec_type, typename other_reference, typename other_iterator, int_type other_direction_tag,
 	typename std::enable_if<std::is_convertible<other_vec_type,vec_type>::value, other_vec_type *>::type = nullptr,
 	typename std::enable_if<std::is_convertible<other_reference,reference>::value, other_reference *>::type = nullptr,
 	typename std::enable_if<std::is_convertible<other_iterator,iterator>::value, other_iterator *>::type = nullptr>

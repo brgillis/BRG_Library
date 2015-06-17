@@ -36,7 +36,7 @@
 #include <boost/accumulators/statistics/count.hpp>
 #include <boost/accumulators/statistics/weighted_variance.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/statistics/effective_count.hpp"
@@ -49,7 +49,7 @@ template<typename Sample>
 struct error_of_weighted_mean_accumulator
 : accumulator_base
 {
-  typedef double result_type;
+  typedef flt_type result_type;
 
   error_of_weighted_mean_accumulator(dont_care)
   {

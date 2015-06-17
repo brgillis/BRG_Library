@@ -31,9 +31,9 @@
 #include <string>
 #include <vector>
 
-#include <Eigen/Core> // Just for the Row/Column major tags
+#include "brg/common.h"
 
-#include "brg/global.h"
+#include "brg/Eigen.hpp" // Just for RowMajor and ColMajor tags
 
 #include "brg/container/table_typedefs.hpp"
 
@@ -65,7 +65,7 @@ void print_table( std::ostream & out_stream,
 {
 	// Set up the value we'll print if an entry is bad
 	std::stringstream ss("");
-	ss << std::numeric_limits<double>::max();
+	ss << std::numeric_limits<flt_type>::max();
 	std::string bad_value = ss.str();
 	ss.clear();
 	ss.str("");
@@ -106,7 +106,7 @@ void print_table( std::ostream & out_stream,
 					// For the first header element, we'll check if it starts with a
 					// '#'. If it doesn't, we'll add one to it.
 					ss.str(header[c]);
-					if ( ss.peek() != (int)( *"#" ) )
+					if ( ss.peek() != (int_type)( *"#" ) )
 					{
 						add_comment_marker = true;
 					}
@@ -115,7 +115,7 @@ void print_table( std::ostream & out_stream,
 				{
 					width[c] = header[c].length();
 				}
-			} // for( int c = 0; c < num_columns; c++ )
+			} // for( int_type c = 0; c < num_columns; c++ )
 		}
 
 		// Now loop through the data
@@ -148,8 +148,8 @@ void print_table( std::ostream & out_stream,
 				{
 					width[c] = str_val.length();
 				}
-			} // for( int c = 0; c < num_columns; c++ )
-		} // for( int i = 0; i < num_rows; i++ ) (testing width)
+			} // for( int_type c = 0; c < num_columns; c++ )
+		} // for( int_type i = 0; i < num_rows; i++ ) (testing width)
 
 		if(add_comment_marker)
 		{
@@ -289,7 +289,7 @@ inline header_t load_header( std::istream & table_stream )
 	// Get all comment lines at the top of the file
 	while ( table_stream )
 	{
-		if ( table_stream.peek() == (int)( *"#" ) )
+		if ( table_stream.peek() == (int_type)( *"#" ) )
 		{
 			getline( table_stream, temp_line );
 
@@ -311,7 +311,7 @@ inline header_t load_header( std::istream & table_stream )
 	// go to the data and count the columns in the first line. If only one possible header has
 	// the right length, we know that's the one.
 
-	unsigned short int n_cols = 0;
+	int_type n_cols = 0;
 	do
 	{
 		getline( table_stream, temp_line );
@@ -329,7 +329,7 @@ inline header_t load_header( std::istream & table_stream )
 	}
 
 	// Search through the possible headers, and see if we find exactly one with the right size
-	unsigned short int num_right_size = 0;
+	int_type num_right_size = 0;
 	ssize_t i_best = 0;
 	for(ssize_t i=0; i<ssize(possible_headers); ++i)
 	{

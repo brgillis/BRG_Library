@@ -36,7 +36,7 @@
 #include <boost/accumulators/statistics/count.hpp>
 #include <boost/accumulators/statistics/weighted_mean.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 
@@ -48,7 +48,7 @@ template<typename Sample>
 struct mean_weight_accumulator
 : accumulator_base
 {
-  typedef double result_type;
+  typedef flt_type result_type;
 
   mean_weight_accumulator(dont_care)
   {

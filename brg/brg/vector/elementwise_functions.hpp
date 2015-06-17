@@ -30,7 +30,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/container/is_container.hpp"
 #include "brg/container/is_eigen_container.hpp"
@@ -99,7 +99,7 @@ T1 apply( const f & func, const T1 & v1, const T2 &v2 )
 #if (1)
 
 template<typename T, typename f>
-T rand_vector_of_size(const f func, const int size)
+T rand_vector_of_size(const f func, const int_type size)
 {
 	T result(size);
 
@@ -109,7 +109,7 @@ T rand_vector_of_size(const f func, const int size)
 }
 
 template<typename f, typename T1>
-T1 rand_vector_of_size(const f func, const T1 & v1, const int size)
+T1 rand_vector_of_size(const f func, const T1 & v1, const int_type size)
 {
 	T1 result(size);
 
@@ -119,7 +119,7 @@ T1 rand_vector_of_size(const f func, const T1 & v1, const int size)
 }
 
 template<typename f, typename T1, typename T2>
-T1 rand_vector_of_size(const f func, const T1 & v1, const T2 & v2, const int size)
+T1 rand_vector_of_size(const f func, const T1 & v1, const T2 & v2, const int_type size)
 {
 	T1 result(size);
 
@@ -492,7 +492,7 @@ T1 safe_pow( T1 v1, const T2 &v2 )
 {
 
 	assert(v1.size()==v2.size());
-	for(unsigned int i = 0; i < v1.size(); i++)
+	for(int_type i = 0; i < v1.size(); i++)
 	{
 		v1[i] = safe_pow(v1[i], v2[i]);
 	}

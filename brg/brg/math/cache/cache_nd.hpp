@@ -34,7 +34,7 @@
 #include <sstream>
 #include <exception>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/file_access/ascii_table.hpp"
 #include "brg/file_access/open_file.hpp"
@@ -52,32 +52,32 @@
 #define SPP(name) static_cast<name*>(this)
 
 #define DECLARE_BRG_CACHE_ND_STATIC_VARS()		       \
-	static brgastro::multi_vector<double> _mins_, _maxes_, _steps_;      \
+	static brgastro::multi_vector<flt_type> _mins_, _maxes_, _steps_;      \
 	static brgastro::multi_vector<ssize_t> _resolutions_;           \
-	static brgastro::multi_vector<double> _results_;                     \
+	static brgastro::multi_vector<flt_type> _results_;                     \
 											                       \
 	static std::string _file_name_;                                \
-	static unsigned int _version_number_;                          \
+	static int_type _version_number_;                          \
 										                           \
 	static bool _loaded_, _initialised_;                           \
 											                       \
-	static unsigned short int _num_dim_;
+	static int_type _num_dim_;
 
 // Be careful when using this not to use the default constructor for init_steps, which would result in
 // divide-by-zero errors
 #define DEFINE_BRG_CACHE_ND_STATIC_VARS(class_name,init_mins,init_maxes,init_steps,init_num_dim) \
-	brgastro::vector<double> brgastro::class_name::_mins_ = init_mins;	                         \
-	brgastro::vector<double> brgastro::class_name::_maxes_ = init_maxes;                         \
-	brgastro::vector<double> brgastro::class_name::_steps_ = init_steps;                         \
+	brgastro::vector<flt_type> brgastro::class_name::_mins_ = init_mins;	                         \
+	brgastro::vector<flt_type> brgastro::class_name::_maxes_ = init_maxes;                         \
+	brgastro::vector<flt_type> brgastro::class_name::_steps_ = init_steps;                         \
 	bool brgastro::class_name::_loaded_ = false;							                     \
 	bool brgastro::class_name::_initialised_ = false;					                         \
 	brgastro::vector<ssize_t> brgastro::class_name::_resolutions_ =                         \
 		max( (((brgastro::class_name::_maxes_-brgastro::class_name::_mins_) /                    \
 				safe_d(brgastro::class_name::_steps_))+1), 1);                                   \
 	std::string brgastro::class_name::_file_name_ = "";					     	                 \
-	unsigned int brgastro::class_name::_version_number_ = 1;		     		                 \
-	brgastro::vector<double> brgastro::class_name::_results_;                                    \
-	unsigned short int brgastro::class_name::_num_dim_ = init_num_dim;
+	int_type brgastro::class_name::_version_number_ = 1;		     		                 \
+	brgastro::vector<flt_type> brgastro::class_name::_results_;                                    \
+	int_type brgastro::class_name::_num_dim_ = init_num_dim;
 
 namespace brgastro
 {
@@ -118,7 +118,7 @@ private:
 		std::ifstream in_file;
 		std::string file_data;
 		bool need_to_calc = false;
-		int loop_counter = 0;
+		int_type loop_counter = 0;
 
 		if ( SPCP(name)->_loaded_ )
 			return;
@@ -147,7 +147,7 @@ private:
 			// Check that it has the right name and version
 
 			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			unsigned int file_version = std::numeric_limits<unsigned int>::max();
+			int_type file_version = std::numeric_limits<int_type>::max();
 
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
@@ -256,11 +256,11 @@ private:
 		SPCP(name)->_results_.reshape(SPCP(name)->_resolutions_.v() );
 
 		brgastro::multi_vector<ssize_t> position(SPCP(name)->_num_dim_,0);
-		brgastro::multi_vector<double> x(SPCP(name)->_num_dim_,0);
+		brgastro::multi_vector<flt_type> x(SPCP(name)->_num_dim_,0);
 		for ( ssize_t i = 0; i < size(SPCP(name)->_results_); i++ )
 		{
 			x = SPCP(name)->_mins_ + SPCP(name)->_steps_*position;
-			double result = 0;
+			flt_type result = 0;
 			SPCP(name)->_results_(position) = SPCP(name)->_calculate(x);
 
 			for(ssize_t d=0; d<SPCP(name)->_num_dim_; d++)
@@ -297,7 +297,7 @@ private:
 		// Output name and version
 
 		std::string file_name = SPCP(name)->_name_base();
-		unsigned int file_version = SPCP(name)->_version_number_;
+		int_type file_version = SPCP(name)->_version_number_;
 
 		out_file.write(file_name.c_str(),BRG_CACHE_ND_NAME_SIZE);
 		out_file.write((char *)&file_version,sizeof(file_version));
@@ -358,7 +358,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	const double _calculate(const brgastro::multi_vector<double> & x) const
+	const flt_type _calculate(const brgastro::multi_vector<flt_type> & x) const
 	{
 		return 0;
 	}
@@ -394,8 +394,8 @@ public:
 		}
 	} // void set_file_name()
 
-	void set_range( const brgastro::multi_vector<double> & new_mins, const brgastro::multi_vector<double> & new_maxes,
-			const brgastro::multi_vector<double> & new_steps, const bool silent = false )
+	void set_range( const brgastro::multi_vector<flt_type> & new_mins, const brgastro::multi_vector<flt_type> & new_maxes,
+			const brgastro::multi_vector<flt_type> & new_steps, const bool silent = false )
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -428,16 +428,16 @@ public:
 		}
 	} // void set_range()
 
-	const BRG_UNITS get( const brgastro::multi_vector<double> & x, const bool silent = false ) const
+	const BRG_UNITS get( const brgastro::multi_vector<flt_type> & x, const bool silent = false ) const
 	{
 
-		brgastro::multi_vector<double> xlo, xhi;
+		brgastro::multi_vector<flt_type> xlo, xhi;
 		brgastro::multi_vector<ssize_t> x_i; // Lower nearby array points
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
 #else
-		double result = 0;
+		flt_type result = 0;
 #endif
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
@@ -475,16 +475,16 @@ public:
 		xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
 
 		ssize_t num_surrounding_points = 2;
-		for(int i=0; i<SPCP(name)->_num_dim_-1; ++i ) num_surrounding_points*=2;
+		for(int_type i=0; i<SPCP(name)->_num_dim_-1; ++i ) num_surrounding_points*=2;
 
 		result = 0;
-		double total_weight = 0;
+		flt_type total_weight = 0;
 		brgastro::multi_vector<ssize_t> position(SPCP(name)->_num_dim_,0);
 
 		for(ssize_t j=0; j < num_surrounding_points; j++)
 		{
-			double weight = 1;
-			unsigned int divisor = 1;
+			flt_type weight = 1;
+			int_type divisor = 1;
 			for(ssize_t i=0; i < SPCP(name)->_num_dim_; i++)
 			{
 				if(divisible(j/divisor,2))

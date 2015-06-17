@@ -23,7 +23,7 @@
 #ifndef _BRG_SOLVERS_HPP_INCLUDED_
 #define _BRG_SOLVERS_HPP_INCLUDED_
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -54,16 +54,16 @@ namespace brgastro
 
 template< typename f, typename T >
 inline const T solve_iterate( const f * func, const T &init_param = 0,
-		const int slowdown = 1, const double precision = 0.0001,
-		const int max_counter = 10000 )
+		const int_type slowdown = 1, const flt_type precision = 0.0001,
+		const int_type max_counter = 10000 )
 {
 	bool converged_flag;
-	int counter = 0;
+	int_type counter = 0;
 
 	T new_value = init_param;
 	T mean_value = 0;
 	std::vector< T > past_values( 0 );
-	int slowdown_to_use;
+	int_type slowdown_to_use;
 
 	if ( slowdown < 0 )
 		slowdown_to_use = 0;
@@ -76,7 +76,7 @@ inline const T solve_iterate( const f * func, const T &init_param = 0,
 		counter++;
 
 		// Shift back values
-		for ( int i = slowdown_to_use; i > 0; i-- )
+		for ( int_type i = slowdown_to_use; i > 0; i-- )
 		{
 			past_values[i] = past_values[i - 1];
 		}
@@ -96,7 +96,7 @@ inline const T solve_iterate( const f * func, const T &init_param = 0,
 		{
 			mean_value = 0;
 			mean_value += new_value / min( slowdown_to_use + 1, counter + 1 );
-			for ( int i = 0; i < min( slowdown_to_use, counter ); i++ )
+			for ( int_type i = 0; i < min( slowdown_to_use, counter ); i++ )
 				mean_value += past_values[i]
 						/ min( slowdown_to_use + 1, counter + 1 );
 			new_value = mean_value;
@@ -104,7 +104,7 @@ inline const T solve_iterate( const f * func, const T &init_param = 0,
 
 		converged_flag = true;
 		// Check for convergence
-		for ( int i = 0; i < slowdown_to_use + 1; i++ )
+		for ( int_type i = 0; i < slowdown_to_use + 1; i++ )
 		{
 			if ( std::fabs(
 					2 * ( new_value - past_values[i] )
@@ -149,8 +149,8 @@ inline const T solve_iterate( const f * func, const T &init_param = 0,
 // max_steps: Maximum number of steps the solver can take before it gives up.
 template< typename f, typename T >
 T solve_sd( const f * func, const T & init_in_params,
-		const double precision = 0.00001, const double lambda = 0.1,
-		const double cusp_override_power = 0, const int max_steps = 10000)
+		const flt_type precision = 0.00001, const flt_type lambda = 0.1,
+		const flt_type cusp_override_power = 0, const int_type max_steps = 10000)
 {
 
 	T Jacobian( 0 );
@@ -161,16 +161,16 @@ T solve_sd( const f * func, const T & init_in_params,
 	T lambda_norm( 0 );
 	T mag;
 
-	const int lambda_shortening_intervals = 10;
-	const double lambda_shortening_factor = 10;
-	unsigned int num_out_params = 0;
-	int num_steps_taken = 0;
+	const int_type lambda_shortening_intervals = 10;
+	const flt_type lambda_shortening_factor = 10;
+	int_type num_out_params = 0;
+	int_type num_steps_taken = 0;
 	bool converged_flag = false;
 
 	// Sanity checks on variables
-	const double lambda_to_use = max( SMALL_FACTOR,
+	const flt_type lambda_to_use = max( SMALL_FACTOR,
 			min( 1 / SMALL_FACTOR, lambda ) );
-	const int max_steps_to_use = (int)max( 1, max_steps );
+	const int_type max_steps_to_use = (int_type)max( 1, max_steps );
 
 	// Get normalized step size
 	lambda_norm = lambda_to_use / safe_d(differentiate( func, in_params_to_use, 1, cusp_override_power ));
@@ -231,9 +231,9 @@ T solve_sd( const f * func, const T & init_in_params,
 // Vector-in, vector-out version
 template< typename f, typename T >
 std::vector< T > solve_sd( const f * func, const std::vector< T > & init_in_params,
-		const double precision = 0.00001,
-		const double lambda = 0.1, const double cusp_override_power = 0,
-		const int max_steps = 10000)
+		const flt_type precision = 0.00001,
+		const flt_type lambda = 0.1, const flt_type cusp_override_power = 0,
+		const int_type max_steps = 10000)
 {
 	std::vector< std::vector< T > > Jacobian( 0 );
 	std::vector< T > current_in_params( 0 );
@@ -245,17 +245,17 @@ std::vector< T > solve_sd( const f * func, const std::vector< T > & init_in_para
 	typedef typename std::vector<T>::size_type vsize_t;
 	vsize_t num_in_params = ssize(init_in_params);
 
-	const int lambda_shortening_intervals = 10;
-	const double lambda_shortening_factor = 10;
+	const int_type lambda_shortening_intervals = 10;
+	const flt_type lambda_shortening_factor = 10;
 	vsize_t num_out_params = 0;
-	int num_steps_taken = 0;
+	int_type num_steps_taken = 0;
 	bool converged_flag = false;
 
 	// Sanity checks on variables
 	assert(num_in_params >= 1);
-	const double lambda_to_use = max( SMALL_FACTOR,
+	const flt_type lambda_to_use = max( SMALL_FACTOR,
 			min( 1 / SMALL_FACTOR, lambda ) );
-	const int max_steps_to_use = (int)max( 1, max_steps );
+	const int_type max_steps_to_use = (int_type)max( 1, max_steps );
 
 	// Get normalized step size
 	Jacobian = differentiate( func, in_params_to_use, 1, cusp_override_power );
@@ -357,11 +357,11 @@ std::vector< T > solve_sd( const f * func, const std::vector< T > & init_in_para
 template< typename f, typename T >
 T solve_grid( const f * func, const T & init_min_in_param, const T & init_max_in_param,
 		const T & init_init_in_params_step, const T & target_out_param,
-		const double init_init_precision = 0.00001, const int search_precision = 0.1 )
+		const flt_type init_init_precision = 0.00001, const int_type search_precision = 0.1 )
 {
 
-	T d = 0, d_best = std::numeric_limits<double>::max();
-	unsigned int i_best = -1;
+	T d = 0, d_best = std::numeric_limits<flt_type>::max();
+	int_type i_best = -1;
 	T init_in_param_step( 0 );
 	T in_param_step( 0 );
 	T test_in_param( 0 );
@@ -370,13 +370,13 @@ T solve_grid( const f * func, const T & init_min_in_param, const T & init_max_in
 	T min_in_param = init_min_in_param, max_in_params =
 			init_max_in_param;
 
-	const int default_step_number = 10;
-	const double grid_shortening_factor = 0.5;
+	const int_type default_step_number = 10;
+	const flt_type grid_shortening_factor = 0.5;
 
-	double init_precision = init_init_precision, precision = init_precision;
-	double step_dist = 1;
-	unsigned int num_test_points = 0;
-	unsigned int num_in_params_steps( 0 );
+	flt_type init_precision = init_init_precision, precision = init_precision;
+	flt_type step_dist = 1;
+	int_type num_test_points = 0;
+	int_type num_in_params_steps( 0 );
 
 	// Check for sanity and set up parameters
 	if ( max_in_params < min_in_param )
@@ -396,17 +396,17 @@ T solve_grid( const f * func, const T & init_min_in_param, const T & init_max_in
 		init_in_param_step = min( init_init_in_params_step,
 				max_in_params - min_in_param );
 	}
-	num_in_params_steps = (int)floor(
+	num_in_params_steps = (int_type)floor(
 			( max_in_params - min_in_param ) / init_in_param_step )
 			+ 1;
 	num_test_points = num_in_params_steps;
 
 	// First step is to search solution space for the best starting point
 	i_best = 0;
-	d_best = std::numeric_limits<double>::max();
+	d_best = std::numeric_limits<flt_type>::max();
 	in_param_step = init_in_param_step;
 	bool starting_point_found = false;
-	for ( unsigned int i = 0; i < num_test_points; i++ )
+	for ( int_type i = 0; i < num_test_points; i++ )
 	{
 		test_in_param = min_in_param + in_param_step * i;
 
@@ -425,18 +425,18 @@ T solve_grid( const f * func, const T & init_min_in_param, const T & init_max_in
 		{
 		}
 
-	} // for(int i = 0; i < num_test_points; i++ )
+	} // for(int_type i = 0; i < num_test_points; i++ )
 
 	if ( !starting_point_found )
 	{
 		// Try a finer search to see if that can find it
-		int search_factor = (int)( 1. / search_precision );
+		int_type search_factor = (int_type)( 1. / search_precision );
 		in_param_step *= search_precision;
 
 		// Recalculate number of test points
 		num_test_points = num_in_params_steps * search_factor;
 
-		for ( unsigned int i = 0; i < num_test_points; i++ )
+		for ( int_type i = 0; i < num_test_points; i++ )
 		{
 			// Figure out test_in_params for this point and get value there
 			test_in_param = min_in_param + in_param_step * i;
@@ -454,7 +454,7 @@ T solve_grid( const f * func, const T & init_min_in_param, const T & init_max_in
 			{
 			}
 
-		} // for(int i = 0; i < num_test_points; i++ )
+		} // for(int_type i = 0; i < num_test_points; i++ )
 
 	} // if(!starting_point_found)
 
@@ -479,8 +479,8 @@ T solve_grid( const f * func, const T & init_min_in_param, const T & init_max_in
 		in_param_step *= grid_shortening_factor;
 
 		i_best = 0;
-		d_best = std::numeric_limits<double>::max();
-		for ( unsigned int i = 0; i < num_test_points; i++ )
+		d_best = std::numeric_limits<flt_type>::max();
+		for ( int_type i = 0; i < num_test_points; i++ )
 		{
 			test_in_param = best_in_param + in_param_step * i - in_param_step;
 			try
@@ -497,7 +497,7 @@ T solve_grid( const f * func, const T & init_min_in_param, const T & init_max_in
 			{
 			}
 
-		} // for(int i = 0; i < num_test_points; i++ )
+		} // for(int_type i = 0; i < num_test_points; i++ )
 
 		// Figure out best_in_params for next step
 		best_in_param += in_param_step * i_best - in_param_step;
@@ -516,16 +516,16 @@ std::vector< T > solve_grid( const f * func,
 		const std::vector< T > & init_max_in_params,
 		const std::vector< T > & init_init_in_params_step,
 		const std::vector< T > & target_out_params = std::vector< T >(),
-		const double init_init_precision = 0.00001, const int search_precision = 0.1,
-		const std::vector< double > & init_out_params_weight = std::vector<
-				double >( 0 ))
+		const flt_type init_init_precision = 0.00001, const int_type search_precision = 0.1,
+		const std::vector< flt_type > & init_out_params_weight = std::vector<
+				flt_type >( 0 ))
 {
 	typedef typename std::vector<T>::size_type vsize_t;
 	vsize_t num_in_params = ssize(init_min_in_params);
 	vsize_t num_out_params = 0;
 
-	T d = 0, d_best = std::numeric_limits<double>::max();
-	int i_resid = 0, i_temp = 0, i_best = 0;
+	T d = 0, d_best = std::numeric_limits<flt_type>::max();
+	int_type i_resid = 0, i_temp = 0, i_best = 0;
 	std::vector< T > init_in_params_step( num_in_params, 0 );
 	std::vector< T > in_params_step( num_in_params, 0 );
 	std::vector< T > test_in_params( num_in_params, 0 );
@@ -533,21 +533,21 @@ std::vector< T > solve_grid( const f * func,
 	std::vector< T > test_out_params( num_out_params, 0 );
 	std::vector< T > min_in_params = init_min_in_params,
 			max_in_params = init_max_in_params;
-	std::vector< double > out_params_weight = init_out_params_weight;
+	std::vector< flt_type > out_params_weight = init_out_params_weight;
 
-	const int default_step_number = 10;
-	const double grid_shortening_factor = 0.5;
+	const int_type default_step_number = 10;
+	const flt_type grid_shortening_factor = 0.5;
 
-	double init_precision = init_init_precision, precision = init_precision;
-	double step_dist = 1;
-	int num_test_points = 0;
-	int divisor = 1;
-	double total_weight = 0;
-	std::vector< int > num_in_params_steps( num_in_params, 0 );
+	flt_type init_precision = init_init_precision, precision = init_precision;
+	flt_type step_dist = 1;
+	int_type num_test_points = 0;
+	int_type divisor = 1;
+	flt_type total_weight = 0;
+	std::vector< int_type > num_in_params_steps( num_in_params, 0 );
 
 	// Check for sanity and set up parameters
 
-	if(ssize(target_out_params)==0) target_out_params = std::vector<T>(0,func(init_min_in_params).size());
+	if(ssize(target_out_params)==0) target_out_params = std::vector<T>(0,ssize(func(init_min_in_params)));
 
 	num_test_points = 1;
 	if ( ssize(out_params_weight) == 0 )
@@ -579,7 +579,7 @@ std::vector< T > solve_grid( const f * func,
 			init_in_params_step.at( i ) = min( init_init_in_params_step[i],
 					max_in_params.at( i ) - min_in_params.at( i ) );
 		}
-		num_in_params_steps.at( i ) = (int)floor(
+		num_in_params_steps.at( i ) = (int_type)floor(
 				( max_in_params.at( i ) - min_in_params.at( i ) )
 						/ init_in_params_step.at( i ) ) + 1;
 		num_test_points *= num_in_params_steps.at( i );
@@ -599,18 +599,18 @@ std::vector< T > solve_grid( const f * func,
 
 	// First step is to search solution space for the best starting point
 	i_best = 0;
-	d_best = std::numeric_limits<double>::max();
+	d_best = std::numeric_limits<flt_type>::max();
 	in_params_step = init_in_params_step;
 	bool starting_point_found = false;
-	for ( int i = 0; i < num_test_points; i++ )
+	for ( int_type i = 0; i < num_test_points; i++ )
 	{
 		// Figure out test_in_params for this point
 		i_resid = i;
 		divisor = num_test_points;
-		for ( unsigned int j = 0; j < num_in_params; j++ )
+		for ( int_type j = 0; j < num_in_params; j++ )
 		{
 			divisor /= num_in_params_steps.at( j );
-			i_temp = (int)( i_resid / divisor );
+			i_temp = (int_type)( i_resid / divisor );
 			i_resid -= i_temp * divisor;
 			test_in_params.at( j ) = min_in_params.at( j )
 					+ in_params_step.at( j ) * i_temp;
@@ -633,24 +633,24 @@ std::vector< T > solve_grid( const f * func,
 		{
 		}
 
-	} // for(int i = 0; i < num_test_points; i++ )
+	} // for(int_type i = 0; i < num_test_points; i++ )
 
 	if ( !starting_point_found ) // We didn't find any suitable starting point
 	{
 		// Try a finer search to see if that can find it
-		int search_factor = (int)( 1. / search_precision );
+		int_type search_factor = (int_type)( 1. / search_precision );
 		in_params_step = init_in_params_step;
 		for ( vsize_t i = 0; i < ssize(in_params_step); i++ )
 			in_params_step[i] /= search_factor;
 		i_best = 0;
-		d_best = std::numeric_limits<double>::max();
+		d_best = std::numeric_limits<flt_type>::max();
 
 		// Recalculate number of test points
 		num_test_points = 1;
 		for ( vsize_t i = 0; i < num_in_params; i++ )
 			num_test_points *= num_in_params_steps.at( i ) * search_factor;
 
-		for ( int i = 0; i < num_test_points; i++ )
+		for ( int_type i = 0; i < num_test_points; i++ )
 		{
 			// Figure out test_in_params for this point
 			i_resid = i;
@@ -658,7 +658,7 @@ std::vector< T > solve_grid( const f * func,
 			for ( vsize_t j = 0; j < num_in_params; j++ )
 			{
 				divisor /= num_in_params_steps.at( j );
-				i_temp = (int)( i_resid / divisor );
+				i_temp = (int_type)( i_resid / divisor );
 				i_resid -= i_temp * divisor;
 				test_in_params.at( j ) = min_in_params.at( j )
 						+ in_params_step.at( j ) * i_temp;
@@ -683,7 +683,7 @@ std::vector< T > solve_grid( const f * func,
 			{
 			}
 
-		} // for(int i = 0; i < num_test_points; i++ )
+		} // for(int_type i = 0; i < num_test_points; i++ )
 
 	} // if(!starting_point_found)
 
@@ -701,7 +701,7 @@ std::vector< T > solve_grid( const f * func,
 	for ( vsize_t j = 0; j < num_in_params; j++ )
 	{
 		divisor /= num_in_params_steps.at( j );
-		i_temp = (unsigned int)( i_resid / divisor );
+		i_temp = (int_type)( i_resid / divisor );
 		i_resid -= i_temp * divisor;
 		best_in_params.at( j ) = min_in_params.at( j )
 				+ in_params_step.at( j ) * i_temp;
@@ -721,8 +721,8 @@ std::vector< T > solve_grid( const f * func,
 		}
 
 		i_best = -1;
-		d_best = std::numeric_limits<double>::max();
-		for ( int i = 0; i < num_test_points; i++ )
+		d_best = std::numeric_limits<flt_type>::max();
+		for ( int_type i = 0; i < num_test_points; i++ )
 		{
 			// Figure out test_in_params for this point
 			i_resid = i;
@@ -730,7 +730,7 @@ std::vector< T > solve_grid( const f * func,
 			for ( vsize_t j = 0; j < num_in_params; j++ )
 			{
 				divisor /= 3;
-				i_temp = (int)( i_resid / divisor );
+				i_temp = (int_type)( i_resid / divisor );
 				i_resid -= i_temp * divisor;
 				i_temp -= 1;
 				test_in_params.at( j ) = best_in_params.at( j )
@@ -755,15 +755,15 @@ std::vector< T > solve_grid( const f * func,
 			{
 			}
 
-		} // for(int i = 0; i < num_test_points; i++ )
+		} // for(int_type i = 0; i < num_test_points; i++ )
 
 		// Figure out test_in_params for this point
 		i_resid = i_best;
 		divisor = num_test_points;
-		for ( unsigned int j = 0; j < num_in_params; j++ )
+		for ( int_type j = 0; j < num_in_params; j++ )
 		{
 			divisor /= 3;
-			i_temp = (int)( i_resid / divisor );
+			i_temp = (int_type)( i_resid / divisor );
 			i_resid -= i_temp * divisor;
 			i_temp -= 1;
 			test_in_params.at( j ) = best_in_params.at( j )
@@ -781,32 +781,32 @@ std::vector< T > solve_grid( const f * func,
 // Scalar-in, scalar-out version
 template< typename f, typename T >
 T solve_grid( const f * func, const T & init_min_in_params, const T & init_max_in_params,
-		const unsigned int num_search_steps, const T & target_out_params,
-		const double init_init_precision = 0.00001,
-		const int search_precision = 0.1, const bool silent = false )
+		const int_type num_search_steps, const T & target_out_params,
+		const flt_type init_init_precision = 0.00001,
+		const int_type search_precision = 0.1, const bool silent = false )
 {
-	const unsigned int steps = (unsigned int)max( num_search_steps, 1 );
+	const int_type steps = (int_type)max( num_search_steps, 1 );
 
 	T in_params_step(( init_max_in_params - init_min_in_params ) / steps);
 	return brgastro::solve_grid( func, init_min_in_params,
 			init_max_in_params, in_params_step, target_out_params,
 			init_init_precision, search_precision,
 			silent );
-} // const int solve_grid(...)
+} // const int_type solve_grid(...)
 
 // Vector-in, vector-out version
 template< typename f, typename T >
 std::vector<T> solve_grid( const f * func,
 		const std::vector< T > & init_min_in_params,
 		const std::vector< T > & init_max_in_params,
-		const unsigned int num_search_steps, const std::vector< T > & target_out_params,
-		const double init_init_precision = 0.00001, const int search_precision = 0.1,
-		const std::vector< double > & out_params_weight =
-				std::vector< double >( 0 ), const bool silent = false )
+		const int_type num_search_steps, const std::vector< T > & target_out_params,
+		const flt_type init_init_precision = 0.00001, const int_type search_precision = 0.1,
+		const std::vector< flt_type > & out_params_weight =
+				std::vector< flt_type >( 0 ), const bool silent = false )
 {
 	std::vector< T > in_params_step( ssize(init_min_in_params), 0 );
 
-	const unsigned int steps = (unsigned int)max( num_search_steps, 1 );
+	const int_type steps = (int_type)max( num_search_steps, 1 );
 
 	assert(ssize(init_min_in_params)==ssize(init_max_in_params));
 
@@ -818,7 +818,7 @@ std::vector<T> solve_grid( const f * func,
 			init_max_in_params, in_params_step, target_out_params,
 			init_init_precision, search_precision,
 			out_params_weight, silent );
-} // const int solve_grid(...)
+} // const int_type solve_grid(...)
 
 /** Attempts to find the minimum output value for the passed function using a Metropolis-Hastings
  *  MCMC algorithm with simulated annealing.
@@ -839,10 +839,10 @@ std::vector<T> solve_grid( const f * func,
 template< typename f, typename T >
 T solve_MCMC( const f * func, const T init_in_param, const T init_min_in_param,
 		const T init_max_in_param, const T init_in_param_step_sigma,
-		const int max_steps=1000000, const int annealing_period=100000,
-		const double annealing_factor=4)
+		const int_type max_steps=1000000, const int_type annealing_period=100000,
+		const flt_type annealing_factor=4)
 {
-	int step_num = 0;
+	int_type step_num = 0;
 	bool bounds_check = true;
 
 	// Check how bounds were passed in
@@ -880,12 +880,12 @@ T solve_MCMC( const f * func, const T init_in_param, const T init_min_in_param,
 	}
 
 	// Initialise
-	double annealing = 1;
+	flt_type annealing = 1;
 	bool last_cycle = false;
 	T current_in_param = init_in_param, test_in_param = init_in_param, best_in_param = init_in_param;
 	T out_param, best_out_param;
 	T mean_in_param = 0;
-	int last_cycle_count = 0;
+	int_type last_cycle_count = 0;
 
 	// Get value at initial point
 	try
@@ -898,9 +898,9 @@ T solve_MCMC( const f * func, const T init_in_param, const T init_min_in_param,
 		throw;
 	}
 	best_out_param = out_param;
-	double last_likelihood = std::exp(-annealing*out_param/2);
+	flt_type last_likelihood = std::exp(-annealing*out_param/2);
 
-	for(unsigned int step = 0; step < max_steps; step++)
+	for(int_type step = 0; step < max_steps; step++)
 	{
 		// Get a new value
 		test_in_param = current_in_param + in_param_step_sigma*brgastro::Gaus_rand()/annealing;
@@ -919,7 +919,7 @@ T solve_MCMC( const f * func, const T init_in_param, const T init_min_in_param,
 		{
 			good_result = false;
 		}
-		double new_likelihood = std::exp(-annealing*out_param/2);
+		flt_type new_likelihood = std::exp(-annealing*out_param/2);
 
 		// If it's usable, check if we should step to it
 		if(good_result)
@@ -966,7 +966,7 @@ T solve_MCMC( const f * func, const T init_in_param, const T init_min_in_param,
 			if(max_steps-step<=annealing_period)
 				last_cycle = true;
 		}
-	} // for(unsigned int step = 0; step < max_steps; step++)
+	} // for(int_type step = 0; step < max_steps; step++)
 
 	// Calculate mean now
 	mean_in_param /= last_cycle_count;
@@ -1005,8 +1005,8 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 		const std::vector<T> & init_min_in_params,
 		const std::vector<T> & init_max_in_params,
 		const std::vector<T> & init_in_param_step_sigmas,
-		const int max_steps=1000000,
-		const int annealing_period=100000, const double annealing_factor=4)
+		const int_type max_steps=1000000,
+		const int_type annealing_period=100000, const flt_type annealing_factor=4)
 {
 	bool bounds_check = true;
 
@@ -1019,23 +1019,23 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 
 	if(min_in_params.size() < max_in_params.size())
 	{
-		min_in_params.resize(max_in_params.size(),-std::numeric_limits<double>::max());
+		min_in_params.resize(max_in_params.size(),-std::numeric_limits<flt_type>::max());
 	}
 	if(max_in_params.size() < min_in_params.size())
 	{
-		max_in_params.resize(min_in_params.size(),std::numeric_limits<double>::max());
+		max_in_params.resize(min_in_params.size(),std::numeric_limits<flt_type>::max());
 	}
 
 	// Check if any of the params likely have max and min mixed up
 	if(bounds_check)
 	{
-		for(unsigned int i = 0; i < max_in_params.size(); i++)
+		for(int_type i = 0; i < ssize(max_in_params); i++)
 		{
 			if(min_in_params.at(i)>max_in_params.at(i))
 			{
 				std::swap(min_in_params.at(i),max_in_params.at(i));
 			} // if(min_in_params.at(i)>max_in_params.at(i))
-		} // for(unsigned int i = 0; i < max_in_params.size(); i++)
+		} // for(int_type i = 0; i < max_in_params.size(); i++)
 	} // if(bounds_check)
 
 	// Check step sizes
@@ -1045,7 +1045,7 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 	if(ssize(in_param_step_sigmas) < ssize(min_in_params))
 		in_param_step_sigmas.resize(min_in_params.size(),0);
 
-	for(unsigned int i = 0; i < ssize(in_param_step_sigmas); i++)
+	for(int_type i = 0; i < ssize(in_param_step_sigmas); i++)
 	{
 		if(in_param_step_sigmas.at(i) <= 0)
 		{
@@ -1062,13 +1062,13 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 	}
 
 	// Initialise
-	double annealing = 1;
+	flt_type annealing = 1;
 	bool last_cycle = false;
 	std::vector<T> current_in_params = init_in_params, test_in_params = init_in_params,
 			best_in_params = init_in_params;
 	std::vector<T> out_params, best_out_params;
 	std::vector<T> mean_in_params(min_in_params.size(),0);
-	int last_cycle_count = 0;
+	int_type last_cycle_count = 0;
 
 	// Get value at initial point
 	try
@@ -1081,12 +1081,12 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 		throw;
 	}
 	best_out_params = out_params;
-	double last_log_likelihood = brgastro::sum(
+	flt_type last_log_likelihood = brgastro::sum(
 			brgastro::multiply(-annealing/2,out_params));
 
 	auto new_Gaus_rand = [] (const T & mean, const T & std) {return brgastro::Gaus_rand(mean,std);};
 
-	for(int step = 0; step < max_steps; step++)
+	for(int_type step = 0; step < max_steps; step++)
 	{
 		// Get a new value
 		test_in_params = brgastro::rand_vector(new_Gaus_rand,
@@ -1109,7 +1109,7 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 		{
 			good_result = false;
 		}
-		double new_log_likelihood = brgastro::sum(
+		flt_type new_log_likelihood = brgastro::sum(
 				brgastro::multiply(-annealing/2,out_params));
 
 		// If it's usable, check if we should step to it
@@ -1157,7 +1157,7 @@ std::vector<T> solve_MCMC( const f * func, const std::vector<T> & init_in_params
 			if(max_steps-step<=annealing_period)
 				last_cycle = true;
 		}
-	} // for(unsigned int step = 0; step < max_steps; step++)
+	} // for(int_type step = 0; step < max_steps; step++)
 
 	// Calculate mean now
 	mean_in_params = brgastro::divide(mean_in_params,brgastro::safe_d(last_cycle_count));

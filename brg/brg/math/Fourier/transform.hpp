@@ -31,8 +31,8 @@
 
 #include <boost/optional.hpp>
 #include <fftw3.h>
-#include <Eigen/Core>
 
+#include "brg/Eigen.hpp"
 #include "brg/container/is_eigen_container.hpp"
 #include "brg/utility.hpp"
 
@@ -49,7 +49,7 @@ typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,c
 complex_array_type Fourier_transform(const array_type & vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
-	int N = ssize(vals);
+	int_type N = ssize(vals);
 	fftw_complex_ptr out((fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N));
 
 	managed_fftw_plan plan;
@@ -71,14 +71,14 @@ complex_array_type Fourier_transform(const array_type & vals,
 		#pragma omp critical(make_fftw_plan)
 		plan = fftw_plan_dft_r2c_1d(N, in.get(), out.get(), FFTW_MEASURE);
 
-		for(int i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
+		for(int_type i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
 
 		plan.execute(); // Execute before in is allocated
 	}
 
 	complex_array_type result(N);
 
-	for(int i=0; i<N; ++i)
+	for(int_type i=0; i<N; ++i)
 	{
 		result(i) = complex_type(out.get()[i][0],out.get()[i][1]);
 	}
@@ -95,7 +95,7 @@ typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,c
 flt_array_type inverse_Fourier_transform(const array_type & vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
-	int N = ssize(vals);
+	int_type N = ssize(vals);
 
 	fftw_complex_ptr in((fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N));
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
@@ -115,7 +115,7 @@ flt_array_type inverse_Fourier_transform(const array_type & vals,
 	}
 
 	// Initialize after planning
-	for(int i=0; i<N; ++i)
+	for(int_type i=0; i<N; ++i)
 	{
 		in.get()[i][0] = vals[i].real();
 		in.get()[i][1] = vals[i].imag();
@@ -137,7 +137,7 @@ typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,c
 flt_array_type Fourier_sin_transform(const array_type & vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
-	int N = ssize(vals);
+	int_type N = ssize(vals);
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
 
 	managed_fftw_plan plan;
@@ -160,7 +160,7 @@ flt_array_type Fourier_sin_transform(const array_type & vals,
 		#pragma omp critical(make_fftw_plan)
 		plan = fftw_plan_r2r_1d(N, in.get(), out.get(), FFTW_RODFT10, FFTW_MEASURE);
 
-		for(int i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
+		for(int_type i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
 
 		plan.execute(); // Execute before in is deallocated
 	}
@@ -180,7 +180,7 @@ typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,c
 flt_array_type inverse_Fourier_sin_transform(const array_type & vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
-	int N = ssize(vals);
+	int_type N = ssize(vals);
 
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
 
@@ -204,7 +204,7 @@ flt_array_type inverse_Fourier_sin_transform(const array_type & vals,
 		#pragma omp critical(make_fftw_plan)
 		plan = fftw_plan_r2r_1d(N, in.get(), out.get(), FFTW_RODFT01, FFTW_MEASURE);
 
-		for(int i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
+		for(int_type i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
 
 		plan.execute(); // Execute before in is deallocated
 	}
@@ -223,7 +223,7 @@ typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,c
 flt_array_type spherical_Fourier_transform(array_type vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
-	int N = ssize(vals);
+	int_type N = ssize(vals);
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
 
 	vals *= flt_array_type::LinSpaced(N,0.5,N-0.5);
@@ -248,7 +248,7 @@ flt_array_type spherical_Fourier_transform(array_type vals,
 		#pragma omp critical(make_fftw_plan)
 		plan = fftw_plan_r2r_1d(N, in.get(), out.get(), FFTW_RODFT10, FFTW_MEASURE);
 
-		for(int i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
+		for(int_type i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
 
 		plan.execute(); // Execute before in is deallocated
 	}
@@ -267,7 +267,7 @@ typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,c
 flt_array_type inverse_spherical_Fourier_transform(array_type vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
-	int N = ssize(vals);
+	int_type N = ssize(vals);
 
 	fftw_flt_ptr in((flt_type*) fftw_malloc(sizeof(flt_type) * N));
 	fftw_flt_ptr out((flt_type*) fftw_malloc(sizeof(flt_type) * N));
@@ -294,7 +294,7 @@ flt_array_type inverse_spherical_Fourier_transform(array_type vals,
 		#pragma omp critical(make_fftw_plan)
 		plan = fftw_plan_r2r_1d(N, in.get(), out.get(), FFTW_RODFT01, FFTW_MEASURE);
 
-		for(int i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
+		for(int_type i=0; i<N; ++i) in.get()[i] = vals[i]; // Need to initialize after planning in this case
 
 		plan.execute(); // Execute before in is deallocated
 	}
@@ -314,7 +314,7 @@ typename std::enable_if<!brgastro::is_stl_or_eigen_container<func_type>::value,c
 complex_array_type Fourier_transform( const func_type & func,
 		const flt_type & min = 0.,
 		const flt_type & max = 1.,
-		const int & samples = 1024,
+		const int_type & samples = 1024,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none)
 {
 	flt_array_type vals = flt_array_type::LinSpaced(samples,min,max).unaryExpr(func);
@@ -325,7 +325,7 @@ template< typename func_type,
 typename std::enable_if<!brgastro::is_stl_or_eigen_container<func_type>::value,char>::type = 0 >
 flt_array_type Fourier_sin_transform( const func_type & func,
 		const flt_type & max = 1.,
-		const int & samples = 1024,
+		const int_type & samples = 1024,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none)
 {
 	flt_array_type xvals = flt_array_type::LinSpaced(samples,0.,max) + max/(2*(samples-1));
@@ -338,7 +338,7 @@ template< typename func_type,
 typename std::enable_if<!brgastro::is_stl_or_eigen_container<func_type>::value,char>::type = 0 >
 flt_array_type spherical_Fourier_transform( const func_type & func,
 		const flt_type & max = 1.,
-		const int & samples = 1024,
+		const int_type & samples = 1024,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none)
 {
 	flt_array_type xvals = flt_array_type::LinSpaced(samples,0.,max) + max/(2*(samples-1));

@@ -27,7 +27,7 @@
 
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/interpolator/interpolator.h"
 #include "brg/utility.hpp"
@@ -68,12 +68,12 @@ private:
 	bool _interpolator_ptr_set_up_;
 	mutable bool _calculated_;
 
-	std::vector< double > _unknown_t_list_;
+	std::vector< flt_type > _unknown_t_list_;
 
-	static double _default_sample_scale_, _default_sample_max_width_,
+	static flt_type _default_sample_scale_, _default_sample_max_width_,
 			_default_sample_precision_;
-	double _sample_scale_, _sample_max_width_, _sample_precision_;
-	mutable double _t_min_, _t_max_;
+	flt_type _sample_scale_, _sample_max_width_, _sample_precision_;
+	mutable flt_type _t_min_, _t_max_;
 
 	brgastro::interpolator::allowed_interpolation_type _interpolation_type_;
 
@@ -99,11 +99,11 @@ public:
 	// Set functions
 	void set_spline_ptr( brgastro::interpolator *new_interpolator_ptr );
 	void clear_spline_ptr();
-	void set_default_sample_scale( double new_default_sample_scale );
+	void set_default_sample_scale( flt_type new_default_sample_scale );
 	void set_default_sample_max_width(
-			double new_default_sample_max_width );
-	void set_sample_scale( double new_sample_scale );
-	void set_sample_max_width( double new_sample_max_width );
+			flt_type new_default_sample_max_width );
+	void set_sample_scale( flt_type new_sample_scale );
+	void set_sample_max_width( flt_type new_sample_max_width );
 	void reset_sample_scale(); // Sets it to default
 	void reset_sample_max_width(); // Sets it to default
 	void set_interpolation_type(
@@ -111,8 +111,8 @@ public:
 	void reset_interpolation_type();
 
 	// Functions for adding/clearing points
-	void add_point( const double t, const double x );
-	void add_unknown_point( const double t );
+	void add_point( const flt_type t, const flt_type x );
+	void add_unknown_point( const flt_type t );
 
 	void clear_known_points();
 	void clear_unknown_points();
@@ -122,7 +122,7 @@ public:
 	void clear();
 
 	// Get functions
-	double operator()( double xval, bool silent = false ) const;
+	flt_type operator()( flt_type xval, bool silent = false ) const;
 	ssize_t size() const
 	{
 		return ssize(_known_interpolator_) + ssize(_unknown_t_list_);

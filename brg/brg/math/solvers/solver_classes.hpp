@@ -33,7 +33,7 @@
 
 #include <boost/optional.hpp>
 
-#include <Eigen/Core>
+#include "brg/Eigen.hpp"
 
 #include "brg/math/random/random_functions.hpp"
 #include "brg/math/misc_math.hpp"
@@ -43,7 +43,7 @@
 
 namespace brgastro {
 
-template< typename T_value_type, int T_num_params=Eigen::Dynamic >
+template< typename T_value_type, int_type T_num_params=Eigen::Dynamic >
 class MCMC_solver
 {
 public:
@@ -79,7 +79,7 @@ public:
 			const array_type & init_in_param_step_sigmas,
 			const size_type & max_steps=1000000,
 			const size_type & annealing_period=100000,
-			const double & annealing_factor=4,
+			const flt_type & annealing_factor=4,
 			const size_type & skip_factor=10)
 	{
 		static_assert(std::is_convertible<decltype(func(array_type())),value_type>::value,
@@ -118,13 +118,13 @@ public:
 		// Check if any of the params likely have max and min mixed up
 		if(bounds_check)
 		{
-			for(unsigned int i = 0; i < max_in_params.size(); i++)
+			for(int_type i = 0; i < max_in_params.size(); i++)
 			{
 				if(min_in_params(i)>max_in_params(i))
 				{
 					std::swap(min_in_params(i),max_in_params(i));
 				} // if(min_in_params.at(i)>max_in_params.at(i))
-			} // for(unsigned int i = 0; i < max_in_params.size(); i++)
+			} // for(int_type i = 0; i < max_in_params.size(); i++)
 		} // if(bounds_check)
 
 		// Check step sizes
@@ -134,7 +134,7 @@ public:
 		if(in_param_step_sigmas.size() < min_in_params.size())
 			in_param_step_sigmas.resize(min_in_params.size(),0);
 
-		for(unsigned int i = 0; i < in_param_step_sigmas.size(); i++)
+		for(int_type i = 0; i < in_param_step_sigmas.size(); i++)
 		{
 			if(in_param_step_sigmas(i) <= 0)
 			{
@@ -151,7 +151,7 @@ public:
 		}
 
 		// Initialise generally
-		double annealing = 1.;
+		flt_type annealing = 1.;
 
 		bool last_cycle = false;
 		size_type last_cycle_count = 0;
@@ -178,11 +178,11 @@ public:
 			throw;
 		}
 		best_out_param = out_param;
-		double last_log_likelihood = -annealing*out_param/2;
+		flt_type last_log_likelihood = -annealing*out_param/2;
 
 		auto new_Gaus_rand = [] (const value_type & dummy) {return brgastro::Gaus_rand();};
 
-		for(int step = 0; step < max_steps; step++)
+		for(int_type step = 0; step < max_steps; step++)
 		{
 			// Get a new value
 			test_in_params = current_in_params + array_type::Zero(array_size).unaryExpr(new_Gaus_rand)*in_param_step_sigmas/annealing;
@@ -203,7 +203,7 @@ public:
 			{
 				good_result = false;
 			}
-			double new_log_likelihood = -annealing*out_param/2;
+			flt_type new_log_likelihood = -annealing*out_param/2;
 
 			// If it's usable, check if we should step to it
 			bool step_to_it = false;
@@ -273,7 +273,7 @@ public:
 						last_cycle = true;
 				}
 			}
-		} // for(unsigned int step = 0; step < max_steps; step++)
+		} // for(int_type step = 0; step < max_steps; step++)
 
 		// Calculate mean now
 		mean_in_params = mean_in_params/brgastro::safe_d(last_cycle_count);

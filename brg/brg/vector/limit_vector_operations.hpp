@@ -31,7 +31,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"

@@ -23,21 +23,21 @@
 #include <algorithm>
 #include <cassert>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/utility.hpp"
 
 #include "interpolator.h"
 
 // Global function implementations
-bool brgastro::p1first_lt_p2first(std::pair<double,double> pair1, std::pair<double,double> pair2)
+bool brgastro::p1first_lt_p2first(std::pair<flt_type,flt_type> pair1, std::pair<flt_type,flt_type> pair2)
 {
 	assert(pair1.first != pair2.first);
 	return (pair1.first < pair2.first);
 }
 
 // Global function implementations
-bool brgastro::p1first_lt_v2(std::pair<double,double> pair1, double v2)
+bool brgastro::p1first_lt_v2(std::pair<flt_type,flt_type> pair1, flt_type v2)
 {
 	return (pair1.first < v2);
 }
@@ -106,7 +106,7 @@ void brgastro::interpolator::set_interpolation_type(
 
 void brgastro::interpolator::_set_spline_points() const
 {
-	std::vector<double> x_points(0), y_points(0);
+	std::vector<flt_type> x_points(0), y_points(0);
 	sorted_data(); // Ensure it's cached
 	for(ssize_t i = 0; i < ssize(_sorted_data_); i++)
 	{
@@ -132,14 +132,14 @@ void brgastro::interpolator::clear_points()
 	_sorted_data_cached_ = false;
 }
 
-void brgastro::interpolator::add_point(const double x, const double y)
+void brgastro::interpolator::add_point(const flt_type x, const flt_type y)
 {
 	_data_.push_back(std::make_pair(x,y));
 	_spline_cached_ = false;
 	_sorted_data_cached_ = false;
 }
 
-void brgastro::interpolator::try_add_point(const double x, const double y)
+void brgastro::interpolator::try_add_point(const flt_type x, const flt_type y)
 {
 	for (ssize_t i=0;i<ssize(_data_);i++)
 	{
@@ -150,7 +150,7 @@ void brgastro::interpolator::try_add_point(const double x, const double y)
 	_sorted_data_cached_ = false;
 }
 
-std::vector< std::pair<double,double> > & brgastro::interpolator::sorted_data() const
+std::vector< std::pair<flt_type,flt_type> > & brgastro::interpolator::sorted_data() const
 {
 	if(_sorted_data_cached_)
 		return _sorted_data_;
@@ -162,7 +162,7 @@ std::vector< std::pair<double,double> > & brgastro::interpolator::sorted_data() 
 	return _sorted_data_;
 }
 
-const double brgastro::interpolator::operator()(const double x) const
+const flt_type brgastro::interpolator::operator()(const flt_type x) const
 {
 	if(_interpolation_type_==SPLINE)
 	{
@@ -179,7 +179,7 @@ const double brgastro::interpolator::operator()(const double x) const
 		if(ssize(_data_) < 2)
 			throw std::logic_error("Interpolator called before at least 2 points were loaded.\n");
 
-		double xlo, xhi, ylo, yhi;
+		flt_type xlo, xhi, ylo, yhi;
 		if(x<=sorted_data().front().first)
 		{
 			xlo = _sorted_data_[0].first;
@@ -196,7 +196,7 @@ const double brgastro::interpolator::operator()(const double x) const
 		}
 		else
 		{
-			std::vector< std::pair<double,double> >::iterator it=_sorted_data_.end();
+			std::vector< std::pair<flt_type,flt_type> >::iterator it=_sorted_data_.end();
 
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
@@ -226,7 +226,7 @@ const double brgastro::interpolator::operator()(const double x) const
 		}
 		else
 		{
-			std::vector< std::pair<double,double> >::iterator it=_sorted_data_.end();
+			std::vector< std::pair<flt_type,flt_type> >::iterator it=_sorted_data_.end();
 
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
@@ -251,7 +251,7 @@ const double brgastro::interpolator::operator()(const double x) const
 		}
 		else
 		{
-			std::vector< std::pair<double,double> >::iterator it=_sorted_data_.end();
+			std::vector< std::pair<flt_type,flt_type> >::iterator it=_sorted_data_.end();
 
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);

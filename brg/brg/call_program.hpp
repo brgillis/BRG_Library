@@ -33,13 +33,15 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "brg/common.h"
+
 namespace brgastro{
 
 template<typename... Args>
-int call_program_noexcept(const char *program_name, unsigned num_retries, Args... args)
+int_type call_program_noexcept(const char *program_name, int_type num_retries, Args... args)
 {
 	bool good_result=false;
-	unsigned try_count = 0;
+	int_type try_count = 0;
 	pid_t pid;
 	while(!good_result)
 	{
@@ -68,7 +70,7 @@ int call_program_noexcept(const char *program_name, unsigned num_retries, Args..
 			default:
 				/* This is processed by the parent */
 				++try_count;
-				int status=0;
+				int_type status=0;
 				waitpid(pid,&status,0);
 				if(status)
 				{
@@ -82,15 +84,15 @@ int call_program_noexcept(const char *program_name, unsigned num_retries, Args..
 	return 0;
 }
 
-inline int call_program_noexcept(const char *program_name)
+inline int_type call_program_noexcept(const char *program_name)
 {
-	return call_program_noexcept(program_name,unsigned(0));
+	return call_program_noexcept(program_name,int_type(0));
 }
 
 template<typename... Args>
-void call_program(const char *program_name, unsigned num_retries, Args... args)
+void call_program(const char *program_name, int_type num_retries, Args... args)
 {
-	int result=call_program_noexcept(program_name,num_retries,args...);
+	int_type result=call_program_noexcept(program_name,num_retries,args...);
 	if(result>0)
 		throw std::runtime_error("Child in call_program returned error status "
 			+ boost::lexical_cast<std::string>(result) + "\n.");

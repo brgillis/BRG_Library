@@ -30,7 +30,7 @@
 #include <type_traits>
 
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/container/is_container.hpp"
 #include "brg/container/is_eigen_container.hpp"
@@ -54,11 +54,11 @@ const T safe_sqrt( const T & a )
 #endif
 	return std::sqrt( std::fabs( a ) );
 }
-inline double safe_sqrt( const int a ) // Special case for integers due to -INT_MIN > INT_MAX
+inline flt_type safe_sqrt( const int_type a ) // Special case for integers due to -INT_MIN > INT_MAX
 {
 	using std::sqrt;
 
-	double res;
+	flt_type res;
 
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 	if(a < 0)
@@ -67,9 +67,9 @@ inline double safe_sqrt( const int a ) // Special case for integers due to -INT_
 	}
 #endif
 
-	if ( a == std::numeric_limits<int>::min() )
+	if ( a == std::numeric_limits<int_type>::min() )
 	{
-		res = std::numeric_limits<int>::max();
+		res = std::numeric_limits<int_type>::max();
 	}
 	else
 	{
@@ -81,7 +81,7 @@ template< class Ta, class Tx >
 inline const Ta safe_pow( const Ta & a, const Tx & x )
 {
 	Ta res;
-	double ipart;
+	flt_type ipart;
 
 	std::modf( a, &ipart );
 

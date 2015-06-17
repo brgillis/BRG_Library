@@ -30,8 +30,7 @@
 
 #include <type_traits>
 
-#include <Eigen/Core>
-
+#include "brg/Eigen.hpp"
 #include "brg/container/is_container.hpp"
 
 namespace brgastro
@@ -48,32 +47,6 @@ struct is_stl_or_eigen_container : std::integral_constant<bool,
 { };
 
 } // end namespace brgastro
-
-// Global namespace begin and end definitions
-
-template <typename Derived>
-auto begin(const Eigen::EigenBase<Derived> & vec) -> decltype(vec.data())
-{
-	return vec.data();
-}
-
-template <typename Derived>
-auto begin(Eigen::EigenBase<Derived> & vec) -> decltype(vec.data())
-{
-	return vec.data();
-}
-
-template <typename Derived>
-auto end(const Eigen::EigenBase<Derived> & vec) -> decltype(vec.data())
-{
-	return vec.data()+vec.size();
-}
-
-template <typename Derived>
-auto end(Eigen::EigenBase<Derived> & vec) -> decltype(vec.data())
-{
-	return vec.data()+vec.size();
-}
 
 
 

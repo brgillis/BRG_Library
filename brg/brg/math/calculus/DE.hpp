@@ -28,7 +28,7 @@
 
 #include <type_traits>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 
@@ -38,8 +38,8 @@ namespace brgastro {
 // out by half a timestep, with velocity at t+t_step/2 (though it does allow phase classes to be passed to it). This method takes a single step,
 // using the passed acceleration function. The passed function for this implementation must take in one parameter (the magnitude of distance from
 // a centre point) and return one parameter (the magnitude of the acceleration toward this centre point).
-template< typename f, typename Td=double, typename Tv=double, typename Tt=double >
-inline const int leapfrog_step( const Td & x, const Td & y,
+template< typename f, typename Td=flt_type, typename Tv=flt_type, typename Tt=flt_type >
+inline const int_type leapfrog_step( const Td & x, const Td & y,
 								const Td & z, const Tv & vx, const Tv & vy,
 								const Tv & vz,
 								Td & new_x, Td & new_y, Td & new_z,
@@ -73,8 +73,8 @@ inline const int leapfrog_step( const Td & x, const Td & y,
 	return 0;
 }
 
-template< typename f, typename Td=double, typename Tv=double, typename Tt=double >
-inline const int leapfrog_step( Td & x, Td & y, Td & z,
+template< typename f, typename Td=flt_type, typename Tv=flt_type, typename Tt=flt_type >
+inline const int_type leapfrog_step( Td & x, Td & y, Td & z,
 		Tv & vx, Tv & vy, Tv & vz,
 		const Tt & t_step, const f *accel_func )
 {
@@ -83,7 +83,7 @@ inline const int leapfrog_step( Td & x, Td & y, Td & z,
 	Td new_x, new_y, new_z;
 	Tv new_vx, new_vy, new_vz;
 
-	int result;
+	int_type result;
 	result = leapfrog_step( x, y, z, vx, vy, vz, new_x, new_y, new_z, new_vx,
 			new_vy, new_vz, t_step, accel_func );
 	x = new_x;
@@ -95,8 +95,8 @@ inline const int leapfrog_step( Td & x, Td & y, Td & z,
 	return result;
 }
 
-template< typename f, typename Tp, typename Tt=double >
-inline const int leapfrog_step( const Tp &p, Tp & new_p,
+template< typename f, typename Tp, typename Tt=flt_type >
+inline const int_type leapfrog_step( const Tp &p, Tp & new_p,
 		const Tt & t_step, const f *accel_func )
 {
 	static_assert(std::is_same<decltype(p.x/Tt()),decltype(p.vx)>::value,"Invalid types passed to parameters of leapfrog_step");
@@ -105,13 +105,13 @@ inline const int leapfrog_step( const Tp &p, Tp & new_p,
 			new_p.z, new_p.vx, new_p.vy, new_p.vz, t_step, accel_func );
 }
 
-template< typename f, typename Tp, typename Tt=double >
-inline const int leapfrog_step( Tp & p, const Tt & t_step,
+template< typename f, typename Tp, typename Tt=flt_type >
+inline const int_type leapfrog_step( Tp & p, const Tt & t_step,
 		const f *accel_func )
 {
 	static_assert(std::is_same<decltype(p.x/Tt()),decltype(p.vx)>::value,"Invalid types passed to parameters of leapfrog_step");
 
-	int result;
+	int_type result;
 	Tp new_p(p);
 	result = leapfrog_step( p, new_p, t_step, accel_func );
 	p = new_p;

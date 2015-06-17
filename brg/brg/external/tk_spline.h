@@ -39,30 +39,30 @@ namespace tk {
 // band matrix solver
 class band_matrix {
 private:
-   std::vector< std::vector<double> > m_upper;  // upper band
-   std::vector< std::vector<double> > m_lower;  // lower band
+   std::vector< std::vector<flt_type> > m_upper;  // upper band
+   std::vector< std::vector<flt_type> > m_lower;  // lower band
 public:
    band_matrix() {};                             // constructor
-   band_matrix(int dim, int n_u, int n_l);       // constructor
+   band_matrix(int_type dim, int_type n_u, int_type n_l);       // constructor
    ~band_matrix() {};                            // destructor
-   void resize(int dim, int n_u, int n_l);      // init with dim,n_u,n_l
-   int dim() const;                             // matrix dimension
-   int num_upper() const {
+   void resize(int_type dim, int_type n_u, int_type n_l);      // init with dim,n_u,n_l
+   int_type dim() const;                             // matrix dimension
+   int_type num_upper() const {
       return m_upper.size()-1;
    }
-   int num_lower() const {
+   int_type num_lower() const {
       return m_lower.size()-1;
    }
    // access operator
-   double & operator () (int i, int j);            // write
-   double   operator () (int i, int j) const;      // read
+   flt_type & operator () (int_type i, int_type j);            // write
+   flt_type   operator () (int_type i, int_type j) const;      // read
    // we can store an additional diogonal (in m_lower)
-   double& saved_diag(int i);
-   double  saved_diag(int i) const;
+   flt_type& saved_diag(int_type i);
+   flt_type  saved_diag(int_type i) const;
    void lu_decompose();
-   std::vector<double> r_solve(const std::vector<double>& b) const;
-   std::vector<double> l_solve(const std::vector<double>& b) const;
-   std::vector<double> lu_solve(const std::vector<double>& b,
+   std::vector<flt_type> r_solve(const std::vector<flt_type>& b) const;
+   std::vector<flt_type> l_solve(const std::vector<flt_type>& b) const;
+   std::vector<flt_type> lu_solve(const std::vector<flt_type>& b,
                                 bool is_lu_decomposed=false);
 
 };
@@ -71,14 +71,14 @@ public:
 // spline interpolation
 class spline {
 private:
-   std::vector<double> m_x,m_y;           // x,y coordinates of points
+   std::vector<flt_type> m_x,m_y;           // x,y coordinates of points
    // interpolation parameters
    // f(x) = a*(x-x_i)^3 + b*(x-x_i)^2 + c*(x-x_i) + y_i
-   std::vector<double> m_a,m_b,m_c,m_d;
+   std::vector<flt_type> m_a,m_b,m_c,m_d;
 public:
-   void set_points(const std::vector<double>& x,
-                   const std::vector<double>& y, bool cubic_spline=true);
-   double operator() (double x) const;
+   void set_points(const std::vector<flt_type>& x,
+                   const std::vector<flt_type>& y, bool cubic_spline=true);
+   flt_type operator() (flt_type x) const;
 };
 
 } // namespace tk

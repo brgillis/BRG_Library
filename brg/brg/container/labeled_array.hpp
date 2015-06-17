@@ -37,7 +37,7 @@
 #include <boost/iterator.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <Eigen/Core>
+#include "brg/Eigen.hpp"
 
 #include "brg/container/coerce.hpp"
 #include "brg/container/comparison_type.hpp"
@@ -62,7 +62,7 @@
 
 namespace brgastro {
 
-template<typename T_value_type=double, char T_major_tag = Eigen::RowMajor, typename T_label_type=std::string>
+template<typename T_value_type=flt_type, char T_major_tag = Eigen::RowMajor, typename T_label_type=std::string>
 class labeled_array
 {
 public:
@@ -1432,7 +1432,7 @@ public:
     	_add_buffer_to_data_table();
     	for(auto u_it=u_map.begin(); u_it!=u_map.end(); ++u_it)
     	{
-			double factor = 1./(u_it->second);
+			flt_type factor = 1./(u_it->second);
 			if(isbad(factor)) factor = 1; // To catch user mistakes
 
     		auto d_it = _label_map_.left.find(u_it->first);
@@ -1452,7 +1452,7 @@ public:
     	_add_buffer_to_data_table();
     	for(auto u_it=u_map.begin(); u_it!=u_map.end(); ++u_it)
     	{
-			double factor = u_it->second;
+			flt_type factor = u_it->second;
 			if(isbad(factor)) factor = 1; // To catch user mistakes
 
     		auto d_it = _label_map_.left.find(u_it->first);

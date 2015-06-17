@@ -28,7 +28,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/vector/elementwise_functions.hpp"
 

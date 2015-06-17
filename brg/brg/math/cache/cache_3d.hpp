@@ -34,7 +34,7 @@
 #include <string>
 #include <sstream>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "../../file_access/ascii_table.hpp"
 #include "brg/file_access/open_file.hpp"
@@ -52,39 +52,39 @@
 #define SPP(name) static_cast<name*>(this)
 
 #define DECLARE_BRG_CACHE_3D_STATIC_VARS()		               \
-	static double _min_1_, _max_1_, _step_1_;                  \
+	static flt_type _min_1_, _max_1_, _step_1_;                  \
 	static size_t _resolution_1_;                        \
-	static double _min_2_, _max_2_, _step_2_;                  \
+	static flt_type _min_2_, _max_2_, _step_2_;                  \
 	static size_t _resolution_2_;                        \
-	static double _min_3_, _max_3_, _step_3_;                  \
+	static flt_type _min_3_, _max_3_, _step_3_;                  \
 	static size_t _resolution_3_;                        \
-	static std::vector< std::vector< std::vector< double > > > _results_;     \
+	static std::vector< std::vector< std::vector< flt_type > > > _results_;     \
 											                   \
 	static std::string _file_name_;                            \
-	static unsigned int _version_number_;                      \
+	static int_type _version_number_;                      \
 											                   \
 	static bool _loaded_, _initialised_;
 
 #define DEFINE_BRG_CACHE_3D_STATIC_VARS(class_name,init_min_1,init_max_1,init_step_1, \
                                         init_min_2, init_max_2, init_step_2,\
                                         init_min_3, init_max_3, init_step_3)\
-	double brgastro::class_name::_min_1_ = init_min_1;						\
-	double brgastro::class_name::_max_1_ = init_max_1; 						\
-	double brgastro::class_name::_step_1_ = init_step_1;					\
+	flt_type brgastro::class_name::_min_1_ = init_min_1;						\
+	flt_type brgastro::class_name::_max_1_ = init_max_1; 						\
+	flt_type brgastro::class_name::_step_1_ = init_step_1;					\
 	size_t brgastro::class_name::_resolution_1_ = 0;					\
-	double brgastro::class_name::_min_2_ = init_min_2;						\
-	double brgastro::class_name::_max_2_ = init_max_2; 						\
-	double brgastro::class_name::_step_2_ = init_step_2;					\
+	flt_type brgastro::class_name::_min_2_ = init_min_2;						\
+	flt_type brgastro::class_name::_max_2_ = init_max_2; 						\
+	flt_type brgastro::class_name::_step_2_ = init_step_2;					\
 	size_t brgastro::class_name::_resolution_2_ = 0;					\
-	double brgastro::class_name::_min_3_ = init_min_3;						\
-	double brgastro::class_name::_max_3_ = init_max_3; 						\
-	double brgastro::class_name::_step_3_ = init_step_3;					\
+	flt_type brgastro::class_name::_min_3_ = init_min_3;						\
+	flt_type brgastro::class_name::_max_3_ = init_max_3; 						\
+	flt_type brgastro::class_name::_step_3_ = init_step_3;					\
 	size_t brgastro::class_name::_resolution_3_ = 0;					\
 	bool brgastro::class_name::_loaded_ = false;							\
 	bool brgastro::class_name::_initialised_ = false;						\
 	std::string brgastro::class_name::_file_name_ = "";						\
-	unsigned int brgastro::class_name::_version_number_ = 2;		        \
-	std::vector< std::vector< std::vector< double > > > brgastro::class_name::_results_;
+	int_type brgastro::class_name::_version_number_ = 2;		        \
+	std::vector< std::vector< std::vector< flt_type > > > brgastro::class_name::_results_;
 
 namespace brgastro
 {
@@ -129,7 +129,7 @@ private:
 		std::ifstream in_file;
 		std::string file_data;
 		bool need_to_calc = false;
-		int loop_counter = 0;
+		int_type loop_counter = 0;
 
 		if ( SPCP(name)->_loaded_ )
 			return;
@@ -162,7 +162,7 @@ private:
 			// Check that it has the right name and version
 
 			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			unsigned int file_version = std::numeric_limits<unsigned int>::max();
+			int_type file_version = std::numeric_limits<int_type>::max();
 
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
@@ -272,14 +272,14 @@ private:
 		for ( size_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
 		{
 			std::cout << i_1 << std::endl;
-			double x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
+			flt_type x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
 			for( size_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
 			{
-				double x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
+				flt_type x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
 				for( size_t i_3 = 0; i_3 < SPCP(name)->_resolution_3_; ++i_3)
 				{
-					double x_3 = SPCP(name)->_min_3_ + i_3*SPCP(name)->_step_3_;
-					double result = 0;
+					flt_type x_3 = SPCP(name)->_min_3_ + i_3*SPCP(name)->_step_3_;
+					flt_type result = 0;
 					try
 					{
 						result = SPCP(name)->_calculate(x_1, x_2, x_3);
@@ -319,7 +319,7 @@ private:
 		// Output name and version
 
 		std::string file_name = SPCP(name)->_name_base();
-		unsigned int file_version = SPCP(name)->_version_number_;
+		int_type file_version = SPCP(name)->_version_number_;
 
 		out_file.write(file_name.c_str(),BRG_CACHE_ND_NAME_SIZE);
 		out_file.write((char *)&file_version,sizeof(file_version));
@@ -380,7 +380,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	virtual const double _calculate(const double x_1, const double x_2, const double x_3) const
+	virtual const flt_type _calculate(const flt_type x_1, const flt_type x_2, const flt_type x_3) const
 	{
 		return 0;
 	}
@@ -416,9 +416,9 @@ public:
 		}
 	} // void set_file_name()
 
-	void set_range( const double new_min_1, const double new_max_1, const double new_step_1,
-	         const double new_min_2, const double new_max_2, const double new_step_2,
- 	         const double new_min_3, const double new_max_3, const double new_step_3,
+	void set_range( const flt_type new_min_1, const flt_type new_max_1, const flt_type new_step_1,
+	         const flt_type new_min_2, const flt_type new_max_2, const flt_type new_step_2,
+ 	         const flt_type new_min_3, const flt_type new_max_3, const flt_type new_step_3,
 			 const bool silent = false )
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
@@ -502,23 +502,23 @@ public:
 		print_table(out,data,header,silent);
 	}
 
-	const BRG_UNITS get( const double x_1, const double x_2, const double x_3,
+	const BRG_UNITS get( const flt_type x_1, const flt_type x_2, const flt_type x_3,
 			const bool silent = false ) const
 	{
 
-		double xlo_1, xhi_1;
+		flt_type xlo_1, xhi_1;
 		size_t xi_1; // Lower nearby array point
-		double xlo_2, xhi_2;
+		flt_type xlo_2, xhi_2;
 		size_t xi_2; // Lower nearby array point
-		double xlo_3, xhi_3;
+		flt_type xlo_3, xhi_3;
 		size_t xi_3; // Lower nearby array point
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
 #else
-		double result = 0;
+		flt_type result = 0;
 #endif
-		double total_weight = 0;
+		flt_type total_weight = 0;
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
 

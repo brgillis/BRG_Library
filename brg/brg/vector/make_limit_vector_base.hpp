@@ -29,7 +29,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 
@@ -76,7 +76,7 @@ std::vector<T,A> make_log_limit_vector_base(const T & min, const T & max, const 
 
 	std::vector<T,A> result(1,min);
 
-	double log_step = std::pow((double)max/(double)min,1./(num_bins));
+	flt_type log_step = std::pow((flt_type)max/(flt_type)min,1./(num_bins));
 
 	if( isinf(max) )
 	{

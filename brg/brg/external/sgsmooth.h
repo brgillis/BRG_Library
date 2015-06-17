@@ -32,16 +32,18 @@
 
 #include <vector>
 
+#include "brg/common.h"
+
 namespace brgastro{ namespace sgsmooth{
 
 /* common definitions for the sgsmooth plugin */
 
-std::vector<double> sg_smooth(const std::vector<double> & input,
-                             const size_t window, const size_t order);
+flt_vector_type sg_smooth(const flt_vector_type & input,
+                             const size_t & window, const size_t & order);
 
-std::vector<double> sg_derivative(const std::vector<double> & input,
-                             const size_t window, const size_t order,
-                             const double delta=1.0);
+flt_vector_type sg_derivative(const flt_vector_type & input,
+                             const size_t & window, const size_t & order,
+                             const flt_type & delta=1.0);
 
 void sgs_error(const char *errmsg);
 

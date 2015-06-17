@@ -44,6 +44,8 @@
 #include <math.h>               // for fabs
 #include <vector>
 
+#include "brg/common.h"
+
 #include "brg/math/misc_math.hpp"
 
 #include "sgsmooth.h"
@@ -52,13 +54,10 @@
 namespace brgastro{ namespace sgsmooth {
 
 //! default convergence
-static const double TINY_FLOAT = 1.0e-300;
+static const flt_type TINY_FLOAT = 1.0e-300;
 
-//! comfortable array of doubles
-typedef std::vector<double> float_vect;
 //! comfortable array of ints;
-typedef std::vector<int>    int_vect;
-typedef std::vector<size_t>    uint_vect;
+typedef std::vector<size_t> uint_vect;
 
 // savitzky golay smoothing.
 
@@ -71,7 +70,7 @@ typedef std::vector<size_t>    uint_vect;
  *
  * \brief two dimensional floating point array
  */
-class float_mat : public std::vector<float_vect> {
+class float_mat : public std::vector<flt_vector_type> {
 private:
     //! disable the default constructor
     explicit float_mat() {};
@@ -79,11 +78,11 @@ private:
     float_mat &operator =(const float_mat &) { return *this; };
 public:
     //! constructor with sizes
-    float_mat(const size_t rows, const size_t cols, const double def=0.0);
+    float_mat(const size_t rows, const size_t cols, const flt_type def=0.0);
     //! copy constructor for matrix
     float_mat(const float_mat &m);
     //! copy constructor for vector
-    float_mat(const float_vect &v);
+    float_mat(const flt_vector_type &v);
 
     //! use default destructor
     // ~float_mat() {};
@@ -97,8 +96,8 @@ public:
 
 
 // constructor with sizes
-float_mat::float_mat(const size_t rows,const size_t cols,const double defval)
-        : std::vector<float_vect>(rows) {
+float_mat::float_mat(const size_t rows,const size_t cols,const flt_type defval)
+        : std::vector<flt_vector_type>(rows) {
     size_t i;
     for (i = 0; i < rows; ++i) {
         (*this)[i].resize(cols, defval);
@@ -107,27 +106,27 @@ float_mat::float_mat(const size_t rows,const size_t cols,const double defval)
         char buffer[1024];
 
         sprintf(buffer, "cannot build matrix with %u rows and %u columns\n",
-                (unsigned)rows, (unsigned)cols);
+                (int_type)rows, (int_type)cols);
         sgs_error(buffer);
     }
 }
 
 // copy constructor for matrix
-float_mat::float_mat(const float_mat &m) : std::vector<float_vect>(m.size()) {
+float_mat::float_mat(const float_mat &m) : std::vector<flt_vector_type>(m.size()) {
 
     float_mat::iterator inew = begin();
     float_mat::const_iterator iold = m.begin();
     for (/* empty */; iold < m.end(); ++inew, ++iold) {
         const size_t oldsz = iold->size();
         inew->resize(oldsz);
-        const float_vect oldvec(*iold);
+        const flt_vector_type oldvec(*iold);
         *inew = oldvec;
     }
 }
 
 // copy constructor for vector
-float_mat::float_mat(const float_vect &v)
-        : std::vector<float_vect>(1) {
+float_mat::float_mat(const flt_vector_type &v)
+        : std::vector<flt_vector_type>(1) {
 
     const size_t oldsz = v.size();
     front().resize(oldsz);
@@ -174,23 +173,23 @@ void permute(float_mat &A, uint_vect &idx)
  * scaling information in the vector scale. The map of swapped indices is
  * recorded in swp. The return value is +1 or -1 depending on whether the
  * number of row swaps was even or odd respectively. */
-static int partial_pivot(float_mat &A, const size_t row, const size_t col,
-                         float_vect &scale, uint_vect &idx, double tol)
+static int_type partial_pivot(float_mat &A, const size_t row, const size_t col,
+                         flt_vector_type &scale, uint_vect &idx, flt_type tol)
 {
     if (tol <= 0.0)
         tol = TINY_FLOAT;
 
-    int swapNum = 1;
+    int_type swapNum = 1;
 
     // default pivot is the current position, [row,col]
     size_t pivot = row;
-    double piv_elem = fabs(A[idx[row]][col]) * scale[idx[row]];
+    flt_type piv_elem = fabs(A[idx[row]][col]) * scale[idx[row]];
 
     // loop over possible pivots below current
     size_t j;
     for (j = row + 1; j < A.nr_rows(); ++j) {
 
-        const double tmp = fabs(A[idx[j]][col]) * scale[idx[j]];
+        const flt_type tmp = fabs(A[idx[j]][col]) * scale[idx[j]];
 
         // if this elem is larger, then it becomes the pivot
         if (tmp > piv_elem) {
@@ -223,7 +222,7 @@ static int partial_pivot(float_mat &A, const size_t row, const size_t col,
 static void lu_backsubst(float_mat &A, float_mat &a, bool diag=false)
 {
 	size_t k;
-	long int c,r;
+	long_int_type c,r;
 
     for (r = (A.nr_rows() - 1); r >= 0; --r) {
         for (c = (A.nr_cols() - 1); c > r; --c) {
@@ -270,7 +269,7 @@ static void lu_forwsubst(float_mat &A, float_mat &a, bool diag=true)
  * depending on whether the number of row swaps was even or odd
  * respectively.  idx must be preinitialized to a valid set of indices
  * (e.g., {1,2, ... ,A.nr_rows()}). */
-static int lu_factorize(float_mat &A, uint_vect &idx, double tol=TINY_FLOAT)
+static int_type lu_factorize(float_mat &A, uint_vect &idx, flt_type tol=TINY_FLOAT)
 {
     if ( tol <= 0.0)
         tol = TINY_FLOAT;
@@ -282,10 +281,10 @@ static int lu_factorize(float_mat &A, uint_vect &idx, double tol=TINY_FLOAT)
         return 0;
     }
 
-    float_vect scale(A.nr_rows());  // implicit pivot scaling
+    flt_vector_type scale(A.nr_rows());  // implicit pivot scaling
     size_t i,j;
     for (i = 0; i < A.nr_rows(); ++i) {
-        double maxval = 0.0;
+        flt_type maxval = 0.0;
         for (j = 0; j < A.nr_cols(); ++j) {
             if (fabs(A[i][j]) > maxval)
                 maxval = fabs(A[i][j]);
@@ -297,7 +296,7 @@ static int lu_factorize(float_mat &A, uint_vect &idx, double tol=TINY_FLOAT)
         scale[i] = 1.0 / maxval;
     }
 
-    int swapNum = 1;
+    int_type swapNum = 1;
     size_t c,r;
     for (c = 0; c < A.nr_cols() ; ++c) {            // loop over columns
         swapNum *= partial_pivot(A, c, c, scale, idx, tol); // bring pivot to diagonal
@@ -318,7 +317,7 @@ static int lu_factorize(float_mat &A, uint_vect &idx, double tol=TINY_FLOAT)
  * Solves the inhomogeneous matrix problem with lu-decomposition. Note that
  * inversion may be accomplished by setting a to the identity_matrix. */
 static float_mat lin_solve(const float_mat &A, const float_mat &a,
-                           double tol=TINY_FLOAT)
+                           flt_type tol=TINY_FLOAT)
 {
     float_mat B(A);
     float_mat b(a);
@@ -342,10 +341,10 @@ static float_mat lin_solve(const float_mat &A, const float_mat &a,
 //! Returns the inverse of a matrix using LU-decomposition.
 static float_mat invert(const float_mat &A)
 {
-    const int n = A.size();
+    const int_type n = A.size();
     float_mat E(n, n, 0.0);
     float_mat B(A);
-    int i;
+    int_type i;
 
     for (i = 0; i < n; ++i) {
         E[i][i] = 1.0;
@@ -381,7 +380,7 @@ float_mat operator *(const float_mat &a, const float_mat &b)
 
     for (i = 0; i < a.nr_rows(); ++i) {
         for (j = 0; j < b.nr_cols(); ++j) {
-            double sum(0.0);
+            flt_type sum(0.0);
             for (k = 0; k < a.nr_cols(); ++k) {
                 sum += a[i][k] * b[k][j];
             }
@@ -393,18 +392,18 @@ float_mat operator *(const float_mat &a, const float_mat &b)
 
 
 //! calculate savitzky golay coefficients.
-static float_vect sg_coeff(const float_vect &b, const size_t deg)
+static flt_vector_type sg_coeff(const flt_vector_type &b, const size_t deg)
 {
     const size_t rows(b.size());
     const size_t cols(deg + 1);
     float_mat A(rows, cols);
-    float_vect res(rows);
+    flt_vector_type res(rows);
 
     // generate input matrix for least squares fit
     size_t i,j;
     for (i = 0; i < rows; ++i) {
         for (j = 0; j < cols; ++j) {
-            A[i][j] = pow(double(i), double(j));
+            A[i][j] = pow(flt_type(i), flt_type(j));
         }
     }
 
@@ -413,7 +412,7 @@ static float_vect sg_coeff(const float_vect &b, const size_t deg)
     for (i = 0; i < b.size(); ++i) {
         res[i] = c[0][0];
         for (j = 1; j <= deg; ++j) {
-            res[i] += c[j][0] * pow(double(i), double(j));
+            res[i] += c[j][0] * pow(flt_type(i), flt_type(j));
         }
     }
     return res;
@@ -427,9 +426,9 @@ static float_vect sg_coeff(const float_vect &b, const size_t deg)
  * vector of size 2w+1, e.g. for w=2 b=(0,0,1,0,0). evaluating the polynome
  * yields the sg-coefficients.  at the border non symmectric vectors b are
  * used. */
-float_vect sg_smooth(const float_vect &v, const size_t width, const size_t deg)
+flt_vector_type sg_smooth(const flt_vector_type &v, const size_t & width, const size_t & deg)
 {
-    float_vect res(v.size(), 0.0);
+    flt_vector_type res(v.size(), 0.0);
     if ((width < 1) || (deg < 1) || (v.size() < (2 * width + 2))) {
         sgs_error("sgsmooth: parameter error.\n");
         return res;
@@ -444,10 +443,10 @@ float_vect sg_smooth(const float_vect &v, const size_t width, const size_t deg)
 #pragma omp parallel for private(i,j) schedule(static)
 #endif
     for (i = 0; i < width; ++i) {
-        float_vect b1(window, 0.0);
+        flt_vector_type b1(window, 0.0);
         b1[i] = 1.0;
 
-        const float_vect c1(sg_coeff(b1, deg));
+        const flt_vector_type c1(sg_coeff(b1, deg));
         for (j = 0; j < window; ++j) {
             res[i]          += c1[j] * v[j];
             res[endidx - i] += c1[j] * v[endidx - j];
@@ -455,9 +454,9 @@ float_vect sg_smooth(const float_vect &v, const size_t width, const size_t deg)
     }
 
     // now loop over rest of data. reusing the "symmetric" coefficients.
-    float_vect b2(window, 0.0);
+    flt_vector_type b2(window, 0.0);
     b2[width] = 1.0;
-    const float_vect c2(sg_coeff(b2, deg));
+    const flt_vector_type c2(sg_coeff(b2, deg));
 
 #if defined(_OPENMP)
 #pragma omp parallel for private(i,j) schedule(static)
@@ -472,12 +471,12 @@ float_vect sg_smooth(const float_vect &v, const size_t width, const size_t deg)
 
 /*! least squares fit a polynome of degree 'deg' to data in 'b'.
  *  then calculate the first derivative and return it. */
-static float_vect lsqr_fprime(const float_vect &b, const size_t deg)
+static flt_vector_type lsqr_fprime(const flt_vector_type &b, const size_t deg)
 {
     const size_t rows(b.size());
     const size_t cols(deg + 1);
     float_mat A(rows, cols);
-    float_vect res(rows);
+    flt_vector_type res(rows);
 
     // generate input matrix for least squares fit
     size_t i,j;
@@ -492,7 +491,7 @@ static float_vect lsqr_fprime(const float_vect &b, const size_t deg)
     for (i = 0; i < b.size(); ++i) {
         res[i] = c[1][0];
         for (j = 1; j < deg; ++j) {
-            res[i] += c[j + 1][0] * double(j+1)
+            res[i] += c[j + 1][0] * flt_type(j+1)
                 * brgastro::ipow(i, j);
         }
     }
@@ -507,10 +506,10 @@ static float_vect lsqr_fprime(const float_vect &b, const size_t deg)
  * In contrast to the sg_smooth function we do a brute force attempt by
  * always fitting the data to a polynome of degree 'deg' and using the
  * result. */
-std::vector<double> sg_derivative(const std::vector<double> &v, const size_t width,
-                         const size_t deg, const double h)
+std::vector<flt_type> sg_derivative(const std::vector<flt_type> &v, const size_t & width,
+                         const size_t & deg, const flt_type & h)
 {
-    float_vect res(v.size(), 0.0);
+    flt_vector_type res(v.size(), 0.0);
 
     const size_t window = 2 * width + 1;
 
@@ -521,13 +520,13 @@ std::vector<double> sg_derivative(const std::vector<double> &v, const size_t wid
 
     // handle border cases first because we do not repeat the fit
     // lower part
-    float_vect b(window, 0.0);
+    flt_vector_type b(window, 0.0);
     size_t i,j;
 
     for (i = 0; i < window; ++i) {
         b[i] = v[i] / h;
     }
-    const float_vect c(lsqr_fprime(b, deg));
+    const flt_vector_type c(lsqr_fprime(b, deg));
     for (j = 0; j <= width; ++j) {
         res[j] = c[j];
     }
@@ -535,7 +534,7 @@ std::vector<double> sg_derivative(const std::vector<double> &v, const size_t wid
     for (i = 0; i < window; ++i) {
         b[i] = v[v.size() - 1 - i] / h;
     }
-    const float_vect d(lsqr_fprime(b, deg));
+    const flt_vector_type d(lsqr_fprime(b, deg));
     for (i = 0; i <= width; ++i) {
         res[v.size() - 1 - i] = -d[i];
     }

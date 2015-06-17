@@ -33,9 +33,7 @@
 #include <utility>
 #include <vector>
 
-#include <Eigen/Core>
-
-#include "global.h"
+#include "common.h"
 
 
 namespace brgastro
@@ -46,17 +44,6 @@ namespace brgastro
 
 // Standard typedefs
 #if(1)
-
-typedef double flt_type;
-typedef int int_type;
-typedef std::complex<flt_type> complex_type;
-
-typedef int size_type;
-
-typedef Eigen::Array<flt_type,Eigen::Dynamic,1> flt_array_type;
-typedef std::vector<flt_type> flt_vector_type;
-typedef Eigen::Array<complex_type,Eigen::Dynamic,1> complex_array_type;
-typedef std::vector<complex_type> complex_vector_type;
 
 #endif // Standard typedefs
 
@@ -81,54 +68,27 @@ auto ssize( const T & container) -> typename std::make_signed<decltype(container
 	return container.size(); // The return type really does all the work here
 }
 
-// Typedef for the signed version of size_t
-typedef std::make_signed<size_t>::type ssize_t;
-
 // Generic functions
 #if (1)
 
 // Set_zero function - a way for other template functions to "clear" or initialize a value in various ways
-inline void set_zero( int & obj )
+inline void set_zero( int_type & obj )
 {
 	obj = 0;
 }
-inline void set_zero( long int & obj )
+inline void set_zero( short_int_type & obj )
 {
 	obj = 0;
 }
-inline void set_zero( long long int & obj )
+inline void set_zero( long_int_type & obj )
 {
 	obj = 0;
 }
-inline void set_zero( short int & obj )
+inline void set_zero( flt_type & obj )
 {
 	obj = 0;
 }
-inline void set_zero( unsigned int & obj )
-{
-	obj = 0;
-}
-inline void set_zero( unsigned long int & obj )
-{
-	obj = 0;
-}
-inline void set_zero( unsigned long long int & obj )
-{
-	obj = 0;
-}
-inline void set_zero( unsigned short int & obj )
-{
-	obj = 0;
-}
-inline void set_zero( double & obj )
-{
-	obj = 0;
-}
-inline void set_zero( long double & obj )
-{
-	obj = 0;
-}
-inline void set_zero( float & obj )
+inline void set_zero( long_flt_type & obj )
 {
 	obj = 0;
 }

@@ -33,7 +33,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/container/table_typedefs.hpp"
 #include "brg/utility.hpp"
@@ -119,7 +119,7 @@ inline header_t convert_to_header( const std::string & line )
 	std::string word;
 
 	// Get rid of first word if it's the comment indicator
-	if ( line_data_stream.peek() == (int)( *"#" ) )
+	if ( line_data_stream.peek() == (int_type)( *"#" ) )
 	{
 		line_data_stream >> word;
 	}

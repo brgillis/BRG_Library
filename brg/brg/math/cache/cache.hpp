@@ -31,7 +31,7 @@
 #include <sstream>
 
 #include "../../file_access/ascii_table.hpp"
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/file_access/open_file.hpp"
 #include "brg/file_access/trim_comments.hpp"
@@ -50,29 +50,29 @@
 #define SPP(name) static_cast<name*>(this)
 
 #define DECLARE_BRG_CACHE_STATIC_VARS()		\
-	static double _min_1_, _max_1_, _step_1_; \
+	static flt_type _min_1_, _max_1_, _step_1_; \
 	static size_t _resolution_1_;      		\
-	static std::vector< double > _results_; \
+	static std::vector< flt_type > _results_; \
 											\
 	static std::string _file_name_;         \
 	static std::string _header_string_;     \
 											\
 	static bool _loaded_, _initialised_;    \
-	static short int _is_monotonic_;		\
+	static short_int_type _is_monotonic_;		\
 											\
-	static unsigned int _sig_digits_;
+	static int_type _sig_digits_;
 #define DEFINE_BRG_CACHE_STATIC_VARS(class_name,init_min,init_max,init_step) \
-	double brgastro::class_name::_min_1_ = init_min;						\
-	double brgastro::class_name::_max_1_ = init_max; 						\
-	double brgastro::class_name::_step_1_ = init_step; 						\
+	flt_type brgastro::class_name::_min_1_ = init_min;						\
+	flt_type brgastro::class_name::_max_1_ = init_max; 						\
+	flt_type brgastro::class_name::_step_1_ = init_step; 						\
 	bool brgastro::class_name::_loaded_ = false;							\
 	bool brgastro::class_name::_initialised_ = false;						\
-	short int brgastro::class_name::_is_monotonic_ = 0;						\
-	unsigned int brgastro::class_name::_sig_digits_ = 8;					\
+	short_int_type brgastro::class_name::_is_monotonic_ = 0;						\
+	int_type brgastro::class_name::_sig_digits_ = 8;					\
 	size_t brgastro::class_name::_resolution_1_ = 0;						\
 	std::string brgastro::class_name::_file_name_ = "";						\
 	std::string brgastro::class_name::_header_string_ = "";					\
-	std::vector<double> brgastro::class_name::_results_;
+	std::vector<flt_type> brgastro::class_name::_results_;
 
 namespace brgastro
 {
@@ -116,7 +116,7 @@ private:
 		std::string file_data;
 		bool need_to_calc = false;
 		size_t i;
-		int loop_counter = 0;
+		int_type loop_counter = 0;
 
 		if ( SPCP(name)->_loaded_ ) return;
 
@@ -175,8 +175,8 @@ private:
 
 			// Read in data
 
-			double temp_data;
-			double last_data=0;
+			flt_type temp_data;
+			flt_type last_data=0;
 
 			i = 0;
 			SPCP(name)->_is_monotonic_ = 0;
@@ -264,8 +264,8 @@ private:
 		#endif
 		for ( size_t i = 0; i < SPCP(name)->_resolution_1_; i++ )
 		{
-			double result = 0;
-			double x = SPCP(name)->_min_1_ + i*SPCP(name)->_step_1_;
+			flt_type result = 0;
+			flt_type x = SPCP(name)->_min_1_ + i*SPCP(name)->_step_1_;
 			try
 			{
 				result = SPCP(name)->_calculate(x);
@@ -335,7 +335,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	const double _calculate(const double x) const
+	const flt_type _calculate(const flt_type x) const
 	{
 		return 0;
 	}
@@ -363,8 +363,8 @@ public:
 		}
 	} // set_file_name()
 
-	void set_range( const double new_mins, const double new_maxes,
-			const double new_steps, const bool silent = false )
+	void set_range( const flt_type new_mins, const flt_type new_maxes,
+			const flt_type new_steps, const bool silent = false )
 	{
 		// First we try to load, so we can see if there are any changes from
 		// the existing cache
@@ -382,7 +382,7 @@ public:
 			SPCP(name)->_unload();
 			SPCP(name)->_calc( silent );
 		}
-	} // const int set_range()
+	} // const int_type set_range()
 
 	void set_precision( const size_t new_precision,
 			const bool silent = false )
@@ -395,7 +395,7 @@ public:
 		{
 			throw std::runtime_error("Precision for dfa_cache must be > 0.\n");
 		}
-	} // const int set_precision()
+	} // const int_type set_precision()
 
 	template<typename otype>
 	void print( otype & out, const bool silent = false ) const
@@ -431,16 +431,16 @@ public:
 		print_table(out,data,header,silent);
 	}
 
-	const BRG_UNITS get( const double x, const bool silent = false ) const
+	const BRG_UNITS get( const flt_type x, const bool silent = false ) const
 	{
 
-		double xlo, xhi;
+		flt_type xlo, xhi;
 		size_t x_i; // Lower nearby array point
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
 		result = 0;
 #else
-		double result = 0;
+		flt_type result = 0;
 #endif
 
 		// Load if necessary
@@ -484,7 +484,7 @@ public:
 
 	} // get()
 
-	const BRG_UNITS inverse_get( const double y, const bool silent = false ) const
+	const BRG_UNITS inverse_get( const flt_type y, const bool silent = false ) const
 	{
 		// Check if it's possible to do an inverse get
 		if((SPCP(name)->_is_monotonic_!=1)&&((SPCP(name)->_is_monotonic_!=-1)))
@@ -497,12 +497,12 @@ public:
 		}
 
 
-		double xlo, xhi, ylo, yhi;
+		flt_type xlo, xhi, ylo, yhi;
 #ifdef _BRG_USE_UNITS_
 		BRG_UNITS result = SPCP(name)->_inverse_units(); // Ensure the result has the proper units
 		result = 0;
 #else
-		double result = 0;
+		flt_type result = 0;
 #endif
 
 		if ( !SPCP(name)->_loaded_ )

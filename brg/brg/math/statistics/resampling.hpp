@@ -34,7 +34,8 @@
 #include <utility>
 
 #include <boost/optional.hpp>
-#include <Eigen/Core>
+
+#include "brg/Eigen.hpp"
 
 #include "brg/common.h"
 #include "brg/math/random/random_functions.hpp"
@@ -74,7 +75,7 @@ T_vec get_jackknife_resampled(const T_vec & vec,
 	res.conservativeResize(std::partition(
 	  res.data(),
 	  res.data()+res.size(),
-	  [&vec](const int & i){return vec(i) % num_samples == sample_num;})-res.data());
+	  [&vec](const int_type & i){return vec(i) % num_samples == sample_num;})-res.data());
 
 	return res;
 }
@@ -93,7 +94,7 @@ T_vec get_jackknife_resampled(const T_vec & vec,
 	res.resize(std::partition(
 	  res.data(),
 	  res.data()+res.size(),
-	  [&vec](const int & i){return vec(i) % num_samples == sample_num;})-res.data());
+	  [&vec](const int_type & i){return vec(i) % num_samples == sample_num;})-res.data());
 
 	return res;
 }
@@ -142,7 +143,7 @@ private:
 
 		func_output_array_type new_results(get_num_resamples());
 
-		for(int i=0; i<new_results.size(); ++i)
+		for(int_type i=0; i<new_results.size(); ++i)
 		{
 			new_results[i] = _callback_(get_case_resampled(*_data_, *_gen_));
 		}
@@ -295,7 +296,7 @@ private:
 
 		func_output_array_type new_results(get_num_resamples());
 
-		for(int i=0; i<new_results.size(); ++i)
+		for(int_type i=0; i<new_results.size(); ++i)
 		{
 			new_results[i] = _callback_(get_jackknife_resampled(*_data_, i, _num_resamples_));
 		}

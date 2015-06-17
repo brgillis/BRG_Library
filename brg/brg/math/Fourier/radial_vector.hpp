@@ -34,13 +34,14 @@
 #include <utility>
 
 #include <boost/optional.hpp>
-#include <Eigen/Core>
+
+#include "brg/common.h"
+
+#include "brg/Eigen.hpp"
 
 #include "brg/container/is_eigen_container.hpp"
 #include "brg/math/interpolator/interpolator.h"
 #include "brg/math/misc_math.hpp"
-
-#include "brg/math/Fourier/management.hpp" // To get the flt_type defined there
 
 namespace brgastro
 {
@@ -250,7 +251,7 @@ private:
 				// essentially results in constant exponential decay in most normal cases
 
 				// Make sure we match the sign of the last value
-				short int sign = brgastro::sign(new_x_array[i - 1]);
+				short_int_type sign = brgastro::sign(new_x_array[i - 1]);
 				new_x_array[i] = sign * std::exp(log_interpolator(x));
 			}
 		}

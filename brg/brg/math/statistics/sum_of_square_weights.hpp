@@ -32,7 +32,7 @@
 #include <boost/accumulators/framework/features.hpp>
 #include <boost/accumulators/framework/parameters/sample.hpp>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
 

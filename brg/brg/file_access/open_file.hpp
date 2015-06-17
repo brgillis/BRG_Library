@@ -31,7 +31,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 namespace brgastro {
 

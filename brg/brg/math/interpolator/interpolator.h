@@ -29,7 +29,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "brg/global.h"
+#include "brg/common.h"
 
 #include "brg/utility.hpp"
 
@@ -37,8 +37,8 @@
 
 namespace brgastro {
 
-bool p1first_lt_p2first(std::pair<double,double> pair1, std::pair<double,double> pair2);
-bool p1first_lt_v2(std::pair<double,double> pair1, double v2);
+bool p1first_lt_p2first(std::pair<flt_type,flt_type> pair1, std::pair<flt_type,flt_type> pair2);
+bool p1first_lt_v2(std::pair<flt_type,flt_type> pair1, flt_type v2);
 
 class interpolator {
 public:
@@ -53,9 +53,9 @@ public:
 private:
 #if (1)
 
-	std::vector< std::pair<double,double> > _data_;
+	std::vector< std::pair<flt_type,flt_type> > _data_;
 
-	mutable std::vector< std::pair<double,double> > _sorted_data_;
+	mutable std::vector< std::pair<flt_type,flt_type> > _sorted_data_;
 	mutable bool _sorted_data_cached_;
 
 	mutable tk::spline _spline_;
@@ -104,11 +104,11 @@ public:
 
 	// This version doesn't check for duplicate x values, but if one does exist, an exception will
 	// eventually be thrown
-	void add_point(const double x, const double y);
+	void add_point(const flt_type x, const flt_type y);
 
 	// This version checks if there's a point with a duplicate x value. If so, it throws an
 	// exception
-	void try_add_point(const double x, const double y);
+	void try_add_point(const flt_type x, const flt_type y);
 
 	ssize_t size() const
 	{
@@ -120,9 +120,9 @@ public:
 		return (size()==0);
 	}
 
-	std::vector< std::pair<double,double> > & sorted_data() const;
+	std::vector< std::pair<flt_type,flt_type> > & sorted_data() const;
 
-	const double operator()(const double x) const;
+	const flt_type operator()(const flt_type x) const;
 
 #endif // public
 

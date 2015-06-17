@@ -32,7 +32,7 @@
 
 #include <boost/type_traits.hpp>
 
-#include <Eigen/Core>
+#include "brg/Eigen.hpp"
 
 #include "labeled_array_element_iterator.hpp"
 

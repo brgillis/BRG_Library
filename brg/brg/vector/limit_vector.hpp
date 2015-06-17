@@ -36,9 +36,9 @@
 
 #include <boost/serialization/vector.hpp>
 
-#include <Eigen/Core>
+#include "brg/common.h"
 
-#include "brg/global.h"
+#include "brg/Eigen.hpp"
 
 #include "brg/utility.hpp"
 #include "brg/vector/make_limit_vector_base.hpp"
@@ -79,7 +79,7 @@ private:
 	T _step_;
 
 	/// Stored log of minimum value (to improve speed at the cost of a bit of memory)
-	double _lmin_;
+	flt_type _lmin_;
 
 	// Private functions
 #if(1)
@@ -1003,7 +1003,7 @@ public:
 #if(1)
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
+    void serialize(Archive & ar, const int_type version)
     {
     	ar & _base_;
     	ar & _type_;

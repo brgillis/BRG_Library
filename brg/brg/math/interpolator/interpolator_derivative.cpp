@@ -31,9 +31,9 @@
 
 // interpolator_derivative static member initialisations
 #if (1)
-double brgastro::interpolator_derivative::_default_sample_scale_ = 0.02; // As a fraction of t_max-t_min
-double brgastro::interpolator_derivative::_default_sample_max_width_ = 0.05; // As a fraction of t_max-t_min
-double brgastro::interpolator_derivative::_default_sample_precision_ = 0.01;
+flt_type brgastro::interpolator_derivative::_default_sample_scale_ = 0.02; // As a fraction of t_max-t_min
+flt_type brgastro::interpolator_derivative::_default_sample_max_width_ = 0.05; // As a fraction of t_max-t_min
+flt_type brgastro::interpolator_derivative::_default_sample_precision_ = 0.01;
 #endif
 
 // brgastro::interpolator_derivative class method implementations
@@ -122,26 +122,26 @@ void brgastro::interpolator_derivative::clear_spline_ptr()
 }
 
 void brgastro::interpolator_derivative::set_default_sample_scale(
-		double new_default_sample_scale )
+		flt_type new_default_sample_scale )
 {
 	_default_sample_scale_ = new_default_sample_scale;
 }
 
 void brgastro::interpolator_derivative::set_default_sample_max_width(
-		double new_default_sample_max_width )
+		flt_type new_default_sample_max_width )
 {
 	_default_sample_max_width_ = new_default_sample_max_width;
 }
 
 void brgastro::interpolator_derivative::set_sample_scale(
-		double new_sample_scale )
+		flt_type new_sample_scale )
 {
 	_sample_scale_ = new_sample_scale;
 	_calculated_ = false;
 }
 
 void brgastro::interpolator_derivative::set_sample_max_width(
-		double new_sample_max_width )
+		flt_type new_sample_max_width )
 {
 	_sample_max_width_ = new_sample_max_width;
 	_calculated_ = false;
@@ -179,8 +179,8 @@ void brgastro::interpolator_derivative::clear_known_points()
 	_known_interpolator_.clear();
 	if(_unknown_t_list_.empty())
 	{
-		_t_max_ = ( -std::numeric_limits<double>::max() );
-		_t_min_ = std::numeric_limits<double>::max();
+		_t_max_ = ( -std::numeric_limits<flt_type>::max() );
+		_t_min_ = std::numeric_limits<flt_type>::max();
 	}
 	_calculated_ = false;
 }
@@ -190,8 +190,8 @@ void brgastro::interpolator_derivative::clear_unknown_points()
 	_unknown_t_list_.clear();
 	if(_known_interpolator_.empty())
 	{
-		_t_max_ = ( -std::numeric_limits<double>::max() );
-		_t_min_ = std::numeric_limits<double>::max();
+		_t_max_ = ( -std::numeric_limits<flt_type>::max() );
+		_t_min_ = std::numeric_limits<flt_type>::max();
 	}
 	_calculated_ = false;
 }
@@ -216,21 +216,21 @@ void brgastro::interpolator_derivative::clear()
 	_sample_precision_ = _default_sample_precision_;
 }
 
-void brgastro::interpolator_derivative::add_point( const double t,
-		const double x )
+void brgastro::interpolator_derivative::add_point( const flt_type t,
+		const flt_type x )
 {
 	_known_interpolator_.add_point( t, x );
 	_calculated_ = false;
 }
 
-void brgastro::interpolator_derivative::add_unknown_point( const double t )
+void brgastro::interpolator_derivative::add_unknown_point( const flt_type t )
 {
 	_unknown_t_list_.push_back( t );
 	_calculated_ = false;
 }
 
 // Get functions
-double brgastro::interpolator_derivative::operator()( double xval, bool silent ) const
+flt_type brgastro::interpolator_derivative::operator()( flt_type xval, bool silent ) const
 {
 	if ( !_interpolator_ptr_set_up_ )
 	{
@@ -251,8 +251,8 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 	else // We'll have to calculate
 	{
 		// Get t_min and t_max
-		_t_min_ = std::numeric_limits<double>::max();
-		_t_max_ = ( -std::numeric_limits<double>::max() );
+		_t_min_ = std::numeric_limits<flt_type>::max();
+		_t_max_ = ( -std::numeric_limits<flt_type>::max() );
 
 		for ( ssize_t i = 0; i < ssize(_known_interpolator_.sorted_data()); i++ )
 		{
@@ -275,19 +275,19 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 		_estimated_interpolator_.set_interpolation_type(_interpolation_type_);
 		ssize_t num_points_to_calculate = ssize(_unknown_t_list_);
 
-		auto interpolator_functor = [&] (const double & in_param, bool silent=false)
+		auto interpolator_functor = [&] (const flt_type & in_param, bool silent=false)
 		{
 			return (*_interpolator_ptr_)(in_param);
 		};
 
-		auto spline_derivative_functor_val = [&] (const double & in_param, bool silent=false)
+		auto spline_derivative_functor_val = [&] (const flt_type & in_param, bool silent=false)
 		{
 			return differentiate( &interpolator_functor, in_param );
 		};
 
-		double t;
+		flt_type t;
 
-		auto spline_derivative_weight_functor_val = [&] (const double & in_param, bool silent=false)
+		auto spline_derivative_weight_functor_val = [&] (const flt_type & in_param, bool silent=false)
 		{
 
 			if ( std::fabs( in_param - t )
@@ -302,7 +302,7 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 			}
 		};
 
-		double delta_t = fabs( _t_max_ - _t_min_ ) * _sample_max_width_;
+		flt_type delta_t = fabs( _t_max_ - _t_min_ ) * _sample_max_width_;
 
 		for ( ssize_t i = 0; i < num_points_to_calculate; i++ ) // For each point we need to calculate
 		{
@@ -337,6 +337,6 @@ double brgastro::interpolator_derivative::operator()( double xval, bool silent )
 	_calculated_ = true;
 
 	return _estimated_interpolator_( xval );
-} // const double operator()(double xval)
+} // const flt_type operator()(flt_type xval)
 
 #endif
