@@ -25,10 +25,10 @@
 #ifndef _BRG_DENSITY_PROFILE_FUNCTORS_H_
 #define _BRG_DENSITY_PROFILE_FUNCTORS_H_
 
+#include <brg/units/units.hpp>
 #include "brg/common.h"
 
 #include "brg_physics/density_profile/density_profile.h"
-#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 
@@ -38,7 +38,7 @@ class accel_functor
 	 accel_functor class
 	 -----------------------------
 
-	 Function class for acceleration within a density profile
+	 Function class for acceleration_type within a density_type profile
 
 	 Parent class: function_class (from brg_functors)
 
@@ -53,7 +53,7 @@ public:
 		return _host_ptr_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS &  in_param, const bool silent = false ) const;
+	acceleration_type operator()( const distance_type &  in_param ) const;
 
 	accel_functor();
 	accel_functor( const density_profile *init_host_ptr );
@@ -69,14 +69,14 @@ class solve_rhm_functor
 	 solve_rhm_functor class
 	 -----------------------------
 
-	 Function class for solving the half-mass
+	 Function class for solving the half-mass_type
 	 radius of a halo.
 
 	 Parent class: function_class (from brg_functors)
 
 	 **********************************/
 private:
-	const density_profile *_host_ptr_;BRG_MASS _target_mass_;
+	const density_profile *_host_ptr_;mass_type _target_mass_;
 
 public:
 
@@ -85,17 +85,17 @@ public:
 	{
 		return _host_ptr_;
 	}
-	void set_target_mass( const BRG_MASS &new_target_mass );
-	const BRG_MASS & target_mass()
+	void set_target_mass( const mass_type &new_target_mass );
+	const mass_type & target_mass()
 	{
 		return _target_mass_;
 	}
 
-	BRG_UNITS operator ()( const BRG_UNITS & in_param, const bool silent = false ) const;
+	mass_type operator ()( const distance_type & in_param ) const;
 
 	solve_rhm_functor();
 	solve_rhm_functor( const density_profile *init_host,
-			const BRG_MASS &init_target_mass );
+			const mass_type &init_target_mass );
 
 };
 // end class unitless_solve_rhm_functor
@@ -106,7 +106,7 @@ class spherical_density_functor
 	 spherical_density_functor class
 	 -----------------------------
 
-	 Function class integrating density in a sphere
+	 Function class integrating density_type in a sphere
 
 	 Parent class: function_class (from brg_functors)
 
@@ -122,7 +122,7 @@ public:
 		return _host_ptr_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS & in_param, const bool silent = false ) const;
+	custom_unit_type<-1,0,1,0,0> operator()( const distance_type & in_param ) const;
 
 	spherical_density_functor();
 	spherical_density_functor( const density_profile *init_host );

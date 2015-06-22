@@ -45,7 +45,7 @@ public:
 
 	// Constructors and destructor
 #if(1)
-	source_obj( const BRG_ANGLE & init_ra = 0, const BRG_ANGLE & init_dec = 0, flt_type init_z = 0,
+	source_obj( const angle_type & init_ra = 0, const angle_type & init_dec = 0, flt_type init_z = 0,
 			flt_type init_gamma_1 = 0, flt_type init_gamma_2 = 0, flt_type init_kappa = 0 )
 	: sky_obj(init_ra,init_dec,init_z),
 	  _gamma_1_(init_gamma_1),

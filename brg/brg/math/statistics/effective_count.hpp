@@ -38,6 +38,7 @@
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/statistics/sum_of_square_weights.hpp"
+#include "brg/units/units.hpp"
 
 namespace boost { namespace accumulators {
 
@@ -57,7 +58,7 @@ struct effective_count_accumulator
   result_type result(Args const &args) const
   {
 	  if(count(args[accumulator])<=1) return count(args[accumulator]);
-	  if(sum_of_square_weights(args[accumulator])==0) return 0;
+	  if(sum_of_square_weights(args[accumulator])==0) return brgastro::units_cast<result_type>(0.);
 	  return brgastro::square(sum_of_weights(args[accumulator]))/sum_of_square_weights(args[accumulator]);
   }
 };

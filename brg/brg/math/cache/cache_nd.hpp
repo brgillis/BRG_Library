@@ -36,8 +36,10 @@
 
 #include "brg/common.h"
 
+#include "brg/error_handling.h"
 #include "brg/file_access/ascii_table.hpp"
 #include "brg/file_access/open_file.hpp"
+#include "brg/units/units.hpp"
 #include "brg/utility.hpp"
 #include "brg/vector/multi_vector.hpp"
 #include "brg/vector/elementwise_functions.hpp"
@@ -113,7 +115,7 @@ private:
 			SPCP(name)->_initialised_ = true;
 		}
 	}
-	void _load( const bool silent = false ) const
+	void _load() const
 	{
 		std::ifstream in_file;
 		std::string file_data;
@@ -138,7 +140,7 @@ private:
 			if ( open_bin_file_input( in_file, SPCP(name)->_file_name_ ) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -156,7 +158,7 @@ private:
 					(file_version != SPCP(name)->_version_number_) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -175,7 +177,7 @@ private:
 			if ( !(in_file) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -211,7 +213,7 @@ private:
 			if ( (i != product(SPCP(name)->_resolutions_)) || (!in_file) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -229,7 +231,7 @@ private:
 		SPCP(name)->_loaded_ = false;
 		SPCP(name)->_results_.clear();
 	}
-	void _calc( const bool silent = false ) const
+	void _calc() const
 	{
 		// Test that range is sane
 		for(ssize_t i = 0; i < SPCP(name)->_num_dim_; i++)
@@ -244,11 +246,8 @@ private:
 			}
 		}
 
-		// Print a message that we're generating the cache if not silent
-		if(!silent)
-		{
-			std::cout << "Generating " << SPCP(name)->_file_name_ << ". This may take some time.\n";
-		}
+		// Print a message that we're generating the cache
+		handle_notification("Generating " + SPCP(name)->_file_name_ + ". This may take some time_type.");
 
 		// Set up data
 		SPCP(name)->_resolutions_.resize(SPCP(name)->_num_dim_);
@@ -273,15 +272,12 @@ private:
 			}
 		}
 
-		// Print a message that we've finished generating the cache if not silent.
-		if(!silent)
-		{
-			std::cout << "Finished generating " << SPCP(name)->_file_name_ << "!\n";
-		}
+		// Print a message that we've finished generating the cache
+		handle_notification("Finished generating " << SPCP(name)->_file_name_ << "!");
 
 		SPCP(name)->_loaded_ = true;
 	}
-	void _output( const bool silent = false ) const
+	void _output() const
 	{
 
 		std::ofstream out_file;
@@ -289,7 +285,7 @@ private:
 
 		if ( !SPCP(name)->_loaded_ )
 		{
-			SPCP(name)->_calc( silent );;
+			SPCP(name)->_calc();;
 		}
 
 		open_bin_file_output( out_file, SPCP(name)->_file_name_ );
@@ -345,14 +341,10 @@ protected:
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Gets the result in the proper units
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0);
-	}
-	const brgastro::unit_obj _inverse_units() const throw()
-	{
-		return brgastro::unit_obj(0);
+		return any_units_cast<any_units_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -395,7 +387,7 @@ public:
 	} // void set_file_name()
 
 	void set_range( const brgastro::multi_vector<flt_type> & new_mins, const brgastro::multi_vector<flt_type> & new_maxes,
-			const brgastro::multi_vector<flt_type> & new_steps, const bool silent = false )
+			const brgastro::multi_vector<flt_type> & new_steps,)
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -422,23 +414,18 @@ public:
 				SPP(name)->_steps_ = new_steps;
 
 				SPCP(name)->_unload();
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				break;
 			}
 		}
 	} // void set_range()
 
-	const BRG_UNITS get( const brgastro::multi_vector<flt_type> & x, const bool silent = false ) const
+	const any_units_type get( const brgastro::multi_vector<flt_type> & x,) const
 	{
 
 		brgastro::multi_vector<flt_type> xlo, xhi;
 		brgastro::multi_vector<ssize_t> x_i; // Lower nearby array points
-#ifdef _BRG_USE_UNITS_
-		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
-		result = 0;
-#else
 		flt_type result = 0;
-#endif
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
 
@@ -453,7 +440,7 @@ public:
 			{
 				try
 				{
-					SPCP(name)->_load( silent );
+					SPCP(name)->_load();
 				}
 				catch(const std::exception &e)
 				{
@@ -505,19 +492,23 @@ public:
 
 		result /= safe_d(total_weight);
 
+#ifdef _BRG_USE_UNITS_
+		return SPCP(name)->_units(result);
+#else
 		return result;
+#endif
 
 	} // get()
 
 	// Recalculate function. Call if you want to overwrite a cache when something's changed in the code
 	// (for instance, the _calculate() function has been altered)
-	void recalc( const bool silent = false ) const
+	void recalc() const
 	{
 		SPCP(name)->_unload();
-		SPCP(name)->_calc(silent);
-		SPCP(name)->_output(silent);
+		SPCP(name)->_calc();
+		SPCP(name)->_output();
 		SPCP(name)->_unload();
-		SPCP(name)->_load(silent);
+		SPCP(name)->_load();
 	}
 
 	// Constructor

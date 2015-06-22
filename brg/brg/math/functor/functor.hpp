@@ -67,7 +67,7 @@ public:
 		return _params_;
 	}
 
-	virtual T operator()(const T & in_param, const bool silent=false) const =0;
+	virtual T operator()(const T & in_param) const =0;
 
 };
 

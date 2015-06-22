@@ -34,14 +34,14 @@
 #include <vector>
 
 #include <boost/serialization/vector.hpp>
+#include <brg/units/unitconv_map.hpp>
+#include <brg/units/units.hpp>
 
 #include "brg/common.h"
 
 #include "brg/vector/limit_vector.hpp"
 
 #include "brg_lensing/pair_bin_summary.h"
-#include "brg_physics/units/unit_obj.h"
-#include "brg_physics/units/unitconv_map.hpp"
 
 namespace brgastro {
 
@@ -57,8 +57,8 @@ private:
 	// Limits for the bins
 #if(1)
 
-	brgastro::limit_vector< BRG_DISTANCE > _R_bin_limits_;
-	brgastro::limit_vector< BRG_MASS > _m_bin_limits_;
+	brgastro::limit_vector< distance_type > _R_bin_limits_;
+	brgastro::limit_vector< mass_type > _m_bin_limits_;
 	brgastro::limit_vector< flt_type > _z_bin_limits_;
 	brgastro::limit_vector< flt_type > _mag_bin_limits_;
 
@@ -78,17 +78,17 @@ private:
 #if(1)
 
 	// Set specific limits through a limits vector
-	void _set_R_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits);
-	void _set_m_limits(brgastro::limit_vector< BRG_MASS > m_bin_limits);
+	void _set_R_limits(brgastro::limit_vector< distance_type > R_bin_limits);
+	void _set_m_limits(brgastro::limit_vector< mass_type > m_bin_limits);
 	void _set_z_limits(brgastro::limit_vector< flt_type > z_bin_limits);
 	void _set_mag_limits(brgastro::limit_vector< flt_type > mag_bin_limits);
 
 	// Set specific limits through a linear spacing
-	void _set_linear_R_limits(const BRG_DISTANCE & R_min,
-			const BRG_DISTANCE & R_max,
+	void _set_linear_R_limits(const distance_type & R_min,
+			const distance_type & R_max,
 			const ssize_t & R_bins);
-	void _set_linear_m_limits(const BRG_MASS & m_min,
-			const BRG_MASS & m_max,
+	void _set_linear_m_limits(const mass_type & m_min,
+			const mass_type & m_max,
 			const ssize_t & m_bins);
 	void _set_linear_z_limits(const flt_type & z_min,
 			const flt_type & z_max,
@@ -98,11 +98,11 @@ private:
 			const ssize_t & maag_bins);
 
 	// Set specific limits through a log spacing
-	void _set_log_R_limits(const BRG_DISTANCE & R_min,
-			const BRG_DISTANCE & R_max,
+	void _set_log_R_limits(const distance_type & R_min,
+			const distance_type & R_max,
 			const ssize_t & R_num_bins=1);
-	void _set_log_m_limits(const BRG_MASS & m_min,
-			const BRG_MASS & m_max,
+	void _set_log_m_limits(const mass_type & m_min,
+			const mass_type & m_max,
 			const ssize_t & m_num_bins=1);
 	void _set_log_z_limits(const flt_type & z_min,
 			const flt_type & z_max,
@@ -159,17 +159,17 @@ public:
 	}
 
 	// Set limits by vectors
-	pair_bins_summary(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
-			brgastro::limit_vector< BRG_MASS > m_bin_limits=std::vector<flt_type>(),
+	pair_bins_summary(brgastro::limit_vector< distance_type > R_bin_limits,
+			brgastro::limit_vector< mass_type > m_bin_limits=std::vector<flt_type>(),
 			brgastro::limit_vector< flt_type > z_bin_limits=std::vector<flt_type>(),
 			brgastro::limit_vector< flt_type > mag_bin_limits=std::vector<flt_type>());
 
 	// Set limits by min, max, and step
-	pair_bins_summary(const BRG_DISTANCE & R_min,
-				const BRG_DISTANCE & R_max,
+	pair_bins_summary(const distance_type & R_min,
+				const distance_type & R_max,
 				const ssize_t & R_bins=1,
-				const BRG_MASS & m_min=-std::numeric_limits<flt_type>::infinity(),
-				const BRG_MASS & m_max=std::numeric_limits<flt_type>::infinity(),
+				const mass_type & m_min=-std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_max=std::numeric_limits<flt_type>::infinity()*kg,
 				const ssize_t & m_bins=1,
 				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
 				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
@@ -199,17 +199,17 @@ public:
 #if(1)
 
 	// Set specific limits through a limits vector
-	void set_R_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits);
-	void set_m_limits(brgastro::limit_vector< BRG_MASS > m_bin_limits);
+	void set_R_limits(brgastro::limit_vector< distance_type > R_bin_limits);
+	void set_m_limits(brgastro::limit_vector< mass_type > m_bin_limits);
 	void set_z_limits(brgastro::limit_vector< flt_type > z_bin_limits);
 	void set_mag_limits(brgastro::limit_vector< flt_type > mag_bin_limits);
 
 	// Set specific limits through a linear spacing
-	void set_linear_R_limits(const BRG_DISTANCE & R_min,
-			const BRG_DISTANCE & R_max,
+	void set_linear_R_limits(const distance_type & R_min,
+			const distance_type & R_max,
 			const ssize_t & R_bins);
-	void set_linear_m_limits(const BRG_MASS & m_min,
-			const BRG_MASS & m_max,
+	void set_linear_m_limits(const mass_type & m_min,
+			const mass_type & m_max,
 			const ssize_t & m_bins);
 	void set_linear_z_limits(const flt_type & z_min,
 			const flt_type & z_max,
@@ -219,11 +219,11 @@ public:
 			const ssize_t & mag_bins);
 
 	// Set specific limits through a log spacing
-	void set_log_R_limits(const BRG_DISTANCE & R_min,
-			const BRG_DISTANCE & R_max,
+	void set_log_R_limits(const distance_type & R_min,
+			const distance_type & R_max,
 			const ssize_t & R_num_bins=1);
-	void set_log_m_limits(const BRG_MASS & m_min,
-			const BRG_MASS & m_max,
+	void set_log_m_limits(const mass_type & m_min,
+			const mass_type & m_max,
 			const ssize_t & m_num_bins=1);
 	void set_log_z_limits(const flt_type & z_min,
 			const flt_type & z_max,
@@ -238,16 +238,16 @@ public:
 	void clear_z_limits();
 	void clear_mag_limits();
 
-	void set_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
-			brgastro::limit_vector< BRG_MASS > m_bin_limits=std::vector<flt_type>(),
+	void set_limits(brgastro::limit_vector< distance_type > R_bin_limits,
+			brgastro::limit_vector< mass_type > m_bin_limits=std::vector<flt_type>(),
 			brgastro::limit_vector< flt_type > z_bin_limits=std::vector<flt_type>(),
 			brgastro::limit_vector< flt_type > mag_bin_limits=std::vector<flt_type>());
 
-	void set_linear_limits(const BRG_DISTANCE & R_min,
-				const BRG_DISTANCE & R_max,
+	void set_linear_limits(const distance_type & R_min,
+				const distance_type & R_max,
 				const ssize_t & R_num_bins=1,
-				const BRG_MASS & m_min=-std::numeric_limits<flt_type>::infinity(),
-				const BRG_MASS & m_max=std::numeric_limits<flt_type>::infinity(),
+				const mass_type & m_min=-std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_max=std::numeric_limits<flt_type>::infinity()*kg,
 				const ssize_t & m_num_bins=1,
 				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
 				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
@@ -256,11 +256,11 @@ public:
 				const flt_type & mag_max=std::numeric_limits<flt_type>::infinity(),
 				const ssize_t & mag_num_bins=1);
 
-	void set_log_limits(const BRG_DISTANCE & R_min,
-				const BRG_DISTANCE & R_max,
+	void set_log_limits(const distance_type & R_min,
+				const distance_type & R_max,
 				const ssize_t & R_num_bins=1,
-				const BRG_MASS & m_min=-std::numeric_limits<flt_type>::infinity(),
-				const BRG_MASS & m_max=std::numeric_limits<flt_type>::infinity(),
+				const mass_type & m_min=-std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_max=std::numeric_limits<flt_type>::infinity()*kg,
 				const ssize_t & m_num_bins=1,
 				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
 				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
@@ -277,11 +277,11 @@ public:
 	// Accessors to limit vectors and valid_limits
 #if(1)
 
-	const brgastro::limit_vector< BRG_DISTANCE > & R_limits() const
+	const brgastro::limit_vector< distance_type > & R_limits() const
 	{
 		return _R_bin_limits_;
 	}
-	const brgastro::limit_vector< BRG_MASS > & m_limits() const
+	const brgastro::limit_vector< mass_type > & m_limits() const
 	{
 		return _m_bin_limits_;
 	}
@@ -324,31 +324,31 @@ public:
 
 	// Access by index (will throw if out of bounds)
 #if(1)
-	virtual BRG_UNITS delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
-	virtual BRG_UNITS delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual surface_density_type delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual surface_density_type delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
 
-	virtual BRG_UNITS delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
-	virtual BRG_UNITS delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual surface_density_type delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual surface_density_type delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
 
-	virtual BRG_UNITS delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
-	virtual BRG_UNITS delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual surface_density_type delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
+	virtual surface_density_type delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const;
 #endif // Access by index
 
 	// Access by position
 #if(1)
-	virtual BRG_UNITS delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+	virtual surface_density_type delta_Sigma_t_mean_for_bin(const distance_type & R, const mass_type & m,
 			flt_type z, flt_type mag) const;
-	virtual BRG_UNITS delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
-			flt_type z, flt_type mag) const;
-
-	virtual BRG_UNITS delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
-			flt_type z, flt_type mag) const;
-	virtual BRG_UNITS delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+	virtual surface_density_type delta_Sigma_x_mean_for_bin(const distance_type & R, const mass_type & m,
 			flt_type z, flt_type mag) const;
 
-	virtual BRG_UNITS delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+	virtual surface_density_type delta_Sigma_t_std_for_bin(const distance_type & R, const mass_type & m,
 			flt_type z, flt_type mag) const;
-	virtual BRG_UNITS delta_Sigma_x_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+	virtual surface_density_type delta_Sigma_x_std_for_bin(const distance_type & R, const mass_type & m,
+			flt_type z, flt_type mag) const;
+
+	virtual surface_density_type delta_Sigma_t_stderr_for_bin(const distance_type & R, const mass_type & m,
+			flt_type z, flt_type mag) const;
+	virtual surface_density_type delta_Sigma_x_stderr_for_bin(const distance_type & R, const mass_type & m,
 			flt_type z, flt_type mag) const;
 #endif // Access by index
 

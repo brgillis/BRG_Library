@@ -25,13 +25,13 @@
 #ifndef _BRG_POSITION_GRID_CACHE_H_INCLUDED_
 #define _BRG_POSITION_GRID_CACHE_H_INCLUDED_
 
+#include <brg/units/units.hpp>
 #include <cmath>
 
 #include "brg/common.h"
 
 #include "brg/math/safe_math.hpp"
 
-#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro
 {
@@ -41,14 +41,14 @@ class grid_cache
 private:
 	static int_type _ra_grid_change_num_, _dec_grid_change_num_,
 			_z_grid_change_num_;
-	static BRG_ANGLE _ra_grid_min_, _ra_grid_max_, _ra_grid_step_;
-	static BRG_ANGLE _dec_grid_min_, _dec_grid_max_, _dec_grid_step_;
+	static angle_type _ra_grid_min_, _ra_grid_max_, _ra_grid_step_;
+	static angle_type _dec_grid_min_, _dec_grid_max_, _dec_grid_step_;
 	static flt_type _z_grid_min_, _z_grid_max_, _z_grid_step_;
 public:
 	// Set functions
 #if (1)
-	static void set_ra_grid( const BRG_ANGLE & new_ra_grid_min,
-			const BRG_ANGLE & new_ra_grid_max, const BRG_ANGLE & new_ra_grid_step )
+	static void set_ra_grid( const angle_type & new_ra_grid_min,
+			const angle_type & new_ra_grid_max, const angle_type & new_ra_grid_step )
 	{
 		_ra_grid_min_ = new_ra_grid_min;
 		_ra_grid_max_ = new_ra_grid_max;
@@ -56,9 +56,9 @@ public:
 		_ra_grid_change_num_++;
 	}
 
-	static void set_dec_grid( const BRG_ANGLE & new_dec_grid_min,
-			const BRG_ANGLE & new_dec_grid_max,
-			const BRG_ANGLE & new_dec_grid_step )
+	static void set_dec_grid( const angle_type & new_dec_grid_min,
+			const angle_type & new_dec_grid_max,
+			const angle_type & new_dec_grid_step )
 	{
 		_dec_grid_min_ = new_dec_grid_min;
 		_dec_grid_max_ = new_dec_grid_max;
@@ -91,11 +91,11 @@ public:
 	{
 		return _z_grid_change_num_;
 	}
-	static const BRG_ANGLE & ra_grid_min()
+	static const angle_type & ra_grid_min()
 	{
 		return _ra_grid_min_;
 	}
-	static const BRG_ANGLE & dec_grid_min()
+	static const angle_type & dec_grid_min()
 	{
 		return _dec_grid_min_;
 	}
@@ -103,11 +103,11 @@ public:
 	{
 		return _z_grid_min_;
 	}
-	static const BRG_ANGLE & ra_grid_max()
+	static const angle_type & ra_grid_max()
 	{
 		return _ra_grid_max_;
 	}
-	static const BRG_ANGLE & dec_grid_max()
+	static const angle_type & dec_grid_max()
 	{
 		return _dec_grid_max_;
 	}
@@ -115,11 +115,11 @@ public:
 	{
 		return _z_grid_max_;
 	}
-	static const BRG_ANGLE & ra_grid_step()
+	static const angle_type & ra_grid_step()
 	{
 		return _ra_grid_step_;
 	}
-	static const BRG_ANGLE & dec_grid_step()
+	static const angle_type & dec_grid_step()
 	{
 		return _dec_grid_step_;
 	}
@@ -131,12 +131,12 @@ public:
 
 	// Functions to get grid integers or grid boundaries from integers
 #if(1)
-	static int_type get_ra_grid( const BRG_ANGLE & ra )
+	static int_type get_ra_grid( const angle_type & ra )
 	{
 		return (int_type)floor(
 				( ra - _ra_grid_min_ ) / safe_d( _ra_grid_step_ ) );
 	}
-	static int_type get_dec_grid( const BRG_ANGLE & dec )
+	static int_type get_dec_grid( const angle_type & dec )
 	{
 		return (int_type)floor( ( dec - _dec_grid_min_ ) / _dec_grid_step_ );
 	}
@@ -145,37 +145,37 @@ public:
 		return (int_type)floor( ( z - _z_grid_min_ ) / _z_grid_step_ );
 	}
 
-	static BRG_ANGLE get_ra_grid_lower( const int_type ra_grid )
+	static angle_type get_ra_grid_lower( const int_type ra_grid )
 	{
-		return _ra_grid_min_ + _ra_grid_step_ * ra_grid;
+		return _ra_grid_min_ + _ra_grid_step_ * (flt_type)ra_grid;
 	}
-	static BRG_ANGLE get_dec_grid_lower( const int_type dec_grid )
+	static angle_type get_dec_grid_lower( const int_type dec_grid )
 	{
-		return _dec_grid_min_ + _dec_grid_step_ * dec_grid;
+		return _dec_grid_min_ + _dec_grid_step_ * (flt_type)dec_grid;
 	}
 	static flt_type get_z_grid_lower( const int_type z_grid )
 	{
 		return _z_grid_min_ + _z_grid_step_ * z_grid;
 	}
 
-	static BRG_ANGLE get_ra_grid_upper( const int_type ra_grid )
+	static angle_type get_ra_grid_upper( const int_type ra_grid )
 	{
-		return _ra_grid_min_ + _ra_grid_step_ * ( ra_grid + 1 );
+		return _ra_grid_min_ + _ra_grid_step_ * (flt_type)( ra_grid + 1 );
 	}
-	static BRG_ANGLE get_dec_grid_upper( const int_type dec_grid )
+	static angle_type get_dec_grid_upper( const int_type dec_grid )
 	{
-		return _dec_grid_min_ + _dec_grid_step_ * ( dec_grid + 1 );
+		return _dec_grid_min_ + _dec_grid_step_ * (flt_type)( dec_grid + 1 );
 	}
 	static flt_type get_z_grid_upper( const int_type z_grid )
 	{
 		return _z_grid_min_ + _z_grid_step_ * ( z_grid + 1 );
 	}
 
-	static BRG_ANGLE get_ra_grid_mid( const int_type ra_grid )
+	static angle_type get_ra_grid_mid( const int_type ra_grid )
 	{
 		return _ra_grid_min_ + _ra_grid_step_ * ( ra_grid + 0.5 );
 	}
-	static BRG_ANGLE get_dec_grid_mid( const int_type dec_grid )
+	static angle_type get_dec_grid_mid( const int_type dec_grid )
 	{
 		return _dec_grid_min_ + _dec_grid_step_ * ( dec_grid + 0.5 );
 	}

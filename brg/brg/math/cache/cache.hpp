@@ -29,16 +29,16 @@
 #include <stdexcept>
 #include <string>
 #include <sstream>
-
-#include "../../file_access/ascii_table.hpp"
 #include "brg/common.h"
 
+#include "brg/error_handling.h"
+#include "brg/file_access/ascii_table.hpp"
 #include "brg/file_access/open_file.hpp"
 #include "brg/file_access/trim_comments.hpp"
 #include "brg/math/misc_math.hpp"
-
 #include "brg/math/safe_math.hpp"
 
+#include "brg/units/units.hpp"
 
 // Macro definitions
 
@@ -110,7 +110,7 @@ private:
 			SPCP(name)->_initialised_ = true;
 		}
 	}
-	void _load( const bool silent = false ) const
+	void _load() const
 	{
 		std::ifstream in_file;
 		std::string file_data;
@@ -139,7 +139,7 @@ private:
 			catch(const std::exception &e)
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -150,7 +150,7 @@ private:
 			if ( file_data.compare( SPCP(name)->_header_string_ ) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -163,7 +163,7 @@ private:
 			if ( !( in_file >> SPCP(name)->_min_1_ >> SPCP(name)->_max_1_ >> SPCP(name)->_step_1_ ) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -226,7 +226,7 @@ private:
 			if ( i < SPCP(name)->_resolution_1_ )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_unload();
 				continue;
 			}
@@ -243,7 +243,7 @@ private:
 		SPCP(name)->_loaded_ = false;
 		SPCP(name)->_results_.clear();
 	}
-	void _calc( const bool silent = false ) const
+	void _calc() const
 	{
 
 		// Test that range is sane
@@ -272,7 +272,7 @@ private:
 			}
 			catch(const std::exception &e)
 			{
-				if(!silent) std::cerr << e.what() << std::endl;
+				handle_error_message(e.what());
 				bad_result = true;
 			}
 			SPCP(name)->_results_[i] = result;
@@ -281,7 +281,7 @@ private:
 		if(bad_result) throw std::runtime_error("One or more calculations failed in generating cache " + SPCP(name)->_name_base());
 		SPCP(name)->_loaded_ = true;
 	}
-	void _output( const bool silent = false ) const
+	void _output() const
 	{
 
 		std::ofstream out_file;
@@ -289,7 +289,7 @@ private:
 
 		if ( !SPCP(name)->_loaded_ )
 		{
-			SPCP(name)->_calc( silent );
+			SPCP(name)->_calc();
 		}
 
 		open_file_output( out_file, SPCP(name)->_file_name_ );
@@ -322,14 +322,14 @@ protected:
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Gets the result in the proper units
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0);
+		return any_units_cast<any_units_type>(v);
 	}
-	const brgastro::unit_obj _inverse_units() const throw()
+	const any_units_type _inverse_units(const flt_type & v) const
 	{
-		return brgastro::unit_obj(0);
+		return any_units_cast<any_units_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -364,7 +364,7 @@ public:
 	} // set_file_name()
 
 	void set_range( const flt_type new_mins, const flt_type new_maxes,
-			const flt_type new_steps, const bool silent = false )
+			const flt_type new_steps)
 	{
 		// First we try to load, so we can see if there are any changes from
 		// the existing cache
@@ -380,12 +380,11 @@ public:
 			SPP(name)->_step_1_ = new_steps;
 
 			SPCP(name)->_unload();
-			SPCP(name)->_calc( silent );
+			SPCP(name)->_calc();
 		}
 	} // const int_type set_range()
 
-	void set_precision( const size_t new_precision,
-			const bool silent = false )
+	void set_precision( const size_t new_precision)
 	{
 		if ( new_precision > 0 )
 		{
@@ -398,14 +397,14 @@ public:
 	} // const int_type set_precision()
 
 	template<typename otype>
-	void print( otype & out, const bool silent = false ) const
+	void print( otype & out ) const
 	{
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
 			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
 			// so we don't get collisions from loading within two different critical sections at once)
-			SPCP(name)->get(SPCP(name)->_min_1_,silent);
+			SPCP(name)->get(SPCP(name)->_min_1_);
 		}
 
 		// Fill up header
@@ -428,20 +427,17 @@ public:
 			data[2].push_back(ss.str());
 		}
 
-		print_table(out,data,header,silent);
+		print_table(out,data,header);
 	}
 
-	const BRG_UNITS get( const flt_type x, const bool silent = false ) const
+	template<typename Tx>
+	const any_units_type get( const Tx & init_x ) const
 	{
+		flt_type x = value_of(init_x);
 
 		flt_type xlo, xhi;
 		size_t x_i; // Lower nearby array point
-#ifdef _BRG_USE_UNITS_
-		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
-		result = 0;
-#else
 		flt_type result = 0;
-#endif
 
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
@@ -456,11 +452,11 @@ public:
 			{
 				try
 				{
-					SPCP(name)->_load( silent );
+					SPCP(name)->_load();
 				}
 				catch(const std::exception &e)
 				{
-					if(!silent) std::cerr << e.what() << std::endl;
+					handle_error_message(e.what());
 					result = -1;
 				}
 			}
@@ -480,42 +476,37 @@ public:
 		result = ( ( x - xlo ) * SPCP(name)->_results_.at(x_i + 1) + ( xhi - x ) * SPCP(name)->_results_.at(x_i) )
 				/ SPCP(name)->_step_1_;
 
+#ifdef _BRG_USE_UNITS_
+		return SPCP(name)->_units(result);
+#else
 		return result;
+#endif
 
 	} // get()
 
-	const BRG_UNITS inverse_get( const flt_type y, const bool silent = false ) const
+	const any_units_type inverse_get( const flt_type y ) const
 	{
 		// Check if it's possible to do an inverse get
 		if((SPCP(name)->_is_monotonic_!=1)&&((SPCP(name)->_is_monotonic_!=-1)))
 		{
 			// Not a monotonic function. Inverse get isn't possible
 			std::string err = "ERROR: Attempt to use inverse_get in cache for " + SPCP(name)->_file_name_ + " for function which isn't monotonic.\n";
-			if ( !silent )
-				std::cerr << err;
 			throw std::runtime_error(err);
 		}
 
 
 		flt_type xlo, xhi, ylo, yhi;
-#ifdef _BRG_USE_UNITS_
-		BRG_UNITS result = SPCP(name)->_inverse_units(); // Ensure the result has the proper units
-		result = 0;
-#else
 		flt_type result = 0;
-#endif
 
 		if ( !SPCP(name)->_loaded_ )
 		{
 			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
 			// so we don't get collisions from loading within two different critical sections at once)
-			SPCP(name)->get(SPCP(name)->_min_1_,true);
+			SPCP(name)->get(SPCP(name)->_min_1_);
 		}
 		if ( result == -1 )
 		{
 			std::string err = "ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache::inverse_get()\n";
-			if ( !silent )
-				std::cerr << err;
 			throw std::runtime_error(err);
 		}
 
@@ -557,19 +548,23 @@ public:
 
 		} // _is_monotonic == -1
 
+#ifdef _BRG_USE_UNITS_
+		return SPCP(name)->_inverse_units(result);
+#else
 		return result;
+#endif
 
 	}
 
 	// Recalculate function. Call if you want to overwrite a cache when something's changed in the code
 	// (for instance, the _calculate() function has been altered)
-	void recalc( const bool silent = false ) const
+	void recalc() const
 	{
 		SPCP(name)->_unload();
-		SPCP(name)->_calc(silent);
-		SPCP(name)->_output(silent);
+		SPCP(name)->_calc();
+		SPCP(name)->_output();
 		SPCP(name)->_unload();
-		SPCP(name)->_load(silent);
+		SPCP(name)->_load();
 	}
 
 	// Constructor

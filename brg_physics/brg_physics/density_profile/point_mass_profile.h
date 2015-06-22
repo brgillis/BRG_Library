@@ -30,7 +30,7 @@
 #include "brg/common.h"
 
 #include "brg_physics/density_profile/density_profile.h"
-#include "brg_physics/units/unit_obj.h"
+#include "brg/units/units.hpp"
 
 namespace brgastro {
 
@@ -40,13 +40,13 @@ class point_mass_profile: public density_profile
 	 point_mass_profile class
 	 ------------------------
 
-	 A virtual class for a point mass
+	 A virtual class for a point mass_type
 
 	 Defined by two parameters:
-	 mass and z
+	 mass_type and z
 
 	 Parent class:
-	 density profile
+	 density_type profile
 
 	 Derived classes:
 	 (none)
@@ -55,7 +55,7 @@ class point_mass_profile: public density_profile
 private:
 #if (1) // private member variables specific to this class
 
-	BRG_MASS _mass_;
+	mass_type _mass_;
 
 #endif // end private member variables
 
@@ -65,7 +65,7 @@ public:
 #if (1) // Constructors
 	point_mass_profile();
 
-	point_mass_profile( const BRG_MASS init_mass, const flt_type init_z );
+	point_mass_profile( const mass_type init_mass, const flt_type init_z );
 
 #endif // End constructors
 
@@ -73,45 +73,40 @@ public:
 	~point_mass_profile();
 
 #if (1) // Set functions
-	virtual void set_mvir( const BRG_MASS & new_halo_mass, bool silent =
-			false );
-	virtual void set_parameters( const std::vector< BRG_UNITS > &new_parameters,
-			bool silent = false );
+	virtual void set_mvir( const mass_type & new_halo_mass );
+	virtual void set_parameters( const std::vector< any_units_type > &new_parameters );
 #endif // End set functions
 
 #if (1) // Basic get functions
-	BRG_MASS mass() const;
+	mass_type mass() const;
 
-	BRG_MASS mvir() const;
-	BRG_MASS mtot() const;
+	mass_type mvir() const;
+	mass_type mtot() const;
 
-	BRG_DISTANCE rvir() const;
-	BRG_DISTANCE rt(const bool silent = false) const;
-	BRG_DISTANCE rs() const;
+	distance_type rvir() const;
+	distance_type rt() const;
+	distance_type rs() const;
 
-	BRG_VELOCITY vvir() const;
+	velocity_type vvir() const;
 
 #endif // end basic get functions
 
 #if (1) // advanced get functions
-	BRG_UNITS dens( const BRG_DISTANCE & r ) const;
-	BRG_UNITS enc_dens( const BRG_DISTANCE & r,
-			const bool silent = false ) const;
-	BRG_MASS enc_mass( const BRG_DISTANCE & r, const bool silent =
-				true ) const; // Mass enclosed with sphere of radius r
+	density_type dens( const distance_type & r ) const;
+	density_type enc_dens( const distance_type & r) const;
+	mass_type enc_mass( const distance_type & r ) const; // Mass enclosed with sphere of radius r
 	size_t num_parameters() const
 	{
 		return 2; // Mass and redshift
 	}
-	std::vector< BRG_UNITS > get_parameters( const bool silent = false ) const;
+	std::vector< any_units_type > get_parameters() const;
 
-	std::vector< std::string > get_parameter_names( const bool silent = false ) const;
+	std::vector< std::string > get_parameter_names() const;
 #endif // end advanced get functions
 
 #if (1) // Other operations
 
-	void truncate_to_fraction( const flt_type fraction,
-			bool silent = false );
+	void truncate_to_fraction( const flt_type fraction);
 	virtual redshift_obj *redshift_obj_clone() const
 	{
 		return new point_mass_profile( *this );

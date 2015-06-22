@@ -30,9 +30,9 @@
 #ifndef _BRG_MAG_GLOBAL_VALUES_H_INCLUDED_
 #define _BRG_MAG_GLOBAL_VALUES_H_INCLUDED_
 
+#include <brg/units/unit_conversions.hpp>
 #include "brg/math/misc_math.hpp"
 
-#include "brg_physics/units/unit_conversions.hpp"
 
 namespace brgastro {
 

@@ -1,12 +1,12 @@
 /**********************************************************************\
- @file magnification_alpha.cpp
+ @file error_handling.cpp
  ------------------
 
- File containing the implementation of magnification_alpha.
+ TODO <Insert file description here>
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2015 brg
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,27 +23,11 @@
 
 \**********************************************************************/
 
-#include "brg/common.h"
-
-#include "brg/math/calculus/differentiate.hpp"
-#include "brg/units/units.hpp"
-
-#include "brg_lensing/magnification/expected_count_cache.h"
-#include "brg_lensing/magnification/expected_count_derivative_cache.h"
-#include "brg_lensing/magnification/magnification_alpha.h"
+#include "error_handling.h"
 
 namespace brgastro {
 
-flt_type magnification_alpha(const flt_type & m, const flt_type & z)
-{
-	//return 2; // For sanity test purposes - this leads to alpha-1 = 1, so a the measured mag signal is the count overdensity
+error_behavior_type error_behavior = error_behavior_type::WARN;
 
-	flt_type res = any_cast<flt_type>(expected_count_derivative_cache().get(m,z));
-
-	if(res<=0) return 1.; // 1 corresponds to a flat profile, so this is appropriate for zero counts
-
-
-	return res;
 }
 
-} // namespace brgastro

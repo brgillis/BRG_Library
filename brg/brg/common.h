@@ -18,12 +18,20 @@ typedef int int_type;
 typedef long int long_int_type;
 typedef short int short_int_type;
 
+typedef unsigned int unsigned_int_type;
+typedef long unsigned int long_unsigned_int_type;
+typedef short unsigned int short_unsigned_int_type;
+
 typedef std::complex<flt_type> complex_type;
 typedef std::complex<long_flt_type> long_complex_type;
 
 typedef std::vector<int_type> int_vector_type;
 typedef std::vector<long_int_type> long_int_vector_type;
 typedef std::vector<short_int_type> short_int_vector_type;
+
+typedef std::vector<unsigned_int_type> unsigned_int_vector_type;
+typedef std::vector<long_unsigned_int_type> long_unsigned_int_vector_type;
+typedef std::vector<short_unsigned_int_type> short_unsigned_int_vector_type;
 
 typedef std::vector<flt_type> flt_vector_type;
 typedef std::vector<long_flt_type> long_flt_vector_type;
@@ -87,24 +95,6 @@ constexpr flt_type pi = M_PI;
 
 // Conditional defines
 #if(1)
-
-#ifdef _BRG_USE_UNITS_
-#define BRG_UNITS brgastro::unit_obj
-#define BRG_DISTANCE brgastro::unit_distance
-#define BRG_TIME brgastro::unit_time
-#define BRG_MASS brgastro::unit_mass
-#define BRG_ANGLE brgastro::unit_angle
-#define BRG_CHARGE brgastro::unit_charge
-#define BRG_VELOCITY brgastro::unit_velocity
-#else
-#define BRG_UNITS flt_type
-#define BRG_DISTANCE flt_type
-#define BRG_TIME flt_type
-#define BRG_MASS flt_type
-#define BRG_ANGLE flt_type
-#define BRG_CHARGE flt_type
-#define BRG_VELOCITY flt_type
-#endif // #ifdef _BRG_USE_UNITS_
 
 #ifdef _BRG_USE_CPP_11_STD_
 #define BRG_UNIQUE_PTR std::unique_ptr

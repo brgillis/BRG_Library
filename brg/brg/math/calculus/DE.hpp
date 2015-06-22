@@ -35,9 +35,9 @@
 namespace brgastro {
 
 // Leapfrog method for solving a DE. Note that this implementation assumes that the positions and velocities passed to it are already spaced
-// out by half a timestep, with velocity at t+t_step/2 (though it does allow phase classes to be passed to it). This method takes a single step,
-// using the passed acceleration function. The passed function for this implementation must take in one parameter (the magnitude of distance from
-// a centre point) and return one parameter (the magnitude of the acceleration toward this centre point).
+// out by half a timestep, with velocity_type at t+t_step/2 (though it does allow phase classes to be passed to it). This method takes a single step,
+// using the passed acceleration_type function. The passed function for this implementation must take in one parameter (the magnitude of distance_type from
+// a centre point) and return one parameter (the magnitude of the acceleration_type toward this centre point).
 template< typename f, typename Td=flt_type, typename Tv=flt_type, typename Tt=flt_type >
 inline const int_type leapfrog_step( const Td & x, const Td & y,
 								const Td & z, const Tv & vx, const Tv & vy,
@@ -61,7 +61,7 @@ inline const int_type leapfrog_step( const Td & x, const Td & y,
 	new_y = y + vy * t_step;
 	new_z = z + vz * t_step;
 
-	// Calculate acceleration at this new position
+	// Calculate acceleration_type at this new position
 	d = dist3d( new_x, new_y, new_z );
 	a = (*accel_func)( d );
 

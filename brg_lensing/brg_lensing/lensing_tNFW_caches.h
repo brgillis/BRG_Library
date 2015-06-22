@@ -54,10 +54,10 @@ protected:
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Tells what units the result should have
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0,-2,0,1,0,0,0); // Surface density
+		return any_units_cast<surface_density_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -73,7 +73,7 @@ public:
 class tNFW_offset_sig_cache : public brg_cache_4d<tNFW_offset_sig_cache>
 {
 	// Weak lensing signal delta-sigma from truncated NFW profile, using default c and tau,
-	// offset from the centre of it by a distance R
+	// offset from the centre of it by a distance_type R
 private:
 
 	DECLARE_BRG_CACHE_4D_STATIC_VARS();
@@ -90,10 +90,10 @@ protected:
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Tells what units the result should have
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0,-2,0,1,0,0,0); // Surface density
+		return any_units_cast<surface_density_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -127,15 +127,15 @@ protected:
 	void _load_cache_dependencies() const
 	{
 		// This depends on offset_sig, so we'll have to load it through a dummy get
-		brgastro::tNFW_offset_sig_cache().get(0,0,0,0,false);
+		brgastro::tNFW_offset_sig_cache().get(0,0,0,0);
 	}
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Tells what units the result should have
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0,-2,0,1,0,0,0); // Surface density
+		return any_units_cast<surface_density_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -169,15 +169,15 @@ protected:
 	void _load_cache_dependencies() const
 	{
 		// This depends on offset_sig, so we'll have to load it through a dummy get
-		brgastro::tNFW_offset_sig_cache().get(0,0,0,0,false);
+		brgastro::tNFW_offset_sig_cache().get(0,0,0,0);
 	}
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Tells what units the result should have
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0,-2,0,1,0,0,0); // Surface density
+		return any_units_cast<surface_density_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -209,10 +209,10 @@ protected:
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Tells what units the result should have
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0,-2,0,1,0,0,0); // Surface density
+		return any_units_cast<surface_density_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -228,7 +228,7 @@ public:
 class tNFW_offset_Sigma_cache : public brg_cache_4d<tNFW_offset_Sigma_cache>
 {
 	// Magnification signal Sigma from truncated NFW profile, using default c and tau,
-	// offset from the centre of it by a distance R
+	// offset from the centre of it by a distance_type R
 private:
 
 	DECLARE_BRG_CACHE_4D_STATIC_VARS();
@@ -245,10 +245,10 @@ protected:
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Tells what units the result should have
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0,-2,0,1,0,0,0); // Surface density
+		return any_units_cast<surface_density_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -282,15 +282,15 @@ protected:
 	void _load_cache_dependencies() const
 	{
 		// This depends on offset_sig, so we'll have to load it through a dummy get
-		brgastro::tNFW_offset_Sigma_cache().get(0,0,0,0,false);
+		brgastro::tNFW_offset_Sigma_cache().get(0,0,0,0);
 	}
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Tells what units the result should have
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0,-2,0,1,0,0,0); // Surface density
+		return any_units_cast<surface_density_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_

@@ -25,6 +25,7 @@
 #ifndef _BRG_TNFW_PROFILE_H_
 #define _BRG_TNFW_PROFILE_H_
 
+#include <brg/units/units.hpp>
 #include <cmath>
 #include <cstdlib>
 #include <vector>
@@ -32,7 +33,6 @@
 #include "brg/common.h"
 
 #include "brg/utility.hpp"
-#include "brg_physics/units/unit_obj.h"
 #include "brg_physics/density_profile/density_profile.h"
 
 namespace brgastro {
@@ -44,14 +44,14 @@ class tNFW_profile: public density_profile
 	 -------------
 
 	 A virtual class for an object whose
-	 mass fits a truncated NFW profile.
+	 mass_type fits a truncated NFW profile.
 	 See ... .
 
 	 Defined by four parameters:
 	 mvir0, z, c, and tau
 
 	 Parent class:
-	 density profile
+	 density_type profile
 
 	 Derived classes:
 	 tNFW_galaxy
@@ -59,8 +59,8 @@ class tNFW_profile: public density_profile
 	 **********************************/
 private:
 #if (1) // Private member variables specific to this class
-	BRG_MASS _mvir0_;
-	mutable BRG_DISTANCE _rvir_cache_;
+	mass_type _mvir0_;
+	mutable distance_type _rvir_cache_;
 	mutable bool _rvir_cached_;
 	flt_type _c_, _tau_;
 
@@ -70,8 +70,7 @@ protected:
 
 	void _uncache_mass();
 
-	flt_type _taufm( const flt_type mratio, flt_type precision = 0.00001,
-			const bool silent = false ) const; // tau from Mtot/Mvir
+	flt_type _taufm( const flt_type mratio, flt_type precision = 0.00001 ) const; // tau from Mtot/Mvir
 	flt_type _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
 	{
 		return ( 200. / 3. ) * cube( _c_ )
@@ -79,11 +78,12 @@ protected:
 	}
 
 	// Functions relating to tNFW profiles
-	flt_type _cfm( const BRG_MASS mass, const flt_type z=0 ) const // Concentration from mass relationship, from Neto
+	flt_type _cfm( const mass_type mass_type, const flt_type z=0 ) const // Concentration from mass_type relationship, from Neto
 	{
-		return 4.67 * std::pow( mass * unitconv::kgtottMsun / ( 1e4 ), -0.11 );
+		//return 4.67 * std::pow( mass_type * unitconv::kgtottMsun / ( 1e4 ), -0.11 );
+		return 4.67 * std::pow( mass_type / ( 1e14 * unitconv::kgtoMsun * brgastro::kilogram ), -0.11 );
 	}
-	flt_type _cfm() const // Concentration from mass relationship, from Neto
+	flt_type _cfm() const // Concentration from mass_type relationship, from Neto
 	{
 		return _cfm(_mvir0_,z());
 	}
@@ -112,7 +112,7 @@ public:
 #if (1) // Constructors
 	tNFW_profile();
 
-	explicit tNFW_profile( const BRG_MASS & init_mvir0, const flt_type init_z = 0,
+	explicit tNFW_profile( const mass_type & init_mvir0, const flt_type init_z = 0,
 			const flt_type init_c = -1, const flt_type init_tau = -1 );
 
 #endif // End constructors
@@ -122,31 +122,30 @@ public:
 
 #if (1) // Set functions
 
-	void set_mvir( const BRG_MASS & new_halo_mass, const bool silent =
+	void set_mvir( const mass_type & new_halo_mass =
 			false );
-	void set_parameters( const std::vector< BRG_UNITS > & new_parameters,
-			const bool silent = false );
+	void set_parameters( const std::vector< any_units_type > & new_parameters );
 
 	void set_z( const flt_type new_z );
-	void set_tau( const flt_type new_halo_tau, const bool silent = false );
-	void set_c( const flt_type new_halo_c, const bool silent = false );
+	void set_tau( const flt_type new_halo_tau );
+	void set_c( const flt_type new_halo_c );
 
 #endif // End set functions
 
 #if (1) //Basic get functions
 
-	BRG_MASS mvir() const;
-	const BRG_MASS & mvir0() const;
+	mass_type mvir() const;
+	const mass_type & mvir0() const;
 
-	BRG_MASS mtot() const;
+	mass_type mtot() const;
 
-	BRG_DISTANCE rvir() const;
-	BRG_DISTANCE rvir0() const;
-	BRG_DISTANCE rt( const bool silent = false ) const;
-	BRG_DISTANCE rs() const;
+	distance_type rvir() const;
+	distance_type rvir0() const;
+	distance_type rt() const;
+	distance_type rs() const;
 
-	BRG_VELOCITY vvir() const;
-	BRG_VELOCITY vvir0() const;
+	velocity_type vvir() const;
+	velocity_type vvir0() const;
 
 	flt_type c() const;
 	flt_type tau() const;
@@ -154,22 +153,20 @@ public:
 
 #if (1) // advanced get functions
 
-	BRG_UNITS dens( const BRG_DISTANCE & r ) const;
-	BRG_MASS enc_mass( const BRG_DISTANCE & r,
-			const bool silent = false ) const;
+	density_type dens( const distance_type & r ) const;
+	mass_type enc_mass( const distance_type & r ) const;
 	size_t num_parameters() const
 	{
 		return 4; // Mass, redshift, c, and tau
 	}
-	std::vector< BRG_UNITS > get_parameters( const bool silent = true ) const;
+	std::vector< any_units_type > get_parameters() const;
 
-	std::vector< std::string > get_parameter_names( const bool silent = true ) const;
+	std::vector< std::string > get_parameter_names() const;
 #endif // end advanced get functions
 
 #if (1) // Other operations
 
-	virtual void truncate_to_fraction( const flt_type fraction,
-			const bool silent = false );
+	virtual void truncate_to_fraction( const flt_type fraction );
 	virtual redshift_obj *redshift_obj_clone() const
 	{
 		return new tNFW_profile( *this );

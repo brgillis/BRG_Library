@@ -40,6 +40,7 @@
 #include "brg/Eigen.hpp"
 
 #include "brg/container/is_eigen_container.hpp"
+#include "brg/error_handling.h"
 #include "brg/math/interpolator/interpolator.h"
 #include "brg/math/misc_math.hpp"
 
@@ -56,7 +57,7 @@ class radial_vector
 {
 private:
 
-	error_behavior _error_behavior_ = error_behavior::THROW;
+	error_behavior_type _error_behavior_ = error_behavior::THROW;
 
 	size_type _N_; ///< The number of points in the array
 	flt_type _scale_; ///< The physical size of the array in real-space (_scale_/_N_ is the scale of one step)
@@ -264,15 +265,15 @@ private:
 		// We have a potential problem. What do we do about it?
 		std::string error_message(
 				"Cannot rescale array due to divergent data.");
-		if (_error_behavior_ == error_behavior::THROW)
+		if (_error_behavior_ == error_behavior_type::THROW)
 		{
 			throw std::runtime_error(error_message);
 		}
-		else if (_error_behavior_ == error_behavior::WARN)
+		else if (_error_behavior_ == error_behavior_type::WARN)
 		{
 			std::cerr << "WARNING: " << error_message << std::endl;
 		}
-		else if (_error_behavior_ == error_behavior::LOG)
+		else if (_error_behavior_ == error_behavior_type::LOG)
 		{
 			std::cerr << "WARNING: " << error_message << std::endl;
 		}

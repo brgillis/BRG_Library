@@ -24,10 +24,10 @@
 
 #include "brg/common.h"
 
-#include "brg_physics/units/unit_obj.h"
 #include "brg/utility.hpp"
 
 #include "density_profile_functors.h"
+#include "brg/units/units.hpp"
 
 // brgastro::accel_functor class methods
 #if (1)
@@ -38,14 +38,13 @@ void brgastro::accel_functor::set_host_ptr(
 	_host_ptr_ = new_host;
 }
 
-BRG_UNITS brgastro::accel_functor::operator()( const BRG_UNITS &  in_param,
-		const bool silent ) const
+brgastro::acceleration_type brgastro::accel_functor::operator()( const distance_type &  in_param ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
 		throw std::runtime_error("ERROR: Host must be assigned to accel_functor before function can be called.\n");
 	}
-	return _host_ptr_->accel( in_param, silent );
+	return _host_ptr_->accel( in_param );
 }
 
 brgastro::accel_functor::accel_functor()
@@ -68,8 +67,8 @@ void brgastro::spherical_density_functor::set_host_ptr(
 	_host_ptr_ = new_host;
 }
 
-BRG_UNITS brgastro::spherical_density_functor::operator()(
-		const BRG_UNITS &  in_param, const bool silent ) const
+brgastro::custom_unit_type<-1,0,1,0,0> brgastro::spherical_density_functor::operator()(
+		const distance_type &  in_param ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
@@ -100,19 +99,18 @@ void brgastro::solve_rhm_functor::set_host_ptr(
 }
 
 void brgastro::solve_rhm_functor::set_target_mass(
-		const BRG_MASS &new_target_mass )
+		const mass_type &new_target_mass )
 {
 	_target_mass_ = new_target_mass;
 }
 
-BRG_UNITS brgastro::solve_rhm_functor::operator()( const BRG_UNITS &  in_param,
-		const bool silent ) const
+brgastro::mass_type brgastro::solve_rhm_functor::operator()( const distance_type & in_param ) const
 {
 	if ( _host_ptr_ == NULL )
 	{
 		throw std::runtime_error("ERROR: Host must be assigned to solve_rhm_functor before function can be called.\n");
 	}
-	return std::fabs(_target_mass_ - _host_ptr_->enc_mass( fabs( in_param ), silent ) );
+	return abs(_target_mass_ - _host_ptr_->enc_mass( abs( in_param ) ) );
 }
 
 brgastro::solve_rhm_functor::solve_rhm_functor()
@@ -122,7 +120,7 @@ brgastro::solve_rhm_functor::solve_rhm_functor()
 }
 ;
 brgastro::solve_rhm_functor::solve_rhm_functor(
-		const density_profile *init_host, const BRG_MASS &new_target_mass )
+		const density_profile *init_host, const mass_type &new_target_mass )
 {
 	set_host_ptr( init_host );
 	set_target_mass( new_target_mass );

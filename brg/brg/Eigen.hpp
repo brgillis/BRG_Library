@@ -63,9 +63,15 @@ namespace brgastro {
 
 typedef Eigen::Array<flt_type,Eigen::Dynamic,1> flt_array_type;
 typedef Eigen::Array<long_flt_type,Eigen::Dynamic,1> long_flt_array_type;
+
 typedef Eigen::Array<int_type,Eigen::Dynamic,1> int_array_type;
 typedef Eigen::Array<long_int_type,Eigen::Dynamic,1> long_int_array_type;
 typedef Eigen::Array<short_int_type,Eigen::Dynamic,1> short_int_array_type;
+
+typedef Eigen::Array<unsigned_int_type,Eigen::Dynamic,1> unsigned_int_array_type;
+typedef Eigen::Array<long_unsigned_int_type,Eigen::Dynamic,1> long_unsigned_int_array_type;
+typedef Eigen::Array<short_unsigned_int_type,Eigen::Dynamic,1> short_unsigned_int_array_type;
+
 typedef Eigen::Array<complex_type,Eigen::Dynamic,1> complex_array_type;
 typedef Eigen::Array<long_complex_type,Eigen::Dynamic,1> long_complex_array_type;
 

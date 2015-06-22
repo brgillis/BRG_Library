@@ -22,9 +22,8 @@
 
 #include "brg/common.h"
 
-#include "brg_physics/units/unit_obj.h"
-
 #include "position_grid_cache.h"
+#include "brg/units/units.hpp"
 
 // Initialisation for brgastro::grid_cache
 #if (1)
@@ -32,12 +31,23 @@
 int_type brgastro::grid_cache::_ra_grid_change_num_ = 0;
 int_type brgastro::grid_cache::_dec_grid_change_num_ = 0;
 int_type brgastro::grid_cache::_z_grid_change_num_ = 0;
-BRG_ANGLE brgastro::grid_cache::_ra_grid_min_ = -pi;
-BRG_ANGLE brgastro::grid_cache::_ra_grid_max_ = pi;
-BRG_ANGLE brgastro::grid_cache::_ra_grid_step_ = pi / 8;
-BRG_ANGLE brgastro::grid_cache::_dec_grid_min_ = -pi / 2;
-BRG_ANGLE brgastro::grid_cache::_dec_grid_max_ = pi / 2;
-BRG_ANGLE brgastro::grid_cache::_dec_grid_step_ = pi / 8;
+
+#ifdef _BRG_USE_UNITS_
+brgastro::angle_type brgastro::grid_cache::_ra_grid_min_(-pi*boost::units::si::radians);
+brgastro::angle_type brgastro::grid_cache::_ra_grid_max_(pi*boost::units::si::radians);
+brgastro::angle_type brgastro::grid_cache::_ra_grid_step_(pi / 8*boost::units::si::radians);
+brgastro::angle_type brgastro::grid_cache::_dec_grid_min_(-pi / 2*boost::units::si::radians);
+brgastro::angle_type brgastro::grid_cache::_dec_grid_max_(pi / 2*boost::units::si::radians);
+brgastro::angle_type brgastro::grid_cache::_dec_grid_step_(pi / 8*boost::units::si::radians);
+#else
+brgastro::angle_type brgastro::grid_cache::_ra_grid_min_ = -pi;
+brgastro::angle_type brgastro::grid_cache::_ra_grid_max_ = pi;
+brgastro::angle_type brgastro::grid_cache::_ra_grid_step_ = pi / 8;
+brgastro::angle_type brgastro::grid_cache::_dec_grid_min_ = -pi / 2;
+brgastro::angle_type brgastro::grid_cache::_dec_grid_max_ = pi / 2;
+brgastro::angle_type brgastro::grid_cache::_dec_grid_step_ = pi / 8;
+#endif
+
 flt_type brgastro::grid_cache::_z_grid_min_ = 0;
 flt_type brgastro::grid_cache::_z_grid_max_ = 2;
 flt_type brgastro::grid_cache::_z_grid_step_ = 0.1;

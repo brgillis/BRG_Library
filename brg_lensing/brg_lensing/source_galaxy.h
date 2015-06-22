@@ -42,9 +42,9 @@ public:
 
 	// Constructors and destructors
 #if(1)
-	source_galaxy( const BRG_ANGLE & init_ra = 0, const BRG_ANGLE & init_dec = 0, const flt_type & init_z = 0,
+	source_galaxy( const angle_type & init_ra = 0, const angle_type & init_dec = 0, const flt_type & init_z = 0,
 			const flt_type & init_gamma_1 = 0, const flt_type & init_gamma_2 = 0, const flt_type & init_kappa = 0,
-			const BRG_MASS & init_mstar = 0, const flt_type & init_mag = 0, const flt_type & init_weight = 1)
+			const mass_type & init_mstar = 0, const flt_type & init_mag = 0, const flt_type & init_weight = 1)
 	: sky_obj(init_ra,init_dec,init_z),
 	  source_obj(init_ra, init_dec, init_z,
 	  			init_gamma_1, init_gamma_2, init_kappa),
@@ -60,7 +60,7 @@ public:
 	// Implementations of pure virtual functions
 #if(1)
 
-	BRG_MASS m() const
+	mass_type m() const
 	{
 		return galaxy::m();
 	}

@@ -38,6 +38,7 @@
 #include <boost/accumulators/statistics/stats.hpp>
 #include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
+#include <brg/units/units.hpp>
 
 #include "brg/math/statistics/effective_count.hpp"
 #include "brg/math/statistics/mean_weight.hpp"
@@ -53,7 +54,6 @@
 #include "brg_lensing/lens_source_pair.h"
 #include "brg_lensing/pair_bin_summary.h"
 
-#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 
@@ -62,7 +62,7 @@ namespace brgastro {
 struct lens_id
 {
 	ssize_t id;
-	BRG_MASS m;
+	mass_type m;
 	flt_type z;
 	flt_type mag;
 	flt_type weight;
@@ -70,15 +70,15 @@ struct lens_id
 	// Data on the unmasked fraction of annuli
 #if(1)
 
-	brgastro::limit_vector<BRG_DISTANCE> unmasked_frac_bin_limits;
+	brgastro::limit_vector<distance_type> unmasked_frac_bin_limits;
 	std::vector<flt_type> unmasked_fracs;
 
-	flt_type unmasked_frac(const BRG_DISTANCE & R_proj) const;
+	flt_type unmasked_frac(const distance_type & R_proj) const;
 
 #endif
 
-	lens_id(const ssize_t & id, const BRG_MASS & m, const flt_type & z, const flt_type & mag,
-			const std::vector<BRG_DISTANCE> & unmasked_frac_bin_limits,
+	lens_id(const ssize_t & id, const mass_type & m, const flt_type & z, const flt_type & mag,
+			const std::vector<distance_type> & unmasked_frac_bin_limits,
 			const std::vector<flt_type> & unmasked_fracs,
 			const flt_type & weight=1)
 	: id(id),
@@ -119,11 +119,11 @@ private:
 
 	// Pair data
 #if(1)
-	bin_stat_vec_t<BRG_DISTANCE> _magf_R_values_;
-	bin_stat_vec_t<BRG_DISTANCE> _shear_R_values_;
+	bin_stat_vec_t<flt_type> _magf_R_values_;
+	bin_stat_vec_t<flt_type> _shear_R_values_;
 
-	bin_stat_vec_t<BRG_MASS> _magf_lens_m_values_;
-	bin_stat_vec_t<BRG_MASS> _shear_lens_m_values_;
+	bin_stat_vec_t<flt_type> _magf_lens_m_values_;
+	bin_stat_vec_t<flt_type> _shear_lens_m_values_;
 	bin_stat_vec_t<flt_type> _magf_lens_z_values_;
 	bin_stat_vec_t<flt_type> _shear_lens_z_values_;
 	bin_stat_vec_t<flt_type> _magf_lens_mag_values_;
@@ -135,8 +135,8 @@ private:
 	bin_stat_vec_t<flt_type> _magf_unmasked_fracs_;
 	bin_stat_vec_t<flt_type> _mu_obs_values_;
 
-	stat_vec_t<BRG_UNITS> _delta_Sigma_t_values_;
-	stat_vec_t<BRG_UNITS> _delta_Sigma_x_values_;
+	stat_vec_t<flt_type> _delta_Sigma_t_values_;
+	stat_vec_t<flt_type> _delta_Sigma_x_values_;
 
 	boost::container::flat_set<ssize_t> _distinct_lens_ids_;
 	boost::container::flat_map<ssize_t,flt_type> _lens_weights_;
@@ -156,8 +156,8 @@ public:
 
 	// Constructors and destructor
 #if(1)
-	pair_bin( const BRG_DISTANCE & init_R_min=0, const BRG_DISTANCE & init_R_max=0,
-			const BRG_MASS & init_m_min=0, const BRG_MASS & init_m_max=0,
+	pair_bin( const distance_type & init_R_min=0, const distance_type & init_R_max=0,
+			const mass_type & init_m_min=0, const mass_type & init_m_max=0,
 			const flt_type & init_z_min=0, const flt_type & init_z_max=0,
 			const flt_type & init_mag_min=0, const flt_type & init_mag_max=0,
 			const flt_type & init_z_buffer=_z_buffer_default_value_);
@@ -240,30 +240,30 @@ public:
 	// Limits and means accessors
 #if(1)
 
-	virtual BRG_DISTANCE R_mean() const override
+	virtual distance_type R_mean() const override
 	{
 		return shear_R_mean();
 	}
-	virtual BRG_DISTANCE shear_R_mean() const override
+	virtual distance_type shear_R_mean() const override
 	{
-		return safe_extract_weighted_mean(_shear_R_values_);
+		return safe_extract_weighted_mean(_shear_R_values_)*m;
 	}
-	virtual BRG_DISTANCE magf_R_mean() const override
+	virtual distance_type magf_R_mean() const override
 	{
-		return safe_extract_weighted_mean(_magf_R_values_);
+		return safe_extract_weighted_mean(_magf_R_values_)*m;
 	}
 
-	virtual BRG_MASS lens_m_mean() const override
+	virtual mass_type lens_m_mean() const override
 	{
 		return shear_lens_m_mean();
 	}
-	virtual BRG_MASS shear_lens_m_mean() const override
+	virtual mass_type shear_lens_m_mean() const override
 	{
-		return safe_extract_weighted_mean(_shear_lens_m_values_);
+		return safe_extract_weighted_mean(_shear_lens_m_values_)*kg;
 	}
-	virtual BRG_MASS magf_lens_m_mean() const override
+	virtual mass_type magf_lens_m_mean() const override
 	{
-		return safe_extract_weighted_mean(_magf_lens_m_values_);
+		return safe_extract_weighted_mean(_magf_lens_m_values_)*kg;
 	}
 
 	virtual flt_type lens_z_mean() const override
@@ -315,19 +315,19 @@ public:
 	// Calculations on stored values
 #if (1)
 
-	virtual BRG_UNITS area() const override;
+	virtual custom_unit_type<0,0,0,2,0> area() const override;
 
-	virtual BRG_UNITS delta_Sigma_t_mean() const override;
-	virtual BRG_UNITS delta_Sigma_x_mean() const override;
+	virtual surface_density_type delta_Sigma_t_mean() const override;
+	virtual surface_density_type delta_Sigma_x_mean() const override;
 
-	virtual BRG_UNITS delta_Sigma_t_mean_square() const override;
-	virtual BRG_UNITS delta_Sigma_x_mean_square() const override;
+	virtual custom_unit_type<-4,0,2,0,0> delta_Sigma_t_mean_square() const override;
+	virtual custom_unit_type<-4,0,2,0,0> delta_Sigma_x_mean_square() const override;
 
-	virtual BRG_UNITS delta_Sigma_t_std() const override;
-	virtual BRG_UNITS delta_Sigma_x_std() const override;
+	virtual surface_density_type delta_Sigma_t_std() const override;
+	virtual surface_density_type delta_Sigma_x_std() const override;
 
-	virtual BRG_UNITS delta_Sigma_t_stderr() const override;
-	virtual BRG_UNITS delta_Sigma_x_stderr() const override;
+	virtual surface_density_type delta_Sigma_t_stderr() const override;
+	virtual surface_density_type delta_Sigma_x_stderr() const override;
 
 	virtual flt_type mu_hat() const override;
 	virtual flt_type mu_square_hat() const override;

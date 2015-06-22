@@ -49,9 +49,8 @@
 #include "brg_lensing/magnification/mag_signal_integral_cache.h"
 #include "brg_lensing/magnification/mag_weight_integral_cache.h"
 
-#include "brg_physics/units/unit_obj.h"
-
 #include "pair_bin.h"
+#include <brg/units/units.hpp>
 
 namespace brgastro {
 
@@ -63,8 +62,8 @@ void pair_bin::_uncache_values()
 	_mu_W_cached_value_ = std::numeric_limits<flt_type>::infinity();
 }
 
-pair_bin::pair_bin( const BRG_DISTANCE & init_R_min, const BRG_DISTANCE & init_R_max,
-		const BRG_MASS & init_m_min, const BRG_MASS & init_m_max,
+pair_bin::pair_bin( const distance_type & init_R_min, const distance_type & init_R_max,
+		const mass_type & init_m_min, const mass_type & init_m_max,
 		const flt_type & init_z_min, const flt_type & init_z_max,
 		const flt_type & init_mag_min, const flt_type & init_mag_max,
 		const flt_type & init_z_buffer)
@@ -88,16 +87,18 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 	if(shear_weight>0)
 	{
 		// General info
-		_shear_R_values_(new_pair.R_proj(), boost::accumulators::weight = shear_weight);
+		_shear_R_values_(value_of(new_pair.R_proj()), boost::accumulators::weight = shear_weight);
 
-		_shear_lens_m_values_(new_pair.m_lens(), boost::accumulators::weight = shear_weight);
+		_shear_lens_m_values_(value_of(new_pair.m_lens()), boost::accumulators::weight = shear_weight);
 		_shear_lens_mag_values_(new_pair.mag_lens(), boost::accumulators::weight = shear_weight);
 		_shear_lens_z_values_(new_pair.z_lens(), boost::accumulators::weight = shear_weight);
 		_shear_source_z_values_(new_pair.z_source(), boost::accumulators::weight = shear_weight);
 
 		// Shear info
-		_delta_Sigma_t_values_(new_pair.delta_Sigma_t(), boost::accumulators::weight = shear_weight);
-		_delta_Sigma_x_values_(new_pair.delta_Sigma_x(), boost::accumulators::weight = shear_weight);
+		_delta_Sigma_t_values_(value_of(new_pair.delta_Sigma_t()),
+				boost::accumulators::weight = shear_weight);
+		_delta_Sigma_x_values_(value_of(new_pair.delta_Sigma_x()),
+				boost::accumulators::weight = shear_weight);
 	}
 
 	// Now magnification
@@ -107,7 +108,7 @@ void pair_bin::add_pair( const lens_source_pair & new_pair)
 		(z_source>=mag_z_min) && (z_source<mag_z_max) )
 	{
 		// General info
-		_magf_R_values_(new_pair.R_proj(), boost::accumulators::weight = mag_weight);
+		_magf_R_values_(value_of(new_pair.R_proj()), boost::accumulators::weight = mag_weight);
 		_magf_source_z_values_(new_pair.z_source(), boost::accumulators::weight = mag_weight);
 
 		// Magnification info
@@ -121,7 +122,7 @@ void pair_bin::add_lens( const lens_id & lens )
 	if(_distinct_lens_ids_.find(lens.id)==_distinct_lens_ids_.end())
 	{
 		_distinct_lens_ids_.insert(lens.id);
-		_magf_lens_m_values_(lens.m, boost::accumulators::weight = lens.weight);
+		_magf_lens_m_values_(value_of(lens.m), boost::accumulators::weight = lens.weight);
 		_magf_lens_mag_values_(lens.mag, boost::accumulators::weight = lens.weight);
 		_magf_lens_z_values_(lens.z, boost::accumulators::weight = lens.weight);
 
@@ -129,10 +130,11 @@ void pair_bin::add_lens( const lens_id & lens )
 		_magf_unmasked_fracs_(unmasked_frac, boost::accumulators::weight = lens.weight);
 
 		// Get the new weight from the lens's individual weight and its unmasked area
-		flt_type area = pi*(square(afd(R_max(),lens.z))-square(afd(R_min(),lens.z)));
-		flt_type unmasked_area = unmasked_frac*area;
+		custom_unit_type<0,0,0,2,0> area = pi*(square(afd(R_max(),lens.z))-square(afd(R_min(),lens.z)));
+		custom_unit_type<0,0,0,2,0> unmasked_area = unmasked_frac*area;
 
-		flt_type mu_W = unmasked_area*mag_weight_integral_cache().get(lens.z+_z_buffer_);
+		flt_type mu_W = unmasked_area*any_cast<custom_unit_type<0,0,0,-2,0>>(
+				mag_weight_integral_cache().get(lens.z+_z_buffer_));
 
 		brgastro::fixbad(mu_W);
 
@@ -193,50 +195,50 @@ flt_type pair_bin::magf_sum_of_square_weights() const
 	return res;
 }
 
-BRG_UNITS pair_bin::area() const
+custom_unit_type<0,0,0,2,0> pair_bin::area() const
 {
 	flt_type mean_frac = unmasked_frac();
-	BRG_UNITS mean_area = pi*(square(afd(R_max(),magf_lens_z_mean()))-square(afd(R_min(),magf_lens_z_mean())));
+	custom_unit_type<0,0,0,2,0> mean_area = pi*(square(afd(R_max(),magf_lens_z_mean()))-square(afd(R_min(),magf_lens_z_mean())));
 
-	BRG_UNITS result = mean_frac*magf_num_lenses()*mean_area;
+	custom_unit_type<0,0,0,2,0> result = mean_frac*magf_num_lenses()*mean_area;
 	brgastro::fixbad(result);
 	return result;
 }
 
-BRG_UNITS pair_bin::delta_Sigma_t_mean() const
+surface_density_type pair_bin::delta_Sigma_t_mean() const
 {
-	return safe_extract_mean(_delta_Sigma_t_values_);
+	return units_cast<surface_density_type>(safe_extract_mean(_delta_Sigma_t_values_));
 }
-BRG_UNITS pair_bin::delta_Sigma_x_mean() const
+surface_density_type pair_bin::delta_Sigma_x_mean() const
 {
-	return safe_extract_mean(_delta_Sigma_x_values_);
-}
-
-BRG_UNITS pair_bin::delta_Sigma_t_mean_square() const
-{
-	return safe_extract_moment<2>(_delta_Sigma_t_values_);
-}
-BRG_UNITS pair_bin::delta_Sigma_x_mean_square() const
-{
-	return safe_extract_moment<2>(_delta_Sigma_x_values_);
+	return units_cast<surface_density_type>(safe_extract_mean(_delta_Sigma_x_values_));
 }
 
-BRG_UNITS pair_bin::delta_Sigma_t_std() const
+custom_unit_type<-4,0,2,0,0> pair_bin::delta_Sigma_t_mean_square() const
 {
-	return std::sqrt(safe_extract_variance(_delta_Sigma_t_values_));
+	return units_cast<custom_unit_type<-4,0,2,0,0>>(safe_extract_moment<2>(_delta_Sigma_t_values_));
 }
-BRG_UNITS pair_bin::delta_Sigma_x_std() const
+custom_unit_type<-4,0,2,0,0> pair_bin::delta_Sigma_x_mean_square() const
 {
-	return std::sqrt(safe_extract_variance(_delta_Sigma_x_values_));
+	return units_cast<custom_unit_type<-4,0,2,0,0>>(safe_extract_moment<2>(_delta_Sigma_x_values_));
 }
 
-BRG_UNITS pair_bin::delta_Sigma_t_stderr() const
+surface_density_type pair_bin::delta_Sigma_t_std() const
 {
-	return safe_extract_error_of_weighted_mean(_delta_Sigma_t_values_);
+	return units_cast<surface_density_type>(sqrt(safe_extract_variance(_delta_Sigma_t_values_)));
 }
-BRG_UNITS pair_bin::delta_Sigma_x_stderr() const
+surface_density_type pair_bin::delta_Sigma_x_std() const
 {
-	return safe_extract_error_of_weighted_mean(_delta_Sigma_x_values_);
+	return units_cast<surface_density_type>(sqrt(safe_extract_variance(_delta_Sigma_x_values_)));
+}
+
+surface_density_type pair_bin::delta_Sigma_t_stderr() const
+{
+	return units_cast<surface_density_type>(safe_extract_error_of_weighted_mean(_delta_Sigma_t_values_));
+}
+surface_density_type pair_bin::delta_Sigma_x_stderr() const
+{
+	return units_cast<surface_density_type>(safe_extract_error_of_weighted_mean(_delta_Sigma_x_values_));
 }
 
 #endif
@@ -248,7 +250,8 @@ flt_type pair_bin::mu_W() const
 {
 	if(_mu_W_cached_value_==std::numeric_limits<flt_type>::infinity())
 	{
-		_mu_W_cached_value_ = area()*mag_weight_integral_cache().get(magf_lens_z_mean()+_z_buffer_);
+		_mu_W_cached_value_ = area()*
+			any_cast<custom_unit_type<0,0,0,-2,0>>(mag_weight_integral_cache().get(magf_lens_z_mean()+_z_buffer_));
 	}
 	return _mu_W_cached_value_;
 }
@@ -261,7 +264,9 @@ flt_type pair_bin::mu_hat() const
 
 		const flt_type mu_observed = extract_weighted_sum(_mu_obs_values_)/(extract_mean_weight(_mu_obs_values_)*mu_W());
 
-		const flt_type mu_base = area()*mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_)/mu_W();
+		const flt_type mu_base = area()*
+				any_cast<custom_unit_type<0,0,0,-2,0>>(mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_))
+				/mu_W();
 
 		_mu_hat_cached_value_ = 1.+mu_observed-mu_base;
 

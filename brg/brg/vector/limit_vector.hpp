@@ -78,6 +78,9 @@ private:
 	/// Stored step size (to improve speed at the cost of a bit of memory)
 	T _step_;
 
+	/// Stored log step size (to improve speed at the cost of a bit of memory)
+	flt_type _lstep_;
+
 	/// Stored log of minimum value (to improve speed at the cost of a bit of memory)
 	flt_type _lmin_;
 
@@ -93,8 +96,9 @@ private:
 		_base_.push_back(std::numeric_limits<T>::lowest());
 		_base_.push_back(std::numeric_limits<T>::max());
 
-		_step_ = 1;
-		_lmin_ = 0;
+		_step_ = units_cast<T>(1.);
+		_lstep_ = 1.;
+		_lmin_ = 0.;
 	} // void _init()
 
 	/// Check if is valid, and throw if it isn't
@@ -160,7 +164,8 @@ public:
 			const allocator_type& alloc = allocator_type())
 	: _base_(first,last,alloc),
 	  _type_(type::GENERAL),
-	  _step_(1),
+	  _step_(units_cast<T>(1.)),
+	  _lstep_(1.),
 	  _lmin_(0)
 	{
 		_check_if_valid_construction();
@@ -175,6 +180,7 @@ public:
 	: _base_(other._base_, alloc),
 	  _type_(other._type_),
 	  _step_(other._step_),
+	  _lstep_(other._lstep_),
 	  _lmin_(other._lmin_)
 	{
 	}
@@ -183,7 +189,8 @@ public:
 	explicit limit_vector(const std::vector<T,A> & other)
 	: _base_(other),
 	  _type_(type::GENERAL),
-	  _step_(1),
+	  _step_(units_cast<T>(1.)),
+	  _lstep_(1),
 	  _lmin_(0)
 	{
 		_check_if_valid_construction();
@@ -192,7 +199,8 @@ public:
 	limit_vector(const std::vector<T,A> & other, const allocator_type & alloc)
 	: _base_(other, alloc),
 	  _type_(type::GENERAL),
-	  _step_(1),
+	  _step_(units_cast<T>(1.)),
+	  _lstep_(1),
 	  _lmin_(0)
 	{
 		_check_if_valid_construction();
@@ -203,7 +211,8 @@ public:
 	explicit limit_vector(const std::vector<To,Ao> & other, const type & init_type=type::GENERAL)
 	: _base_(other.begin(),other.end(),other.get_allocator()),
 	  _type_(init_type),
-	  _step_(1),
+	  _step_(units_cast<T>(1.)),
+	  _lstep_(1),
 	  _lmin_(0)
 	{
 		// If Linear or log type was passed, switch it to general, since we can't trust it'll be safe
@@ -221,8 +230,9 @@ public:
 	limit_vector(const std::vector<To,Ao> & other, const allocator_type& alloc, const type & init_type=type::GENERAL)
 	: _base_(other.begin(),other.end(),alloc),
 	  _type_(init_type),
-	  _step_(1),
-	  _lmin_(0)
+	  _step_(units_cast<T>(1.)),
+	  _lstep_(1.),
+	  _lmin_(0.)
 	{
 		// If Linear or log type was passed, switch it to general, since we can't trust it'll be safe
 		if(_type_==type::LINEAR) _type_ = type::GENERAL;
@@ -243,6 +253,7 @@ public:
 	: _base_(std::move(other._base_), alloc),
 	  _type_(std::move(other._type_)),
 	  _step_(std::move(other._step_)),
+	  _lstep_(std::move(other._lstep_)),
 	  _lmin_(std::move(other._lmin_))
 	{
 	}
@@ -251,8 +262,9 @@ public:
 	explicit limit_vector(std::vector<T,A> && other)
 	: _base_(other.get_allocator()),
 	  _type_(type::GENERAL),
-	  _step_(1),
-	  _lmin_(0)
+	  _step_(units_cast<T>(1.)),
+	  _lstep_(1.),
+	  _lmin_(0.)
 	{
 		if(is_monotonically_increasing(other))
 		{
@@ -269,8 +281,9 @@ public:
 	limit_vector(std::vector<T,A> && other, const allocator_type& alloc)
 	: _base_(alloc),
 	  _type_(type::GENERAL),
-	  _step_(1),
-	  _lmin_(0)
+	  _step_(units_cast<T>(1.)),
+	  _lstep_(1.),
+	  _lmin_(0.)
 	{
 		if(is_monotonically_increasing(other))
 		{
@@ -289,8 +302,9 @@ public:
 	       const allocator_type& alloc = allocator_type())
 	: _base_(il,alloc),
 	  _type_(type::GENERAL),
-	  _step_(1),
-	  _lmin_(0)
+	  _step_(units_cast<T>(1.)),
+	  _lstep_(1.),
+	  _lmin_(0.)
 	{
 		_check_if_valid_construction();
 	}
@@ -316,9 +330,9 @@ public:
 
 			using std::pow;
 			using std::log;
-			_lmin_ = log(min);
+			_lmin_ = log(value_of(min));
 
-			_step_ = (log(max)-_lmin_)/num_bins;
+			_lstep_ = (log(value_of(max))-_lmin_)/num_bins;
 
 		}
 		else
@@ -326,7 +340,7 @@ public:
 			_type_ = type::LINEAR;
 			_base_ = make_linear_limit_vector_base<T,A>(min,max,num_bins);
 
-			_step_ = (max-min)/num_bins;
+			_step_ = (max-min)/(flt_type)num_bins;
 			_lmin_ = 0;
 		}
 		_base_.shrink_to_fit();
@@ -790,13 +804,13 @@ public:
 			{
 				if(std::is_integral<T>::value)
 				{
-					return static_cast<size_type>((val-min())/_step_);
+					return static_cast<size_type>(value_of((val-min())/_step_));
 				}
 				else
 				{
 					// For floating-point types, we add an epsilon at this step to prevent values at the exact bin boundaries
 					// from being assigned the wrong bin
-					size_type res = static_cast<size_type>((val-min()+std::numeric_limits<T>::epsilon())/_step_);
+					size_type res = static_cast<size_type>(value_of((val-min()+std::numeric_limits<T>::epsilon())/_step_));
 					if(res>=num_bins()) res=num_bins()-1; // This may on rare occasions happen due to the above epsilon-adding
 					return res;
 				}
@@ -808,8 +822,8 @@ public:
 
 			{
 				using std::log;
-				T lval = log(val);
-				return static_cast<size_type>((lval-_lmin_+std::numeric_limits<T>::epsilon())/_step_);
+				flt_type lval = log(value_of(val));
+				return static_cast<size_type>(value_of((lval-_lmin_+std::numeric_limits<flt_type>::epsilon())/_lstep_));
 
 			}
 
@@ -846,7 +860,7 @@ public:
 
 	/// Interpolate between values for successive bins
 	template<typename Tv, typename To>
-	Tv interpolate_bins(const Tv & val, const To & val_vec) const
+	auto interpolate_bins(const Tv & val, const To & val_vec) const -> typename std::decay<decltype(val_vec[0])>::type
 	{
 		if(static_cast<size_type>(val_vec.size())!=num_bins())
 			throw std::logic_error("Value vector's size must equal num_bins() in interpolate_bins.\n");
@@ -862,7 +876,7 @@ public:
 
 		for(size_type i=0; i<size()-2; i += step_length)
 		{
-			if((_base_[i]+_base_[i+1])/2>=val)
+			if((_base_[i]+_base_[i+1])/2.>=val)
 			{
 				if(i==0)
 					bin_i=0;
@@ -872,10 +886,10 @@ public:
 			}
 		}
 
-		T xlo = (_base_[bin_i]+_base_[bin_i+1])/2;
-		T xhi = (_base_[bin_i+step_length]+_base_[bin_i+step_length+1])/2;
-		const Tv & ylo = val_vec[bin_i];
-		const Tv & yhi = val_vec[bin_i+1];
+		T xlo = (_base_[bin_i]+_base_[bin_i+1])/2.;
+		T xhi = (_base_[bin_i+step_length]+_base_[bin_i+step_length+1])/2.;
+		auto ylo = val_vec[bin_i];
+		auto yhi = val_vec[bin_i+1];
 
 		return ylo + (yhi-ylo)/(xhi-xlo) * (val-xlo);
 	}

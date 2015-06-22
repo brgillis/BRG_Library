@@ -38,10 +38,12 @@
 
 #include "brg/common.h"
 
-#include "../../file_access/ascii_table.hpp"
+#include "brg/error_handling.h"
+#include "brg/file_access/ascii_table.hpp"
 #include "brg/file_access/open_file.hpp"
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
+#include "brg/units/units.hpp"
 #include "brg/utility.hpp"
 
 
@@ -135,7 +137,7 @@ private:
 			SPCP(name)->_initialised_ = true;
 		}
 	}
-	void _load( const bool silent = false ) const
+	void _load() const
 	{
 		std::ifstream in_file;
 		std::string file_data;
@@ -163,7 +165,7 @@ private:
 			catch(const std::exception &e)
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -181,7 +183,7 @@ private:
 					(file_version != SPCP(name)->_version_number_) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -242,7 +244,7 @@ private:
 					|| (!in_file) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc( silent );
+				SPCP(name)->_calc();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -260,7 +262,7 @@ private:
 		SPCP(name)->_loaded_ = false;
 		SPCP(name)->_results_.clear();
 	}
-	void _calc( const bool silent = false ) const
+	void _calc() const
 	{
 
 		// Test that range is sane
@@ -272,11 +274,8 @@ private:
 			throw std::runtime_error("Bad range passed to brg_cache_4d::_calc() for " + SPCP(name)->_name_base() + "\n");
 		}
 
-		// Print a message that we're generating the cache if not silent
-		if(!silent)
-		{
-			std::cout << "Generating " << SPCP(name)->_file_name_ << ". This may take some time.\n";
-		}
+		// Print a message that we're generating the cache
+		handle_notification("Generating " + SPCP(name)->_file_name_ + ". This may take some time_type.");
 
 		// Set up data
 		SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
@@ -322,13 +321,10 @@ private:
 		if(bad_result) throw std::runtime_error("One or more calculations in generating cache " + SPCP(name)->_file_name_ + " failed.");
 		SPCP(name)->_loaded_ = true;
 
-		// Print a message that we've finished generating the cache if not silent.
-		if(!silent)
-		{
-			std::cout << "Finished generating " << SPCP(name)->_file_name_ << "!\n";
-		}
+		// Print a message that we've finished generating the cache
+		handle_notification("Finished generating " << SPCP(name)->_file_name_ << "!");
 	}
-	void _output( const bool silent = false ) const
+	void _output() const
 	{
 
 		std::ofstream out_file;
@@ -336,7 +332,7 @@ private:
 
 		if ( !SPCP(name)->_loaded_ )
 		{
-			SPCP(name)->_calc( silent );
+			SPCP(name)->_calc();
 		}
 
 		open_bin_file_output( out_file, SPCP(name)->_file_name_ );
@@ -404,10 +400,10 @@ protected:
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Gets the result in the proper units
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0);
+		return any_units_cast<any_units_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_
@@ -454,7 +450,7 @@ public:
 	         const flt_type new_min_2, const flt_type new_max_2, const flt_type new_step_2,
  	         const flt_type new_min_3, const flt_type new_max_3, const flt_type new_step_3,
  	         const flt_type new_min_4, const flt_type new_max_4, const flt_type new_step_4,
-			 const bool silent = false )
+			)
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -487,12 +483,12 @@ public:
 			SPP(name)->_step_4_ = new_step_4;
 
 			SPCP(name)->_unload();
-			SPCP(name)->_calc( silent );
+			SPCP(name)->_calc();
 		}
 	} // void set_range()
 
 	template<typename otype>
-	void print( otype & out, const bool silent = false ) const
+	void print( otype & out,) const
 	{
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
@@ -503,7 +499,7 @@ public:
 			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
 			// so we don't get collisions from loading within two different critical sections at once)
 			SPCP(name)->get(SPCP(name)->_min_1_,SPCP(name)->_min_2_,SPCP(name)->_min_3_,
-					SPCP(name)->_min_4_,silent);
+					SPCP(name)->_min_4_);
 		}
 
 		// Fill up header
@@ -547,12 +543,18 @@ public:
 			}
 		}
 
-		print_table(out,data,header,silent);
+		print_table(out,data,header);
 	}
 
-	const BRG_UNITS get( const flt_type x_1, const flt_type x_2, const flt_type x_3, const flt_type x_4,
-			const bool silent = false ) const
+	template< typename Tx1, typename Tx2, typename Tx3, typename Tx4 >
+	const any_units_type get( const Tx1 & init_x_1, const Tx2 & init_x_2,
+			const Tx3 & init_x_3, const Tx4 & init_x_4) const
 	{
+
+		flt_type x_1 = value_of(init_x_1);
+		flt_type x_2 = value_of(init_x_2);
+		flt_type x_3 = value_of(init_x_3);
+		flt_type x_4 = value_of(init_x_4);
 
 		flt_type xlo_1, xhi_1;
 		size_t xi_1; // Lower nearby array point
@@ -562,12 +564,7 @@ public:
 		size_t xi_3; // Lower nearby array point
 		flt_type xlo_4, xhi_4;
 		size_t xi_4; // Lower nearby array point
-#ifdef _BRG_USE_UNITS_
-		BRG_UNITS result = SPCP(name)->_units(); // Ensure the result has the proper units
-		result = 0;
-#else
 		flt_type result = 0;
-#endif
 		flt_type total_weight = 0;
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
@@ -585,7 +582,7 @@ public:
 			{
 				try
 				{
-					SPCP(name)->_load( silent );
+					SPCP(name)->_load();
 				}
 				catch(const std::exception &e)
 				{
@@ -669,19 +666,23 @@ public:
 
 		result /= safe_d(total_weight);
 
+#ifdef _BRG_USE_UNITS_
+		return SPCP(name)->_units(result);
+#else
 		return result;
+#endif
 
 	} // get()
 
 	// Recalculate function. Call if you want to overwrite a cache when something's changed in the code
 	// (for instance, the _calculate() function has been altered)
-	void recalc( const bool silent = false ) const
+	void recalc() const
 	{
 		SPCP(name)->_unload();
-		SPCP(name)->_calc(silent);
-		SPCP(name)->_output(silent);
+		SPCP(name)->_calc();
+		SPCP(name)->_output();
 		SPCP(name)->_unload();
-		SPCP(name)->_load(silent);
+		SPCP(name)->_load();
 	}
 
 	// Constructor

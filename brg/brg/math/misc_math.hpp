@@ -37,6 +37,8 @@
 #include "brg/container/is_container.hpp"
 #include "brg/container/is_eigen_container.hpp"
 
+#include "brg/units/units.hpp"
+
 namespace brgastro {
 
 // Returns true if val is Not a Number - Personal implementation, to make sure it works for all types
@@ -99,7 +101,8 @@ inline bool isgood( const T & val )
 	return !isbad( val );
 }
 
-template< typename T >
+template< typename T,
+	typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
 inline void fixbad( T & val )
 {
 	using std::isnan;
@@ -121,6 +124,29 @@ inline void fixbad( T & val )
 		}
 	}
 }
+template< typename T,
+	typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+inline void fixbad( T & val )
+{
+	using std::isnan;
+	using std::isinf;
+	if(isnan(value_of(val)))
+	{
+		set_zero(val);
+		return;
+	}
+	if(isinf(val))
+	{
+		if(value_of(val)>0)
+		{
+			val = units_cast<T>(std::numeric_limits<flt_type>::max());
+		}
+		else
+		{
+			val = units_cast<T>(std::numeric_limits<flt_type>::lowest());
+		}
+	}
+}
 
 // Min/max: Functions to return the lower/higher of two values.
 // The return type is a bit complicated if the variables are of
@@ -134,7 +160,7 @@ typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0
 typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
 inline T1 min( T1 a, const T2 & b )
 {
-	return ( a < static_cast<T1>(b) ? a :  static_cast<T1>(b) );
+	return ( a < static_cast<T1>(b) ? a : static_cast<T1>(b) );
 }
 template< class T1, class T2,
 typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
@@ -143,7 +169,7 @@ typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0
 typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
 inline T1 max( T1 a, const T2 & b )
 {
-	return ( a <  static_cast<T1>(b) ?  static_cast<T1>(b) : a );
+	return ( a < static_cast<T1>(b) ? static_cast<T1>(b) : a );
 }
 template<  class T1, class T2, class T3,
 typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
@@ -181,8 +207,7 @@ inline bool divisible( const Ta & a, const Tb & b )
 }
 
 // Rounds to nearest integer, favouring even
-template< typename T >
-int_type round_int( T value, const flt_type epsilon=std::numeric_limits<flt_type>::epsilon() )
+inline int_type round_int( flt_type value, const flt_type epsilon=std::numeric_limits<flt_type>::epsilon() )
 {
 
 	if ( value < 0.0 )
@@ -210,23 +235,23 @@ int_type round_int( T value, const flt_type epsilon=std::numeric_limits<flt_type
 // Inline square
 template< typename T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-T square(T v1)
+decltype(T()*T()) square(const T & v1)
 {
-	return v1*=v1;
+	return v1*v1;
 }
 
 // Inline cube
 template< typename T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-T cube(T v1)
+decltype(T()*square(T())) cube(const T & v1)
 {
-	return v1*=square(v1);
+	return v1*square(v1);
 }
 
 // Inline quart
 template< typename T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-T quart(T v1)
+decltype(square(T())*square(T())) quart(const T & v1)
 {
 	return square(v1)*square(v1);
 }
@@ -234,78 +259,33 @@ T quart(T v1)
 // Inline inverse
 template< typename T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-flt_type inverse(const T & v1)
-{
-	return 1./v1;
-}
-inline long_flt_type inverse(const long_flt_type & v1)
+decltype(1/T()) inverse(const T & v1)
 {
 	return 1./v1;
 }
 
-// Inline square
+// Inline inverse square
 template< typename T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-flt_type inv_square(const T & v1)
-{
-	return inverse(square(v1));
-}
-inline long_flt_type inv_square(const long_flt_type & v1)
+decltype(inverse(square(T()))) inv_square(const T & v1)
 {
 	return inverse(square(v1));
 }
 
-// Inline cube
+// Inline inverse cube
 template< typename T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-flt_type inv_cube(const T & v1)
-{
-	return inverse(cube(v1));
-}
-inline long_flt_type inv_cube(const long_flt_type & v1)
+decltype(inverse(cube(T()))) inv_cube(const T & v1)
 {
 	return inverse(cube(v1));
 }
 
-// Inline quart
+// Inline inverse quart
 template< typename T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-flt_type inv_quart(const T & v1)
+decltype(inverse(quart(T()))) inv_quart(const T & v1)
 {
 	return inverse(quart(v1));
-}
-inline long_flt_type inv_quart(const long_flt_type & v1)
-{
-	return inverse(quart(v1));
-}
-
-// Integer power - use only when you know it'll be an integer, but not the specific value,
-// and when it isn't likely to be too high
-
-#if (1)
-// This version is optimized so that it won't check for the p==0 and p<0 cases, and generally
-// shouldn't be called directly
-template< typename T,
-typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-T _ipow( T v, int_type p )
-{
-	if(p==1) return v;
-	T tmp = _ipow(v,p/2);
-	if(p%2==0) return tmp*tmp;
-	return v*tmp*tmp;
-}
-#endif
-
-template< typename T,
-typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr >
-T ipow( T v, int_type p )
-{
-	if(p<0) return 1/_ipow(v,-p);
-	if(p==0) return 1;
-	if(p==1) return v;
-	T tmp = _ipow(v,p/2);
-	if(p%2==0) return tmp*tmp;
-	return v*tmp*tmp;
 }
 
 // Returns 1 if a is positive, -1 if it is negative, and 0 if it is 0
@@ -332,14 +312,12 @@ inline constexpr short_int_type sign(T x) {
 template < typename T1, typename T2 >
 inline T1 quad_add( const T1 & v1, const T2 & v2)
 {
-	using std::sqrt;
 	return sqrt( square(v1) + square(v2));
 }
 template < typename T1, typename T2, typename T3 >
 inline T1 quad_add( const T1 & v1, const T2 & v2,
 		const T3 v3 )
 {
-	using std::sqrt;
 	return sqrt( square(v1) + square(v2) + square(v3) );
 }
 
@@ -347,18 +325,17 @@ inline T1 quad_add( const T1 & v1, const T2 & v2,
 template < typename T1, typename T2 >
 inline T1 quad_sub( const T1 & v1, const T2 v2 )
 {
-	using std::sqrt;
 	return sqrt( square(v1) - square(v2) );
 }
 
-// Function to calculate the distance between two points in 2-dimensions
+// Function to calculate the distance_type between two points in 2-dimensions
 template < typename Tx1, typename Ty1, typename Tx2, typename Ty2 >
 inline Tx1 dist2d( const Tx1 x1, const Ty1 y1, const Tx2 x2,
 		const Ty2 y2 )
 {
 	return quad_add( x2 - x1, y2 - y1 );
 }
-// Function to calculate the distance between a point and (0,0) in 2-dimensions
+// Function to calculate the distance_type between a point and (0,0) in 2-dimensions
 template < typename Tx1, typename Ty1 >
 inline Tx1 dist2d( const Tx1 x1, const Ty1 y1 )
 {
@@ -369,12 +346,10 @@ inline Tx1 dist2d( const Tx1 x1, const Ty1 y1 )
 template < typename Tx1, typename Ty1, typename Ta1 >
 inline Tx1 lc_add( const Tx1 x1, const Ty1 y1, const Ta1 a1 )
 {
-	using std::sqrt;
-	using std::cos;
-	return sqrt( square(x1) + square(y1) - 2 * x1 * y1 * cos( a1 ) );
+	return sqrt( square(x1) + square(y1) - 2. * x1 * y1 * cos( a1 ) );
 }
 
-// 3-D distance between two points
+// 3-D distance_type between two points
 template < typename Tx1, typename Ty1, typename Tz1, typename Tx2, typename Ty2, typename Tz2 >
 inline Tx1 dist3d( const Tx1 x1, const Ty1 y1, const Tz1 z1,
 		const Tx2 x2, const Ty2 y2, const Tz2 z2 )
@@ -382,7 +357,7 @@ inline Tx1 dist3d( const Tx1 x1, const Ty1 y1, const Tz1 z1,
 	return quad_add( x2 - x1, y2 - y1, z2 - z1 );
 }
 
-// 3-D distance from (0,0,0)
+// 3-D distance_type from (0,0,0)
 template < typename Tx, typename Ty, typename Tz >
 inline Tx dist3d( const Tx x1, const Ty y1, const Tz z1 )
 {
@@ -394,7 +369,6 @@ template< typename Ta, typename Tb >
 inline Ta weighted_dist( std::vector< Ta > a,
 		std::vector< Tb > b )
 {
-	using std::sqrt;
 	Ta result = 0;
 	assert(a.size()==b.size());
 	for ( size_t i = 0; i < a.size(); i++ )
@@ -466,17 +440,15 @@ inline T1 square_err( T1 v, T1 v_err )
 template < typename T1 >
 inline T1 sqrt_err( const T1 & v, T1 v_err )
 {
-	using std::sqrt;
-	return v_err/=(2*sqrt(v));
+	return v_err/=(2*std::sqrt(v));
 }
 
 // Gets the error in a power of a value
 template < typename T1 >
 inline T1 pow_err( const T1 & v, T1 v_err, const long_flt_type & p  )
 {
-	using std::pow;
 	flt_type f_err = v_err/v;
-	return v_err*=(p*pow(v,p-1.));
+	return v_err*=(p*std::pow(v,p-1.));
 }
 template < typename T1 >
 inline T1 ipow_err( const T1 & v, T1 v_err, int_type p  )

@@ -45,9 +45,9 @@ public:
 	{
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS & in_param,	const bool silent = false ) const
+	distance_type operator()( const distance_type & in_param ) const
 	{
-		if(in_param<=0)
+		if(value_of(in_param)<=0)
 		{
 			return _halo_->rvir0();
 		}
@@ -71,9 +71,9 @@ public:
 	{
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS &  in_param, const bool silent = false ) const
+	density_type operator()( const distance_type &  in_param ) const
 	{
-		return std::fabs(virial_density_factor*_halo_->rho_crit()-_halo_->enc_dens(in_param));
+		return abs(virial_density_factor*_halo_->rho_crit()-_halo_->enc_dens(in_param));
 	}
 
 };

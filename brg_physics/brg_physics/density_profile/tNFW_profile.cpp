@@ -26,9 +26,10 @@
 #include <stdexcept>
 #include <vector>
 
+#include "brg/error_handling.h"
 #include "brg/math/solvers/solvers.hpp"
 #include "brg_physics/density_profile/tNFW_profile_functors.hpp"
-#include "brg_physics/units/unit_obj.h"
+#include "brg/units/units.hpp"
 #include "brg/utility.hpp"
 
 #include "tNFW_profile.h"
@@ -46,7 +47,7 @@ void brgastro::tNFW_profile::_uncache_mass()
 }
 
 flt_type brgastro::tNFW_profile::_taufm( const flt_type m_ratio,
-		flt_type precision, const bool silent ) const
+		flt_type precision ) const
 {
 	flt_type m_target = m_ratio * _mftau();
 	flt_type taustepsize = _tau_ / 2;
@@ -89,7 +90,7 @@ brgastro::tNFW_profile::tNFW_profile()
 	_tau_ = 0;
 }
 
-brgastro::tNFW_profile::tNFW_profile( const BRG_MASS & init_mvir0,
+brgastro::tNFW_profile::tNFW_profile( const mass_type & init_mvir0,
 		const flt_type init_z, const flt_type init_c, const flt_type init_tau )
 {
 	_mvir0_ = init_mvir0;
@@ -123,20 +124,17 @@ brgastro::tNFW_profile::~tNFW_profile()
 
 #if (1) // Set functions
 
-void brgastro::tNFW_profile::set_mvir( const BRG_MASS & new_halo_mass,
-		const bool silent )
+void brgastro::tNFW_profile::set_mvir( const mass_type & new_halo_mass )
 {
 	_mvir0_ = new_halo_mass;
 	_uncache_mass();
 }
-void brgastro::tNFW_profile::set_tau( const flt_type new_halo_tau,
-		const bool silent )
+void brgastro::tNFW_profile::set_tau( const flt_type new_halo_tau )
 {
 	_tau_ = new_halo_tau;
 	_uncache_mass();
 }
-void brgastro::tNFW_profile::set_c( const flt_type new_halo_c,
-		const bool silent )
+void brgastro::tNFW_profile::set_c( const flt_type new_halo_c )
 {
 	_c_ = new_halo_c;
 	_uncache_mass();
@@ -147,37 +145,39 @@ void brgastro::tNFW_profile::set_z( const flt_type new_z )
 	_uncache_mass();
 }
 void brgastro::tNFW_profile::set_parameters(
-		const std::vector< BRG_UNITS > &parameters, const bool silent )
+		const std::vector< any_units_type > &parameters )
 {
 	assert(parameters.size()==num_parameters());
 
-	set_mvir( parameters[0] );
-	set_z( parameters[1] );
-	if ( parameters[2] <= 0 )
+	set_mvir( any_cast<mass_type>(parameters[0]) );
+	set_z( any_cast<flt_type>(parameters[1]) );
+	flt_type new_c = any_cast<flt_type>(parameters[2]);
+	if ( new_c <= 0 )
 	{
-		set_c( _cfm( parameters[0], parameters[1] ) );
+		set_c( _cfm( mvir(), z() ) );
 	}
 	else
 	{
-		set_c( parameters[2] );
+		set_c( new_c );
 	}
-	if ( parameters[3] <= 0 )
+	flt_type new_tau = any_cast<flt_type>(parameters[3]);
+	if ( new_tau <= 0 )
 	{
 		set_tau( default_tau_factor * _c_ );
 	}
 	else
 	{
-		set_tau( parameters[3] );
+		set_tau( new_tau );
 	}
 }
 
 #endif // end set functions
 
-BRG_MASS brgastro::tNFW_profile::mvir() const
+brgastro::mass_type brgastro::tNFW_profile::mvir() const
 {
 	return enc_mass(rvir());
 }
-const BRG_MASS & brgastro::tNFW_profile::mvir0() const
+const brgastro::mass_type & brgastro::tNFW_profile::mvir0() const
 {
 	return _mvir0_;
 }
@@ -191,39 +191,40 @@ flt_type brgastro::tNFW_profile::c() const
 	return _c_;
 }
 
-BRG_MASS brgastro::tNFW_profile::mtot() const
+brgastro::mass_type brgastro::tNFW_profile::mtot() const
 {
 	return _mvir0_ * _mftau();
 }
 
-BRG_VELOCITY brgastro::tNFW_profile::vvir() const
+brgastro::velocity_type brgastro::tNFW_profile::vvir() const
 {
-	return std::pow( 10 * Gc * H() * mvir(), 1. / 3. );
+	return pow<1,3>( 10. * Gc * H() * mvir() );
 }
-BRG_VELOCITY brgastro::tNFW_profile::vvir0() const
+brgastro::velocity_type brgastro::tNFW_profile::vvir0() const
 {
-	return std::pow( 10 * Gc * H() * _mvir0_, 1. / 3. );
+	return pow<1,3>( 10. * Gc * H() * _mvir0_ );
 }
-BRG_DISTANCE brgastro::tNFW_profile::rvir() const
+brgastro::distance_type brgastro::tNFW_profile::rvir() const
 {
 	if(!_rvir_cached_)
 	{
 
 		tNFW_solve_rvir_iterative_functor it_solver(this);
 
-		_rvir_cache_ = 0;
+		_rvir_cache_ = units_cast<distance_type>(0.);
 
 		// First, we try solving iteratively
-		_rvir_cache_ = solve_iterate( &it_solver, rvir0(), 1, 0.0001, 1000 );
-		if ( ( _rvir_cache_ == 0 ) || ( isbad( _rvir_cache_ ) ) )
+		_rvir_cache_ = solve_iterate( it_solver, rvir0(), 1, 0.0001, 1000 );
+		if ( ( value_of(_rvir_cache_) == 0. ) || ( isbad( _rvir_cache_ ) ) )
 		{
 			// Iteratively didn't work, so we go to the grid option
 			tNFW_solve_rvir_minimize_functor min_solver(this);
 
-			BRG_UNITS max_rvir = rvir0();
+			distance_type max_rvir = rvir0();
 			try
 			{
-				_rvir_cache_ =  solve_grid( &min_solver, (BRG_UNITS)0., max_rvir, 100, (BRG_UNITS)0.);
+				_rvir_cache_ =  solve_grid( min_solver, units_cast<distance_type>(0.), max_rvir, 100,
+						units_cast<density_type>(0.));
 			}
 			catch(const std::exception &e)
 			{
@@ -235,22 +236,22 @@ BRG_DISTANCE brgastro::tNFW_profile::rvir() const
 	}
 	return _rvir_cache_;
 }
-BRG_DISTANCE brgastro::tNFW_profile::rvir0() const
+brgastro::distance_type brgastro::tNFW_profile::rvir0() const
 {
-	return vvir0() / H() / 10;
+	return vvir0() / H() / 10.;
 }
-BRG_DISTANCE brgastro::tNFW_profile::rs() const
+brgastro::distance_type brgastro::tNFW_profile::rs() const
 {
 	return rvir0() / _c_;
 }
-BRG_DISTANCE brgastro::tNFW_profile::rt( const bool silent ) const
+brgastro::distance_type brgastro::tNFW_profile::rt() const
 {
 	return rvir0() / _tau_;
 }
 
-BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE & r ) const
+brgastro::density_type brgastro::tNFW_profile::dens( const distance_type & r ) const
 {
-	BRG_UNITS result, rho_c;
+	density_type result, rho_c;
 
 	flt_type d_c, x, tau_use;
 	if ( _tau_ <= 0 )
@@ -258,7 +259,7 @@ BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE & r ) const
 	else
 		tau_use = _tau_;
 	d_c = _delta_c();
-	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
+	rho_c = 3. * square(H()) / ( 8. * pi * Gc );
 	x = max(r / rs(),min_x);
 
 	result = ( d_c * rho_c ) / ( x * square( 1 + x ) )
@@ -267,18 +268,17 @@ BRG_UNITS brgastro::tNFW_profile::dens( const BRG_DISTANCE & r ) const
 
 	return result;
 }
-BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE & r,
-		const bool silent ) const
+brgastro::mass_type brgastro::tNFW_profile::enc_mass( const distance_type & r ) const
 {
 	using brgastro::square;
 	using brgastro::cube;
 	using std::log;
 	using std::atan;
 
-	BRG_UNITS rho_c;
-	BRG_MASS m0, mx;
+	density_type rho_c;
+	flt_type m0, mx;
 	flt_type d_c, x, tau_use;
-	if(r<=0) return 0;
+	if(value_of(r)<=0) return units_cast<mass_type>(0.);
 	if ( _tau_ < 0 )
 		tau_use = default_tau_factor * _c_;
 	else if (_tau_ == 0)
@@ -289,7 +289,7 @@ BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE & r,
 	flt_type tau_sq = square(tau_use);
 
 	d_c = _delta_c();
-	rho_c = 3 * square(H()) / ( 8 * pi * Gc );
+	rho_c = 3. * square(H()) / ( 8. * pi * Gc );
 	x = max(r / rs(),min_x);
 
 	// Result here integrated with Wolfram Alpha
@@ -298,13 +298,13 @@ BRG_MASS brgastro::tNFW_profile::enc_mass( const BRG_DISTANCE & r,
 							+ 4 * tau_use * atan(x / tau_use)
 							+ 2 * (-1 + tau_sq) * log(1 + x)
 							- (-1 + tau_sq) * log(tau_sq + square(x))) - m0;
-	return cube(rs()) * d_c * rho_c * 2 * pi * tau_sq * mx
+	return cube(rs()) * d_c * rho_c * 2. * pi * tau_sq * mx
 			/ square(1 + tau_sq);
 }
 
-std::vector< BRG_UNITS > brgastro::tNFW_profile::get_parameters( const bool silent ) const
+std::vector< brgastro::any_units_type > brgastro::tNFW_profile::get_parameters() const
 {
-	std::vector< BRG_UNITS > parameters( num_parameters() );
+	std::vector< any_units_type > parameters( num_parameters() );
 	parameters[0] = _mvir0_;
 	parameters[1] = z();
 	parameters[2] = _c_;
@@ -312,7 +312,7 @@ std::vector< BRG_UNITS > brgastro::tNFW_profile::get_parameters( const bool sile
 	return parameters;
 }
 
-std::vector< std::string > brgastro::tNFW_profile::get_parameter_names( const bool silent ) const
+std::vector< std::string > brgastro::tNFW_profile::get_parameter_names() const
 {
 	std::vector< std::string > parameter_names( num_parameters() );
 
@@ -323,15 +323,12 @@ std::vector< std::string > brgastro::tNFW_profile::get_parameter_names( const bo
 	return parameter_names;
 }
 
-void brgastro::tNFW_profile::truncate_to_fraction( const flt_type f,
-		const bool silent )
+void brgastro::tNFW_profile::truncate_to_fraction( const flt_type f )
 {
 	if ( f <= 0 )
 	{
 		if ( f < 0 )
-			if ( !silent )
-				std::cerr
-						<< "WARNING: Cannot truncate to negative fraction. Truncating to zero instead.\n";
+			handle_error("Cannot truncate to negative fraction. Truncating to zero instead.");
 		_tau_ = 0;
 		override_rhmvir( 0 );
 		override_rhmtot( 0 );
@@ -343,10 +340,8 @@ void brgastro::tNFW_profile::truncate_to_fraction( const flt_type f,
 		flt_type new_tau_val = _taufm( f, bound(SMALL_FACTOR, std::fabs(0.1*(1-f)),0.00001) );
 		if ( new_tau_val < 0 )
 		{
-			if ( !silent )
-				std::cerr
-						<< "WARNING: Could not solve for new tau value in truncate_to_fraction.\n"
-						<< "tau will remain unchanged.\n";
+			handle_error(std::string("Could not solve for new tau value in truncate_to_fraction.\n")
+						+ "tau will remain unchanged.");
 		}
 		else
 		{

@@ -33,7 +33,7 @@
 #include "brg/common.h"
 
 #include "brg/math/cache/cache.hpp"
-#include "brg_physics/units/unit_obj.h"
+#include "brg/units/units.hpp"
 
 namespace brgastro {
 
@@ -55,9 +55,9 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_obj(0,0,0,0,0,-2);
+		return any_units_cast<custom_unit_type<0,0,0,-2,0>>(v);
 	}
 
 #endif // _BRG_USE_UNITS_

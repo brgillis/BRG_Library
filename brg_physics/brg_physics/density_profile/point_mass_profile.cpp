@@ -27,9 +27,9 @@
 
 #include "brg/common.h"
 
+#include "brg/error_handling.h"
 #include "brg/utility.hpp"
-
-#include "brg_physics/units/unit_obj.h"
+#include "brg/units/units.hpp"
 
 #include "point_mass_profile.h"
 
@@ -42,7 +42,7 @@ brgastro::point_mass_profile::point_mass_profile()
 	_mass_ = 0;
 }
 
-brgastro::point_mass_profile::point_mass_profile( const BRG_MASS init_mass,
+brgastro::point_mass_profile::point_mass_profile( const mass_type init_mass,
 		const flt_type init_z )
 {
 	set_mvir( init_mass );
@@ -59,105 +59,93 @@ brgastro::point_mass_profile::~point_mass_profile()
 #if (1) // Set functions
 
 void brgastro::point_mass_profile::set_mvir(
-		const BRG_MASS & new_halo_mass, bool silent )
+		const mass_type & new_halo_mass )
 {
 	_mass_ = new_halo_mass;
 }
-void brgastro::point_mass_profile::set_parameters( const std::vector< BRG_UNITS > &parameters, bool silent )
+void brgastro::point_mass_profile::set_parameters( const std::vector< any_units_type > & parameters )
 {
 	assert(parameters.size()==2);
-	set_mvir( parameters.at( 0 ) );
-	set_z( parameters.at( 1 ) );
+	set_mvir( any_cast<mass_type>(parameters.at( 0 )) );
+	set_z( any_cast<flt_type>(parameters.at( 1 )) );
 }
 
 #endif // end set functions
 
-BRG_MASS brgastro::point_mass_profile::mvir() const
+brgastro::mass_type brgastro::point_mass_profile::mvir() const
 {
 	return _mass_;
 }
-BRG_MASS brgastro::point_mass_profile::mass() const
-{
-	return _mass_;
-}
-
-BRG_MASS brgastro::point_mass_profile::mtot() const
+brgastro::mass_type brgastro::point_mass_profile::mass() const
 {
 	return _mass_;
 }
 
-BRG_VELOCITY brgastro::point_mass_profile::vvir() const
+brgastro::mass_type brgastro::point_mass_profile::mtot() const
 {
-	return std::pow( 10 * Gc * H() * mvir(), 1. / 3. );
+	return _mass_;
 }
-BRG_DISTANCE brgastro::point_mass_profile::rvir() const
+
+brgastro::velocity_type brgastro::point_mass_profile::vvir() const
 {
-	return vvir() / H() / 10;
+	return pow<1,3>( 10. * Gc * H() * mvir() );
 }
-BRG_DISTANCE brgastro::point_mass_profile::rs() const
+brgastro::distance_type brgastro::point_mass_profile::rvir() const
+{
+	return vvir() / H() / 10.;
+}
+brgastro::distance_type brgastro::point_mass_profile::rs() const
 {
 	return 0;
 }
-BRG_DISTANCE brgastro::point_mass_profile::rt(
-		const bool silent) const
+brgastro::distance_type brgastro::point_mass_profile::rt() const
 {
-	return 0;
+	return units_cast<distance_type>(0);
 }
 
-BRG_UNITS brgastro::point_mass_profile::dens(
-		const BRG_DISTANCE & r ) const
+brgastro::density_type brgastro::point_mass_profile::dens(
+		const distance_type & r ) const
 {
-#ifdef _BRG_USE_UNITS_
-	BRG_UNITS result(0,-3,0,1,0,0,0);
-#else
-	flt_type result = 0;
-#endif
-
-	result = ( r == 0 ? std::numeric_limits<flt_type>::max() : 0 );
+	density_type result = units_cast<density_type>(( value_of(r) == 0 ? std::numeric_limits<flt_type>::max() : 0 ));
 
 	return result;
 }
-BRG_UNITS brgastro::point_mass_profile::enc_dens(
-		const BRG_DISTANCE & r,
-		const bool silent ) const
+brgastro::density_type brgastro::point_mass_profile::enc_dens(
+		const distance_type & r) const
 {
 	return enc_mass( r ) / ( 4. / 3. * pi * cube( r ) );
 }
-BRG_MASS brgastro::point_mass_profile::enc_mass(
-		const BRG_DISTANCE & r,
-		const bool silent ) const
+brgastro::mass_type brgastro::point_mass_profile::enc_mass(
+		const distance_type & r) const
 {
 	return _mass_;
 }
 
-std::vector< BRG_UNITS > brgastro::point_mass_profile::get_parameters( const bool silent ) const
+std::vector< brgastro::any_units_type >
+	brgastro::point_mass_profile::get_parameters() const
 {
-	std::vector< BRG_UNITS > parameters(num_parameters());
+	std::vector< any_units_type > parameters(num_parameters());
 
-	parameters[0] = _mass_;
+	parameters[0] = any_units_cast<any_units_type>(_mass_);
 	parameters[1] = z();
 	return parameters;
 }
 
-std::vector< std::string > brgastro::point_mass_profile::get_parameter_names(
-		const bool silent ) const
+std::vector< std::string > brgastro::point_mass_profile::get_parameter_names() const
 {
 	std::vector< std::string > parameter_names(num_parameters());
 
-	parameter_names.at( 0 ) = "mass";
+	parameter_names.at( 0 ) = "mass_type";
 	parameter_names.at( 1 ) = "z";
 	return parameter_names;
 }
 
-void brgastro::point_mass_profile::truncate_to_fraction( const flt_type f,
-		const bool silent )
+void brgastro::point_mass_profile::truncate_to_fraction( const flt_type f)
 {
 	if ( ( f <= 0 ) || ( isbad( f ) ) )
 	{
-		if ( !silent )
-			std::cerr
-					<< "WARNING: Bad, negative, or zero f passed to truncate_to_fraction.\n"
-					<< "Will truncate to zero instead.\n";
+		handle_error(std::string("Bad, negative, or zero f passed to truncate_to_fraction.\n")
+					+ "Will truncate to zero instead.");
 		_mass_ = 0;
 	}
 	else

@@ -34,6 +34,9 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/access.hpp>
+
+#include <brg/units/units.hpp>
 
 #include "brg/common.h"
 
@@ -41,7 +44,6 @@
 #include "brg/vector/summary_functions.hpp"
 
 #include "brg_lensing/lensing_tNFW_profile.h"
-#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 
@@ -57,8 +59,8 @@ private:
 	// Bin limits
 #if(1)
 
-	BRG_DISTANCE _R_min_, _R_max_;
-	BRG_MASS _m_min_, _m_max_;
+	distance_type _R_min_, _R_max_;
+	mass_type _m_min_, _m_max_;
 	flt_type _z_min_, _z_max_;
 	flt_type _mag_min_, _mag_max_;
 
@@ -70,11 +72,11 @@ private:
 	ssize_t _shear_pair_count_;
 	ssize_t _magf_pair_count_;
 
-	BRG_DISTANCE _shear_R_mean_;
-	BRG_DISTANCE _magf_R_mean_;
+	distance_type _shear_R_mean_;
+	distance_type _magf_R_mean_;
 
-	BRG_MASS _shear_lens_m_mean_;
-	BRG_MASS _magf_lens_m_mean_;
+	mass_type _shear_lens_m_mean_;
+	mass_type _magf_lens_m_mean_;
 	flt_type _shear_lens_z_mean_;
 	flt_type _magf_lens_z_mean_;
 	flt_type _shear_lens_mag_mean_;
@@ -87,12 +89,12 @@ private:
 	flt_type _magf_sum_of_weights_;
 	flt_type _shear_sum_of_square_weights_;
 	flt_type _magf_sum_of_square_weights_;
-	BRG_UNITS _delta_Sigma_t_mean_, _delta_Sigma_x_mean_;
-	BRG_UNITS _delta_Sigma_t_mean_square_, _delta_Sigma_x_mean_square_;
+	surface_density_type _delta_Sigma_t_mean_, _delta_Sigma_x_mean_;
+	custom_unit_type<-4,0,2,0,0> _delta_Sigma_t_mean_square_, _delta_Sigma_x_mean_square_;
 
 	flt_type _mu_hat_;
 	flt_type _mu_square_hat_;
-	BRG_UNITS _area_;
+	custom_unit_type<0,0,0,2,0> _area_;
 	ssize_t _magf_lens_count_;
 
 #endif
@@ -165,8 +167,8 @@ public:
 
 	// Constructors and destructor
 #if(1)
-	pair_bin_summary( const BRG_DISTANCE & init_R_min=0, const BRG_DISTANCE & init_R_max=0,
-			const BRG_MASS & init_m_min=0, const BRG_MASS & init_m_max=0,
+	pair_bin_summary( const distance_type & init_R_min=0, const distance_type & init_R_max=0,
+			const mass_type & init_m_min=0*kg, const mass_type & init_m_max=0*kg,
 			const flt_type & init_z_min=0, const flt_type & init_z_max=0,
 			const flt_type & init_mag_min=0, const flt_type & init_mag_max=0 );
 	pair_bin_summary( const pair_bin & bin);
@@ -295,58 +297,58 @@ public:
 	// Limits and means accessors
 #if(1)
 
-	const BRG_DISTANCE & R_min() const
+	const distance_type & R_min() const
 	{
 		return _R_min_;
 	}
-	const BRG_DISTANCE & R_max() const
+	const distance_type & R_max() const
 	{
 		return _R_max_;
 	}
-	BRG_DISTANCE R_mid() const
+	distance_type R_mid() const
 	{
 		return (_R_max_+_R_min_)/2.;
 	}
-	BRG_DISTANCE R_amid() const
+	distance_type R_amid() const
 	{
 		using std::sqrt;
 		return sqrt((square(_R_max_)+square(_R_min_))/2.);
 	}
 
-	virtual BRG_DISTANCE R_mean() const
+	virtual distance_type R_mean() const
 	{
 		return shear_R_mean();
 	}
-	virtual BRG_DISTANCE shear_R_mean() const
+	virtual distance_type shear_R_mean() const
 	{
 		return _shear_R_mean_;
 	}
-	virtual BRG_DISTANCE magf_R_mean() const
+	virtual distance_type magf_R_mean() const
 	{
 		return _magf_R_mean_;
 	}
 
-	const BRG_MASS & m_min() const
+	const mass_type & m_min() const
 	{
 		return _m_min_;
 	}
-	const BRG_MASS & m_max() const
+	const mass_type & m_max() const
 	{
 		return _m_max_;
 	}
-	BRG_MASS m_mid() const
+	mass_type m_mid() const
 	{
 		return (_m_max_+_m_min_)/2.;
 	}
-	virtual BRG_MASS lens_m_mean() const
+	virtual mass_type lens_m_mean() const
 	{
 		return shear_lens_m_mean();
 	}
-	virtual BRG_MASS shear_lens_m_mean() const
+	virtual mass_type shear_lens_m_mean() const
 	{
 		return _shear_lens_m_mean_;
 	}
-	virtual BRG_MASS magf_lens_m_mean() const
+	virtual mass_type magf_lens_m_mean() const
 	{
 		return _magf_lens_m_mean_;
 	}
@@ -420,34 +422,34 @@ public:
 	// Summary values
 #if (1)
 
-	BRG_UNITS shear_sigma_crit() const;
-	BRG_UNITS magf_sigma_crit() const;
+	surface_density_type shear_sigma_crit() const;
+	surface_density_type magf_sigma_crit() const;
 
 	// Shear
 #if (1)
-	virtual BRG_UNITS delta_Sigma_t_mean() const
+	virtual surface_density_type delta_Sigma_t_mean() const
 	{
 		return _delta_Sigma_t_mean_;
 	}
-	virtual BRG_UNITS delta_Sigma_x_mean() const
+	virtual surface_density_type delta_Sigma_x_mean() const
 	{
 		return _delta_Sigma_x_mean_;
 	}
 
-	virtual BRG_UNITS delta_Sigma_t_mean_square() const
+	virtual custom_unit_type<-4,0,2,0,0> delta_Sigma_t_mean_square() const
 	{
 		return _delta_Sigma_t_mean_square_;
 	}
-	virtual BRG_UNITS delta_Sigma_x_mean_square() const
+	virtual custom_unit_type<-4,0,2,0,0> delta_Sigma_x_mean_square() const
 	{
 		return _delta_Sigma_x_mean_square_;
 	}
 
-	virtual BRG_UNITS delta_Sigma_t_std() const;
-	virtual BRG_UNITS delta_Sigma_x_std() const;
+	virtual surface_density_type delta_Sigma_t_std() const;
+	virtual surface_density_type delta_Sigma_x_std() const;
 
-	virtual BRG_UNITS delta_Sigma_t_stderr() const;
-	virtual BRG_UNITS delta_Sigma_x_stderr() const;
+	virtual surface_density_type delta_Sigma_t_stderr() const;
+	virtual surface_density_type delta_Sigma_x_stderr() const;
 
 	flt_type gamma_t_mean() const;
 	flt_type gamma_x_mean() const;
@@ -459,22 +461,29 @@ public:
 	flt_type gamma_stderr() const;
 	flt_type gamma_square_stderr() const;
 
-	BRG_UNITS model_delta_Sigma_t(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
-	flt_type model_gamma_t(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	surface_density_type model_delta_Sigma_t(const flt_type & MLratio_1h = 50.,
+			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
+	flt_type model_gamma_t(const flt_type & MLratio_1h = 50.,
+			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
 
-	BRG_UNITS model_1h_delta_Sigma_t(const flt_type & MLratio_1h = 50.) const;
+	surface_density_type model_1h_delta_Sigma_t(const flt_type & MLratio_1h = 50.) const;
 	flt_type model_1h_gamma_t(const flt_type & MLratio_1h = 50.) const;
 
-	BRG_UNITS model_offset_delta_Sigma_t(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
-	flt_type model_offset_gamma_t(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	surface_density_type model_offset_delta_Sigma_t(
+			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
+	flt_type model_offset_gamma_t(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
 
 #endif // Shear
 
 	// Magnification
 #if (1)
 
-	BRG_UNITS area_per_lens() const;
-	virtual BRG_UNITS area() const
+	custom_unit_type<0,0,0,2,0> area_per_lens() const;
+	virtual custom_unit_type<0,0,0,2,0> area() const
 	{
 		return _area_;
 	}
@@ -507,20 +516,29 @@ public:
 	flt_type kappa() const;
 	flt_type kappa_stderr() const;
 
-	BRG_UNITS Sigma() const;
-	BRG_UNITS Sigma_stderr() const;
+	surface_density_type Sigma() const;
+	surface_density_type Sigma_stderr() const;
 
-	flt_type model_mu(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
-	flt_type model_kappa(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
-	BRG_UNITS model_Sigma(const flt_type & MLratio_1h = 50., const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	flt_type model_mu(const flt_type & MLratio_1h = 50.,
+			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
+	flt_type model_kappa(const flt_type & MLratio_1h = 50.,
+			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
+	surface_density_type model_Sigma(const flt_type & MLratio_1h = 50.,
+			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
 
 	flt_type model_1h_mu(const flt_type & MLratio_1h = 50.) const;
 	flt_type model_1h_kappa(const flt_type & MLratio_1h = 50.) const;
-	BRG_UNITS model_1h_Sigma(const flt_type & MLratio_1h = 50.) const;
+	surface_density_type model_1h_Sigma(const flt_type & MLratio_1h = 50.) const;
 
-	flt_type model_offset_mu(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
-	flt_type model_offset_kappa(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
-	BRG_UNITS model_offset_Sigma(const BRG_MASS & mean_group_mass = 1e14*unitconv::Msuntokg, const flt_type & sat_frac = 0.2) const;
+	flt_type model_offset_mu(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
+	flt_type model_offset_kappa(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
+	surface_density_type model_offset_Sigma(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_type & sat_frac = 0.2) const;
 
 #endif // Magnification
 

@@ -45,8 +45,7 @@ namespace brgastro {
 template<typename T>
 inline table_map_t<T> make_table_map(
 		const table_t<T> & data,
-		const header_t & header,
-		const bool silent=false)
+		const header_t & header)
 {
 	table_map_t<T> result;
 

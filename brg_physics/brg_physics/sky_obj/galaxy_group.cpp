@@ -26,6 +26,7 @@
 
 #include "brg/common.h"
 
+#include "brg/error_handling.h"
 #include "brg_physics/sky_obj/galaxy.h"
 
 #include "galaxy_group.h"
@@ -92,8 +93,7 @@ void brgastro::galaxy_group::resize( size_t new_num_members )
 	num_members = new_num_members;
 }
 
-void brgastro::galaxy_group::set_member( size_t member_index, galaxy * new_member,
-		const bool silent )
+void brgastro::galaxy_group::set_member( size_t member_index, galaxy * new_member )
 {
 	if ( member_index >= num_members )
 	{
@@ -103,7 +103,7 @@ void brgastro::galaxy_group::set_member( size_t member_index, galaxy * new_membe
 	member_indices[member_index] = new_member->index();
 }
 void brgastro::galaxy_group::set_member_index( size_t member_index,
-		size_t new_member_index, const bool silent )
+		size_t new_member_index )
 {
 	if ( member_index >= num_members )
 	{
@@ -111,15 +111,14 @@ void brgastro::galaxy_group::set_member_index( size_t member_index,
 	}
 	member_indices[member_index] = new_member_index;
 }
-void brgastro::galaxy_group::add_member( galaxy * new_member, const bool silent )
+void brgastro::galaxy_group::add_member( galaxy * new_member )
 {
 	int_type new_num_members = num_members + 1;
 	resize( new_num_members );
 	members[new_num_members - 1] = new_member;
 	member_indices[new_num_members - 1] = new_member->index();
 }
-void brgastro::galaxy_group::remove_member( galaxy * rem_member,
-		const bool silent )
+void brgastro::galaxy_group::remove_member( galaxy * rem_member )
 {
 	size_t i;
 	for ( i = 0; i < num_members; i++ )
@@ -129,9 +128,7 @@ void brgastro::galaxy_group::remove_member( galaxy * rem_member,
 	}
 	if ( i == num_members ) // Then we didn't find it
 	{
-		if ( !silent )
-			std::cerr
-					<< "WARNING: Could not find member to remove from galaxy_group.\n";
+		handle_error("Could not find member to remove from galaxy_group.");
 		return;
 	}
 	for ( size_t j = i; j < num_members - 1; j++ )

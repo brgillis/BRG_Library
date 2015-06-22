@@ -45,7 +45,7 @@ const flt_type brgastro::mag_signal_integral_cache::_calculate( const flt_type i
 {
 	mu_signal_integration_functor func(in_param_1);
 
-	return integrate_Romberg<decltype(func),long_flt_type>(&func,brgastro::mag_m_min,brgastro::mag_m_max,
+	return integrate_Romberg<decltype(func),long_flt_type>(func,brgastro::mag_m_min,brgastro::mag_m_max,
 		0.000001);
 }
 void brgastro::mag_signal_integral_cache::_load_cache_dependencies() const

@@ -42,20 +42,6 @@ namespace brgastro
 // Classes, enums, and typedefs
 #if(1)
 
-// Standard typedefs
-#if(1)
-
-#endif // Standard typedefs
-
-/// Error behavior enum
-enum class error_behavior
-{
-	THROW,
-	WARN,
-	LOG,
-	NOTHING
-};
-
 #endif
 
 // Functions

@@ -37,14 +37,13 @@
 #include "brg/vector/make_vector.hpp"
 #include "brg/vector/summary_functions.hpp"
 
-#include "brg_physics/units/unit_obj.h"
-
 #include "pair_binner.h"
 #include <brg/file_access/ascii_table.hpp>
+#include <brg/units/units.hpp>
 
 namespace brgastro {
 
-flt_type lens_id::unmasked_frac(const BRG_DISTANCE & R_proj) const
+flt_type lens_id::unmasked_frac(const distance_type & R_proj) const
 {
 	try
 	{
@@ -73,7 +72,7 @@ void pair_binner::_sort() const
 	}
 
 	// Check if the lens is within bounds first
-	const BRG_MASS & m = _buffering_lens_id_->m;
+	const mass_type & m = _buffering_lens_id_->m;
 	const flt_type & z = _buffering_lens_id_->z;
 	const flt_type & mag = _buffering_lens_id_->mag;
 	if(m_limits().outside_limits(m) || z_limits().outside_limits(z) || mag_limits().outside_limits(mag))
@@ -107,21 +106,16 @@ void pair_binner::_sort() const
 	// Now loop through and sort each pair into the proper bin
 	// Note that we don't zero the sorting index here. This is intentional, so
 	// we don't have to resort previously sorted pairs when new ones are added.
-	int_type counter_1 = 0; //!!
-	int_type counter_2 = 0; //!!
-	int_type counter_3 = 0; //!!
+
 	for(const auto & pair : _pairs_)
 	{
-		++counter_1; //!!
 
 		// Check bounds first
-		BRG_DISTANCE R_proj = pair.R_proj();
+		distance_type R_proj = pair.R_proj();
 		if(R_limits().outside_limits(R_proj)) continue;
-		++counter_2; //!!
 
 		// Check lens-source z separation against buffer
 		if(pair.z_diff()<_z_buffer_-std::numeric_limits<flt_type>::epsilon()) continue;
-		++counter_3; //!!
 
 		// Add the pair to the proper bin
 		_pair_bins_buffer_[R_limits().get_bin_index(R_proj)].add_pair(pair);
@@ -165,7 +159,7 @@ void pair_binner::add_pair( const lens_source_pair & new_pair)
 	_pairs_.push_back(new_pair);
 	_sorted_ = false;
 }
-void pair_binner::add_lens_id( const ssize_t & new_id, const BRG_MASS & m, const flt_type & z,
+void pair_binner::add_lens_id( const ssize_t & new_id, const mass_type & m, const flt_type & z,
 		const flt_type & mag, const flt_type & weight)
 {
 	// Check if we're already buffering a different lens
@@ -218,34 +212,34 @@ void pair_binner::sort() const
 
 // Access by index (will throw if out of bounds)
 #if(1)
-BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
+surface_density_type pair_binner::delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
+surface_density_type pair_binner::delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
 }
 
-BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
+surface_density_type pair_binner::delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
+surface_density_type pair_binner::delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
 }
 
-BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
+surface_density_type pair_binner::delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
+surface_density_type pair_binner::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i)
 {
 	_sort();
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
@@ -254,7 +248,7 @@ BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ss
 
 // Access by position
 #if(1)
-BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_binner::delta_Sigma_t_mean_for_bin(const distance_type & R, const mass_type & m,
 												  const flt_type & z, const flt_type & mag)
 {
 	_sort();
@@ -264,7 +258,7 @@ BRG_UNITS pair_binner::delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, const 
 	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_binner::delta_Sigma_x_mean_for_bin(const distance_type & R, const mass_type & m,
 												  const flt_type & z, const flt_type & mag)
 {
 	_sort();
@@ -275,7 +269,7 @@ BRG_UNITS pair_binner::delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, const 
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
 }
 
-BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_binner::delta_Sigma_t_std_for_bin(const distance_type & R, const mass_type & m,
 												 const flt_type & z, const flt_type & mag)
 {
 	_sort();
@@ -285,7 +279,7 @@ BRG_UNITS pair_binner::delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, const B
 	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_binner::delta_Sigma_x_std_for_bin(const distance_type & R, const mass_type & m,
 												 const flt_type & z, const flt_type & mag)
 {
 	_sort();
@@ -296,7 +290,7 @@ BRG_UNITS pair_binner::delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, const B
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
 }
 
-BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_binner::delta_Sigma_t_stderr_for_bin(const distance_type & R, const mass_type & m,
 													const flt_type & z, const flt_type & mag)
 {
 	_sort();
@@ -306,7 +300,7 @@ BRG_UNITS pair_binner::delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R, cons
 	ssize_t mag_i = mag_limits().get_bin_index(mag);
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
-BRG_UNITS pair_binner::delta_Sigma_x_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_binner::delta_Sigma_x_stderr_for_bin(const distance_type & R, const mass_type & m,
 													const flt_type & z, const flt_type & mag)
 {
 	_sort();

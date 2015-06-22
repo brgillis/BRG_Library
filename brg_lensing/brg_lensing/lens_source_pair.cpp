@@ -39,7 +39,7 @@
 #include "brg_lensing/source_obj.hpp"
 
 #include "brg_physics/sky_obj/sky_obj.h"
-#include "brg_physics/units/unit_obj.h"
+#include "brg/units/units.hpp"
 
 #include "lens_source_pair.h"
 
@@ -49,8 +49,8 @@ namespace brgastro {
 
 void lens_source_pair::_calc_gamma(const flt_type gamma_1, const flt_type gamma_2) const
 {
-	flt_type rot_cos = cos(-2*_theta_);
-	flt_type rot_sin = sin(-2*_theta_);
+	flt_type rot_cos = cos(-2.*_theta_);
+	flt_type rot_sin = sin(-2.*_theta_);
 	_gamma_t_ = -(rot_cos*gamma_1-rot_sin*gamma_2);
 	_gamma_x_ = rot_sin*gamma_1+rot_cos*gamma_2;
 }
@@ -78,8 +78,8 @@ void lens_source_pair::store_data() const
 	_weight_source_ = source_ptr->weight();
 
 	// Note minus sign in dra to correct for ra's reverse orientation in the sky
-	BRG_ANGLE dra = -(source_ptr->ra()-lens_ptr->ra())*cos(lens_ptr->dec());
-	BRG_ANGLE ddec = source_ptr->dec()-lens_ptr->dec();
+	angle_type dra = -(source_ptr->ra()-lens_ptr->ra())*cos(lens_ptr->dec());
+	angle_type ddec = source_ptr->dec()-lens_ptr->dec();
 
 	_R_proj_ = dfa(skydist2d(lens_ptr,source_ptr),_z_lens_);
 	_theta_ = atan2(ddec,dra);
@@ -234,7 +234,7 @@ flt_type lens_source_pair::z_diff() const
 	_conditional_store_data();
 	return _z_source_-_z_lens_+std::numeric_limits<flt_type>::epsilon();
 }
-const BRG_MASS & lens_source_pair::m_lens() const
+const mass_type & lens_source_pair::m_lens() const
 {
 	_conditional_store_data();
 	return _m_lens_;
@@ -279,12 +279,12 @@ flt_type lens_source_pair::mag_weight() const
 	_conditional_store_data();
 	return _weight_lens_*_weight_pair_;
 }
-const BRG_DISTANCE & lens_source_pair::R_proj() const
+const distance_type & lens_source_pair::R_proj() const
 {
 	_conditional_store_data();
 	return _R_proj_;
 }
-const BRG_ANGLE & lens_source_pair::theta() const
+const angle_type & lens_source_pair::theta() const
 {
 	_conditional_store_data();
 	return _theta_;
@@ -305,7 +305,7 @@ const flt_type & lens_source_pair::gamma_x() const
 // Calculated values
 #if(1)
 
-BRG_UNITS lens_source_pair::sigma_crit() const
+surface_density_type lens_source_pair::sigma_crit() const
 {
 	_conditional_store_data();
 	if(_z_lens_>=_z_source_) return 0;
@@ -314,12 +314,12 @@ BRG_UNITS lens_source_pair::sigma_crit() const
 			/ ( ad_distance( 0, _z_lens_ ) * ad_distance( _z_lens_, _z_source_ ) );
 }
 
-BRG_UNITS lens_source_pair::delta_Sigma_t() const
+surface_density_type lens_source_pair::delta_Sigma_t() const
 {
 	return sigma_crit()*gamma_t();
 }
 
-BRG_UNITS lens_source_pair::delta_Sigma_x() const
+surface_density_type lens_source_pair::delta_Sigma_x() const
 {
 	return sigma_crit()*gamma_x();
 }

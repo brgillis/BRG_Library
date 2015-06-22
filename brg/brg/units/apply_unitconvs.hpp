@@ -26,6 +26,7 @@
 #ifndef _BRG_APPLY_UNITCONVS_HPP_INCLUDED_
 #define _BRG_APPLY_UNITCONVS_HPP_INCLUDED_
 
+#include <brg/units/unitconv_map.hpp>
 #include <map>
 #include <string>
 #include <vector>
@@ -37,7 +38,6 @@
 #include "brg/vector/elementwise_functions.hpp"
 #include "brg/vector/make_vector.hpp"
 
-#include "brg_physics/units/unitconv_map.hpp"
 
 namespace brgastro
 {

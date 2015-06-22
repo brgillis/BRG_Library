@@ -38,6 +38,7 @@
 
 #include <boost/container/flat_set.hpp>
 #include <boost/optional.hpp>
+#include <brg/units/units.hpp>
 
 #include "brg/common.h"
 
@@ -45,7 +46,6 @@
 #include "brg_lensing/pair_bins_summary.h"
 
 #include "brg_physics/sky_obj/galaxy.h"
-#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 
@@ -72,7 +72,7 @@ private:
 	// The ID of the lens we're currently buffering (and its associated data), if we're indeed currently buffering one
 	mutable boost::optional<lens_id> _buffering_lens_id_;
 
-	// A buffer for the pair bins (It's recreated each time we sort, but we store the structure since it's rather large,
+	// A buffer for the pair bins (It's recreated each time_type we sort, but we store the structure since it's rather large,
 	// to save on allocation/deallocation calls).
 	mutable std::vector<pair_bin> _pair_bins_buffer_;
 
@@ -87,7 +87,7 @@ private:
 	// Data on the unmasked fraction of annuli
 #if(1)
 
-	std::vector<BRG_DISTANCE> _unmasked_frac_bin_limits_;
+	std::vector<distance_type> _unmasked_frac_bin_limits_;
 	std::vector<flt_type> _unmasked_fracs_;
 
 #endif
@@ -110,8 +110,8 @@ public:
 	}
 
 	// Set limits by vectors
-	pair_binner(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
-			brgastro::limit_vector< BRG_MASS > m_bin_limits=brgastro::limit_vector<flt_type>(),
+	pair_binner(brgastro::limit_vector< distance_type > R_bin_limits,
+			brgastro::limit_vector< mass_type > m_bin_limits=brgastro::limit_vector<mass_type>(),
 			brgastro::limit_vector< flt_type > z_bin_limits=brgastro::limit_vector<flt_type>(),
 			brgastro::limit_vector< flt_type > mag_bin_limits=brgastro::limit_vector<flt_type>())
 	:	pair_bins_summary(R_bin_limits,m_bin_limits,z_bin_limits,mag_bin_limits),
@@ -121,22 +121,33 @@ public:
 	}
 
 	// Set limits by min, max, and step
-	pair_binner(const BRG_DISTANCE & R_min,
-				const BRG_DISTANCE & R_max,
-				const BRG_DISTANCE & R_step,
-				const BRG_MASS & m_min=-std::numeric_limits<flt_type>::infinity(),
-				const BRG_MASS & m_max=std::numeric_limits<flt_type>::infinity(),
-				const BRG_MASS & m_step=std::numeric_limits<flt_type>::infinity(),
+	pair_binner(const distance_type & R_min,
+				const distance_type & R_max,
+				const distance_type & R_step,
+				const mass_type & m_min=-std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_max=std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_step=std::numeric_limits<flt_type>::infinity()*kg,
 				flt_type z_min=-std::numeric_limits<flt_type>::infinity(),
 				flt_type z_max=std::numeric_limits<flt_type>::infinity(),
 				flt_type z_step=std::numeric_limits<flt_type>::infinity(),
 				flt_type mag_min=-std::numeric_limits<flt_type>::infinity(),
 				flt_type mag_max=std::numeric_limits<flt_type>::infinity(),
 				flt_type mag_step=std::numeric_limits<flt_type>::infinity())
-	:	pair_bins_summary(R_min,R_max,R_step,m_min,m_max,m_step,z_min,z_max,z_step,
-			mag_min,mag_max,mag_step),
-			_z_buffer_(_default_z_buffer_),
-		 	_sorted_(false)
+	:	pair_bins_summary(
+			R_min,
+			R_max,
+			(int_type)((R_max-R_min)/R_step),
+			m_min,
+			m_max,
+			(int_type)((m_max-m_min)/m_step),
+			z_min,
+			z_max,
+			(int_type)((z_max-z_min)/z_step),
+			mag_min,
+			mag_max,
+			(int_type)((mag_max-mag_min)/mag_step)),
+		_z_buffer_(_default_z_buffer_),
+		_sorted_(false)
 	{
 	}
 
@@ -162,7 +173,7 @@ public:
 
 	bool binnable( const galaxy & lens) const;
 	void add_pair( const lens_source_pair & new_pair);
-	void add_lens_id( const ssize_t & new_lens_id, const BRG_MASS & m, const flt_type & z,
+	void add_lens_id( const ssize_t & new_lens_id, const mass_type & m, const flt_type & z,
 			const flt_type & mag, const flt_type & weight=1);
 	void clear();
 	void empty();
@@ -186,31 +197,31 @@ public:
 
 	// Access by index (will throw if out of bounds)
 #if(1)
-	BRG_UNITS delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
-	BRG_UNITS delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
+	surface_density_type delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
+	surface_density_type delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
 
-	BRG_UNITS delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
-	BRG_UNITS delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
+	surface_density_type delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
+	surface_density_type delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
 
-	BRG_UNITS delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
-	BRG_UNITS delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
+	surface_density_type delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
+	surface_density_type delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i);
 #endif // Access by index
 
 	// Access by position
 #if(1)
-	BRG_UNITS delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+	surface_density_type delta_Sigma_t_mean_for_bin(const distance_type & R, const mass_type & m,
 										   const flt_type & z, const flt_type & mag);
-	BRG_UNITS delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
-										   const flt_type & z, const flt_type & mag);
-
-	BRG_UNITS delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
-										   const flt_type & z, const flt_type & mag);
-	BRG_UNITS delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+	surface_density_type delta_Sigma_x_mean_for_bin(const distance_type & R, const mass_type & m,
 										   const flt_type & z, const flt_type & mag);
 
-	BRG_UNITS delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+	surface_density_type delta_Sigma_t_std_for_bin(const distance_type & R, const mass_type & m,
 										   const flt_type & z, const flt_type & mag);
-	BRG_UNITS delta_Sigma_x_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+	surface_density_type delta_Sigma_x_std_for_bin(const distance_type & R, const mass_type & m,
+										   const flt_type & z, const flt_type & mag);
+
+	surface_density_type delta_Sigma_t_stderr_for_bin(const distance_type & R, const mass_type & m,
+										   const flt_type & z, const flt_type & mag);
+	surface_density_type delta_Sigma_x_stderr_for_bin(const distance_type & R, const mass_type & m,
 										   const flt_type & z, const flt_type & mag);
 #endif // Access by index
 

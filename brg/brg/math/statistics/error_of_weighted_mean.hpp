@@ -49,7 +49,7 @@ template<typename Sample>
 struct error_of_weighted_mean_accumulator
 : accumulator_base
 {
-  typedef flt_type result_type;
+  typedef Sample result_type;
 
   error_of_weighted_mean_accumulator(dont_care)
   {

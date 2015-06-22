@@ -230,7 +230,7 @@ void brgastro::interpolator_derivative::add_unknown_point( const flt_type t )
 }
 
 // Get functions
-flt_type brgastro::interpolator_derivative::operator()( flt_type xval, bool silent ) const
+flt_type brgastro::interpolator_derivative::operator()( flt_type xval ) const
 {
 	if ( !_interpolator_ptr_set_up_ )
 	{
@@ -275,19 +275,19 @@ flt_type brgastro::interpolator_derivative::operator()( flt_type xval, bool sile
 		_estimated_interpolator_.set_interpolation_type(_interpolation_type_);
 		ssize_t num_points_to_calculate = ssize(_unknown_t_list_);
 
-		auto interpolator_functor = [&] (const flt_type & in_param, bool silent=false)
+		auto interpolator_functor = [&] (const flt_type & in_param)
 		{
 			return (*_interpolator_ptr_)(in_param);
 		};
 
-		auto spline_derivative_functor_val = [&] (const flt_type & in_param, bool silent=false)
+		auto spline_derivative_functor_val = [&] (const flt_type & in_param)
 		{
 			return differentiate( &interpolator_functor, in_param );
 		};
 
 		flt_type t;
 
-		auto spline_derivative_weight_functor_val = [&] (const flt_type & in_param, bool silent=false)
+		auto spline_derivative_weight_functor_val = [&] (const flt_type & in_param)
 		{
 
 			if ( std::fabs( in_param - t )
@@ -307,10 +307,10 @@ flt_type brgastro::interpolator_derivative::operator()( flt_type xval, bool sile
 		for ( ssize_t i = 0; i < num_points_to_calculate; i++ ) // For each point we need to calculate
 		{
 			t = _unknown_t_list_[i];
-			BRG_UNITS min_in_params( t - delta_t );
-			BRG_UNITS max_in_params( t + delta_t );
-			BRG_UNITS out_params( 0 );
-			BRG_UNITS Jacobian( 0 );
+			flt_type min_in_params( t - delta_t );
+			flt_type max_in_params( t + delta_t );
+			flt_type out_params( 0 );
+			flt_type Jacobian( 0 );
 
 			if ( delta_t <= 0 )
 			{
@@ -322,8 +322,8 @@ flt_type brgastro::interpolator_derivative::operator()( flt_type xval, bool sile
 			{
 
 				out_params = integrate_weighted_Romberg(
-						&spline_derivative_functor_val,
-						&spline_derivative_weight_functor_val,
+						spline_derivative_functor_val,
+						spline_derivative_weight_functor_val,
 						min_in_params, max_in_params, _sample_precision_,
 						false );
 

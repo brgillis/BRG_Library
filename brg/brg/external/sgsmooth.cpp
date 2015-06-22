@@ -403,7 +403,7 @@ static flt_vector_type sg_coeff(const flt_vector_type &b, const size_t deg)
     size_t i,j;
     for (i = 0; i < rows; ++i) {
         for (j = 0; j < cols; ++j) {
-            A[i][j] = pow(flt_type(i), flt_type(j));
+            A[i][j] = runtime_ipow(i, j);
         }
     }
 
@@ -412,7 +412,7 @@ static flt_vector_type sg_coeff(const flt_vector_type &b, const size_t deg)
     for (i = 0; i < b.size(); ++i) {
         res[i] = c[0][0];
         for (j = 1; j <= deg; ++j) {
-            res[i] += c[j][0] * pow(flt_type(i), flt_type(j));
+            res[i] += c[j][0] * runtime_ipow(i, j);
         }
     }
     return res;
@@ -482,7 +482,7 @@ static flt_vector_type lsqr_fprime(const flt_vector_type &b, const size_t deg)
     size_t i,j;
     for (i = 0; i < rows; ++i) {
         for (j = 0; j < cols; ++j) {
-            A[i][j] = brgastro::ipow(i, j);
+            A[i][j] = brgastro::runtime_ipow(i, j);
         }
     }
 
@@ -492,7 +492,7 @@ static flt_vector_type lsqr_fprime(const flt_vector_type &b, const size_t deg)
         res[i] = c[1][0];
         for (j = 1; j < deg; ++j) {
             res[i] += c[j + 1][0] * flt_type(j+1)
-                * brgastro::ipow(i, j);
+                * brgastro::runtime_ipow(i, j);
         }
     }
     return res;

@@ -98,8 +98,7 @@ public:
 
 	// Function method
 
-	long_flt_type operator()( const long_flt_type & in_params,
-			const bool silent = false ) const;
+	long_flt_type operator()( const long_flt_type & in_params) const;
 
 };
 

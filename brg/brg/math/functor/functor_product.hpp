@@ -38,7 +38,7 @@ namespace brgastro
 /** Class definitions **/
 #if (1)
 
-template< typename f1, typename f2, typename T=BRG_UNITS >
+template< typename f1, typename f2, typename T=flt_type >
 class functor_product
 {
 	/*****************************************************
@@ -133,11 +133,12 @@ public:
 
 	// Function method
 
-	const T operator()( const T & in_param,	const bool silent = false ) const
+	decltype(multiply((*_f1_ptr_)( T() ),(*_f2_ptr_)( T() )))
+		operator()( const T & in_param ) const
 	{
 		assert((_f1_ptr_!=NULL) && (_f2_ptr_!=NULL));
 
-		return multiply((*_f1_ptr_)( in_param, silent ),(*_f2_ptr_)( in_param, silent ));
+		return multiply((*_f1_ptr_)( in_param ),(*_f2_ptr_)( in_param ));
 	}
 }; // class functor_product< f1, f2, T>
 

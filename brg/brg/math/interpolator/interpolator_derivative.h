@@ -122,7 +122,7 @@ public:
 	void clear();
 
 	// Get functions
-	flt_type operator()( flt_type xval, bool silent = false ) const;
+	flt_type operator()( flt_type xval = false ) const;
 	ssize_t size() const
 	{
 		return ssize(_known_interpolator_) + ssize(_unknown_t_list_);

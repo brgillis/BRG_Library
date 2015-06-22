@@ -27,6 +27,8 @@
 
 #include "brg/common.h"
 
+#include "brg/units/units.hpp"
+
 #include "brg_physics/astro.h"
 #include "brg_physics/sky_obj/position_grid_cache.h"
 
@@ -53,15 +55,15 @@ private:
 
 	flt_type _weight_;
 
-	BRG_ANGLE _ra_, _ra_err_, _dec_, _dec_err_;
+	angle_type _ra_, _ra_err_, _dec_, _dec_err_;
 #endif
 public:
 #if (1)
 	// Public member functions
 
 	// Constructor
-	sky_obj( const BRG_ANGLE & init_ra = 0, const BRG_ANGLE & init_dec = 0, flt_type init_z = 0,
-			const BRG_ANGLE & init_ra_err = 0, const BRG_ANGLE & init_dec_err = 0, flt_type init_z_err =
+	sky_obj( const angle_type & init_ra = 0*rad, const angle_type & init_dec = 0*rad, flt_type init_z = 0,
+			const angle_type & init_ra_err = 0*rad, const angle_type & init_dec_err = 0*rad, flt_type init_z_err =
 			0 ); // Normal constructor
 
 	//sky_obj(const sky_obj & other_sky_obj); // Copy constructor (Default is fine for us)
@@ -74,21 +76,21 @@ public:
 	virtual void partial_clear(); // Resets all variables which can't be initialized
 
 #if (1) // Set functions
-	virtual void set_ra( const BRG_ANGLE & new_ra );
-	virtual void set_dec( const BRG_ANGLE & new_dec );
-	void set_ra_err( const BRG_ANGLE & new_ra_err );
-	void set_dec_err( const BRG_ANGLE & new_dec_err );
-	virtual void set_ra_dec( const BRG_ANGLE & new_ra,
-			const BRG_ANGLE & new_dec ); // Sets ra and dec
-	virtual void set_ra_dec_z( const BRG_ANGLE & new_ra,
-			const BRG_ANGLE & new_dec, const flt_type new_z ); // Sets all values
-	virtual void set_ra_dec_z_err( const BRG_ANGLE & new_ra,
-			const BRG_ANGLE & new_dec, const flt_type new_z,
-			const BRG_ANGLE & new_ra_err, const BRG_ANGLE & new_dec_err,
+	virtual void set_ra( const angle_type & new_ra );
+	virtual void set_dec( const angle_type & new_dec );
+	void set_ra_err( const angle_type & new_ra_err );
+	void set_dec_err( const angle_type & new_dec_err );
+	virtual void set_ra_dec( const angle_type & new_ra,
+			const angle_type & new_dec ); // Sets ra and dec
+	virtual void set_ra_dec_z( const angle_type & new_ra,
+			const angle_type & new_dec, const flt_type new_z ); // Sets all values
+	virtual void set_ra_dec_z_err( const angle_type & new_ra,
+			const angle_type & new_dec, const flt_type new_z,
+			const angle_type & new_ra_err, const angle_type & new_dec_err,
 			const flt_type new_z_err ); // Sets all values and error
-	virtual void set_ra_dec_err( const BRG_ANGLE & new_ra,
-			const BRG_ANGLE & new_dec, const BRG_ANGLE & new_ra_err,
-			const BRG_ANGLE & new_dec_err ); // Sets ra and dec and error
+	virtual void set_ra_dec_err( const angle_type & new_ra,
+			const angle_type & new_dec, const angle_type & new_ra_err,
+			const angle_type & new_dec_err ); // Sets ra and dec and error
 
 	void set_weight( const flt_type new_weight );
 	void set_index( const int_type new_index );
@@ -97,19 +99,19 @@ public:
 
 #if (1) //Get functions
 
-	const BRG_ANGLE & ra() const
+	const angle_type & ra() const
 	{
 		return _ra_;
 	}
-	const BRG_ANGLE & dec() const
+	const angle_type & dec() const
 	{
 		return _dec_;
 	}
-	const BRG_ANGLE & ra_err() const
+	const angle_type & ra_err() const
 	{
 		return _ra_err_;
 	}
-	const BRG_ANGLE & dec_err() const
+	const angle_type & dec_err() const
 	{
 		return _dec_err_;
 	}
@@ -132,7 +134,7 @@ public:
 	// Pure virtual get functions
 #if (1)
 
-	virtual BRG_MASS m() const = 0;
+	virtual mass_type m() const = 0;
 	virtual flt_type mag() const = 0;
 
 #endif
@@ -146,10 +148,10 @@ public:
 };
 // class sky_obj
 
-BRG_DISTANCE dfa( const sky_obj *obj1, const sky_obj *obj2,
-		const flt_type z = -1 );
+distance_type dfa( const sky_obj *obj1, const sky_obj *obj2,
+		const flt_type & z = -1. );
 
-BRG_ANGLE skydist2d( const sky_obj *obj1, const sky_obj *obj2 );
+angle_type skydist2d( const sky_obj *obj1, const sky_obj *obj2 );
 
 } // end namespace brgastro
 

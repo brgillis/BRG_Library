@@ -25,9 +25,11 @@
 #ifndef _BRG_GALAXY_H_
 #define _BRG_GALAXY_H_
 
+#include <brg/units/units.hpp>
 #include "brg/common.h"
 
 #include "brg_physics/sky_obj/sky_obj.h"
+
 
 namespace brgastro {
 
@@ -53,7 +55,7 @@ public:
 
 	// Public member variables
 
-	BRG_MASS stellar_mass;
+	mass_type stellar_mass;
 	flt_type umag, umag_err;
 	flt_type gmag, gmag_err;
 	flt_type rmag, rmag_err;
@@ -70,9 +72,9 @@ public:
 	// Public member functions
 
 	// Constructors
-	galaxy( const BRG_ANGLE & init_ra = 0, const BRG_ANGLE & init_dec = 0, flt_type init_z = 0,
-			const BRG_ANGLE & init_ra_err = 0, const BRG_ANGLE & init_dec_err = 0, flt_type init_z_err =
-			0, const BRG_MASS & init_stellar_mass=0,
+	galaxy( const angle_type & init_ra = 0, const angle_type & init_dec = 0, flt_type init_z = 0,
+			const angle_type & init_ra_err = 0, const angle_type & init_dec_err = 0, flt_type init_z_err =
+			0, const mass_type & init_stellar_mass=0,
 			flt_type init_mag=0, flt_type init_mag_err=0 );
 
 	// Copy constructor
@@ -85,7 +87,7 @@ public:
 
 	// Implementations of pure virtual functions from sky_obj
 #if (1)
-	BRG_MASS m() const
+	mass_type m() const
 	{
 		return stellar_mass;
 	}

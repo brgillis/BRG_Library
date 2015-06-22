@@ -31,14 +31,13 @@
 
 #include "brg/math/cache/cache.hpp"
 #include "brg/math/cache/cache_2d.hpp"
-#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro
 {
 
 class dfa_cache : public brg_cache<dfa_cache>
 {
-	// "Distance from angle" cache
+	// "Distance from angle_type" cache
 private:
 
 	DECLARE_BRG_CACHE_STATIC_VARS();
@@ -52,22 +51,16 @@ protected:
 		return "dfa";
 	}
 
-#ifdef _BRG_USE_UNITS_
-
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
-	{
-		return brgastro::unit_obj(0,0,1,0,0,0,0);
-	}
-	const brgastro::unit_obj _inverse_units() const throw()
-	{
-		return brgastro::unit_obj(0);
-	}
-
-#endif // _BRG_USE_UNITS_
-
 	// Long-form calculation function.
 	const flt_type _calculate( const flt_type in_param ) const;
+
+#ifdef _BRG_USE_UNITS_
+
+	// Gets the result in the proper units
+	const any_units_type _units( const flt_type & v ) const;
+	const any_units_type _inverse_units(const flt_type & v) const;
+
+#endif
 
 public:
 
@@ -76,7 +69,7 @@ public:
 
 class add_cache : public brg_cache_2d<add_cache>
 {
-	// Angular diameter distance
+	// Angular diameter distance_type
 private:
 
 	DECLARE_BRG_CACHE_2D_STATIC_VARS();
@@ -91,22 +84,16 @@ protected:
 		return name_base;
 	}
 
-#ifdef _BRG_USE_UNITS_
-
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
-	{
-		return brgastro::unit_obj(0,1,0,0,0,0,0); // Distance units
-	}
-	const brgastro::unit_obj _inverse_units() const throw()
-	{
-		return brgastro::unit_obj(0); // Unitless (redshift)
-	}
-
-#endif // _BRG_USE_UNITS_
-
 	// Long-form calculation function.
 	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2 ) const;
+
+#ifdef _BRG_USE_UNITS_
+
+	// Gets the result in the proper units
+	const any_units_type _units( const flt_type & v ) const;
+	const any_units_type _inverse_units(const flt_type & v) const;
+
+#endif
 
 public:
 
@@ -129,22 +116,16 @@ protected:
 		return "tfa";
 	}
 
-#ifdef _BRG_USE_UNITS_
-
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
-	{
-		return brgastro::unit_obj(0,0,1,0,0,0,0);
-	}
-	const brgastro::unit_obj _inverse_units() const throw()
-	{
-		return brgastro::unit_obj(0);
-	}
-
-#endif // _BRG_USE_UNITS_
-
 	// Long-form calculation function.
 	const flt_type _calculate( const flt_type in_params ) const;
+
+#ifdef _BRG_USE_UNITS_
+
+	// Gets the result in the proper units
+	const any_units_type _units( const flt_type & v ) const;
+	const any_units_type _inverse_units(const flt_type & v) const;
+
+#endif
 
 public:
 

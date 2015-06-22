@@ -29,10 +29,9 @@
 
 #include "brg/math/cache/cache.hpp"
 #include "brg/math/cache/cache_2d.hpp"
+#include "brg/units/units.hpp"
 
 #include "brg_physics/astro.h"
-#include "brg_physics/units/unit_obj.h"
-
 #include "astro_caches.h"
 
 /** Static Class Initialisation **/
@@ -55,22 +54,74 @@ DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
 
 // brgastro::dfa_cache class methods
 #if (1)
+
 const flt_type brgastro::dfa_cache::_calculate( const flt_type in_params ) const
 {
-	return brgastro::integrate_add( 0, in_params );
+	return value_of(brgastro::integrate_add( 0, in_params ));
 }
+
+#ifdef _BRG_USE_UNITS_
+
+// Gets the result in the proper units
+const brgastro::any_units_type brgastro::dfa_cache::_units( const flt_type & v ) const
+{
+	return any_units_cast<custom_unit_type<1,0,0,-1,0>>(v);
+}
+const brgastro::any_units_type brgastro::dfa_cache::_inverse_units(const flt_type & v) const
+{
+	return any_units_cast<dimensionless_type>(v);
+}
+
+#endif
 
 #endif // end brgastro::dfa_cache functions
 
 // brgastro::add_cache class methods
+#if(1)
+
 const flt_type brgastro::add_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2) const
 {
-	return brgastro::integrate_add(in_param_1,in_param_2);
+	return value_of(brgastro::integrate_add(in_param_1,in_param_2));
 }
+
+#ifdef _BRG_USE_UNITS_
+
+// Gets the result in the proper units
+const brgastro::any_units_type brgastro::add_cache::_units( const flt_type & v ) const
+{
+	return any_units_cast<distance_type>(v);
+}
+const brgastro::any_units_type brgastro::add_cache::_inverse_units(const flt_type & v) const
+{
+	return any_units_cast<dimensionless_type>(v);
+}
+
+#endif
+
+#endif // brgastro::add_cache class methods
+
+// brgastro::tfa_cache class methods
+#if(1)
 
 const flt_type brgastro::tfa_cache::_calculate( const flt_type in_params ) const
 {
-	return -brgastro::integrate_ltd( 0, brgastro::zfa( in_params ) ) / c;
+	return value_of(-brgastro::integrate_ltd( 0, brgastro::zfa( in_params ) ) / c);
 }
+
+#ifdef _BRG_USE_UNITS_
+
+// Gets the result in the proper units
+const brgastro::any_units_type brgastro::tfa_cache::_units( const flt_type & v ) const
+{
+	return any_units_cast<time_type>(v);
+}
+const brgastro::any_units_type brgastro::tfa_cache::_inverse_units(const flt_type & v) const
+{
+	return any_units_cast<dimensionless_type>(v);
+}
+
+#endif
+
+#endif // brgastro::tfa_cache class methods
 
 #endif // end class methods

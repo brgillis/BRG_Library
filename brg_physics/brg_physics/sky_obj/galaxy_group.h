@@ -80,18 +80,16 @@ public:
 	// Functions to set parameters
 	virtual void clear();
 	virtual void resize( size_t new_num_members );
-	virtual void set_member( size_t index, galaxy * new_member,
-			const bool silent = false );
-	virtual void set_member_index( size_t index, size_t new_member_index,
-			const bool silent = false );
-	virtual void add_member( galaxy * new_member, const bool silent =
+	virtual void set_member( size_t index, galaxy * new_member );
+	virtual void set_member_index( size_t index, size_t new_member_index );
+	virtual void add_member( galaxy * new_member =
 			false );
-	virtual void remove_member( galaxy * rem_member, const bool silent =
+	virtual void remove_member( galaxy * rem_member =
 			false );
 
 	// Implementations of pure virtual functions from sky_obj
 #if (1)
-	BRG_MASS m() const
+	mass_type m() const
 	{
 		return 0; // TODO: Should be combine magnitude of member galaxies
 	}

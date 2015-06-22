@@ -43,12 +43,11 @@
 
 #include "brg_lensing/pair_bin.h"
 #include "brg_lensing/pair_binner.h"
-#include "brg_physics/units/unit_obj.h"
-#include "brg_physics/units/apply_unitconvs.hpp"
-
 #include "pair_bins_summary.h"
 #include <brg/file_access/ascii_table_map.hpp>
 #include <brg/file_access/open_file.hpp>
+#include <brg/units/apply_unitconvs.hpp>
+#include <brg/units/units.hpp>
 
 namespace brgastro {
 
@@ -87,11 +86,11 @@ void pair_bins_summary::_check_limits()
 #if(1)
 
 // Set specific limits through a limits vector
-void pair_bins_summary::_set_R_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits)
+void pair_bins_summary::_set_R_limits(brgastro::limit_vector< distance_type > R_bin_limits)
 {
 	_R_bin_limits_ = R_bin_limits;
 }
-void pair_bins_summary::_set_m_limits(brgastro::limit_vector< BRG_MASS > m_bin_limits)
+void pair_bins_summary::_set_m_limits(brgastro::limit_vector< mass_type > m_bin_limits)
 {
 	_m_bin_limits_ = m_bin_limits;
 }
@@ -105,17 +104,17 @@ void pair_bins_summary::_set_mag_limits(brgastro::limit_vector< flt_type > mag_b
 }
 
 // Set specific limits through a linear spacing
-void pair_bins_summary::_set_linear_R_limits(const BRG_DISTANCE & R_min,
-		const BRG_DISTANCE & R_max,
+void pair_bins_summary::_set_linear_R_limits(const distance_type & R_min,
+		const distance_type & R_max,
 		const ssize_t & R_bins)
 {
-	_R_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LINEAR, R_min, R_max, R_bins);
+	_R_bin_limits_.reconstruct(brgastro::limit_vector<distance_type>::type::LINEAR, R_min, R_max, R_bins);
 }
-void pair_bins_summary::_set_linear_m_limits(const BRG_MASS & m_min,
-		const BRG_MASS & m_max,
+void pair_bins_summary::_set_linear_m_limits(const mass_type & m_min,
+		const mass_type & m_max,
 		const ssize_t & m_bins)
 {
-	_m_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LINEAR, m_min, m_max, m_bins);
+	_m_bin_limits_.reconstruct(brgastro::limit_vector<mass_type>::type::LINEAR, m_min, m_max, m_bins);
 }
 void pair_bins_summary::_set_linear_z_limits(const flt_type & z_min,
 		const flt_type & z_max,
@@ -131,17 +130,17 @@ void pair_bins_summary::_set_linear_mag_limits(const flt_type & mag_min,
 }
 
 // Set specific limits through a log spacing
-void pair_bins_summary::_set_log_R_limits(const BRG_DISTANCE & R_min,
-		const BRG_DISTANCE & R_max,
+void pair_bins_summary::_set_log_R_limits(const distance_type & R_min,
+		const distance_type & R_max,
 		const ssize_t & R_num_bins)
 {
-	_R_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LOG, R_min, R_max, R_num_bins);
+	_R_bin_limits_.reconstruct(brgastro::limit_vector<distance_type>::type::LOG, R_min, R_max, R_num_bins);
 }
-void pair_bins_summary::_set_log_m_limits(const BRG_MASS & m_min,
-		const BRG_MASS & m_max,
+void pair_bins_summary::_set_log_m_limits(const mass_type & m_min,
+		const mass_type & m_max,
 		const ssize_t & m_num_bins)
 {
-	_m_bin_limits_.reconstruct(brgastro::limit_vector<flt_type>::type::LOG, m_min, m_max, m_num_bins);
+	_m_bin_limits_.reconstruct(brgastro::limit_vector<mass_type>::type::LOG, m_min, m_max, m_num_bins);
 }
 void pair_bins_summary::_set_log_z_limits(const flt_type & z_min,
 		const flt_type & z_max,
@@ -196,8 +195,8 @@ void pair_bins_summary::_reconstruct() const
 #if(1)
 
 // Set limits by vectors
-pair_bins_summary::pair_bins_summary(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
-		brgastro::limit_vector< BRG_MASS > m_bin_limits,
+pair_bins_summary::pair_bins_summary(brgastro::limit_vector< distance_type > R_bin_limits,
+		brgastro::limit_vector< mass_type > m_bin_limits,
 		brgastro::limit_vector< flt_type > z_bin_limits,
 		brgastro::limit_vector< flt_type > mag_bin_limits)
 :	_R_bin_limits_(R_bin_limits),
@@ -210,11 +209,11 @@ pair_bins_summary::pair_bins_summary(brgastro::limit_vector< BRG_DISTANCE > R_bi
 }
 
 // Set limits by min, max, and step
-pair_bins_summary::pair_bins_summary(const BRG_DISTANCE & R_min,
-				const BRG_DISTANCE & R_max,
+pair_bins_summary::pair_bins_summary(const distance_type & R_min,
+				const distance_type & R_max,
 				const ssize_t & R_bins,
-				const BRG_MASS & m_min,
-				const BRG_MASS & m_max,
+				const mass_type & m_min,
+				const mass_type & m_max,
 				const ssize_t & m_bins,
 				const flt_type & z_min,
 				const flt_type & z_max,
@@ -222,8 +221,8 @@ pair_bins_summary::pair_bins_summary(const BRG_DISTANCE & R_min,
 				const flt_type & mag_min,
 				const flt_type & mag_max,
 				const ssize_t & mag_bins)
-:	_R_bin_limits_(brgastro::limit_vector<BRG_DISTANCE>::type::LINEAR,R_min,R_max,R_bins),
- 	_m_bin_limits_(brgastro::limit_vector<BRG_MASS>::type::LINEAR,m_min,m_max,m_bins),
+:	_R_bin_limits_(brgastro::limit_vector<distance_type>::type::LINEAR,R_min,R_max,R_bins),
+ 	_m_bin_limits_(brgastro::limit_vector<mass_type>::type::LINEAR,m_min,m_max,m_bins),
  	_z_bin_limits_(brgastro::limit_vector<flt_type>::type::LINEAR,z_min,z_max,z_bins),
  	_mag_bin_limits_(brgastro::limit_vector<flt_type>::type::LINEAR,mag_min,mag_max,mag_bins),
  	_valid_limits_(false)
@@ -263,12 +262,12 @@ pair_bins_summary::pair_bins_summary( const pair_binner & bins)
 #if(1)
 
 // Set specific limits through a limits vector
-void pair_bins_summary::set_R_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits)
+void pair_bins_summary::set_R_limits(brgastro::limit_vector< distance_type > R_bin_limits)
 {
 	_set_R_limits(R_bin_limits);
 	_check_limits();
 }
-void pair_bins_summary::set_m_limits(brgastro::limit_vector< BRG_MASS > m_bin_limits)
+void pair_bins_summary::set_m_limits(brgastro::limit_vector< mass_type > m_bin_limits)
 {
 	_set_m_limits(m_bin_limits);
 	_check_limits();
@@ -285,15 +284,15 @@ void pair_bins_summary::set_mag_limits(brgastro::limit_vector< flt_type > mag_bi
 }
 
 // Set specific limits through a linear spacing
-void pair_bins_summary::set_linear_R_limits(const BRG_DISTANCE & R_min,
-		const BRG_DISTANCE & R_max,
+void pair_bins_summary::set_linear_R_limits(const distance_type & R_min,
+		const distance_type & R_max,
 		const ssize_t & R_bins)
 {
 	_set_linear_R_limits(R_min,R_max,R_bins);
 	_check_limits();
 }
-void pair_bins_summary::set_linear_m_limits(const BRG_MASS & m_min,
-		const BRG_MASS & m_max,
+void pair_bins_summary::set_linear_m_limits(const mass_type & m_min,
+		const mass_type & m_max,
 		const ssize_t & m_bins)
 {
 	_set_linear_m_limits(m_min,m_max,m_bins);
@@ -315,15 +314,15 @@ void pair_bins_summary::set_linear_mag_limits(const flt_type & mag_min,
 }
 
 // Set specific limits through a log spacing
-void pair_bins_summary::set_log_R_limits(const BRG_DISTANCE & R_min,
-		const BRG_DISTANCE & R_max,
+void pair_bins_summary::set_log_R_limits(const distance_type & R_min,
+		const distance_type & R_max,
 		const ssize_t & R_num_bins)
 {
 	_set_log_R_limits(R_min,R_max,R_num_bins);
 	_check_limits();
 }
-void pair_bins_summary::set_log_m_limits(const BRG_MASS & m_min,
-		const BRG_MASS & m_max,
+void pair_bins_summary::set_log_m_limits(const mass_type & m_min,
+		const mass_type & m_max,
 		const ssize_t & m_num_bins)
 {
 	_set_log_m_limits(m_min,m_max,m_num_bins);
@@ -366,8 +365,8 @@ void pair_bins_summary::clear_mag_limits()
 	_check_limits();
 }
 
-void pair_bins_summary::set_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_limits,
-		brgastro::limit_vector< BRG_MASS > m_bin_limits,
+void pair_bins_summary::set_limits(brgastro::limit_vector< distance_type > R_bin_limits,
+		brgastro::limit_vector< mass_type > m_bin_limits,
 		brgastro::limit_vector< flt_type > z_bin_limits,
 		brgastro::limit_vector< flt_type > mag_bin_limits)
 {
@@ -378,11 +377,11 @@ void pair_bins_summary::set_limits(brgastro::limit_vector< BRG_DISTANCE > R_bin_
 	_check_limits();
 }
 
-void pair_bins_summary::set_linear_limits(const BRG_DISTANCE & R_min,
-			const BRG_DISTANCE & R_max,
+void pair_bins_summary::set_linear_limits(const distance_type & R_min,
+			const distance_type & R_max,
 			const ssize_t & R_bins,
-			const BRG_MASS & m_min,
-			const BRG_MASS & m_max,
+			const mass_type & m_min,
+			const mass_type & m_max,
 			const ssize_t & m_bins,
 			const flt_type & z_min,
 			const flt_type & z_max,
@@ -398,11 +397,11 @@ void pair_bins_summary::set_linear_limits(const BRG_DISTANCE & R_min,
 	_check_limits();
 }
 
-void pair_bins_summary::set_log_limits(const BRG_DISTANCE & R_min,
-			const BRG_DISTANCE & R_max,
+void pair_bins_summary::set_log_limits(const distance_type & R_min,
+			const distance_type & R_max,
 			const ssize_t & R_num_bins,
-			const BRG_MASS & m_min,
-			const BRG_MASS & m_max,
+			const mass_type & m_min,
+			const mass_type & m_max,
 			const ssize_t & m_num_bins,
 			const flt_type & z_min,
 			const flt_type & z_max,
@@ -449,29 +448,29 @@ void pair_bins_summary::fixbad()
 
 // Access by index (will throw if out of bounds)
 #if(1)
-BRG_UNITS pair_bins_summary::delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
+surface_density_type pair_bins_summary::delta_Sigma_t_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
 {
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
+surface_density_type pair_bins_summary::delta_Sigma_x_mean_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
 {
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
 }
 
-BRG_UNITS pair_bins_summary::delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
+surface_density_type pair_bins_summary::delta_Sigma_t_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
 {
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
+surface_density_type pair_bins_summary::delta_Sigma_x_std_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
 {
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
 }
 
-BRG_UNITS pair_bins_summary::delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
+surface_density_type pair_bins_summary::delta_Sigma_t_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
 {
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
+surface_density_type pair_bins_summary::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m_i, ssize_t z_i, ssize_t mag_i) const
 {
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
@@ -479,7 +478,7 @@ BRG_UNITS pair_bins_summary::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssize_t m
 
 // Access by position
 #if(1)
-BRG_UNITS pair_bins_summary::delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_bins_summary::delta_Sigma_t_mean_for_bin(const distance_type & R, const mass_type & m,
 		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
@@ -488,7 +487,7 @@ BRG_UNITS pair_bins_summary::delta_Sigma_t_mean_for_bin(const BRG_DISTANCE & R, 
 	ssize_t mag_i = _mag_bin_limits_.get_bin_index(mag);
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_bins_summary::delta_Sigma_x_mean_for_bin(const distance_type & R, const mass_type & m,
 		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
@@ -498,7 +497,7 @@ BRG_UNITS pair_bins_summary::delta_Sigma_x_mean_for_bin(const BRG_DISTANCE & R, 
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_mean();
 }
 
-BRG_UNITS pair_bins_summary::delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_bins_summary::delta_Sigma_t_std_for_bin(const distance_type & R, const mass_type & m,
 		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
@@ -507,7 +506,7 @@ BRG_UNITS pair_bins_summary::delta_Sigma_t_std_for_bin(const BRG_DISTANCE & R, c
 	ssize_t mag_i = _mag_bin_limits_.get_bin_index(mag);
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_bins_summary::delta_Sigma_x_std_for_bin(const distance_type & R, const mass_type & m,
 		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
@@ -517,7 +516,7 @@ BRG_UNITS pair_bins_summary::delta_Sigma_x_std_for_bin(const BRG_DISTANCE & R, c
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_x_std();
 }
 
-BRG_UNITS pair_bins_summary::delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_bins_summary::delta_Sigma_t_stderr_for_bin(const distance_type & R, const mass_type & m,
 		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
@@ -526,7 +525,7 @@ BRG_UNITS pair_bins_summary::delta_Sigma_t_stderr_for_bin(const BRG_DISTANCE & R
 	ssize_t mag_i = _mag_bin_limits_.get_bin_index(mag);
 	return pair_bin_summaries().at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
-BRG_UNITS pair_bins_summary::delta_Sigma_x_stderr_for_bin(const BRG_DISTANCE & R, const BRG_MASS & m,
+surface_density_type pair_bins_summary::delta_Sigma_x_stderr_for_bin(const distance_type & R, const mass_type & m,
 		flt_type z, flt_type mag) const
 {
 	ssize_t R_i = _R_bin_limits_.get_bin_index(R);
@@ -639,18 +638,19 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					// It's possible we'll get bins with no shear information like this, but this
 					// prunes out at least those without any info
 
-					ssize_t col_i = 0;
-					data[col_i].push_back(bin.R_min());
-					data[++col_i].push_back(bin.R_max());
-					data[++col_i].push_back(bin.m_min());
-					data[++col_i].push_back(bin.m_max());
+					ssize_t col_i = -1;
+
+					data[++col_i].push_back(value_of(bin.R_min()));
+					data[++col_i].push_back(value_of(bin.R_max()));
+					data[++col_i].push_back(value_of(bin.m_min()));
+					data[++col_i].push_back(value_of(bin.m_max()));
 					data[++col_i].push_back(bin.z_min());
 					data[++col_i].push_back(bin.z_max());
 					data[++col_i].push_back(bin.mag_min());
 					data[++col_i].push_back(bin.mag_max());
 
-					data[++col_i].push_back(bin.shear_R_mean());
-					data[++col_i].push_back(bin.shear_lens_m_mean());
+					data[++col_i].push_back(value_of(bin.shear_R_mean()));
+					data[++col_i].push_back(value_of(bin.shear_lens_m_mean()));
 					data[++col_i].push_back(bin.shear_lens_z_mean());
 					data[++col_i].push_back(bin.shear_lens_mag_mean());
 
@@ -659,59 +659,59 @@ void pair_bins_summary::print_bin_data(std::ostream &out,
 					data[++col_i].push_back(bin.shear_pair_count());
 					data[++col_i].push_back(bin.shear_effective_pair_count());
 
-					data[++col_i].push_back(bin.shear_sigma_crit());
+					data[++col_i].push_back(value_of(bin.shear_sigma_crit()));
 
-					data[++col_i].push_back(bin.delta_Sigma_t_mean());
-					data[++col_i].push_back(bin.delta_Sigma_t_std());
-					data[++col_i].push_back(bin.delta_Sigma_t_stderr());
-					data[++col_i].push_back(bin.delta_Sigma_x_mean());
-					data[++col_i].push_back(bin.delta_Sigma_x_std());
-					data[++col_i].push_back(bin.delta_Sigma_x_stderr());
+					data[++col_i].push_back(value_of(bin.delta_Sigma_t_mean()));
+					data[++col_i].push_back(value_of(bin.delta_Sigma_t_std()));
+					data[++col_i].push_back(value_of(bin.delta_Sigma_t_stderr()));
+					data[++col_i].push_back(value_of(bin.delta_Sigma_x_mean()));
+					data[++col_i].push_back(value_of(bin.delta_Sigma_x_std()));
+					data[++col_i].push_back(value_of(bin.delta_Sigma_x_stderr()));
 
 					data[++col_i].push_back(bin.gamma_t_mean());
 					data[++col_i].push_back(bin.gamma_t_stderr());
 					data[++col_i].push_back(bin.gamma_x_mean());
 					data[++col_i].push_back(bin.gamma_x_stderr());
 
-					data[++col_i].push_back(bin.model_delta_Sigma_t());
+					data[++col_i].push_back(value_of(bin.model_delta_Sigma_t()));
 					data[++col_i].push_back(bin.model_gamma_t());
 
-					data[++col_i].push_back(bin.model_1h_delta_Sigma_t());
+					data[++col_i].push_back(value_of(bin.model_1h_delta_Sigma_t()));
 					data[++col_i].push_back(bin.model_1h_gamma_t());
 
-					data[++col_i].push_back(bin.model_offset_delta_Sigma_t());
+					data[++col_i].push_back(value_of(bin.model_offset_delta_Sigma_t()));
 					data[++col_i].push_back(bin.model_offset_gamma_t());
 
-					data[++col_i].push_back(bin.magf_R_mean());
-					data[++col_i].push_back(bin.magf_lens_m_mean());
+					data[++col_i].push_back(value_of(bin.magf_R_mean()));
+					data[++col_i].push_back(value_of(bin.magf_lens_m_mean()));
 					data[++col_i].push_back(bin.magf_lens_z_mean());
 					data[++col_i].push_back(bin.magf_lens_mag_mean());
 
 					data[++col_i].push_back(bin.magf_source_z_mean());
 
 					data[++col_i].push_back(bin.magf_num_lenses());
-					data[++col_i].push_back(bin.area());
+					data[++col_i].push_back(value_of(bin.area()));
 
-					data[++col_i].push_back(bin.magf_sigma_crit());
+					data[++col_i].push_back(value_of(bin.magf_sigma_crit()));
 
 					data[++col_i].push_back(bin.mu_hat());
 					data[++col_i].push_back(bin.mu_stderr());
 					data[++col_i].push_back(bin.kappa());
 					data[++col_i].push_back(bin.kappa_stderr());
-					data[++col_i].push_back(bin.Sigma());
-					data[++col_i].push_back(bin.Sigma_stderr());
+					data[++col_i].push_back(value_of(bin.Sigma()));
+					data[++col_i].push_back(value_of(bin.Sigma_stderr()));
 
 					data[++col_i].push_back(bin.model_mu());
 					data[++col_i].push_back(bin.model_kappa());
-					data[++col_i].push_back(bin.model_Sigma());
+					data[++col_i].push_back(value_of(bin.model_Sigma()));
 
 					data[++col_i].push_back(bin.model_1h_mu());
 					data[++col_i].push_back(bin.model_1h_kappa());
-					data[++col_i].push_back(bin.model_1h_Sigma());
+					data[++col_i].push_back(value_of(bin.model_1h_Sigma()));
 
 					data[++col_i].push_back(bin.model_offset_mu());
 					data[++col_i].push_back(bin.model_offset_kappa());
-					data[++col_i].push_back(bin.model_offset_Sigma());
+					data[++col_i].push_back(value_of(bin.model_offset_Sigma()));
 				}
 			}
 		}

@@ -40,25 +40,20 @@ private:
 
 	// Lensing related calculation methods
 #if (1)
-	const BRG_UNITS _proj_dens( const BRG_DISTANCE & R,
-			const bool silent = false ) const;
-	const BRG_UNITS _proj_enc_dens( const BRG_DISTANCE & R, const bool silent =
-			false ) const;
-	const BRG_MASS _proj_enc_mass( const BRG_DISTANCE & R, const bool silent =
-			false ) const;
-	const BRG_UNITS _quick_Delta_Sigma( const BRG_DISTANCE & R, const bool silent =
-			false ) const;
-	const BRG_UNITS _quick_offset_Delta_Sigma( const BRG_DISTANCE & R,
-			const BRG_DISTANCE & offset_R, const bool silent = false ) const;
-	const BRG_UNITS _quick_group_Delta_Sigma( const BRG_DISTANCE & R,
-			const flt_type & group_c, const bool silent = false ) const;
-	const BRG_UNITS _quick_shifted_Delta_Sigma( const BRG_DISTANCE & R, const bool silent = false ) const;
-	const BRG_UNITS _quick_Sigma( const BRG_DISTANCE & R, const bool silent =
-			false ) const;
-	const BRG_UNITS _quick_offset_Sigma( const BRG_DISTANCE & R,
-			const BRG_DISTANCE & offset_R, const bool silent = false ) const;
-	const BRG_UNITS _quick_group_Sigma( const BRG_DISTANCE & R,
-			const flt_type & group_c, const bool silent = false ) const;
+	surface_density_type _proj_dens( const distance_type & R ) const;
+	surface_density_type _proj_enc_dens( const distance_type & R ) const;
+	mass_type _proj_enc_mass( const distance_type & R ) const;
+	surface_density_type _quick_Delta_Sigma( const distance_type & R ) const;
+	surface_density_type _quick_offset_Delta_Sigma( const distance_type & R,
+			const distance_type & offset_R ) const;
+	surface_density_type _quick_group_Delta_Sigma( const distance_type & R,
+			const flt_type & group_c ) const;
+	surface_density_type _quick_shifted_Delta_Sigma( const distance_type & R ) const;
+	surface_density_type _quick_Sigma( const distance_type & R ) const;
+	surface_density_type _quick_offset_Sigma( const distance_type & R,
+			const distance_type & offset_R ) const;
+	surface_density_type _quick_group_Sigma( const distance_type & R,
+			const flt_type & group_c ) const;
 
 #endif // Lensing related calculation methods
 
@@ -70,7 +65,7 @@ public:
 	lensing_tNFW_profile()
 	{
 	}
-	lensing_tNFW_profile( const BRG_MASS & init_mvir0, const flt_type init_z,
+	lensing_tNFW_profile( const mass_type & init_mvir0, const flt_type init_z,
 			const flt_type init_c = -1, const flt_type init_tau = -1 )
 	: tNFW_profile(init_mvir0, init_z, init_c, init_tau)
 	{

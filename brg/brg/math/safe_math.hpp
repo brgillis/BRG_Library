@@ -29,6 +29,8 @@
 #include <limits>
 #include <type_traits>
 
+#include <boost/units/get_dimension.hpp>
+#include <boost/units/is_quantity.hpp>
 
 #include "brg/common.h"
 
@@ -49,7 +51,7 @@ const T safe_sqrt( const T & a )
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 	if(a < 0)
 	{
-		std::cerr << "WARNING: safe_sqrt() prevented error from negative input.\n";
+		handle_error_message("safe_sqrt() prevented error from negative input.");
 	}
 #endif
 	return std::sqrt( std::fabs( a ) );
@@ -63,7 +65,7 @@ inline flt_type safe_sqrt( const int_type a ) // Special case for integers due t
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 	if(a < 0)
 	{
-		std::cerr << "WARNING: safe_sqrt() prevented error from negative input.\n";
+		handle_error_message("safe_sqrt() prevented error from negative input.");
 	}
 #endif
 
@@ -77,18 +79,18 @@ inline flt_type safe_sqrt( const int_type a ) // Special case for integers due t
 	}
 	return sqrt( res );
 }
-template< class Ta, class Tx >
-inline const Ta safe_pow( const Ta & a, const Tx & x )
+template< class Ta >
+inline const Ta safe_pow( const Ta & a, const flt_type & x )
 {
 	Ta res;
 	flt_type ipart;
 
-	std::modf( a, &ipart );
+	std::modf( x, &ipart );
 
-	if ( ( a < 0 ) && ( ipart != a ) )
+	if ( ( a < Ta(0.) ) && ( ipart != x ) )
 	{
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
-		std::cerr << "WARNING: safe_pow() prevented error from negative input.\n";
+		handle_error_message("WARNING: safe_pow() prevented error from negative input.");
 #endif
 		res = -a;
 	}
@@ -111,28 +113,58 @@ inline const T1 safe_quad_sub( const T1 & v1, const T2 & v2 )
 // sure you don't hit a divide-by-zero error.
 template< class T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T>::value,char>::type = 0>
+typename std::enable_if<!brgastro::is_eigen_container<T>::value,char>::type = 0,
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
 const T safe_d( const T & a )
 {
 
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 	if( (a == 0) || isbad(a) )
 	{
-		std::cerr << "WARNING: safe_d() prevented error from zero input or bad input.\n";
+		handle_error_message("safe_d() prevented error from zero input or bad input.");
 	}
 #endif
-	T min_d = a; // So it'll have the right units if we're using units here.
-	min_d = MIN_DIVISOR;
+	T min_d(MIN_DIVISOR);
 
 	if ( isnan( a ) )
 		return min_d;
 	if ( isinf( a ) )
 		return 1. / min_d;
 
-	if (std::fabs(a)>min_d)
+	if (fabs(a)>min_d)
 		return a;
 
 	if(min_d == 0) return 1; // In case of integers
+
+	return min_d;
+
+}
+
+// Version for units
+template< class T,
+typename std::enable_if<!brgastro::is_stl_container<T>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_eigen_container<T>::value,char>::type = 0,
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+const T safe_d( const T & a )
+{
+
+#ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
+	if( (a.value() == 0) || isbad(a) )
+	{
+		handle_error_message("safe_d() prevented error from zero input or bad input.");
+	}
+#endif
+	//boost::units::quantity<boost::units::si::length>::
+
+	T min_d(MIN_DIVISOR * typename T::unit_type() );
+
+	if ( isnan( a.value() ) )
+		return min_d;
+	if ( isinf( a.value() ) )
+		return typename T::unit_type() /MIN_DIVISOR;
+
+	if (fabs(a.value())>min_d.value())
+		return a;
 
 	return min_d;
 
@@ -149,7 +181,7 @@ T safe_d( T array )
 		#ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 		if( (a == 0) || isbad(a) )
 		{
-			std::cerr << "WARNING: safe_d() prevented error from zero input or bad input.\n";
+			handle_error_message("safe_d() prevented error from zero input or bad input.");
 		}
 		#endif
 
@@ -199,7 +231,7 @@ T safe_d( T array )
 		#ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 		if( (*p == 0) || isbad(*p) )
 		{
-			std::cerr << "WARNING: safe_d() prevented error from zero input or bad input.\n";
+			handle_error_message("safe_d() prevented error from zero input or bad input.");
 		}
 		#endif
 

@@ -28,12 +28,12 @@
 #ifndef _BRG_SHIFTING_CACHE_H_INCLUDED_
 #define _BRG_SHIFTING_CACHE_H_INCLUDED_
 
+#include <brg/units/units.hpp>
 #include <string>
 
 #include "brg/common.h"
 #include "brg/math/cache/cache_2d.hpp"
 
-#include "brg_physics/units/unit_obj.h"
 
 namespace brgastro {
 
@@ -57,10 +57,10 @@ protected:
 
 #ifdef _BRG_USE_UNITS_
 
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	const brgastro::unit_obj _units() const throw()
+	// Tells what units the result should have
+	const any_units_type _units( const flt_type & v ) const
 	{
-		return brgastro::unit_angle(0);
+		return any_units_cast<surface_density_type>(v);
 	}
 
 #endif // _BRG_USE_UNITS_

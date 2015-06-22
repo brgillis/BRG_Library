@@ -39,7 +39,7 @@
 #include "brg_lensing/source_obj.hpp"
 
 #include "brg_physics/sky_obj/sky_obj.h"
-#include "brg_physics/units/unit_obj.h"
+#include "brg/units/units.hpp"
 
 namespace brgastro {
 
@@ -58,13 +58,13 @@ private:
 
 	mutable bool _data_stored_;
 	mutable flt_type _z_lens_, _z_source_;
-	mutable BRG_MASS _m_lens_;
+	mutable mass_type _m_lens_;
 	mutable size_t _id_lens_;
 	mutable flt_type _mag_lens_, _mag_source_;
 	mutable flt_type _weight_lens_, _weight_source_;
 	flt_type _weight_pair_;
-	mutable BRG_DISTANCE _R_proj_;
-	mutable BRG_ANGLE _theta_;
+	mutable distance_type _R_proj_;
+	mutable angle_type _theta_;
 	mutable flt_type _gamma_t_, _gamma_x_;
 
 	void _conditional_store_data() const
@@ -112,12 +112,12 @@ public:
 	const flt_type & z_lens() const;
 	const flt_type & z_source() const;
 	flt_type z_diff() const;
-	const BRG_MASS & m_lens() const;
+	const mass_type & m_lens() const;
 	const size_t & id_lens() const;
 	const flt_type & mag_lens() const;
 	const flt_type & mag_source() const;
-	const BRG_DISTANCE & R_proj() const;
-	const BRG_ANGLE & theta() const;
+	const distance_type & R_proj() const;
+	const angle_type & theta() const;
 	const flt_type & gamma_t() const;
 	const flt_type & gamma_x() const;
 	const flt_type & weight_lens() const;
@@ -131,9 +131,9 @@ public:
 	// Calculated values
 #if(1)
 
-	BRG_UNITS sigma_crit() const;
-	BRG_UNITS delta_Sigma_t() const;
-	BRG_UNITS delta_Sigma_x() const;
+	surface_density_type sigma_crit() const;
+	surface_density_type delta_Sigma_t() const;
+	surface_density_type delta_Sigma_x() const;
 #endif
 };
 

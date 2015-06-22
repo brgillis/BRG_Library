@@ -30,8 +30,7 @@
 
 namespace brgastro {
 
-long_flt_type Schechter_like_functor::operator()( const long_flt_type & in_param,
-			const bool silent) const
+long_flt_type Schechter_like_functor::operator()( const long_flt_type & in_param) const
 {
 	const flt_type mag_jump_limit = 23.;
 

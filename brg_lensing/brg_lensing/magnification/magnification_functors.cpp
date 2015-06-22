@@ -26,6 +26,7 @@
 #include "brg/common.h"
 
 #include "brg/math/misc_math.hpp"
+#include "brg/units/units.hpp"
 
 #include "brg_physics/astro.h"
 #include "brg_lensing/magnification/expected_count_cache.h"
@@ -34,24 +35,26 @@
 
 namespace brgastro {
 
-constexpr flt_type test_fudge_factor = 1;
+constexpr flt_type test_fudge_factor = 1.;
 
-BRG_UNITS mag_expected_count_functor::operator() (const long_flt_type & m, bool silent) const
+flt_type mag_expected_count_functor::operator() (const long_flt_type & m) const
 {
-	return expected_count_cache().get(m,_z_mean_);
+	flt_type res = any_cast<flt_type>(expected_count_cache().get(m,_z_mean_));
+
+	return res;
 }
 
-BRG_UNITS mu_signal_integration_functor::operator() (const long_flt_type & m, bool silent) const
+flt_type mu_signal_integration_functor::operator() (const long_flt_type & m) const
 {
 	long_flt_type alpha = magnification_alpha(m,_z_mean_);
-	long_flt_type count = test_fudge_factor*expected_count_cache().get(m,_z_mean_);
+	long_flt_type count = test_fudge_factor*any_cast<flt_type>(expected_count_cache().get(m,_z_mean_));
 	return count*(alpha-1);
 }
 
-BRG_UNITS mu_weight_integration_functor::operator() (const long_flt_type & m, bool silent) const
+flt_type mu_weight_integration_functor::operator() (const long_flt_type & m) const
 {
 	long_flt_type alpha = magnification_alpha(m,_z_mean_);
-	long_flt_type count = test_fudge_factor*expected_count_cache().get(m,_z_mean_);
+	long_flt_type count = test_fudge_factor*any_cast<flt_type>(expected_count_cache().get(m,_z_mean_));
 	return count*square(alpha-1);
 }
 

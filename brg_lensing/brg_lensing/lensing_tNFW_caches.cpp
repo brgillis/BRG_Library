@@ -33,9 +33,8 @@
 #include "brg_lensing/lensing_tNFW_profile.h"
 
 #include "brg_physics/astro.h"
-#include "brg_physics/units/unit_obj.h"
-
 #include "lensing_tNFW_caches.h"
+#include <brg/units/units.hpp>
 
 // Initialisation for brgastro::tNFW_sig_cache
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_sig_cache,
@@ -88,11 +87,11 @@ DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_Sigma_cache,
 const flt_type brgastro::tNFW_sig_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
 		const flt_type in_param_3 ) const
 {
-	const flt_type mass = std::exp(in_param_1);
-	const flt_type z = in_param_2;
-	const flt_type r = std::exp(in_param_3);
+	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
+	const auto z = in_param_2;
+	const auto R = units_cast<distance_type>(std::exp(in_param_3));
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	return profile.Delta_Sigma( r );
+	return value_of(profile.Delta_Sigma( R ));
 }
 
 #endif // end brgastro::tNFW_sig_cache methods
@@ -103,12 +102,12 @@ const flt_type brgastro::tNFW_sig_cache::_calculate( const flt_type in_param_1, 
 const flt_type brgastro::tNFW_offset_sig_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
 		const flt_type in_param_3, const flt_type in_param_4 ) const
 {
-	const flt_type mass = std::exp(in_param_1);
-	const flt_type z = in_param_2;
-	const flt_type r = std::exp(in_param_3);
-	const flt_type offset_r = std::exp(in_param_4);
+	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
+	const auto z = in_param_2;
+	const auto R = units_cast<distance_type>(std::exp(in_param_3));
+	const auto offset_R = units_cast<distance_type>(std::exp(in_param_4));
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	return profile.offset_Delta_Sigma( r, offset_r );
+	return value_of(profile.offset_Delta_Sigma( R, offset_R ));
 }
 
 #endif // end brgastro::NFW_offset_sig_cache functions
@@ -119,12 +118,12 @@ const flt_type brgastro::tNFW_offset_sig_cache::_calculate( const flt_type in_pa
 const flt_type brgastro::tNFW_group_sig_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
 		const flt_type in_param_3, const flt_type in_param_4 ) const
 {
-	const flt_type mass = std::exp(in_param_1);
-	const flt_type z = in_param_2;
-	const flt_type r = std::exp(in_param_3);
-	const flt_type group_c = in_param_4;
+	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
+	const auto z = in_param_2;
+	const auto R = units_cast<distance_type>(std::exp(in_param_3));
+	const auto group_c = in_param_4;
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	return profile.semiquick_group_Delta_Sigma( r, group_c );
+	return value_of(profile.semiquick_group_Delta_Sigma( R, group_c ));
 }
 
 #endif // end brgastro::tNFW_group_sig_cache functions
@@ -134,11 +133,11 @@ const flt_type brgastro::tNFW_group_sig_cache::_calculate( const flt_type in_par
 const flt_type brgastro::tNFW_shifted_sig_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
 		const flt_type in_param_3 ) const
 {
-	const flt_type mass = std::exp(in_param_1);
-	const flt_type z = in_param_2;
-	const flt_type R = std::exp(in_param_3);
+	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
+	const auto z = in_param_2;
+	const auto R = units_cast<distance_type>(std::exp(in_param_3));
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	return profile.semiquick_shifted_Delta_Sigma( R );
+	return value_of(profile.semiquick_shifted_Delta_Sigma( R ));
 }
 
 #endif // end brgastro::tNFW_sig_cache methods
@@ -148,11 +147,11 @@ const flt_type brgastro::tNFW_shifted_sig_cache::_calculate( const flt_type in_p
 const flt_type brgastro::tNFW_Sigma_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
 		const flt_type in_param_3 ) const
 {
-	const flt_type mass = std::exp(in_param_1);
-	const flt_type z = in_param_2;
-	const flt_type r = std::exp(in_param_3);
+	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
+	const auto z = in_param_2;
+	const auto R = units_cast<distance_type>(std::exp(in_param_3));
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	return profile.proj_dens( r );
+	return value_of(profile.proj_dens( R ));
 }
 
 #endif // end brgastro::tNFW_Sigma_cache methods
@@ -163,12 +162,12 @@ const flt_type brgastro::tNFW_Sigma_cache::_calculate( const flt_type in_param_1
 const flt_type brgastro::tNFW_offset_Sigma_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
 		const flt_type in_param_3, const flt_type in_param_4 ) const
 {
-	const flt_type mass = std::exp(in_param_1);
-	const flt_type z = in_param_2;
-	const flt_type r = std::exp(in_param_3);
-	const flt_type offset_r = std::exp(in_param_4);
+	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
+	const auto z = in_param_2;
+	const auto R = units_cast<distance_type>(std::exp(in_param_3));
+	const auto offset_R = units_cast<distance_type>(std::exp(in_param_4));
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	return profile.offset_Sigma( r, offset_r );
+	return value_of(profile.offset_Sigma( R, offset_R ));
 }
 
 #endif // end brgastro::NFW_offset_Sigma_cache functions
@@ -179,12 +178,12 @@ const flt_type brgastro::tNFW_offset_Sigma_cache::_calculate( const flt_type in_
 const flt_type brgastro::tNFW_group_Sigma_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
 		const flt_type in_param_3, const flt_type in_param_4 ) const
 {
-	const flt_type mass = std::exp(in_param_1);
-	const flt_type z = in_param_2;
-	const flt_type r = std::exp(in_param_3);
-	const flt_type group_c = in_param_4;
+	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
+	const auto z = in_param_2;
+	const auto R = units_cast<distance_type>(std::exp(in_param_3));
+	const auto group_c = in_param_4;
 	brgastro::lensing_tNFW_profile profile(mass,z);
-	return profile.semiquick_group_Sigma( r, group_c );
+	return value_of(profile.semiquick_group_Sigma( R, group_c ));
 }
 
 #endif // end brgastro::tNFW_group_Sigma_cache functions

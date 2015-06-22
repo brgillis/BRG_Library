@@ -40,26 +40,26 @@ struct phase
  -----
 
  A structure representing the full phase of an
- object (position and velocity) and also time,
+ object (position and velocity_type) and also time_type,
  to help limit the number of variables that need
  to be passed to certain functions.
 
  All member variables are public, and may be
  accessed directly. Units should be in the
- default set: m for position, m/s for velocity,
- s for time.
+ default set: m for position, m/s for velocity_type,
+ s for time_type.
 
  **********************************************/
 {
-	BRG_DISTANCE x, y, z;
+	distance_type x, y, z;
 
-	BRG_VELOCITY vx, vy, vz;
+	velocity_type vx, vy, vz;
 
-	BRG_TIME t;
-	phase( const BRG_DISTANCE & init_x = 0, const BRG_DISTANCE & init_y = 0,
-			const BRG_DISTANCE & init_z = 0, const BRG_VELOCITY & init_vx = 0,
-			const BRG_VELOCITY & init_vy = 0, const BRG_VELOCITY & init_vz = 0,
-	BRG_TIME init_t = 0 )
+	time_type t;
+	phase( const distance_type & init_x = 0, const distance_type & init_y = 0,
+			const distance_type & init_z = 0, const velocity_type & init_vx = 0,
+			const velocity_type & init_vy = 0, const velocity_type & init_vz = 0,
+	time_type init_t = 0 )
 	{
 		x = init_x;
 		y = init_y;
@@ -69,10 +69,10 @@ struct phase
 		vz = init_vz;
 		t = init_t;
 	}
-	const int_type set_phase( const BRG_DISTANCE & init_x = 0, const BRG_DISTANCE & init_y = 0,
-			const BRG_DISTANCE & init_z = 0, const BRG_VELOCITY & init_vx = 0,
-			const BRG_VELOCITY & init_vy = 0, const BRG_VELOCITY & init_vz = 0,
-	BRG_TIME init_t = 0 )
+	const int_type set_phase( const distance_type & init_x = 0, const distance_type & init_y = 0,
+			const distance_type & init_z = 0, const velocity_type & init_vx = 0,
+			const velocity_type & init_vy = 0, const velocity_type & init_vz = 0,
+	time_type init_t = 0 )
 	{
 		x = init_x;
 		y = init_y;

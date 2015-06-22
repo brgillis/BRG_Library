@@ -25,12 +25,13 @@
 #ifndef _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 #define _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 
+#include "brg/units/unit_conversions.hpp"
+#include "brg/units/units.hpp"
 #include "brg/common.h"
 
 #include "brg/math/calculus/integrate.hpp"
 
 #include "brg_physics/astro.h"
-#include "brg_physics/units/unit_conversions.hpp"
 
 namespace brgastro {
 
@@ -41,14 +42,14 @@ class projected_density_functor
 	 projected_density_functor class
 	 -----------------------------
 
-	 Function class integrating density along a projected line
+	 Function class integrating density_type along a projected line
 
 	 Parent class: function_class (from brg_functors)
 
 	 **********************************/
 private:
 	const name *_host_ptr_;
-	BRG_UNITS _offset_R_;
+	distance_type _offset_R_;
 
 public:
 
@@ -61,28 +62,27 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_offset_R( const BRG_DISTANCE & new_offset_R )
+	void set_offset_R( const distance_type & new_offset_R )
 	{
 		_offset_R_ = new_offset_R;
 	}
-	const BRG_DISTANCE offset_R()
+	const distance_type offset_R()
 	{
 		return _offset_R_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS & in_param,
-			const bool silent = false ) const
+	surface_density_type operator()( const distance_type & in_param ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
 			throw std::runtime_error("ERROR: Host must be assigned to projected_density_functor before function can be called.\n");
 		}
-		BRG_DISTANCE r = quad_add( in_param, _offset_R_ );
+		distance_type r = quad_add( in_param, _offset_R_ );
 		return _host_ptr_->dens( r );
 	}
 
 	projected_density_functor( const name *init_host=NULL,
-			const BRG_DISTANCE & init_offset_R=0 )
+			const distance_type & init_offset_R=0 )
 	{
 		set_host_ptr( init_host );
 		set_offset_R( init_offset_R );
@@ -99,7 +99,7 @@ class cylindrical_density_functor
 	 cylindrical_density_functor class
 	 -----------------------------
 
-	 Function class for integrating density in a cylinder
+	 Function class for integrating density_type in a cylinder
 
 	 Parent class: function_class (from brg_functors)
 
@@ -118,7 +118,7 @@ public:
 		return _host_ptr_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS & in_param, const bool silent = false ) const
+	custom_unit_type<-1,0,1,0,0> operator()( const distance_type & in_param ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
@@ -141,7 +141,7 @@ class offset_ring_dens_functor
 {
 
 	const name *_host_ptr_;
-	BRG_DISTANCE _R0_, _R_;
+	distance_type _R0_, _R_;
 
 public:
 
@@ -154,39 +154,38 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R0( const BRG_DISTANCE & new_R0 )
+	void set_R0( const distance_type & new_R0 )
 	{
 		_R0_ = new_R0;
 	}
-	const BRG_DISTANCE &  R0()
+	const distance_type &  R0()
 	{
 		return _R0_;
 	}
 
-	void set_R( const BRG_DISTANCE & new_R )
+	void set_R( const distance_type & new_R )
 	{
 		_R_ = new_R;
 	}
-	const BRG_DISTANCE &  R()
+	const distance_type &  R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS &  in_param,
-			const bool silent = false ) const
+	surface_density_type operator()( const angle_type &  in_param ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
 			throw std::runtime_error("ERROR: Host must be assigned to offset_ring_dens_functor before function can be called.\n");
 		}
 
-		BRG_DISTANCE d = lc_add( _R0_, _R_, in_param );
+		distance_type d = lc_add( _R0_, _R_, in_param );
 
-		return _host_ptr_->proj_dens( d, silent );
+		return _host_ptr_->proj_dens( d );
 	}
 
 	offset_ring_dens_functor( const name *new_host=NULL,
-			const BRG_DISTANCE & new_R_0 = 0, const BRG_DISTANCE & new_R = 0 )
+			const distance_type & new_R_0 = 0, const distance_type & new_R = 0 )
 	{
 		_host_ptr_ = new_host;
 		_R_ = new_R;
@@ -200,9 +199,9 @@ class offset_circ_dens_functor
 {
 private:
 	const name *_host_ptr_;
-	BRG_DISTANCE _R0_, _R_;
+	distance_type _R0_, _R_;
 
-	BRG_DISTANCE _arc_length_in_circle( const BRG_DISTANCE & R2 ) const
+	distance_type _arc_length_in_circle( const distance_type & R2 ) const
 	{
 		// Check for complete enclosure
 		if( _R0_ + R2 <= _R_)
@@ -211,9 +210,9 @@ private:
 		}
 		else
 		{
-			BRG_DISTANCE result = 2.*R2 * std::acos( (square(_R0_)-square(_R_)+square(R2)) / (2.*_R0_*R2) );
-			if(result>0) return result;
-			return 0.; // We'll get here only in cases due to round-off error, where it should actually be zero
+			distance_type res = 2.*R2 * std::acos( (square(_R0_)-square(_R_)+square(R2)) / (2.*_R0_*R2) );
+			if(value_of(res)>0) return res;
+			return units_cast<distance_type>(0.); // We'll get here only in cases due to round-off error, where it should actually be zero
 		}
 	}
 
@@ -228,39 +227,38 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R0( const BRG_DISTANCE & new_R0 )
+	void set_R0( const distance_type & new_R0 )
 	{
 		_R0_ = new_R0;
 	}
-	const BRG_DISTANCE & R0()
+	const distance_type & R0()
 	{
 		return _R0_;
 	}
 
-	void set_R( const BRG_DISTANCE & new_R )
+	void set_R( const distance_type & new_R )
 	{
 		_R_ = new_R;
 	}
-	const BRG_DISTANCE & R()
+	const distance_type & R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS & in_param,
-			const bool silent = false ) const
+	custom_unit_type<-1,0,1,0,0> operator()( const distance_type & in_param ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
 			throw std::runtime_error("ERROR: Host must be assigned to offset_circ_dens_functor before function can be called.\n");
 		}
 
-		BRG_DISTANCE L = _arc_length_in_circle(in_param);
+		distance_type L = _arc_length_in_circle(in_param);
 
-		return L * _host_ptr_->proj_dens( in_param, silent );
+		return L * _host_ptr_->proj_dens( in_param );
 	}
 
 	offset_circ_dens_functor( const name *new_host=NULL,
-			const BRG_DISTANCE & new_R0 = 0, const BRG_DISTANCE & new_R = 0  )
+			const distance_type & new_R0 = 0, const distance_type & new_R = 0  )
 	{
 		_host_ptr_ = new_host;
 		_R0_ = new_R0;
@@ -275,7 +273,7 @@ class offset_Delta_Sigma_functor
 private:
 
 	const name *_host_ptr_;
-	BRG_DISTANCE _R_;
+	distance_type _R_;
 
 public:
 
@@ -288,28 +286,27 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R( const BRG_DISTANCE & new_R )
+	void set_R( const distance_type & new_R )
 	{
 		_R_ = new_R;
 	}
-	const BRG_DISTANCE &  R()
+	const distance_type &  R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS &  in_param,
-			const bool silent = false ) const
+	surface_density_type operator()( const distance_type &  in_param ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
 			throw std::runtime_error("ERROR: Host must be assigned to offset_Delta_Sigma_functor before function can be called.\n");
 		}
 
-		return _host_ptr_->offset_Delta_Sigma( _R_, in_param, silent );
+		return _host_ptr_->offset_Delta_Sigma( _R_, in_param );
 	}
 
 	offset_Delta_Sigma_functor( const name *init_host=NULL,
-			const BRG_DISTANCE & init_R = 0 )
+			const distance_type & init_R = 0 )
 	{
 		_host_ptr_ = init_host;
 		_R_ = init_R;
@@ -324,7 +321,7 @@ class quick_offset_Delta_Sigma_functor
 private:
 
 	const name *_host_ptr_;
-	BRG_DISTANCE _R_;
+	distance_type _R_;
 
 public:
 
@@ -337,28 +334,27 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R( const BRG_DISTANCE & new_R )
+	void set_R( const distance_type & new_R )
 	{
 		_R_ = new_R;
 	}
-	const BRG_DISTANCE &  R()
+	const distance_type &  R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS &  in_param,
-			const bool silent = false ) const
+	surface_density_type operator()( const distance_type &  in_param ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
 			throw std::runtime_error("ERROR: Host must be assigned to offset_Delta_Sigma_functor before function can be called.\n");
 		}
 
-		return _host_ptr_->quick_offset_Delta_Sigma( _R_, in_param, silent );
+		return _host_ptr_->quick_offset_Delta_Sigma( _R_, in_param );
 	}
 
 	quick_offset_Delta_Sigma_functor( const name *init_host=NULL,
-			const BRG_DISTANCE & init_R = 0 )
+			const distance_type & init_R = 0 )
 	{
 		_host_ptr_ = init_host;
 		_R_ = init_R;
@@ -390,13 +386,12 @@ public:
 	{
 		_c_ = new_c;
 	}
-	const flt_type c()
+	const flt_type & c() noexcept
 	{
 		return _c_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS &  in_param,
-			const bool silent = false ) const
+	flt_type operator()( const distance_type &  in_param ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
@@ -405,14 +400,14 @@ public:
 
 		if ( _c_ == 0 )
 		{
-			return 2 * pi * in_param * _host_ptr_->proj_dens( in_param );
+			return value_of(2. * pi * in_param * _host_ptr_->proj_dens( in_param ));
 		}
 		else
 		{
 			BRG_UNIQUE_PTR<name> group_profile(_host_ptr_->lensing_profile_extension_clone());
 			group_profile->set_c(_c_);
 			group_profile->set_tau(group_profile->tau()*_c_/_host_ptr_->c());
-			return 2 * pi * in_param * group_profile->proj_dens(in_param);
+			return value_of(2. * pi * in_param * group_profile->proj_dens(in_param));
 		}
 	}
 
@@ -431,27 +426,26 @@ class shifted_Delta_Sigma_weight_functor
 
 private:
 
-	BRG_DISTANCE _sigma_;
+	distance_type _sigma_;
 
 public:
 
-	void set_sigma( const BRG_DISTANCE & new_sigma )
+	void set_sigma( const distance_type & new_sigma )
 	{
 		_sigma_ = new_sigma;
 	}
-	const BRG_DISTANCE & sigma()
+	const distance_type & sigma()
 	{
 		return _sigma_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS &  in_param,
-			const bool silent = false ) const
+	flt_type operator()( const distance_type &  in_param ) const
 	{
 		// The output here is the height of a Rayleigh distribution at in_param
-		return in_param/square(_sigma_) * std::exp(-square(in_param)/(2*square(_sigma_)));
+		return value_of(in_param/square(_sigma_) * std::exp(-square(in_param)/(2.*square(_sigma_))));
 	}
 
-	shifted_Delta_Sigma_weight_functor( const BRG_DISTANCE & new_sigma=0 )
+	shifted_Delta_Sigma_weight_functor( const distance_type & new_sigma=0 )
 	{
 		_sigma_ = new_sigma;
 	}
@@ -465,7 +459,7 @@ class shifted_Delta_Sigma_circ_functor
 private:
 
 	const name *_host_ptr_;
-	BRG_DISTANCE _R_, _R_shift_;
+	distance_type _R_, _R_shift_;
 
 public:
 
@@ -478,54 +472,54 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R_shift( const BRG_DISTANCE & new_R_shift )
+	void set_R_shift( const distance_type & new_R_shift )
 	{
 		_R_shift_ = new_R_shift;
 	}
-	const BRG_DISTANCE & R_shift()
+	const distance_type & R_shift()
 	{
 		return _R_shift_;
 	}
 
-	void set_R( const BRG_DISTANCE & new_R )
+	void set_R( const distance_type & new_R )
 	{
 		_R_ = new_R;
 	}
-	const BRG_DISTANCE & R()
+	const distance_type & R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS &  in_param, const bool silent = false ) const
+	surface_density_type operator()( const angle_type &  in_param ) const
 	{
-		// in_param here will be angle theta in radians
+		// in_param here will be angle_type theta in radians
 
-		const BRG_DISTANCE R_actual(lc_add(_R_, _R_shift_, in_param));
+		const distance_type R_actual(lc_add(_R_, _R_shift_, in_param));
 
-		const BRG_ANGLE theta(asin(_R_shift_/R_actual * sin(in_param)));
+		const angle_type theta(asin(_R_shift_/R_actual * sin(in_param)));
 		const flt_type angle_factor = cos(theta);
 
 		flt_type extra_shear_factor;
-		if(_R_shift_==0)
+		if(value_of(_R_shift_)==0)
 			extra_shear_factor = 0;
 		else
 			extra_shear_factor = (R_actual-_R_)/_R_shift_*
-				_host_ptr_->shift_factor(1*brgastro::unitconv::kpctom);
+				_host_ptr_->shift_factor(1*brgastro::unitconv::kpctom*m);
 
 		if(isbad(theta))
 		{
-			return _host_ptr_->Delta_Sigma(R_actual,silent) +
+			return _host_ptr_->Delta_Sigma(R_actual) +
 				extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z());
 		}
 		else
 		{
-			return _host_ptr_->Delta_Sigma(R_actual,silent)*angle_factor +
+			return _host_ptr_->Delta_Sigma(R_actual)*angle_factor +
 					extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z()); //TODO Should there be a factor of 1/2 here?
 		}
 	}
 
 	shifted_Delta_Sigma_circ_functor( const name *new_host=NULL,
-			const BRG_DISTANCE & new_R_shift=0, const BRG_DISTANCE & new_R=0 )
+			const distance_type & new_R_shift=0, const distance_type & new_R=0 )
 	{
 		_host_ptr_ = new_host;
 		_R_shift_ = new_R_shift;
@@ -541,7 +535,7 @@ class shifted_Delta_Sigma_functor
 private:
 
 	const name *_host_ptr_;
-	BRG_DISTANCE _R_;
+	distance_type _R_;
 
 public:
 
@@ -554,33 +548,32 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_R( const BRG_DISTANCE & new_R )
+	void set_R( const distance_type & new_R )
 	{
 		_R_ = new_R;
 	}
-	const BRG_DISTANCE & R()
+	const distance_type & R()
 	{
 		return _R_;
 	}
 
-	BRG_UNITS operator()( const BRG_UNITS & in_param, const bool silent = false ) const
+	surface_density_type operator()( const distance_type & in_param ) const
 	{
 		// in_param here will be R_shift
 		shifted_Delta_Sigma_circ_functor<name> func(_host_ptr_,in_param,_R_);
 
-		const flt_type min_in_param = 0;
-		const flt_type max_in_param = pi;
+		const angle_type min_in_param = 0 * rad;
+		const angle_type max_in_param = pi * rad;
 		const flt_type precision = 0.000001;
-		BRG_UNITS out_param(0);
 
-		out_param = brgastro::integrate_Romberg( &func, min_in_param, max_in_param,
+		auto out_param = brgastro::integrate_Romberg( func, min_in_param, max_in_param,
 				precision, false );
 
-		return out_param /= pi;
+		return out_param / (pi * rad);
 	}
 
 	shifted_Delta_Sigma_functor( const name *new_host=NULL,
-			const BRG_DISTANCE & new_R=0 )
+			const distance_type & new_R=0 )
 	{
 		_host_ptr_ = new_host;
 		_R_ = new_R;

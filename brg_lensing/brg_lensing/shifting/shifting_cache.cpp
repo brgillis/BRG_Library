@@ -30,9 +30,8 @@
 #include "brg/math/safe_math.hpp"
 
 #include "brg_lensing/shifting/shifting_loader.h"
-#include "brg_physics/units/unit_conversions.hpp"
-
 #include "shifting_cache.h"
+#include <brg/units/unit_conversions.hpp>
 
 // Initialise the cache
 DEFINE_BRG_CACHE_2D_STATIC_VARS( shifting_cache,

@@ -96,21 +96,13 @@ inline T differentiate( const f * func, const T & in_param,
 	{
 		if ( small_factor_with_units == 0 )
 		{
-#ifdef _BRG_USE_UNITS_
-			d_in_param.set(SMALL_FACTOR,in_param.get_unit_powers());
-#else
 			d_in_param = factor;
-#endif
 		}
 		else
 		{
 			if ( in_param == 0 )
 			{
-#ifdef _BRG_USE_UNITS_
-				d_in_param.set(small_factor_with_units.get_value(),in_param.get_unit_powers());
-#else
 				d_in_param = small_factor_with_units;
-#endif
 			} // if(in_params[i]==0)
 		}
 	}
