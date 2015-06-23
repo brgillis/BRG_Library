@@ -25,8 +25,6 @@
 #ifndef _BRG_ASTRO_H_INCLUDED_
 #define _BRG_ASTRO_H_INCLUDED_
 
-#include <brg/units/unit_conversions.hpp>
-#include <brg/units/units.hpp>
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
@@ -35,6 +33,8 @@
 
 #include "brg/common.h"
 
+#include "brg/units/unit_conversions.hpp"
+#include "brg/units/units.hpp"
 #include "brg/math/misc_math.hpp"
 
 

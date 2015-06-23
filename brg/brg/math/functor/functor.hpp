@@ -34,7 +34,7 @@
 
 namespace brgastro {
 
-template<typename T, typename param_struct=char> // Defaults to using the minimum size for the param structure
+template<typename Tin, typename Tout, typename param_struct=char> // Defaults to using the minimum size for the param structure
 class functor
 {
 private:
@@ -67,7 +67,7 @@ public:
 		return _params_;
 	}
 
-	virtual T operator()(const T & in_param) const =0;
+	virtual Tout operator()(const Tin & in_param) const =0;
 
 };
 

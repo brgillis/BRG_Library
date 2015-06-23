@@ -39,7 +39,8 @@ namespace brgastro {
 /**
  *
  */
-class Schechter_like_functor: public brgastro::functor<long_flt_type,std::vector<long_flt_type>> {
+class Schechter_like_functor: public brgastro::functor<flt_type,flt_type,
+	std::vector<flt_type>> {
 private:
 	constexpr static ssize_t _num_params_ = 7;
 
@@ -47,7 +48,7 @@ public:
 	Schechter_like_functor()
 	{
 	}
-	Schechter_like_functor(const std::vector<long_flt_type> & init_params )
+	Schechter_like_functor(const std::vector<flt_type> & init_params )
 	: functor(init_params)
 	{
 	}

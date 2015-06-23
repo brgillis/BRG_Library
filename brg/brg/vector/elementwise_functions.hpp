@@ -178,52 +178,57 @@ T2 rand_vector(const f func, const T1 & v1, T2 v2)
 #if (1)
 
 template< typename T1, typename T2,
-	typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 add( T1 v1, const T2 &v2 )
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto add( const T1 & v1, const T2 &v2 ) -> decltype(v1+v2)
 {
-	assert(v1.size()==v2.size());
-
-	for(typename T1::size_type i = 0; i < v1.size(); i++)
-	{
-		v1[i] += v2[i];
-	}
-
-	return v1;
+	return v1+v2;
 }
 
 template< typename T1, typename T2,
-	typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-	typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 add( T1 v1, const T2 &v2 )
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto add( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]+v2)>
 {
-	for(auto & v : v1)
+	typedef decltype(v1[0]+v2) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
 	{
-		v += v2;
+		vout[i] = add(v1[i],v2);
 	}
 
-	return v1;
-}
-
-template< typename T1, typename T2,
-	typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-	typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T2 add( const T1 & v1, T2 v2 )
-{
-	for(auto & v : v2)
-	{
-		v += v1;
-	}
-
-	return v2;
+	return vout;
 }
 
 template< typename T1, typename T2,
 typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 add( T1 v1, const T2 & v2 )
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto add( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1+v2[0])>
 {
-	return v1 += v2;
+	return add(v2,v1);
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto add( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]+v2[0])>
+{
+	assert(v1.size()==v2.size());
+
+	typedef decltype(v1[0]+v2[0]) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
+	{
+		vout[i] = add(v1[i],v2[i]);
+	}
+
+	return vout;
 }
 
 #endif // Element-wise addition
@@ -232,51 +237,67 @@ T1 add( T1 v1, const T2 & v2 )
 #if (1)
 
 template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto subtract( const T1 & v1, const T2 &v2 ) -> decltype(v1-v2)
+{
+	return v1-v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]-v2)>
+{
+	typedef decltype(v1[0]-v2) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
+	{
+		vout[i] = subtract(v1[i],v2);
+	}
+
+	return vout;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1-v2[0])>
+{
+	typedef decltype(v1-v2[0]) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
+	{
+		vout[i] = subtract(v1,v2[i]);
+	}
+
+	return vout;
+}
+
+template< typename T1, typename T2,
 typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
 typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 subtract( T1 v1, const T2 &v2 )
+auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]-v2[0])>
 {
 	assert(v1.size()==v2.size());
-	for(typename T1::size_type i = 0; i < v1.size(); i++)
+
+	typedef decltype(v1[0]-v2[0]) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
 	{
-		v1[i] -= v2[i];
+		vout[i] = subtract(v1[i],v2[i]);
 	}
 
-	return v1;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 subtract( T1 v1, const T2 &v2 )
-{
-	for(auto & v : v1)
-	{
-		v -= v2;
-	}
-
-	return v1;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T2 subtract( const T1 & v1, T2 v2 )
-{
-	for(auto & v : v2)
-	{
-		v = v1-v;
-	}
-
-	return v2;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 subtract( T1 v1, const T2 & v2 )
-{
-	return v1 -= v2;
+	return vout;
 }
 
 #endif // Element-wise subtraction
@@ -285,51 +306,57 @@ T1 subtract( T1 v1, const T2 & v2 )
 #if (1)
 
 template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto multiply( const T1 & v1, const T2 &v2 ) -> decltype(v1*v2)
+{
+	return v1*v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto multiply( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]*v2)>
+{
+	typedef decltype(v1[0]*v2) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
+	{
+		vout[i] = multiply(v1[i],v2);
+	}
+
+	return vout;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto multiply( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1*v2[0])>
+{
+	return multiply(v2,v1);
+}
+
+template< typename T1, typename T2,
 typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
 typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 multiply( T1 v1, const T2 &v2 )
+auto multiply( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]*v2[0])>
 {
 	assert(v1.size()==v2.size());
-	for(typename T1::size_type i = 0; i < v1.size(); i++)
+
+	typedef decltype(v1[0]*v2[0]) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
 	{
-		v1[i] *= v2[i];
+		vout[i] = multiply(v1[i],v2[i]);
 	}
 
-	return v1;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 multiply( T1 v1, const T2 &v2 )
-{
-	for(auto & v : v1)
-	{
-		v *= v2;
-	}
-
-	return v1;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T2 multiply( const T1 & v1, T2 v2 )
-{
-	for(auto & v : v2)
-	{
-		v *= v1;
-	}
-
-	return v2;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 multiply( T1 v1, const T2 & v2 )
-{
-	return v1 *= v2;
+	return vout;
 }
 
 #endif // Element-wise multiplication
@@ -338,51 +365,67 @@ T1 multiply( T1 v1, const T2 & v2 )
 #if (1)
 
 template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto divide( const T1 & v1, const T2 &v2 ) -> decltype(v1/v2)
+{
+	return v1/v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]/v2)>
+{
+	typedef decltype(v1[0]/v2) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
+	{
+		vout[i] = divide(v1[i],v2);
+	}
+
+	return vout;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1/v2[0])>
+{
+	typedef decltype(v1/v2[0]) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
+	{
+		vout[i] = divide(v1,v2[i]);
+	}
+
+	return vout;
+}
+
+template< typename T1, typename T2,
 typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
 typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 divide( T1 v1, const T2 &v2 )
+auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]/v2[0])>
 {
 	assert(v1.size()==v2.size());
-	for(typename T1::size_type i = 0; i < v1.size(); i++)
+
+	typedef decltype(v1[0]/v2[0]) Tvout;
+	typedef std::vector<Tvout> Tout;
+
+	Tout vout(v1.size());
+
+	for(ssize_t i=0; i<ssize(vout);++i)
 	{
-		v1[i] /= v2[i];
+		vout[i] = divide(v1[i],v2[i]);
 	}
 
-	return v1;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 divide( T1 v1, const T2 &v2 )
-{
-	for(auto & v : v1)
-	{
-		v /= v2;
-	}
-
-	return v1;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T2 divide( const T1 & v1, T2 v2 )
-{
-	for(auto & v : v2)
-	{
-		v = v1/v;
-	}
-
-	return v2;
-}
-
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 divide( T1 v1, const T2 & v2 )
-{
-	return v1 /= v2;
+	return vout;
 }
 
 #endif // Element-wise divide
@@ -391,17 +434,11 @@ T1 divide( T1 v1, const T2 & v2 )
 #if (1)
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 pow( T1 v1, const T2 &v2 )
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+T1 pow( const T1 & v1, const T2 & v2 )
 {
-	assert(v1.size()==v2.size());
-	for(typename T1::size_type i = 0; i < v1.size(); i++)
-	{
-		v1[i] = pow(v1[i], v2[i]);
-	}
-
-	return v1;
+	return std::pow(v1, v2);
 }
 
 template< typename T1, typename T2,
@@ -432,22 +469,14 @@ T2 pow( const T1 & v1, T2 v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 pow( const T1 & v1, const T2 & v2 )
-{
-	return std::pow(v1, v2);
-}
-
-template< typename T1, typename T2,
 typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
 typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 ipow( T1 v1, const T2 &v2 )
+T1 pow( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
 	for(typename T1::size_type i = 0; i < v1.size(); i++)
 	{
-		v1[i] = ipow(v1[i], v2[i]);
+		v1[i] = pow(v1[i], v2[i]);
 	}
 
 	return v1;
@@ -456,11 +485,11 @@ T1 ipow( T1 v1, const T2 &v2 )
 template< typename T1, typename T2,
 typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
 typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 ipow( T1 v1, const T2 &v2 )
+T1 runtime_ipow( T1 v1, const T2 &v2 )
 {
 	for(auto & v : v1)
 	{
-		v = ipow(v, v2);
+		v = runtime_ipow(v, v2);
 	}
 
 	return v1;
@@ -469,36 +498,35 @@ T1 ipow( T1 v1, const T2 &v2 )
 template< typename T1, typename T2,
 typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
 typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 ipow( const T1 & v1, const T2 & v2 )
+T1 runtime_ipow( const T1 & v1, const T2 & v2 )
 {
 	T1 result(v2.size());
 	for(typename T2::size_type i = 0; i < v2.size(); i++)
 	{
-		result[i] = ipow(v1, v2[i]);
+		result[i] = runtime_ipow(v1, v2[i]);
 	}
 
 	return v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+T1 runtime_ipow( T1 v1, const T2 &v2 )
+{
+	assert(v1.size()==v2.size());
+	for(typename T1::size_type i = 0; i < v1.size(); i++)
+	{
+		v1[i] = runtime_ipow(v1[i], v2[i]);
+	}
+
+	return v1;
 }
 
 #endif // Element-wise power
 
 // Element-wise safe power
 #if (1)
-
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
-T1 safe_pow( T1 v1, const T2 &v2 )
-{
-
-	assert(v1.size()==v2.size());
-	for(int_type i = 0; i < v1.size(); i++)
-	{
-		v1[i] = safe_pow(v1[i], v2[i]);
-	}
-
-	return v1;
-}
 
 template< typename T1, typename T2,
 typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
@@ -525,6 +553,21 @@ T2 safe_pow( const T1 & v1, T2 v2 )
 	}
 
 	return v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+T1 safe_pow( T1 v1, const T2 &v2 )
+{
+
+	assert(v1.size()==v2.size());
+	for(int_type i = 0; i < v1.size(); i++)
+	{
+		v1[i] = safe_pow(v1[i], v2[i]);
+	}
+
+	return v1;
 }
 
 #endif // Element-wise safe power

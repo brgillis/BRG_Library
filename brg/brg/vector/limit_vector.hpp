@@ -393,11 +393,11 @@ public:
 
 		for(i=0; i<vec.size()-1; ++i)
 		{
-			vec[i] -= (vec[i+1]-vec[i])/2;
+			vec[i] -= (vec[i+1]-vec[i])/2.;
 		}
 
 		// Special handling for the final element
-		To d_last = (vec[i]-vec[i-1])/3;
+		To d_last = (vec[i]-vec[i-1])/3.;
 		vec.push_back(vec[i]+d_last);
 		vec[i]-=d_last;
 

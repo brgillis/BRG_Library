@@ -57,7 +57,7 @@ class radial_vector
 {
 private:
 
-	error_behavior_type _error_behavior_ = error_behavior::THROW;
+	error_behavior_type _error_behavior_ = error_behavior_type::THROW;
 
 	size_type _N_; ///< The number of points in the array
 	flt_type _scale_; ///< The physical size of the array in real-space (_scale_/_N_ is the scale of one step)

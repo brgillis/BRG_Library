@@ -40,6 +40,7 @@
 
 #include <boost/units/cmath.hpp>
 #include <boost/units/derived_dimension.hpp>
+#include <boost/units/is_quantity.hpp>
 #include <boost/units/systems/si.hpp>
 #include <boost/any.hpp>
 #include <boost/serialization/split_free.hpp>
@@ -63,7 +64,7 @@ typedef boost::units::quantity<boost::units::si::frequency> inverse_time_type;
 typedef boost::units::quantity<boost::units::si::mass> mass_type;
 
 typedef boost::units::quantity<boost::units::si::plane_angle> angle_type;
-typedef boost::units::quantity<boost::units::si::solid_angle> square_angle_type;
+typedef decltype(angle_type()*angle_type()) square_angle_type;
 
 typedef boost::units::quantity<boost::units::si::temperature> temperature_type;
 

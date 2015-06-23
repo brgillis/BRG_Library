@@ -33,6 +33,8 @@
 #include <map>
 #include <string>
 
+#include "brg/common.h"
+
 namespace brgastro
 {
 

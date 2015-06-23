@@ -1103,7 +1103,7 @@ std::vector<T> solve_MCMC( const f & func, const std::vector<T> & init_in_params
 		bool good_result = true;
 		try
 		{
-			out_params = ( func )(test_in_params);
+			out_params = func(test_in_params);
 		}
 		catch(const std::exception &e)
 		{
