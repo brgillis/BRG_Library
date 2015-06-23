@@ -414,8 +414,7 @@ public:
 
 	void set_range( const flt_type new_min_1, const flt_type new_max_1, const flt_type new_step_1,
 	         const flt_type new_min_2, const flt_type new_max_2, const flt_type new_step_2,
- 	         const flt_type new_min_3, const flt_type new_max_3, const flt_type new_step_3,
-			)
+ 	         const flt_type new_min_3, const flt_type new_max_3, const flt_type new_step_3)
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -448,7 +447,7 @@ public:
 	} // void set_range()
 
 	template<typename otype>
-	void print( otype & out,) const
+	void print( otype & out) const
 	{
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();

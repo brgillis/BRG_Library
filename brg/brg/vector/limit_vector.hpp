@@ -52,25 +52,26 @@ class limit_vector
 {
 public:
 	// Some typedefs that we can allow users to access
-	typedef typename std::vector<T,A>::value_type value_type;
-	typedef typename std::vector<T,A>::allocator_type allocator_type;
-	typedef typename std::vector<T,A>::reference reference;
-	typedef typename std::vector<T,A>::const_reference const_reference;
-	typedef typename std::vector<T,A>::pointer pointer;
-	typedef typename std::vector<T,A>::const_pointer const_pointer;
-	typedef typename std::vector<T,A>::iterator iterator;
-	typedef typename std::vector<T,A>::const_iterator const_iterator;
-	typedef typename std::vector<T,A>::reverse_iterator reverse_iterator;
-	typedef typename std::vector<T,A>::const_reverse_iterator const_reverse_iterator;
-	typedef typename std::vector<T,A>::difference_type difference_type;
-	typedef typename std::make_signed<typename std::vector<T,A>::size_type>::type size_type;
+	typedef std::vector<T,A> base_type;
+	typedef typename base_type::value_type value_type;
+	typedef typename base_type::allocator_type allocator_type;
+	typedef typename base_type::reference reference;
+	typedef typename base_type::const_reference const_reference;
+	typedef typename base_type::pointer pointer;
+	typedef typename base_type::const_pointer const_pointer;
+	typedef typename base_type::iterator iterator;
+	typedef typename base_type::const_iterator const_iterator;
+	typedef typename base_type::reverse_iterator reverse_iterator;
+	typedef typename base_type::const_reverse_iterator const_reverse_iterator;
+	typedef typename base_type::difference_type difference_type;
+	typedef typename std::make_signed<typename base_type::size_type>::type size_type;
 
 	// Enum to describe type of limit vector this is
 	enum class type {GENERAL, LINEAR, LOG, DISJOINT};
 
 private:
 	/// The base vector storing the data
-	std::vector<T,A> _base_;
+	base_type _base_;
 
 	/// What type of limit vector this is (linear, log, or general)
 	type _type_;
@@ -643,8 +644,10 @@ public:
 	}
 
 	/// Multiply the whole vector by a constant
-	void multiply(const value_type & val)
+	void multiply(const flt_type & val)
 	{
+		assert(val>0);
+
 		// Modify the base
 		for(auto & elem : _base_)
 		{
@@ -661,7 +664,7 @@ public:
 
 		case type::LOG:
 			// If log, modify _lmin_
-			_lmin_ = std::log(min());
+			_lmin_ = std::log(value_of(min()));
 			break;
 
 		default:
@@ -672,9 +675,67 @@ public:
 		return;
 	}
 
-	/// Divide the whole vector by a constant
-	void divide(const value_type & val)
+	/// Multiply the whole vector by a constant
+	template< typename Tv >
+	auto get_multiplied(const Tv & val) const -> limit_vector<decltype(val*T())>
 	{
+		assert(value_of(val)>0);
+
+		typedef decltype(val*T()) Tm;
+		typedef limit_vector<Tm> Tout;
+
+		switch(_type_)
+		{
+
+		case type::LINEAR:
+		{
+
+			Tout res;
+
+			res.reconstruct(Tout::type::LINEAR,min()*val,max()*val,num_bins());
+
+			return res;
+
+			break;
+		}
+		case type::LOG:
+		{
+			Tout res;
+
+			res.reconstruct(Tout::type::LOG,min()*val,max()*val,num_bins());
+
+			return res;
+
+			break;
+		}
+		default: // general and disjoint cases
+		{
+			typedef typename Tout::base_type Tout_base;
+
+			Tout_base res_base(_base_.size());
+
+			for(int i = 0; i<ssize(_base_); ++i)
+			{
+				res_base[i] = _base_[i]*val;
+			}
+
+			Tout res(std::move(res_base));
+
+			if(_type_==type::DISJOINT)
+				res.make_disjoint();
+
+			return res;
+
+			break;
+		}
+		}
+	}
+
+	/// Divide the whole vector by a constant
+	void divide(const flt_type & val)
+	{
+		assert(val>0);
+
 		// Modify the base
 		for(auto & elem : _base_)
 		{
@@ -691,7 +752,7 @@ public:
 
 		case type::LOG:
 			// If log, modify _lmin_
-			_lmin_ = std::log(min());
+			_lmin_ = std::log(value_of(min()));
 			break;
 
 		default:
@@ -701,6 +762,62 @@ public:
 
 		return;
 	}
+
+	/// Multiply the whole vector by a constant
+	template< typename Tv >
+	auto get_divided(const Tv & val) const -> limit_vector<decltype(T()/val)>
+	{
+		assert(value_of(val)>0);
+
+		typedef decltype(T()/val) Td;
+		typedef limit_vector<Td> Tout;
+
+		switch(_type_)
+		{
+
+		case type::LINEAR:
+		{
+			Tout res;
+
+			res.reconstruct(Tout::type::LINEAR,min()/val,max()/val,num_bins());
+
+			return res;
+
+			break;
+		}
+		case type::LOG:
+		{
+			Tout res;
+
+			res.reconstruct(Tout::type::LOG,min()/val,max()/val,num_bins());
+
+			return res;
+
+			break;
+		}
+		default: // general and disjoint cases
+		{
+			typedef typename Tout::base_type Tout_base;
+
+			Tout_base res_base(_base_.size());
+
+			for(int i = 0; i<_base_.size(); ++i)
+			{
+				res_base[i] = _base_[i]/val;
+			}
+
+			Tout res(std::move(res_base));
+
+			if(_type_==type::DISJOINT)
+				res.make_disjoint();
+
+			return res;
+
+			break;
+		}
+		}
+	}
+
 #endif // Modifiers
 
 	// Limit_vector-specific functions

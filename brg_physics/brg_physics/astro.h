@@ -122,12 +122,14 @@ const flt_type default_tau_factor = 2.;
 inverse_time_type H( const flt_type & z );
 
 // Functions to get transverse distance_type (in m) from angle_type (in rad) or vice-versa
-distance_type dfa( const angle_type & da, const flt_type & z );
+custom_unit_type<1,0,0,-1,0> dfa( const flt_type & z ); // Just gives conversion factor
+distance_type dfa( const angle_type & da, const flt_type & z ); // Performs conversion
 distance_type dfa( const angle_type & a1, const angle_type & a2,
-		const flt_type & z );
+		const flt_type & z ); // Performs conversion of dist between two angles
 distance_type dfa( const angle_type & a1x, const angle_type & a1y,
-		const angle_type & a2x, const angle_type & a2y, const flt_type  &z );
+		const angle_type & a2x, const angle_type & a2y, const flt_type  &z ); // Performs conversion of dist between two positions
 
+custom_unit_type<-1,0,0,1,0> afd( const flt_type & z );
 angle_type afd( const distance_type & dd, const flt_type & z );
 angle_type afd( const distance_type & d1, const distance_type & d2,
 		const flt_type & z );

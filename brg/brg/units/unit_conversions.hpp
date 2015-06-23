@@ -23,6 +23,8 @@
 #ifndef _BRG_UNIT_CONVERSIONS_HPP_INCLUDED_
 #define _BRG_UNIT_CONVERSIONS_HPP_INCLUDED_
 
+#include "brg/common.h"
+
 namespace brgastro{ namespace unitconv {
 // All unit conversions are exact (to the limit of flt_type variables) unless noted
 

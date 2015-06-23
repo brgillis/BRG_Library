@@ -85,9 +85,13 @@ brgastro::inverse_time_type brgastro::H( const flt_type & test_z )
 // dfa and afd functions
 #if (1)
 
+brgastro::custom_unit_type<1,0,0,-1,0> brgastro::dfa( const flt_type & z )
+{
+	return any_cast<custom_unit_type<1,0,0,-1,0>>(dfa_cache().get( z ));
+}
 brgastro::distance_type brgastro::dfa( const angle_type & da, const flt_type & z )
 {
-	return da * any_cast<custom_unit_type<1,0,0,-1,0>>(dfa_cache().get( z ));
+	return da * dfa(z);
 }
 brgastro::distance_type brgastro::dfa( const angle_type & a1, const angle_type & a2,
 		const flt_type & z )
@@ -99,14 +103,18 @@ brgastro::distance_type brgastro::dfa( const angle_type & a1x, const angle_type 
 {
 	return brgastro::dfa( skydist2d( a1x, a1y, a2x, a2y ), z );
 }
+brgastro::custom_unit_type<-1,0,0,1,0> brgastro::afd( const flt_type & z )
+{
+	return 1./dfa(z);
+}
 brgastro::angle_type brgastro::afd( const distance_type & dd, const flt_type & z )
 {
-	return dd / safe_d( any_cast<custom_unit_type<1,0,0,-1,0>>(dfa_cache().get( z )) );
+	return dd / dfa(z);
 }
 brgastro::angle_type brgastro::afd( const distance_type & d1, const distance_type & d2,
 		const flt_type & z )
 {
-	return brgastro::afd( fabs( d2 - d1 ), z );
+	return brgastro::afd( abs( d2 - d1 ), z );
 }
 brgastro::angle_type brgastro::afd( const distance_type & d1x,
 		const distance_type & d1y, const distance_type & d2x,

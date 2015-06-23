@@ -44,7 +44,7 @@ enum class error_behavior_type
 extern error_behavior_type error_behavior;
 
 /// Handle an error message
-void handle_error(const std::string & str)
+inline void handle_error(const std::string & str)
 {
 	switch (error_behavior) {
 		case error_behavior_type::THROW:
@@ -64,7 +64,7 @@ void handle_error(const std::string & str)
 }
 
 /// Handle a notification
-void handle_notification(const std::string & str)
+inline void handle_notification(const std::string & str)
 {
 	switch (error_behavior) {
 		case error_behavior_type::THROW:
@@ -84,7 +84,7 @@ void handle_notification(const std::string & str)
 }
 
 /// Handle an error message when throwing isn't an option
-void handle_error_message(const std::string & str)
+inline void handle_error_message(const std::string & str)
 {
 	switch (error_behavior) {
 		case error_behavior_type::THROW:

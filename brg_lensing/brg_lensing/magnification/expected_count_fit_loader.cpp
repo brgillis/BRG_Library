@@ -33,13 +33,14 @@
 
 #include "brg/common.h"
 
+#include "brg/file_access/ascii_table_map.hpp"
 #include "brg/utility.hpp"
 #include "brg/vector/elementwise_functions.hpp"
+#include "brg/units/units.hpp"
 
 #include "brg_lensing/magnification/count_fitting_results.hpp"
 
 #include "expected_count_fit_loader.h"
-#include <brg/file_access/ascii_table_map.hpp>
 
 
 // Initialisation of static vars
@@ -70,7 +71,7 @@ void brgastro::expected_count_fit_loader::_load()
 	}
 
 }
-ssize_t brgastro::expected_count_fit_loader::_lower_z_index(flt_type z)
+ssize_t brgastro::expected_count_fit_loader::_lower_z_index(const flt_type & z)
 {
 	auto size = ssize(_data_map_.at("z_mid"));
 	assert(size>=2);
@@ -83,21 +84,21 @@ ssize_t brgastro::expected_count_fit_loader::_lower_z_index(flt_type z)
 	return size-2;
 }
 
-std::vector<long_flt_type> brgastro::expected_count_fit_loader::get(long_flt_type z)
+std::vector<flt_type> brgastro::expected_count_fit_loader::get(const flt_type & z)
 {
 	if(!_loaded_) _load();
 
 	const size_t zi = _lower_z_index(z);
 
-	const long_flt_type zlo = _data_map_["z_mid"][zi];
-	const long_flt_type zhi = _data_map_["z_mid"][zi+1];
+	const flt_type zlo = _data_map_["z_mid"][zi];
+	const flt_type zhi = _data_map_["z_mid"][zi+1];
 
-	const long_flt_type weight = zhi-zlo;
+	const flt_type weight = zhi-zlo;
 
-	std::vector<long_flt_type> r_lo, r_hi;
+	std::vector<flt_type> r_lo, r_hi;
 
 #ifdef _BRG_USE_UNITS_
-	r_lo.push_back(unit_obj(_data_map_["N_scale"].at(zi)*(zhi-z),0,0,0,0,-2));
+	r_lo.push_back(_data_map_["N_scale"].at(zi)*(zhi-z));
 #else
 	r_lo.push_back(_data_map_["N_scale"].at(zi)*(zhi-z));
 #endif
@@ -105,7 +106,7 @@ std::vector<long_flt_type> brgastro::expected_count_fit_loader::get(long_flt_typ
 	r_lo.push_back(_data_map_["alpha"].at(zi)*(zhi-z));
 	r_lo.push_back(_data_map_["lower_cutoff_sharpness"].at(zi)*(zhi-z));
 #ifdef _BRG_USE_UNITS_
-	r_lo.push_back(unit_obj(_data_map_["mag23_jump"].at(zi)*(zhi-z),0,0,0,0,-2));
+	r_lo.push_back(_data_map_["mag23_jump"].at(zi)*(zhi-z));
 #else
 	r_lo.push_back(_data_map_["mag23_jump"].at(zi)*(zhi-z));
 #endif
@@ -113,7 +114,7 @@ std::vector<long_flt_type> brgastro::expected_count_fit_loader::get(long_flt_typ
 	r_lo.push_back(_data_map_["upper_cutoff_sharpness"].at(zi)*(zhi-z));
 
 #ifdef _BRG_USE_UNITS_
-	r_hi.push_back(unit_obj(_data_map_["N_scale"].at(zi+1)*(z-zlo),0,0,0,0,-2));
+	r_hi.push_back(_data_map_["N_scale"].at(zi+1)*(z-zlo));
 #else
 	r_hi.push_back(_data_map_["N_scale"].at(zi+1)*(z-zlo));
 #endif
@@ -121,7 +122,7 @@ std::vector<long_flt_type> brgastro::expected_count_fit_loader::get(long_flt_typ
 	r_hi.push_back(_data_map_["alpha"].at(zi+1)*(z-zlo));
 	r_hi.push_back(_data_map_["lower_cutoff_sharpness"].at(zi+1)*(z-zlo));
 #ifdef _BRG_USE_UNITS_
-	r_hi.push_back(unit_obj(_data_map_["mag23_jump"].at(zi+1)*(z-zlo),0,0,0,0,-2));
+	r_hi.push_back(_data_map_["mag23_jump"].at(zi+1)*(z-zlo));
 #else
 	r_hi.push_back(_data_map_["mag23_jump"].at(zi+1)*(z-zlo));
 #endif

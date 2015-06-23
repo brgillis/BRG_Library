@@ -46,12 +46,12 @@ namespace brgastro {
 class lensing_correlation_function_estimator {
 private:
 
-	typedef std::tuple<flt_type,flt_type,flt_type,flt_type> position;
+	typedef std::tuple<angle_type,angle_type,flt_type,flt_type> position;
 	typedef std::vector<position> position_list;
 
 	position_list _D1_pos_list_, _D2_pos_list_, _R1_pos_list_, _R2_pos_list_;
 
-	brgastro::limit_vector<flt_type> _r_bin_limits_;
+	brgastro::limit_vector<angle_type> _r_bin_limits_;
 
 	flt_type _z_buffer_;
 
@@ -128,8 +128,8 @@ public:
 
 	/// Weighted calculation function, using a Hamilton-like estimator. This assumes the weight
 	/// function passed here has an expected value of zero.
-	Eigen::ArrayXd calculate_weighted(const std::function<flt_type(flt_type)> &
-			weight_function = [] (const flt_type & theta) {return 1.;}) const;
+	Eigen::ArrayXd calculate_weighted(const std::function<flt_type(angle_type)> &
+			weight_function = [] (const angle_type & theta) {return 1.;}) const;
 
 	/// Calculation function for dipole correlation function with a given offset. The offset should
 	/// vary from [0,1) or [-0.5,0.5) for unique results.

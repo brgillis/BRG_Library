@@ -33,6 +33,7 @@
 
 #include "brg/math/misc_math.hpp"
 #include "brg/math/safe_math.hpp"
+#include "brg/units/units.hpp"
 #include "brg/utility.hpp"
 #include "brg/vector/limit_vector.hpp"
 
@@ -49,7 +50,7 @@ bool lensing_correlation_function_estimator::_set_up() const
 
 // Calculation functions
 Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
-		const std::function<flt_type(flt_type)> & weight_function) const
+		const std::function<flt_type(angle_type)> & weight_function) const
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
@@ -65,7 +66,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
 	int_type R1D2_pairs = 0;
 	int_type R1R2_pairs = 0;
 
-	const flt_type & max_r = _r_bin_limits_.max();
+	const angle_type & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of an array
 	auto increment_bin = [&] (Eigen::ArrayXd & array, int_type & pair_counter,
@@ -77,16 +78,16 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
 
 		++pair_counter;
 
-		flt_type dx = std::get<0>(p1)-std::get<0>(p2);
-		if(std::fabs(dx)>max_r) return;
-		flt_type dy = std::get<1>(p1)-std::get<1>(p2);
-		if(std::fabs(dy)>max_r) return;
+		angle_type dx = std::get<0>(p1)-std::get<0>(p2);
+		if(abs(dx)>max_r) return;
+		angle_type dy = std::get<1>(p1)-std::get<1>(p2);
+		if(abs(dy)>max_r) return;
 
-		flt_type r = brgastro::quad_add(dx,dy);
+		angle_type r = brgastro::quad_add(dx,dy);
 
 		if(_r_bin_limits_.outside_limits(r)) return;
 
-		flt_type theta = std::atan2(dy,dx);
+		angle_type theta = atan2(dy,dx);
 
 		size_t i = _r_bin_limits_.get_bin_index(r);
 
@@ -148,7 +149,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate() const
 	long_int_type R1D2_pairs = 0;
 	long_int_type R1R2_pairs = 0;
 
-	const flt_type & max_r = _r_bin_limits_.max();
+	const angle_type & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of an array
 	auto increment_bin = [&] (Eigen::ArrayXd & array, long_int_type & pair_counter,
@@ -160,12 +161,12 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate() const
 
 		++pair_counter;
 
-		flt_type dx = std::get<0>(p1)-std::get<0>(p2);
-		if(std::fabs(dx)>max_r) return;
-		flt_type dy = std::get<1>(p1)-std::get<1>(p2);
-		if(std::fabs(dy)>max_r) return;
+		angle_type dx = std::get<0>(p1)-std::get<0>(p2);
+		if(abs(dx)>max_r) return;
+		angle_type dy = std::get<1>(p1)-std::get<1>(p2);
+		if(abs(dy)>max_r) return;
 
-		flt_type r = brgastro::quad_add(dx,dy);
+		angle_type r = brgastro::quad_add(dx,dy);
 
 		if(_r_bin_limits_.outside_limits(r)) return;
 
@@ -239,25 +240,25 @@ Eigen::ArrayXd lensing_correlation_function_estimator::errors() const
 
 Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const flt_type & offset) const
 {
-	auto weight_function = [&offset] (const flt_type & theta)
+	auto weight_function = [&offset] (const angle_type & theta)
 	{
-		return 1+std::sin(theta + 2*pi*offset);
+		return 1.+sin(theta + 2.*pi*rad*offset);
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
 Eigen::ArrayXd lensing_correlation_function_estimator::calculate_quadrupole(const flt_type & offset) const
 {
-	auto weight_function = [&offset] (const flt_type & theta)
+	auto weight_function = [&offset] (const angle_type & theta)
 	{
-		return 1+std::sin((theta + 2*pi*offset)/2);
+		return 1.+sin((theta + 2.*pi*rad*offset)/2.);
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
 Eigen::ArrayXd lensing_correlation_function_estimator::calculate_octopole(const flt_type & offset) const
 {
-	auto weight_function = [&offset] (const flt_type & theta)
+	auto weight_function = [&offset] (const angle_type & theta)
 	{
-		return 1+std::sin((theta + 2*pi*offset)/4);
+		return 1.+sin((theta + 2*pi*rad*offset)/4.);
 	};
 	return calculate_weighted(weight_function)-calculate();
 }

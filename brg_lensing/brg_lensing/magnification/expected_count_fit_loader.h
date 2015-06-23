@@ -46,10 +46,10 @@ class expected_count_fit_loader {
 	static brgastro::table_map_t<flt_type> _data_map_;
 
 	static void _load();
-	static ssize_t _lower_z_index(flt_type z);
+	static ssize_t _lower_z_index(const flt_type & z);
 public:
 
-	static std::vector<long_flt_type> get(long_flt_type z);
+	static std::vector<flt_type> get(const flt_type & z);
 	static void unload();
 };
 
