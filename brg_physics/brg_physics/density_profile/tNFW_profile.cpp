@@ -198,11 +198,11 @@ brgastro::mass_type brgastro::tNFW_profile::mtot() const
 
 brgastro::velocity_type brgastro::tNFW_profile::vvir() const
 {
-	return pow<1,3>( 10. * Gc * H() * mvir() );
+	return ipow<1,3>( 10. * Gc * H() * mvir() );
 }
 brgastro::velocity_type brgastro::tNFW_profile::vvir0() const
 {
-	return pow<1,3>( 10. * Gc * H() * _mvir0_ );
+	return ipow<1,3>( 10. * Gc * H() * _mvir0_ );
 }
 brgastro::distance_type brgastro::tNFW_profile::rvir() const
 {

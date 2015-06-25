@@ -88,7 +88,7 @@ brgastro::mass_type brgastro::point_mass_profile::mtot() const
 
 brgastro::velocity_type brgastro::point_mass_profile::vvir() const
 {
-	return pow<1,3>( 10. * Gc * H() * mvir() );
+	return ipow<1,3>( 10. * Gc * H() * mvir() );
 }
 brgastro::distance_type brgastro::point_mass_profile::rvir() const
 {

@@ -33,11 +33,32 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #include "brg/container/is_boost_tuple.hpp"
+#include "brg/units/units.hpp"
 #include "brg/vector/elementwise_functions.hpp" // So we have primary definition of math funcs
+
+// Define some macros to save space
+#define BRG_S_IS_TUPLE(T1) typename std::enable_if<brgastro::is_boost_tuple<T1>::value && \
+	!brgastro::is_null_type<T1>::value>::type
+#define BRG_S_NOT_TUPLE(T1) typename std::enable_if<!brgastro::is_boost_tuple<T1>::value>::type
+#define BRG_S_IS_NULL(T1) typename std::enable_if<brgastro::is_null_type<T1>::value>::type
+#define BRG_F_IS_TUPLE(T1) typename std::enable_if<brgastro::is_boost_tuple<T1>::value && \
+	!brgastro::is_null_type<T1>::value,char>::type = 0
+#define BRG_F_NOT_TUPLE(T1) typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0
+#define BRG_F_IS_NULL(T1) typename std::enable_if<brgastro::is_null_type<T1>::value,char>::type = 0
+#define BRG_F_EITHER_IS_NULL(T1,T2) typename std::enable_if<brgastro::is_null_type<T1>::value || \
+	brgastro::is_null_type<T2>::value,char>::type = 0
 
 namespace brgastro {
 
-using boost::tuple;
+template <
+  class T0 = boost::tuples::null_type, class T1 = boost::tuples::null_type,
+  class T2 = boost::tuples::null_type,
+  class T3 = boost::tuples::null_type, class T4 = boost::tuples::null_type,
+  class T5 = boost::tuples::null_type,
+  class T6 = boost::tuples::null_type, class T7 = boost::tuples::null_type,
+  class T8 = boost::tuples::null_type,
+  class T9 = boost::tuples::null_type>
+using tuple = boost::tuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>;
 
 namespace tuples { // Various helper functions the end-user won't need to worry about
 
@@ -56,7 +77,7 @@ boost::tuples::cons<Th,Tt> make_cons(Th && h, Tt && t)
  * This is needed since the compiler won't fully recurse function decltypes, but it
  * will fully recurse a structure.
  */
-template< class T1, class T2, class Enable = void>
+template< class T1, class T2, class Enable1 = void, class Enable2 = void>
 struct add_typeof_helper
 {
 };
@@ -67,8 +88,7 @@ struct add_typeof_helper
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct add_typeof_helper<T1,T2,typename std::enable_if<
-	is_boost_tuple<T1>::value && is_boost_tuple<T2>::value>::type>
+struct add_typeof_helper<T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -83,8 +103,7 @@ struct add_typeof_helper<T1,T2,typename std::enable_if<
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct add_typeof_helper<T1,T2,typename std::enable_if<
-	is_boost_tuple<T1>::value && !is_boost_tuple<T2>::value>::type>
+struct add_typeof_helper<T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_NOT_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -99,8 +118,7 @@ struct add_typeof_helper<T1,T2,typename std::enable_if<
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct add_typeof_helper<T1,T2,typename std::enable_if<
-	!is_boost_tuple<T1>::value && is_boost_tuple<T2>::value>::type>
+struct add_typeof_helper<T1,T2,BRG_S_NOT_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -144,7 +162,7 @@ struct add_typeof_helper<boost::tuples::null_type,boost::tuples::null_type,void>
  * This is needed since the compiler won't fully recurse function decltypes, but it
  * will fully recurse a structure.
  */
-template< class T1, class T2, class Enable = void>
+template< class T1, class T2, class Enable1 = void, class Enable2 = void>
 struct subtract_typeof_helper
 {
 };
@@ -155,8 +173,7 @@ struct subtract_typeof_helper
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct subtract_typeof_helper<T1,T2,typename std::enable_if<
-	is_boost_tuple<T1>::value && is_boost_tuple<T2>::value>::type>
+struct subtract_typeof_helper<T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -171,8 +188,7 @@ struct subtract_typeof_helper<T1,T2,typename std::enable_if<
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct subtract_typeof_helper<T1,T2,typename std::enable_if<
-	is_boost_tuple<T1>::value && !is_boost_tuple<T2>::value>::type>
+struct subtract_typeof_helper<T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_NOT_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -187,8 +203,7 @@ struct subtract_typeof_helper<T1,T2,typename std::enable_if<
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct subtract_typeof_helper<T1,T2,typename std::enable_if<
-	!is_boost_tuple<T1>::value && is_boost_tuple<T2>::value>::type>
+struct subtract_typeof_helper<T1,T2,BRG_S_NOT_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -232,7 +247,7 @@ struct subtract_typeof_helper<boost::tuples::null_type,boost::tuples::null_type,
  * This is needed since the compiler won't fully recurse function decltypes, but it
  * will fully recurse a structure.
  */
-template< class T1, class T2, class Enable = void>
+template< class T1, class T2, class Enable1 = void, class Enable2 = void>
 struct multiply_typeof_helper
 {
 };
@@ -243,8 +258,7 @@ struct multiply_typeof_helper
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct multiply_typeof_helper<T1,T2,typename std::enable_if<
-	is_boost_tuple<T1>::value && is_boost_tuple<T2>::value>::type>
+struct multiply_typeof_helper<T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -259,8 +273,7 @@ struct multiply_typeof_helper<T1,T2,typename std::enable_if<
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct multiply_typeof_helper<T1,T2,typename std::enable_if<
-	is_boost_tuple<T1>::value && !is_boost_tuple<T2>::value>::type>
+struct multiply_typeof_helper<T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_NOT_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -275,8 +288,7 @@ struct multiply_typeof_helper<T1,T2,typename std::enable_if<
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct multiply_typeof_helper<T1,T2,typename std::enable_if<
-	!is_boost_tuple<T1>::value && is_boost_tuple<T2>::value>::type>
+struct multiply_typeof_helper<T1,T2,BRG_S_NOT_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -320,7 +332,7 @@ struct multiply_typeof_helper<boost::tuples::null_type,boost::tuples::null_type,
  * This is needed since the compiler won't fully recurse function decltypes, but it
  * will fully recurse a structure.
  */
-template< class T1, class T2, class Enable = void>
+template< class T1, class T2, class Enable1 = void, class Enable2 = void>
 struct divide_typeof_helper
 {
 };
@@ -331,8 +343,7 @@ struct divide_typeof_helper
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct divide_typeof_helper<T1,T2,typename std::enable_if<
-	is_boost_tuple<T1>::value && is_boost_tuple<T2>::value>::type>
+struct divide_typeof_helper<T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -347,8 +358,7 @@ struct divide_typeof_helper<T1,T2,typename std::enable_if<
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct divide_typeof_helper<T1,T2,typename std::enable_if<
-	is_boost_tuple<T1>::value && !is_boost_tuple<T2>::value>::type>
+struct divide_typeof_helper<T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_NOT_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -363,8 +373,7 @@ struct divide_typeof_helper<T1,T2,typename std::enable_if<
  * will fully recurse a structure.
  */
 template< class T1, class T2>
-struct divide_typeof_helper<T1,T2,typename std::enable_if<
-	!is_boost_tuple<T1>::value && is_boost_tuple<T2>::value>::type>
+struct divide_typeof_helper<T1,T2,BRG_S_NOT_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
 {
 	typedef typename std::decay<T1>::type T1d;
 	typedef typename std::decay<T2>::type T2d;
@@ -399,6 +408,158 @@ struct divide_typeof_helper<boost::tuples::null_type,boost::tuples::null_type,vo
 };
 
 #endif // divide_typeof_helper
+
+// sqrt_typeof_helper
+#if(1)
+
+/**
+ * Helper structure to determine the type of sqrting a tuple.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class T1, class Enable1 = void, class Enable2 = void>
+struct sqrt_typeof_helper
+{
+};
+
+/**
+ * Helper structure to determine the type of sqrting two values or tuples together.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class T1>
+struct sqrt_typeof_helper<T1,BRG_S_IS_TUPLE(T1)>
+{
+	typedef typename std::decay<T1>::type T1d;
+
+	typedef boost::tuples::cons<decltype(sqrt(T1d().get_head())),
+			typename sqrt_typeof_helper<decltype(T1d().get_tail())>::type> type;
+};
+
+/**
+ * Null type overload to end recursion.
+ */
+template<>
+struct sqrt_typeof_helper<boost::tuples::null_type,void>
+{
+	typedef boost::tuples::null_type type;
+};
+
+#endif // sqrt_typeof_helper
+
+// ipow_typeof_helper
+#if(1)
+
+/**
+ * Helper structure to determine the type of ipowing a tuple.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< int_type p, class T1, class Enable1 = void, class Enable2 = void>
+struct ipow_typeof_helper
+{
+};
+
+/**
+ * Helper structure to determine the type of ipowing two values or tuples together.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< int_type p, class T1>
+struct ipow_typeof_helper<p,T1,BRG_S_IS_TUPLE(T1)>
+{
+	typedef typename std::decay<T1>::type T1d;
+
+	typedef boost::tuples::cons<decltype(ipow<p>(T1d().get_head())),
+			typename ipow_typeof_helper<p,decltype(T1d().get_tail())>::type> type;
+};
+
+/**
+ * Null type overload to end recursion.
+ */
+template< int_type p >
+struct ipow_typeof_helper<p,boost::tuples::null_type,void>
+{
+	typedef boost::tuples::null_type type;
+};
+
+#endif // ipow_typeof_helper
+
+// sct_typeof_helper - sin, cos, tan typeof helper
+#if(1)
+
+/**
+ * Helper structure to determine the type of scting a tuple.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class T1, class Enable1 = void, class Enable2 = void>
+struct sct_typeof_helper
+{
+};
+
+/**
+ * Helper structure to determine the type of scting two values or tuples together.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class T1>
+struct sct_typeof_helper<T1,BRG_S_IS_TUPLE(T1)>
+{
+	typedef typename std::decay<T1>::type T1d;
+
+	typedef boost::tuples::cons<decltype(sin(T1d().get_head())),
+			typename sct_typeof_helper<decltype(T1d().get_tail())>::type> type;
+};
+
+/**
+ * Null type overload to end recursion.
+ */
+template<>
+struct sct_typeof_helper<boost::tuples::null_type,void>
+{
+	typedef boost::tuples::null_type type;
+};
+
+#endif // sct_typeof_helper
+
+// asct_typeof_helper - asin, acos, atan typeof helper
+#if(1)
+
+/**
+ * Helper structure to determine the type of scting a tuple.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class T1, class Enable1 = void, class Enable2 = void>
+struct asct_typeof_helper
+{
+};
+
+/**
+ * Helper structure to determine the type of scting two values or tuples together.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class T1>
+struct asct_typeof_helper<T1,BRG_S_IS_TUPLE(T1)>
+{
+	typedef typename std::decay<T1>::type T1d;
+
+	typedef boost::tuples::cons<decltype(asin(T1d().get_head())),
+			typename asct_typeof_helper<decltype(T1d().get_tail())>::type> type;
+};
+
+/**
+ * Null type overload to end recursion.
+ */
+template<>
+struct asct_typeof_helper<boost::tuples::null_type,void>
+{
+	typedef boost::tuples::null_type type;
+};
+
+#endif // asct_typeof_helper
 
 } // namespace tuples
 
@@ -500,10 +661,7 @@ inline void trinary_for_each( const f & func, boost::tuples::cons<Th, Tt> & t1,
 // Addition
 #if(1)
 
-template< class T1, class T2,
-	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value
-	|| std::is_same<typename std::decay<T2>::type,boost::tuples::null_type>::value,
-		char>::type = 0>
+template< class T1, class T2,BRG_F_EITHER_IS_NULL(T1,T2)>
 inline boost::tuples::null_type add( T1 &&,
 		T2 &&)
 {
@@ -511,8 +669,8 @@ inline boost::tuples::null_type add( T1 &&,
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
 inline typename tuples::add_typeof_helper<T1,T2>::type add( const T1 & t1,
 		const T2 & t2)
 {
@@ -520,8 +678,8 @@ inline typename tuples::add_typeof_helper<T1,T2>::type add( const T1 & t1,
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
 inline typename tuples::add_typeof_helper<T1,T2>::type add( const T1 & t1,
 		const T2 & t2)
 {
@@ -529,8 +687,8 @@ inline typename tuples::add_typeof_helper<T1,T2>::type add( const T1 & t1,
 }
 
 template <class T1, class T2,
-typename std::enable_if<!is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_NOT_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
 inline typename tuples::add_typeof_helper<T1,T2>::type add( const T1 & t1,
 		const T2 & t2)
 {
@@ -542,10 +700,7 @@ inline typename tuples::add_typeof_helper<T1,T2>::type add( const T1 & t1,
 // Subtraction
 #if(1)
 
-template< class T1, class T2,
-	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value
-	|| std::is_same<typename std::decay<T2>::type,boost::tuples::null_type>::value,
-		char>::type = 0>
+template< class T1, class T2,BRG_F_EITHER_IS_NULL(T1,T2)>
 inline boost::tuples::null_type subtract( T1 &&,
 		T2 &&)
 {
@@ -553,8 +708,8 @@ inline boost::tuples::null_type subtract( T1 &&,
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
 inline typename tuples::subtract_typeof_helper<T1,T2>::type subtract( const T1 & t1,
 		const T2 & t2)
 {
@@ -562,8 +717,8 @@ inline typename tuples::subtract_typeof_helper<T1,T2>::type subtract( const T1 &
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
 inline typename tuples::subtract_typeof_helper<T1,T2>::type subtract( const T1 & t1,
 		const T2 & t2)
 {
@@ -571,8 +726,8 @@ inline typename tuples::subtract_typeof_helper<T1,T2>::type subtract( const T1 &
 }
 
 template <class T1, class T2,
-typename std::enable_if<!is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_NOT_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
 inline typename tuples::subtract_typeof_helper<T1,T2>::type subtract( const T1 & t1,
 		const T2 & t2)
 {
@@ -584,10 +739,7 @@ inline typename tuples::subtract_typeof_helper<T1,T2>::type subtract( const T1 &
 // Multiplication
 #if(1)
 
-template< class T1, class T2,
-	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value
-	|| std::is_same<typename std::decay<T2>::type,boost::tuples::null_type>::value,
-		char>::type = 0>
+template< class T1, class T2,BRG_F_EITHER_IS_NULL(T1,T2)>
 inline boost::tuples::null_type multiply( T1 &&,
 		T2 &&)
 {
@@ -595,8 +747,8 @@ inline boost::tuples::null_type multiply( T1 &&,
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
 inline typename tuples::multiply_typeof_helper<T1,T2>::type multiply( const T1 & t1,
 		const T2 & t2)
 {
@@ -604,8 +756,8 @@ inline typename tuples::multiply_typeof_helper<T1,T2>::type multiply( const T1 &
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
 inline typename tuples::multiply_typeof_helper<T1,T2>::type multiply( const T1 & t1,
 		const T2 & t2)
 {
@@ -613,8 +765,8 @@ inline typename tuples::multiply_typeof_helper<T1,T2>::type multiply( const T1 &
 }
 
 template <class T1, class T2,
-typename std::enable_if<!is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_NOT_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
 inline typename tuples::multiply_typeof_helper<T1,T2>::type multiply( const T1 & t1,
 		const T2 & t2)
 {
@@ -626,10 +778,7 @@ inline typename tuples::multiply_typeof_helper<T1,T2>::type multiply( const T1 &
 // Division
 #if(1)
 
-template< class T1, class T2,
-	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value
-	|| std::is_same<typename std::decay<T2>::type,boost::tuples::null_type>::value,
-		char>::type = 0>
+template< class T1, class T2,BRG_F_EITHER_IS_NULL(T1,T2)>
 inline boost::tuples::null_type divide( T1 &&,
 		T2 &&)
 {
@@ -637,8 +786,8 @@ inline boost::tuples::null_type divide( T1 &&,
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
 inline typename tuples::divide_typeof_helper<T1,T2>::type divide( const T1 & t1,
 		const T2 & t2)
 {
@@ -646,8 +795,8 @@ inline typename tuples::divide_typeof_helper<T1,T2>::type divide( const T1 & t1,
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
 inline typename tuples::divide_typeof_helper<T1,T2>::type divide( const T1 & t1,
 		const T2 & t2)
 {
@@ -655,8 +804,8 @@ inline typename tuples::divide_typeof_helper<T1,T2>::type divide( const T1 & t1,
 }
 
 template <class T1, class T2,
-typename std::enable_if<!is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+BRG_F_NOT_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
 inline typename tuples::divide_typeof_helper<T1,T2>::type divide( const T1 & t1,
 		const T2 & t2)
 {
@@ -673,43 +822,41 @@ inline typename tuples::divide_typeof_helper<T1,T2>::type divide( const T1 & t1,
 // Addition
 #if(1)
 
-template< class T1, class T2,
-	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value,
-		char>::type = 0>
-inline const T1 & add_equals( const T1 & t1,
+template< class T1, class T2, BRG_F_IS_NULL(T1)>
+inline const T1 & add_equal( const T1 & t1,
 		T2 &&)
 {
 	return t1;
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
-inline T1 & add_equals( T1 & t1,
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 & add_equal( T1 & t1,
 		const T2 & t2)
 {
 	static_assert(boost::is_convertible<typename tuples::add_typeof_helper<T1,T2>::type,
 			typename std::decay<T1>::type>::value,
-			"add_equals cannot be compiled due to incompatible types.");
+			"add_equal cannot be compiled due to incompatible types.");
 
-	add_equals(t1.get_head(),t2.get_head()); // Add heads
-	add_equals(t1.get_tail(),t2.get_tail()); // Recursively add tails
+	add_equal(t1.get_head(),t2.get_head()); // Add heads
+	add_equal(t1.get_tail(),t2.get_tail()); // Recursively add tails
 
 	return t1;
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
-inline T1 & add_equals( T1 & t1,
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
+inline T1 & add_equal( T1 & t1,
 		const T2 & t2)
 {
 	static_assert(boost::is_convertible<typename tuples::add_typeof_helper<T1,T2>::type,
 			typename std::decay<T1>::type>::value,
-			"add_equals cannot be compiled due to incompatible types.");
+			"add_equal cannot be compiled due to incompatible types.");
 
-	add_equals(t1.get_head(),t2); // Add to head
-	add_equals(t1.get_tail(),t2); // Recursively add to tail
+	add_equal(t1.get_head(),t2); // Add to head
+	add_equal(t1.get_tail(),t2); // Recursively add to tail
 
 	return t1;
 }
@@ -719,43 +866,41 @@ inline T1 & add_equals( T1 & t1,
 // Subtraction
 #if(1)
 
-template< class T1, class T2,
-	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value,
-		char>::type = 0>
-inline const T1 & subtract_equals( const T1 & t1,
+template< class T1, class T2, BRG_F_IS_NULL(T1)>
+inline const T1 & subtract_equal( const T1 & t1,
 		T2 &&)
 {
 	return t1;
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
-inline T1 & subtract_equals( T1 & t1,
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 & subtract_equal( T1 & t1,
 		const T2 & t2)
 {
 	static_assert(boost::is_convertible<typename tuples::subtract_typeof_helper<T1,T2>::type,
 			typename std::decay<T1>::type>::value,
-			"subtract_equals cannot be compiled due to incompatible types.");
+			"subtract_equal cannot be compiled due to incompatible types.");
 
-	subtract_equals(t1.get_head(),t2.get_head()); // subtract heads
-	subtract_equals(t1.get_tail(),t2.get_tail()); // Recursively subtract tails
+	subtract_equal(t1.get_head(),t2.get_head()); // subtract heads
+	subtract_equal(t1.get_tail(),t2.get_tail()); // Recursively subtract tails
 
 	return t1;
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
-inline T1 & subtract_equals( T1 & t1,
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
+inline T1 & subtract_equal( T1 & t1,
 		const T2 & t2)
 {
 	static_assert(boost::is_convertible<typename tuples::subtract_typeof_helper<T1,T2>::type,
 			typename std::decay<T1>::type>::value,
-			"subtract_equals cannot be compiled due to incompatible types.");
+			"subtract_equal cannot be compiled due to incompatible types.");
 
-	subtract_equals(t1.get_head(),t2); // subtract from head
-	subtract_equals(t1.get_tail(),t2); // Recursively subtract from tail
+	subtract_equal(t1.get_head(),t2); // subtract from head
+	subtract_equal(t1.get_tail(),t2); // Recursively subtract from tail
 
 	return t1;
 }
@@ -765,43 +910,41 @@ inline T1 & subtract_equals( T1 & t1,
 // Multiplication
 #if(1)
 
-template< class T1, class T2,
-	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value,
-		char>::type = 0>
-inline const T1 & multiply_equals( const T1 & t1,
+template< class T1, class T2, BRG_F_IS_NULL(T1)>
+inline const T1 & multiply_equal( const T1 & t1,
 		T2 &&)
 {
 	return t1;
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
-inline T1 & multiply_equals( T1 & t1,
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 & multiply_equal( T1 & t1,
 		const T2 & t2)
 {
 	static_assert(boost::is_convertible<typename tuples::multiply_typeof_helper<T1,T2>::type,
 			typename std::decay<T1>::type>::value,
-			"multiply_equals cannot be compiled due to incompatible types.");
+			"multiply_equal cannot be compiled due to incompatible types.");
 
-	multiply_equals(t1.get_head(),t2.get_head()); // multiply heads
-	multiply_equals(t1.get_tail(),t2.get_tail()); // Recursively multiply tails
+	multiply_equal(t1.get_head(),t2.get_head()); // multiply heads
+	multiply_equal(t1.get_tail(),t2.get_tail()); // Recursively multiply tails
 
 	return t1;
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
-inline T1 & multiply_equals( T1 & t1,
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
+inline T1 & multiply_equal( T1 & t1,
 		const T2 & t2)
 {
 	static_assert(boost::is_convertible<typename tuples::multiply_typeof_helper<T1,T2>::type,
 			typename std::decay<T1>::type>::value,
-			"multiply_equals cannot be compiled due to incompatible types.");
+			"multiply_equal cannot be compiled due to incompatible types.");
 
-	multiply_equals(t1.get_head(),t2); // multiply with head
-	multiply_equals(t1.get_tail(),t2); // Recursively multiply with tail
+	multiply_equal(t1.get_head(),t2); // multiply with head
+	multiply_equal(t1.get_tail(),t2); // Recursively multiply with tail
 
 	return t1;
 }
@@ -811,43 +954,41 @@ inline T1 & multiply_equals( T1 & t1,
 // Division
 #if(1)
 
-template< class T1, class T2,
-	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value,
-		char>::type = 0>
-inline const T1 & divide_equals( const T1 & t1,
+template< class T1, class T2, BRG_F_IS_NULL(T1)>
+inline const T1 & divide_equal( const T1 & t1,
 		T2 &&)
 {
 	return t1;
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
-inline T1 & divide_equals( T1 & t1,
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 & divide_equal( T1 & t1,
 		const T2 & t2)
 {
 	static_assert(boost::is_convertible<typename tuples::divide_typeof_helper<T1,T2>::type,
 			typename std::decay<T1>::type>::value,
-			"divide_equals cannot be compiled due to incompatible types.");
+			"divide_equal cannot be compiled due to incompatible types.");
 
-	divide_equals(t1.get_head(),t2.get_head()); // divide heads
-	divide_equals(t1.get_tail(),t2.get_tail()); // Recursively divide tails
+	divide_equal(t1.get_head(),t2.get_head()); // divide heads
+	divide_equal(t1.get_tail(),t2.get_tail()); // Recursively divide tails
 
 	return t1;
 }
 
 template <class T1, class T2,
-typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
-inline T1 & divide_equals( T1 & t1,
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
+inline T1 & divide_equal( T1 & t1,
 		const T2 & t2)
 {
 	static_assert(boost::is_convertible<typename tuples::divide_typeof_helper<T1,T2>::type,
 			typename std::decay<T1>::type>::value,
-			"divide_equals cannot be compiled due to incompatible types.");
+			"divide_equal cannot be compiled due to incompatible types.");
 
-	divide_equals(t1.get_head(),t2); // divide from head
-	divide_equals(t1.get_tail(),t2); // Recursively divide from tail
+	divide_equal(t1.get_head(),t2); // divide from head
+	divide_equal(t1.get_tail(),t2); // Recursively divide from tail
 
 	return t1;
 }
@@ -855,6 +996,260 @@ inline T1 & divide_equals( T1 & t1,
 #endif // Division
 
 #endif // Compound assignment-arithmetic
+
+// Advanced and misc operations
+#if(1)
+
+// abs
+#if(1)
+
+template<class T1,
+BRG_F_IS_NULL(T1)>
+inline boost::tuples::null_type abs( const T1 & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1,
+BRG_F_IS_TUPLE(T1)>
+inline T1 abs( const T1 & t1 )
+{
+	return tuples::make_cons(abs(t1.get_head()),abs(t1.get_tail()));
+}
+
+#endif // abs
+
+// sqrt
+#if(1)
+
+template<class T1,
+BRG_F_IS_NULL(T1)>
+inline boost::tuples::null_type sqrt( const T1 & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1,
+BRG_F_IS_TUPLE(T1)>
+inline typename tuples::sqrt_typeof_helper<T1>::type sqrt( const T1 & t1 )
+{
+	return tuples::make_cons(sqrt(t1.get_head()),sqrt(t1.get_tail()));
+}
+
+#endif // sqrt
+
+// pow
+#if(1)
+
+template<class T1, class T2,
+BRG_F_IS_NULL(T1),
+BRG_F_IS_NULL(T2)>
+inline boost::tuples::null_type pow( const T1 & t1,
+		const T2 & t2)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1, class T2,
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 pow( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(pow(t1.get_head(),t2.get_head()),pow(t1.get_tail(),t2.get_tail()));
+}
+
+template <class T1, class T2,
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
+inline T1 pow( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(pow(t1.get_head(),t2),pow(t1.get_tail(),t2));
+}
+
+template <class T1, class T2,
+BRG_F_NOT_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 pow( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(pow(t1,t2.get_head()),pow(t1,t2.get_tail()));
+}
+
+#endif // pow
+
+// runtime_ipow
+#if(1)
+
+template< class T1, class T2,BRG_F_EITHER_IS_NULL(T1,T2)>
+inline boost::tuples::null_type runtime_ipow( const T1 & t1,
+		T2 &&)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1, class T2,
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 runtime_ipow( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(runtime_ipow(t1.get_head(),t2.get_head()),runtime_ipow(t1.get_tail(),t2.get_tail()));
+}
+
+template <class T1, class T2,
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
+inline T1 runtime_ipow( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(runtime_ipow(t1.get_head(),t2),runtime_ipow(t1.get_tail(),t2));
+}
+
+template <class T1, class T2,
+BRG_F_NOT_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 runtime_ipow( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(runtime_ipow(t1,t2.get_head()),runtime_ipow(t1,t2.get_tail()));
+}
+
+#endif // runtime_ipow
+
+// ipow
+#if(1)
+
+template< int_type p >
+inline boost::tuples::null_type ipow( const boost::tuples::null_type & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template < int_type p, class T1,
+BRG_F_IS_TUPLE(T1)>
+inline typename tuples::ipow_typeof_helper<p,T1>::type ipow( const T1 & t1 )
+{
+	return tuples::make_cons(ipow<p>(t1.get_head()),ipow<p>(t1.get_tail()));
+}
+
+#endif // ipow
+
+#endif // Advanced math functions
+
+// Trigonometric functions
+#if(1)
+
+// sin
+#if(1)
+
+template< class T1, BRG_F_IS_NULL(T1)>
+inline boost::tuples::null_type sin( const T1 & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1,
+BRG_F_IS_TUPLE(T1)>
+inline typename tuples::sct_typeof_helper<T1>::type sin( const T1 & t1 )
+{
+	return tuples::make_cons(sin(t1.get_head()),sin(t1.get_tail()));
+}
+
+#endif // sin
+
+// cos
+#if(1)
+
+template< class T1, BRG_F_IS_NULL(T1)>
+inline boost::tuples::null_type cos( const T1 & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1,
+BRG_F_IS_TUPLE(T1)>
+inline typename tuples::sct_typeof_helper<T1>::type cos( const T1 & t1 )
+{
+	return tuples::make_cons(cos(t1.get_head()),cos(t1.get_tail()));
+}
+
+#endif // cos
+
+// tan
+#if(1)
+
+template< class T1, BRG_F_IS_NULL(T1)>
+inline boost::tuples::null_type tan( const T1 & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1,
+BRG_F_IS_TUPLE(T1)>
+inline typename tuples::sct_typeof_helper<T1>::type tan( const T1 & t1 )
+{
+	return tuples::make_cons(tan(t1.get_head()),tan(t1.get_tail()));
+}
+
+#endif // tan
+
+// asin
+#if(1)
+
+template< class T1, BRG_F_IS_NULL(T1)>
+inline boost::tuples::null_type asin( const T1 & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1,
+BRG_F_IS_TUPLE(T1)>
+inline typename tuples::asct_typeof_helper<T1>::type asin( const T1 & t1 )
+{
+	return tuples::make_cons(asin(t1.get_head()),asin(t1.get_tail()));
+}
+
+#endif // asin
+
+// acos
+#if(1)
+
+template< class T1, BRG_F_IS_NULL(T1)>
+inline boost::tuples::null_type acos( const T1 & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1,
+BRG_F_IS_TUPLE(T1)>
+inline typename tuples::asct_typeof_helper<T1>::type acos( const T1 & t1 )
+{
+	return tuples::make_cons(acos(t1.get_head()),acos(t1.get_tail()));
+}
+
+#endif // acos
+
+// atan
+#if(1)
+
+template< class T1, BRG_F_IS_NULL(T1)>
+inline boost::tuples::null_type atan( const T1 & t1)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1,
+BRG_F_IS_TUPLE(T1)>
+inline typename tuples::asct_typeof_helper<T1>::type atan( const T1 & t1 )
+{
+	return tuples::make_cons(atan(t1.get_head()),atan(t1.get_tail()));
+}
+
+#endif // atan
+
+#endif
 
 }
 

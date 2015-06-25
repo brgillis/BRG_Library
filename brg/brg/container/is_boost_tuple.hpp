@@ -48,6 +48,10 @@ template <class TH, class TT>
 struct _is_boost_tuple<boost::tuples::cons<TH,TT>>
 	: std::true_type
 {};
+template <>
+struct _is_boost_tuple<boost::tuples::null_type>
+	: std::true_type
+{};
 
 template<typename T>
 struct is_boost_tuple
@@ -62,6 +66,20 @@ static_assert(is_boost_tuple<boost::tuples::cons<double, boost::tuples::null_typ
 		"ERROR: is_boost_tuple isn't cons lists.");
 static_assert(is_boost_tuple<boost::tuples::cons<double, boost::tuples::null_type> &>::value,
 		"ERROR: is_boost_tuple isn't cons list references.");
+
+template<typename T>
+struct _is_null_type : std::false_type
+{};
+
+template <>
+struct _is_null_type<boost::tuples::null_type>
+	: std::true_type
+{};
+
+template<typename T>
+struct is_null_type
+	: _is_null_type<typename std::decay<T>::type>
+{};
 
 } // namespace brgastro
 

@@ -30,6 +30,7 @@
 
 #include "brg/common.h"
 
+#include "brg/container/is_boost_tuple.hpp"
 #include "brg/math/ipow.hpp"
 
 //#include "brg/math/misc_math.hpp"
@@ -164,143 +165,158 @@ any_units_type any_units_cast( const Tin & x)
 #if(1)
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 T abs( const T & x)
 {
 	return boost::units::abs(x);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 T abs( const T & x)
 {
 	return std::fabs(x);
 }
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 auto sqrt( const T & x) -> decltype(boost::units::sqrt(x))
 {
 	return boost::units::sqrt(x);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 auto sqrt( const T & x) -> decltype(std::sqrt(x))
 {
 	return std::sqrt(x);
 }
 
 template< int_type e, typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
-auto pow(const T & x) -> decltype(boost::units::pow<e>(x))
-{
-	return ipow<e>(x);
-}
-template< int_type e, typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
-auto pow(const T & x) -> decltype(boost::units::pow<e>(x))
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+auto ipow(const T & x) -> decltype(boost::units::pow<e>(x))
 {
 	return boost::units::pow<e>(x);
 }
 
 template< int_type en, int_type ed, typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
-auto pow( const T & x) -> decltype(boost::units::pow<boost::units::static_rational<en,ed>>(x))
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+auto ipow( const T & x) -> decltype(boost::units::pow<boost::units::static_rational<en,ed>>(x))
 {
 	return boost::units::pow<boost::units::static_rational<en,ed>>(x);
 }
 template< int_type en, int_type ed, typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
-auto pow( const T & x) -> decltype(boost::units::pow<boost::units::static_rational<en,ed>>(x))
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+auto ipow( const T & x) -> decltype(boost::units::pow<boost::units::static_rational<en,ed>>(x))
 {
 	return std::pow(x,static_cast<flt_type>(en)/ed);
 }
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 flt_type sin( const T & x)
 {
 	return boost::units::sin(x);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 flt_type sin( const T & x)
 {
 	return std::sin(x);
 }
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 flt_type cos( const T & x)
 {
 	return boost::units::cos(x);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 flt_type cos( const T & x)
 {
 	return std::cos(x);
 }
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 flt_type tan( const T & x)
 {
 	return boost::units::tan(x);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 flt_type tan( const T & x)
 {
 	return std::tan(x);
 }
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 angle_type asin( const T & x)
 {
 	return boost::units::asin(x);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 T asin( const T & x)
 {
 	return std::asin(x);
 }
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 angle_type acos( const T & x)
 {
 	return boost::units::acos(x);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 T acos( const T & x)
 {
 	return std::acos(x);
 }
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 angle_type atan( const T & y)
 {
 	return boost::units::atan(y);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 flt_type atan( const T & y)
 {
 	return std::atan(y);
 }
 
 template<typename T,
-typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 angle_type atan2( const T & y, const T & x=1.)
 {
 	return boost::units::atan2(y,x);
 }
 template<typename T,
-typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0>
+typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 flt_type atan2( const T & y, const T & x=1.)
 {
 	return std::atan2(y,x);
@@ -410,7 +426,8 @@ any_units_type any_units_cast( const Tin & x)
 // Math functions
 #if(1)
 
-template<typename T>
+template<typename T,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 T abs( const T & x)
 {
 	return std::abs(x);
@@ -421,11 +438,11 @@ flt_type sqrt( const flt_type & x)
 	return std::sqrt(x);
 }
 
-template< int_type e>
-flt_type pow( const flt_type & x)
-{
-	return ipow<e>(x);
-}
+//template< int_type e>
+//flt_type ipow( const flt_type & x)
+//{
+//	return ipow<e>(x);
+//}
 
 template< int_type en, int_type ed>
 flt_typepow( const flt_type & x)

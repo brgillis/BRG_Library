@@ -170,54 +170,6 @@ const T safe_d( const T & a )
 
 }
 
-// Container specialization
-template< class T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,char>::type = 0>
-T safe_d( T array )
-{
-	for( auto & a : array)
-	{
-
-		#ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
-		if( (a == 0) || isbad(a) )
-		{
-			handle_error_message("safe_d() prevented error from zero input or bad input.");
-		}
-		#endif
-
-		#ifdef _BRG_USE_UNITS_
-		decltype(a) min_d = a; // So it'll have the right units
-		#else
-		decltype(a) min_d;
-		#endif
-
-		if(std::is_integral<decltype(a)>::value)
-			min_d = 1;
-		else
-			min_d = MIN_DIVISOR;
-
-		if ( isnan( a ) )
-		{
-			a = min_d;
-			continue;
-		}
-		if ( isinf( a ) )
-		{
-			a = 1. / min_d;
-			continue;
-		}
-
-		if (std::fabs(a)<min_d)
-		{
-			a = min_d;
-			continue;
-		}
-
-	}
-
-	return array;
-}
-
 // Eigen-like container specialization
 template< class T,
 typename std::enable_if<!brgastro::is_stl_container<T>::value,char>::type = 0,

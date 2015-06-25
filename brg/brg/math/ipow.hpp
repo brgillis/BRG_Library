@@ -101,8 +101,8 @@ struct ipow_s {
 
 	ipow_s( const flt_type & v )
 	: value([&](){
-			if(p<0) return 1/_ipow_s<-p>(v);
-			if(p==0) return 1;
+			if(p<0) return 1./_ipow_s<-p>(v).value;
+			if(p==0) return 1.;
 			if(p==1) return v;
 			flt_type tmp = _ipow_s<p/2>(v).value;
 			if(p%2==0) return tmp*tmp;

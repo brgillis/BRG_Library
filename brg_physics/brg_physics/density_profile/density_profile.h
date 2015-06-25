@@ -206,7 +206,7 @@ public:
 	virtual distance_type rvir() const // Virial radius (exact definition can be chosen per profile if preferred)
 	{
 
-		return pow<1,3>( 2. * mvir() * Gc / ( square( H() ) * virial_density_factor ));
+		return ipow<1,3>( 2. * mvir() * Gc / ( square( H() ) * virial_density_factor ));
 	}
 	mass_type hmvir() const // Half virial mass
 	{

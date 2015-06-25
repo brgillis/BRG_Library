@@ -41,8 +41,36 @@
 
 namespace brgastro {
 
-// These apply a standard function to each element of a vector and return a vector of results
+// Define some macros to save space
 
+#define BRG_IS_STL(T1) typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0
+
+#define BRG_BOTH_STL(T1,T2) typename std::enable_if<brgastro::is_stl_container<T1>::value && \
+	brgastro::is_stl_container<T2>::value,char>::type = 0
+#define BRG_FIRST_STL(T1,T2) typename std::enable_if<brgastro::is_stl_container<T1>::value && \
+	!brgastro::is_stl_container<T2>::value && \
+	!brgastro::is_boost_tuple<T2>::value,char>::type = 0
+#define BRG_SECOND_STL(T1,T2) typename std::enable_if<brgastro::is_stl_container<T2>::value && \
+	!brgastro::is_stl_container<T1>::value && \
+	!brgastro::is_eigen_container<T1>::value && \
+	!brgastro::is_boost_tuple<T1>::value,char>::type = 0
+#define BRG_NEITHER_STL(T1,T2) typename std::enable_if<!brgastro::is_stl_container<T1>::value && \
+	!brgastro::is_eigen_container<T1>::value && \
+	!brgastro::is_boost_tuple<T1>::value && \
+	!brgastro::is_stl_container<T2>::value && \
+	!brgastro::is_eigen_container<T2>::value && \
+	!brgastro::is_boost_tuple<T2>::value,char>::type = 0
+
+#define BRG_IS_EIGEN(T1) typename std::enable_if<brgastro::is_eigen_container<T1>::value,char>::type = 0
+
+#define BRG_IS_STL_OR_EIGEN(T1) typename std::enable_if<brgastro::is_stl_container<T1>::value || \
+		brgastro::is_eigen_container<T1>::value,char>::type = 0
+
+#define BRG_NOT_CONTAINER(T1) typename std::enable_if<!brgastro::is_stl_container<T1>::value && \
+		!brgastro::is_eigen_container<T1>::value && \
+		!brgastro::is_boost_tuple<T1>::value,char>::type = 0
+
+// These apply a standard function to each element of a vector and return a vector of results
 // Element-wise generic function
 #if (1)
 
@@ -54,9 +82,7 @@ T apply( const f & func, T v1)
 	return v1;
 }
 
-template< typename f, typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename f, typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 T1 apply( const f & func,  T1 v1, const T2 & v2)
 {
 	std::transform(v1.begin(), v1.end(), v2.begin(), v1.begin(), func);
@@ -64,9 +90,7 @@ T1 apply( const f & func,  T1 v1, const T2 & v2)
 	return v1;
 }
 
-template< typename f, typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename f, typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 T2 apply( const f & func, const T1 & v1, T2 v2)
 {
 	for(auto & v : v2) v = func(v1,v);
@@ -74,9 +98,7 @@ T2 apply( const f & func, const T1 & v1, T2 v2)
 	return v2;
 }
 
-template< typename f, typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename f, typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 T1 apply( const f & func, T1 v1, const T2 &v2 )
 {
 	for(auto & v : v1) v = func(v,v2);
@@ -84,9 +106,7 @@ T1 apply( const f & func, T1 v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename f, typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename f, typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
 T1 apply( const f & func, const T1 & v1, const T2 &v2 )
 {
 	T1 result = func(v1,v2);
@@ -129,8 +149,7 @@ T1 rand_vector_of_size(const f func, const T1 & v1, const T2 & v2, const int_typ
 	return result;
 }
 
-template<typename f, typename T1,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0>
+template<typename f, typename T1, BRG_IS_STL(T1) >
 T1 rand_vector(const f func, T1 v1 )
 {
 	for(typename T1::size_type i = 0; i < v1.size(); i++) v1[i] = func(v1[i]);
@@ -138,9 +157,7 @@ T1 rand_vector(const f func, T1 v1 )
 	return v1;
 }
 
-template<typename f, typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template<typename f, typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 T1 rand_vector(const f func, T1 v1, const T2 & v2)
 {
 	assert(v1.size()==v2.size());
@@ -150,9 +167,7 @@ T1 rand_vector(const f func, T1 v1, const T2 & v2)
 	return v1;
 }
 
-template<typename f, typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template<typename f, typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 T1 rand_vector(const f func, T1 v1, const T2 & v2)
 {
 	for(auto & v : v1) v = func(v,v2);
@@ -160,9 +175,7 @@ T1 rand_vector(const f func, T1 v1, const T2 & v2)
 	return v1;
 }
 
-template<typename f, typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template<typename f, typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 T2 rand_vector(const f func, const T1 & v1, T2 v2)
 {
 	for(auto & v : v2) v = func(v1,v);
@@ -178,17 +191,13 @@ T2 rand_vector(const f func, const T1 & v1, T2 v2)
 // Element-wise addition
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
 auto add( const T1 & v1, const T2 &v2 ) -> decltype(v1+v2)
 {
 	return v1+v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 auto add( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]+v2)>
 {
 	typedef decltype(v1[0]+v2) Tvout;
@@ -204,17 +213,13 @@ auto add( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]+v2)>
 	return vout;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 auto add( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1+v2[0])>
 {
 	return add(v2,v1);
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 auto add( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]+v2[0])>
 {
 	assert(v1.size()==v2.size());
@@ -237,17 +242,13 @@ auto add( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]+v2[0])>
 // Element-wise subtraction
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
 auto subtract( const T1 & v1, const T2 &v2 ) -> decltype(v1-v2)
 {
 	return v1-v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]-v2)>
 {
 	typedef decltype(v1[0]-v2) Tvout;
@@ -263,9 +264,7 @@ auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]-v2)>
 	return vout;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1-v2[0])>
 {
 	typedef decltype(v1-v2[0]) Tvout;
@@ -281,9 +280,7 @@ auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1-v2[0])>
 	return vout;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]-v2[0])>
 {
 	assert(v1.size()==v2.size());
@@ -306,17 +303,13 @@ auto subtract( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]-v2[0]
 // Element-wise multiplication
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
 auto multiply( const T1 & v1, const T2 &v2 ) -> decltype(v1*v2)
 {
 	return v1*v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 auto multiply( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]*v2)>
 {
 	typedef decltype(v1[0]*v2) Tvout;
@@ -332,17 +325,13 @@ auto multiply( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]*v2)>
 	return vout;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 auto multiply( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1*v2[0])>
 {
 	return multiply(v2,v1);
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 auto multiply( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]*v2[0])>
 {
 	assert(v1.size()==v2.size());
@@ -365,17 +354,13 @@ auto multiply( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]*v2[0]
 // Element-wise division
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
 auto divide( const T1 & v1, const T2 &v2 ) -> decltype(v1/v2)
 {
 	return v1/v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]/v2)>
 {
 	typedef decltype(v1[0]/v2) Tvout;
@@ -391,9 +376,7 @@ auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]/v2)>
 	return vout;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1/v2[0])>
 {
 	typedef decltype(v1/v2[0]) Tvout;
@@ -409,9 +392,7 @@ auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1/v2[0])>
 	return vout;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]/v2[0])>
 {
 	assert(v1.size()==v2.size());
@@ -434,17 +415,13 @@ auto divide( const T1 & v1, const T2 &v2 ) -> std::vector<decltype(v1[0]/v2[0])>
 // Element-wise power
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
 T1 pow( const T1 & v1, const T2 & v2 )
 {
 	return std::pow(v1, v2);
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 T1 pow( T1 v1, const T2 &v2 )
 {
 	for(auto & v : v1)
@@ -455,9 +432,7 @@ T1 pow( T1 v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 T2 pow( const T1 & v1, T2 v2 )
 {
 	using std::pow;
@@ -469,9 +444,7 @@ T2 pow( const T1 & v1, T2 v2 )
 	return v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 T1 pow( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
@@ -483,9 +456,7 @@ T1 pow( T1 v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 T1 runtime_ipow( T1 v1, const T2 &v2 )
 {
 	for(auto & v : v1)
@@ -496,9 +467,7 @@ T1 runtime_ipow( T1 v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 T1 runtime_ipow( const T1 & v1, const T2 & v2 )
 {
 	T1 result(v2.size());
@@ -510,9 +479,7 @@ T1 runtime_ipow( const T1 & v1, const T2 & v2 )
 	return v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 T1 runtime_ipow( T1 v1, const T2 &v2 )
 {
 	assert(v1.size()==v2.size());
@@ -529,9 +496,7 @@ T1 runtime_ipow( T1 v1, const T2 &v2 )
 // Element-wise safe power
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 T1 safe_pow( T1 v1, const T2 &v2 )
 {
 
@@ -543,9 +508,7 @@ T1 safe_pow( T1 v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_SECOND_STL(T1,T2) >
 T2 safe_pow( const T1 & v1, T2 v2 )
 {
 	for(auto & v : v2)
@@ -556,9 +519,7 @@ T2 safe_pow( const T1 & v1, T2 v2 )
 	return v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
 T1 safe_pow( T1 v1, const T2 &v2 )
 {
 
@@ -577,8 +538,8 @@ T1 safe_pow( T1 v1, const T2 &v2 )
 #if (1)
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value || brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value || brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+BRG_IS_STL_OR_EIGEN(T1),
+BRG_IS_STL_OR_EIGEN(T2) >
 T1 max( const T1 & v1, const T2 &v2 )
 {
 
@@ -595,8 +556,8 @@ T1 max( const T1 & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value || brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value || brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+BRG_IS_STL_OR_EIGEN(T1),
+BRG_IS_STL_OR_EIGEN(T2) >
 T1 max( T1 && v1, const T2 &v2 )
 {
 
@@ -610,10 +571,7 @@ T1 max( T1 && v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 T1 max( const T1 & v1, const T2 &v2 )
 {
 
@@ -627,10 +585,7 @@ T1 max( const T1 & v1, const T2 &v2 )
 	return vr;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
 T1 max( T1 && v1, const T2 &v2 )
 {
 
@@ -643,8 +598,8 @@ T1 max( T1 && v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+BRG_IS_EIGEN(T1),
+BRG_NOT_CONTAINER(T2),
 typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
 T1 max( const T1 & v1, const T2 &v2 )
 {
@@ -659,8 +614,8 @@ T1 max( const T1 & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+BRG_IS_EIGEN(T1),
+BRG_NOT_CONTAINER(T2),
 typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
 T1 max( T1 && v1, const T2 &v2 )
 {
@@ -674,9 +629,8 @@ T1 max( T1 && v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+BRG_NOT_CONTAINER(T1),
+BRG_IS_STL(T2) >
 T2 max( const T1 & v1, const T2 & v2 )
 {
 	auto vr(v2);
@@ -690,9 +644,8 @@ T2 max( const T1 & v1, const T2 & v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+BRG_NOT_CONTAINER(T1),
+BRG_IS_STL(T2) >
 T2 max( const T1 & v1, T2 && v2 )
 {
 	for(auto & v : v2)
@@ -704,9 +657,8 @@ T2 max( const T1 & v1, T2 && v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+BRG_NOT_CONTAINER(T1),
+BRG_IS_EIGEN(T2) >
 T2 max( const T1 & v1, const T2 & v2 )
 {
 	auto vr(v2);
@@ -720,9 +672,8 @@ T2 max( const T1 & v1, const T2 & v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+BRG_NOT_CONTAINER(T1),
+BRG_IS_EIGEN(T2) >
 T2 max( const T1 & v1, T2 && v2 )
 {
 	for(decltype(v2.size()) i = 0; i < v2.size(); i++)
@@ -739,8 +690,8 @@ T2 max( const T1 & v1, T2 && v2 )
 #if (1)
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value || brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value || brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+BRG_IS_STL_OR_EIGEN(T1),
+BRG_IS_STL_OR_EIGEN(T2) >
 T1 min( const T1 & v1, const T2 &v2 )
 {
 
@@ -757,8 +708,8 @@ T1 min( const T1 & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value || brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value || brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+BRG_IS_STL_OR_EIGEN(T1),
+BRG_IS_STL_OR_EIGEN(T2) >
 T1 min( T1 && v1, const T2 &v2 )
 {
 
@@ -772,10 +723,8 @@ T1 min( T1 && v1, const T2 &v2 )
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2),
+		BRG_NOT_CONTAINER(T2) >
 T1 min( const T1 & v1, const T2 &v2 )
 {
 
@@ -789,10 +738,8 @@ T1 min( const T1 & v1, const T2 &v2 )
 	return vr;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2),
+		BRG_NOT_CONTAINER(T2) >
 T1 min( T1 && v1, const T2 &v2 )
 {
 
@@ -805,8 +752,8 @@ T1 min( T1 && v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+BRG_IS_EIGEN(T1),
+BRG_NOT_CONTAINER(T2),
 typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
 T1 min( const T1 & v1, const T2 &v2 )
 {
@@ -821,8 +768,8 @@ T1 min( const T1 & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+BRG_IS_EIGEN(T1),
+BRG_NOT_CONTAINER(T2),
 typename std::enable_if<!brgastro::is_eigen_container<T2>::value,char>::type = 0 >
 T1 min( T1 && v1, const T2 &v2 )
 {
@@ -836,9 +783,8 @@ T1 min( T1 && v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+BRG_NOT_CONTAINER(T1),
+BRG_IS_STL(T2) >
 T2 min( const T1 & v1, const T2 & v2 )
 {
 	auto vr(v2);
@@ -852,9 +798,8 @@ T2 min( const T1 & v1, const T2 & v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+BRG_NOT_CONTAINER(T1),
+BRG_IS_STL(T2) >
 T2 min( const T1 & v1, T2 && v2 )
 {
 	for(auto & v : v2)
@@ -866,9 +811,8 @@ T2 min( const T1 & v1, T2 && v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+BRG_NOT_CONTAINER(T1),
+BRG_IS_EIGEN(T2) >
 T2 min( const T1 & v1, const T2 & v2 )
 {
 	auto vr(v2);
@@ -882,9 +826,8 @@ T2 min( const T1 & v1, const T2 & v2 )
 }
 
 template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_eigen_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_eigen_container<T2>::value,char>::type = 0 >
+BRG_NOT_CONTAINER(T1),
+BRG_IS_EIGEN(T2) >
 T2 min( const T1 & v1, T2 && v2 )
 {
 	for(decltype(v2.size()) i = 0; i < v2.size(); i++)
@@ -914,8 +857,7 @@ T2 bound( T1 && lower_bound, T2 && a, T3 && upper_bound)
 // Element-wise negate
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr>
+template< typename T, BRG_IS_STL(T)>
 T negate( T v )
 {
 	for(auto & vv : v)
@@ -926,8 +868,7 @@ T negate( T v )
 	return v;
 }
 
-template< typename T,
-typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr>
+template< typename T, BRG_IS_STL(T)>
 T negate( const T & v )
 {
 	return -v;
@@ -938,8 +879,7 @@ T negate( const T & v )
 // Element-wise abs
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr>
+template< typename T, BRG_IS_STL(T)>
 T abs( T v )
 {
 	using std::abs;
@@ -954,39 +894,10 @@ T abs( T v )
 
 #endif // Element-wise abs
 
-// Element-wise fabs
-#if (1)
-
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr>
-T fabs( T v )
-{
-	using std::fabs;
-
-	for(auto & vv : v)
-	{
-		vv = fabs(vv);
-	}
-
-	return v;
-}
-
-template< typename T,
-typename std::enable_if<!brgastro::is_stl_container<T>::value,T>::type* = nullptr>
-T fabs( T v )
-{
-	using std::fabs;
-
-	return fabs(v);
-}
-
-#endif // Element-wise fabs
-
 // Element-wise square root
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr>
+template< typename T, BRG_IS_STL(T)>
 T sqrt( T v )
 {
 	using std::sqrt;
@@ -1004,8 +915,7 @@ T sqrt( T v )
 // Element-wise safe square root
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr>
+template< typename T, BRG_IS_STL(T)>
 T safe_sqrt( T v )
 {
 	for(auto & vv : v)
@@ -1021,8 +931,7 @@ T safe_sqrt( T v )
 // Element-wise exponential
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr>
+template< typename T, BRG_IS_STL(T)>
 T exp( T v )
 {
 	using std::exp;
@@ -1038,8 +947,7 @@ T exp( T v )
 // Element-wise log
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr>
+template< typename T, BRG_IS_STL(T)>
 T log( T v )
 {
 	using std::log;
@@ -1055,8 +963,7 @@ T log( T v )
 // Element-wise square
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+template< typename T, BRG_IS_STL(T) >
 T square( T v )
 {
 	for(auto & vv : v)
@@ -1072,8 +979,7 @@ T square( T v )
 // Element-wise cube
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+template< typename T, BRG_IS_STL(T) >
 T cube( T v )
 {
 	for(auto & vv : v)
@@ -1089,8 +995,7 @@ T cube( T v )
 // Element-wise quart
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+template< typename T, BRG_IS_STL(T) >
 T quart( T v )
 {
 	for(auto & vv : v)
@@ -1106,8 +1011,7 @@ T quart( T v )
 // Element-wise inverse
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+template< typename T, BRG_IS_STL(T) >
 T inverse( T v )
 {
 	for(auto & vv : v)
@@ -1123,8 +1027,7 @@ T inverse( T v )
 // Element-wise inv_square
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+template< typename T, BRG_IS_STL(T) >
 T inv_square( T v )
 {
 	for(auto & vv : v)
@@ -1140,8 +1043,7 @@ T inv_square( T v )
 // Element-wise inv_cube
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+template< typename T, BRG_IS_STL(T) >
 T inv_cube( T v )
 {
 	for(auto & vv : v)
@@ -1157,8 +1059,7 @@ T inv_cube( T v )
 // Element-wise inv_quart
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+template< typename T, BRG_IS_STL(T) >
 T inv_quart( T v )
 {
 	for(auto & vv : v)
@@ -1174,8 +1075,7 @@ T inv_quart( T v )
 // Element-wise safe_d
 #if (1)
 
-template< typename T,
-typename std::enable_if<brgastro::is_stl_container<T>::value,T>::type* = nullptr >
+template< typename T, BRG_IS_STL(T) >
 T safe_d( T v )
 {
 	for(auto & vv : v)
@@ -1191,237 +1091,189 @@ T safe_d( T v )
 // Element-wise compound math/assignment
 #if (1)
 
-// Element-wise add_equals
+// Element-wise add_equal
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & add_equals( T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
+T1 & add_equal( T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(add(v1,v2))>::value,
-			"basic add_equals cannot be compiled due to incompatible types.");
+			"basic add_equal cannot be compiled due to incompatible types.");
 	return v1+=v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & add_equals( T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
+T1 & add_equal( T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(add(v1,v2))>::value,
-			"stl-container,scalar add_equals cannot be compiled due to incompatible types.");
+			"stl-container,scalar add_equal cannot be compiled due to incompatible types.");
 
 	for(ssize_t i=0; i<ssize(v1);++i)
 	{
-		add_equals(v1[i],v2);
+		add_equal(v1[i],v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & add_equals( const T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
+T1 & add_equal( const T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(add(v1,v2))>::value,
-			"stl-container,stl-container add_equals cannot be compiled due to incompatible types.");
+			"stl-container,stl-container add_equal cannot be compiled due to incompatible types.");
 
 	assert(v1.size()==v2.size());
 
 	for(ssize_t i=0; i<ssize(v1);++i)
 	{
-		add_equals(v1[i],v2[i]);
+		add_equal(v1[i],v2[i]);
 	}
 
 	return v1;
 }
 
-#endif // Element-wise add_equals
+#endif // Element-wise add_equal
 
-// Element-wise subtract_equals
+// Element-wise subtract_equal
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & subtract_equals( T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
+T1 & subtract_equal( T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(subtract(v1,v2))>::value,
-			"basic subtract_equals cannot be compiled due to incompatible types.");
+			"basic subtract_equal cannot be compiled due to incompatible types.");
 	return v1-=v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & subtract_equals( T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
+T1 & subtract_equal( T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(subtract(v1,v2))>::value,
-			"stl-container,scalar subtract_equals cannot be compiled due to incompatible types.");
+			"stl-container,scalar subtract_equal cannot be compiled due to incompatible types.");
 
 	for(ssize_t i=0; i<ssize(v1);++i)
 	{
-		subtract_equals(v1[i],v2);
+		subtract_equal(v1[i],v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & subtract_equals( const T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
+T1 & subtract_equal( const T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(subtract(v1,v2))>::value,
-			"stl-container,stl-container subtract_equals cannot be compiled due to incompatible types.");
+			"stl-container,stl-container subtract_equal cannot be compiled due to incompatible types.");
 
 	assert(v1.size()==v2.size());
 
 	for(ssize_t i=0; i<ssize(v1);++i)
 	{
-		subtract_equals(v1[i],v2[i]);
+		subtract_equal(v1[i],v2[i]);
 	}
 
 	return v1;
 }
 
-#endif // Element-wise subtract_equals
+#endif // Element-wise subtract_equal
 
-// Element-wise multiply_equals
+// Element-wise multiply_equal
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & multiply_equals( T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
+T1 & multiply_equal( T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(multiply(v1,v2))>::value,
-			"basic multiply_equals cannot be compiled due to incompatible types.");
+			"basic multiply_equal cannot be compiled due to incompatible types.");
 	return v1*=v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & multiply_equals( T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
+T1 & multiply_equal( T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(multiply(v1,v2))>::value,
-			"stl-container,scalar multiply_equals cannot be compiled due to incompatible types.");
+			"stl-container,scalar multiply_equal cannot be compiled due to incompatible types.");
 
 	for(ssize_t i=0; i<ssize(v1);++i)
 	{
-		multiply_equals(v1[i],v2);
+		multiply_equal(v1[i],v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & multiply_equals( const T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
+T1 & multiply_equal( const T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(multiply(v1,v2))>::value,
-			"stl-container,stl-container multiply_equals cannot be compiled due to incompatible types.");
+			"stl-container,stl-container multiply_equal cannot be compiled due to incompatible types.");
 
 	assert(v1.size()==v2.size());
 
 	for(ssize_t i=0; i<ssize(v1);++i)
 	{
-		multiply_equals(v1[i],v2[i]);
+		multiply_equal(v1[i],v2[i]);
 	}
 
 	return v1;
 }
 
-#endif // Element-wise multiply_equals
+#endif // Element-wise multiply_equal
 
-// Element-wise divide_equals
+// Element-wise divide_equal
 #if (1)
 
-template< typename T1, typename T2,
-typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & divide_equals( T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_NEITHER_STL(T1,T2) >
+T1 & divide_equal( T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(divide(v1,v2))>::value,
-			"basic divide_equals cannot be compiled due to incompatible types.");
+			"basic divide_equal cannot be compiled due to incompatible types.");
 	return v1/=v2;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & divide_equals( T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_FIRST_STL(T1,T2) >
+T1 & divide_equal( T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(divide(v1,v2))>::value,
-			"stl-container,scalar divide_equals cannot be compiled due to incompatible types.");
+			"stl-container,scalar divide_equal cannot be compiled due to incompatible types.");
 
 	for(ssize_t i=0; i<ssize(v1);++i)
 	{
-		divide_equals(v1[i],v2);
+		divide_equal(v1[i],v2);
 	}
 
 	return v1;
 }
 
-template< typename T1, typename T2,
-typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
-typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
-typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
-T1 & divide_equals( const T1 & v1, const T2 &v2 )
+template< typename T1, typename T2, BRG_BOTH_STL(T1,T2) >
+T1 & divide_equal( const T1 & v1, const T2 &v2 )
 {
 	static_assert(std::is_same<typename std::decay<T1>::type,
 			decltype(divide(v1,v2))>::value,
-			"stl-container,stl-container divide_equals cannot be compiled due to incompatible types.");
+			"stl-container,stl-container divide_equal cannot be compiled due to incompatible types.");
 
 	assert(v1.size()==v2.size());
 
 	for(ssize_t i=0; i<ssize(v1);++i)
 	{
-		divide_equals(v1[i],v2[i]);
+		divide_equal(v1[i],v2[i]);
 	}
 
 	return v1;
 }
 
-#endif // Element-wise divide_equals
+#endif // Element-wise divide_equal
 
 #endif
 
@@ -1459,7 +1311,7 @@ std::vector<bool> equal( const T1 & v1, const T2 &v2 )
 	return result;
 }
 
-template< typename T1, typename T2, typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_IS_STL(T2) >
 std::vector<bool> equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
@@ -1510,7 +1362,7 @@ std::vector<bool> not_equal( const T1 & v1, const T2 &v2 )
 	return result;
 }
 
-template< typename T1, typename T2, typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_IS_STL(T2) >
 std::vector<bool> not_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
@@ -1561,7 +1413,7 @@ std::vector<bool> less_than( const T1 & v1, const T2 &v2 )
 	return result;
 }
 
-template< typename T1, typename T2, typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_IS_STL(T2) >
 std::vector<bool> less_than( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
@@ -1612,7 +1464,7 @@ std::vector<bool> greater_than( const T1 & v1, const T2 &v2 )
 	return result;
 }
 
-template< typename T1, typename T2, typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_IS_STL(T2) >
 std::vector<bool> greater_than( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
@@ -1663,7 +1515,7 @@ std::vector<bool> less_than_or_equal( const T1 & v1, const T2 &v2 )
 	return result;
 }
 
-template< typename T1, typename T2, typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_IS_STL(T2) >
 std::vector<bool> less_than_or_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
@@ -1714,7 +1566,7 @@ std::vector<bool> greater_than_or_equal( const T1 & v1, const T2 &v2 )
 	return result;
 }
 
-template< typename T1, typename T2, typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0 >
+template< typename T1, typename T2, BRG_IS_STL(T2) >
 std::vector<bool> greater_than_or_equal( const T1 & v1, const T2 &v2 )
 {
 	std::vector<bool> result(v1.size());
@@ -1756,7 +1608,7 @@ bool greater_than_or_equal( const T1 & v1, const T2 & v2 )
 // not
 #if (1)
 template<typename T>
-inline const T v_not(const T v)
+inline const T v_not(T v)
 {
 	for(typename T::size_type i=0; i < v.size(); i++)
 	{
