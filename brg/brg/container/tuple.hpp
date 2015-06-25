@@ -28,7 +28,9 @@
 
 #include <type_traits>
 #include <utility>
+
 #include <boost/tuple/tuple.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 #include "brg/container/is_boost_tuple.hpp"
 #include "brg/vector/elementwise_functions.hpp" // So we have primary definition of math funcs
@@ -57,11 +59,6 @@ boost::tuples::cons<Th,Tt> make_cons(Th && h, Tt && t)
 template< class T1, class T2, class Enable = void>
 struct add_typeof_helper
 {
-//	typedef typename std::decay<T1>::type T1d;
-//	typedef typename std::decay<T2>::type T2d;
-//
-//	typedef boost::tuples::cons<decltype(add(T1d().get_head(),T2d().get_head())),
-//			typename add_typeof_helper<decltype(T1d().get_tail()),decltype(T2d().get_tail())>::type> type;
 };
 
 /**
@@ -405,6 +402,9 @@ struct divide_typeof_helper<boost::tuples::null_type,boost::tuples::null_type,vo
 
 } // namespace tuples
 
+// for_each
+#if(1)
+
 // Unary for_each
 #if(1)
 
@@ -491,6 +491,11 @@ inline void trinary_for_each( const f & func, boost::tuples::cons<Th, Tt> & t1,
 }
 
 #endif // Trinary for_each
+
+#endif // for_each
+
+// Basic arithmetic
+#if(1)
 
 // Addition
 #if(1)
@@ -659,6 +664,197 @@ inline typename tuples::divide_typeof_helper<T1,T2>::type divide( const T1 & t1,
 }
 
 #endif // Division
+
+#endif // Basic arithmetic
+
+// Compound assignment-arithmetic
+#if(1)
+
+// Addition
+#if(1)
+
+template< class T1, class T2,
+	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value,
+		char>::type = 0>
+inline const T1 & add_equals( const T1 & t1,
+		T2 &&)
+{
+	return t1;
+}
+
+template <class T1, class T2,
+typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 & add_equals( T1 & t1,
+		const T2 & t2)
+{
+	static_assert(boost::is_convertible<typename tuples::add_typeof_helper<T1,T2>::type,
+			typename std::decay<T1>::type>::value,
+			"add_equals cannot be compiled due to incompatible types.");
+
+	add_equals(t1.get_head(),t2.get_head()); // Add heads
+	add_equals(t1.get_tail(),t2.get_tail()); // Recursively add tails
+
+	return t1;
+}
+
+template <class T1, class T2,
+typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 & add_equals( T1 & t1,
+		const T2 & t2)
+{
+	static_assert(boost::is_convertible<typename tuples::add_typeof_helper<T1,T2>::type,
+			typename std::decay<T1>::type>::value,
+			"add_equals cannot be compiled due to incompatible types.");
+
+	add_equals(t1.get_head(),t2); // Add to head
+	add_equals(t1.get_tail(),t2); // Recursively add to tail
+
+	return t1;
+}
+
+#endif // Addition
+
+// Subtraction
+#if(1)
+
+template< class T1, class T2,
+	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value,
+		char>::type = 0>
+inline const T1 & subtract_equals( const T1 & t1,
+		T2 &&)
+{
+	return t1;
+}
+
+template <class T1, class T2,
+typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 & subtract_equals( T1 & t1,
+		const T2 & t2)
+{
+	static_assert(boost::is_convertible<typename tuples::subtract_typeof_helper<T1,T2>::type,
+			typename std::decay<T1>::type>::value,
+			"subtract_equals cannot be compiled due to incompatible types.");
+
+	subtract_equals(t1.get_head(),t2.get_head()); // subtract heads
+	subtract_equals(t1.get_tail(),t2.get_tail()); // Recursively subtract tails
+
+	return t1;
+}
+
+template <class T1, class T2,
+typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 & subtract_equals( T1 & t1,
+		const T2 & t2)
+{
+	static_assert(boost::is_convertible<typename tuples::subtract_typeof_helper<T1,T2>::type,
+			typename std::decay<T1>::type>::value,
+			"subtract_equals cannot be compiled due to incompatible types.");
+
+	subtract_equals(t1.get_head(),t2); // subtract from head
+	subtract_equals(t1.get_tail(),t2); // Recursively subtract from tail
+
+	return t1;
+}
+
+#endif // Subtraction
+
+// Multiplication
+#if(1)
+
+template< class T1, class T2,
+	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value,
+		char>::type = 0>
+inline const T1 & multiply_equals( const T1 & t1,
+		T2 &&)
+{
+	return t1;
+}
+
+template <class T1, class T2,
+typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 & multiply_equals( T1 & t1,
+		const T2 & t2)
+{
+	static_assert(boost::is_convertible<typename tuples::multiply_typeof_helper<T1,T2>::type,
+			typename std::decay<T1>::type>::value,
+			"multiply_equals cannot be compiled due to incompatible types.");
+
+	multiply_equals(t1.get_head(),t2.get_head()); // multiply heads
+	multiply_equals(t1.get_tail(),t2.get_tail()); // Recursively multiply tails
+
+	return t1;
+}
+
+template <class T1, class T2,
+typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 & multiply_equals( T1 & t1,
+		const T2 & t2)
+{
+	static_assert(boost::is_convertible<typename tuples::multiply_typeof_helper<T1,T2>::type,
+			typename std::decay<T1>::type>::value,
+			"multiply_equals cannot be compiled due to incompatible types.");
+
+	multiply_equals(t1.get_head(),t2); // multiply with head
+	multiply_equals(t1.get_tail(),t2); // Recursively multiply with tail
+
+	return t1;
+}
+
+#endif // Multiplication
+
+// Division
+#if(1)
+
+template< class T1, class T2,
+	typename std::enable_if<std::is_same<typename std::decay<T1>::type,boost::tuples::null_type>::value,
+		char>::type = 0>
+inline const T1 & divide_equals( const T1 & t1,
+		T2 &&)
+{
+	return t1;
+}
+
+template <class T1, class T2,
+typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 & divide_equals( T1 & t1,
+		const T2 & t2)
+{
+	static_assert(boost::is_convertible<typename tuples::divide_typeof_helper<T1,T2>::type,
+			typename std::decay<T1>::type>::value,
+			"divide_equals cannot be compiled due to incompatible types.");
+
+	divide_equals(t1.get_head(),t2.get_head()); // divide heads
+	divide_equals(t1.get_tail(),t2.get_tail()); // Recursively divide tails
+
+	return t1;
+}
+
+template <class T1, class T2,
+typename std::enable_if<is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 & divide_equals( T1 & t1,
+		const T2 & t2)
+{
+	static_assert(boost::is_convertible<typename tuples::divide_typeof_helper<T1,T2>::type,
+			typename std::decay<T1>::type>::value,
+			"divide_equals cannot be compiled due to incompatible types.");
+
+	divide_equals(t1.get_head(),t2); // divide from head
+	divide_equals(t1.get_tail(),t2); // Recursively divide from tail
+
+	return t1;
+}
+
+#endif // Division
+
+#endif // Compound assignment-arithmetic
 
 }
 

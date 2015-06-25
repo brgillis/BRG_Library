@@ -32,6 +32,7 @@
 
 #include "brg/common.h"
 
+#include "brg/container/is_boost_tuple.hpp"
 #include "brg/container/is_container.hpp"
 #include "brg/container/is_eigen_container.hpp"
 #include "brg/math/misc_math.hpp"
@@ -1186,6 +1187,243 @@ T safe_d( T v )
 #endif // Element-wise safe_d
 
 #endif // Element-wise math
+
+// Element-wise compound math/assignment
+#if (1)
+
+// Element-wise add_equals
+#if (1)
+
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & add_equals( T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(add(v1,v2))>::value,
+			"basic add_equals cannot be compiled due to incompatible types.");
+	return v1+=v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & add_equals( T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(add(v1,v2))>::value,
+			"stl-container,scalar add_equals cannot be compiled due to incompatible types.");
+
+	for(ssize_t i=0; i<ssize(v1);++i)
+	{
+		add_equals(v1[i],v2);
+	}
+
+	return v1;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & add_equals( const T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(add(v1,v2))>::value,
+			"stl-container,stl-container add_equals cannot be compiled due to incompatible types.");
+
+	assert(v1.size()==v2.size());
+
+	for(ssize_t i=0; i<ssize(v1);++i)
+	{
+		add_equals(v1[i],v2[i]);
+	}
+
+	return v1;
+}
+
+#endif // Element-wise add_equals
+
+// Element-wise subtract_equals
+#if (1)
+
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & subtract_equals( T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(subtract(v1,v2))>::value,
+			"basic subtract_equals cannot be compiled due to incompatible types.");
+	return v1-=v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & subtract_equals( T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(subtract(v1,v2))>::value,
+			"stl-container,scalar subtract_equals cannot be compiled due to incompatible types.");
+
+	for(ssize_t i=0; i<ssize(v1);++i)
+	{
+		subtract_equals(v1[i],v2);
+	}
+
+	return v1;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & subtract_equals( const T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(subtract(v1,v2))>::value,
+			"stl-container,stl-container subtract_equals cannot be compiled due to incompatible types.");
+
+	assert(v1.size()==v2.size());
+
+	for(ssize_t i=0; i<ssize(v1);++i)
+	{
+		subtract_equals(v1[i],v2[i]);
+	}
+
+	return v1;
+}
+
+#endif // Element-wise subtract_equals
+
+// Element-wise multiply_equals
+#if (1)
+
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & multiply_equals( T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(multiply(v1,v2))>::value,
+			"basic multiply_equals cannot be compiled due to incompatible types.");
+	return v1*=v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & multiply_equals( T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(multiply(v1,v2))>::value,
+			"stl-container,scalar multiply_equals cannot be compiled due to incompatible types.");
+
+	for(ssize_t i=0; i<ssize(v1);++i)
+	{
+		multiply_equals(v1[i],v2);
+	}
+
+	return v1;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & multiply_equals( const T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(multiply(v1,v2))>::value,
+			"stl-container,stl-container multiply_equals cannot be compiled due to incompatible types.");
+
+	assert(v1.size()==v2.size());
+
+	for(ssize_t i=0; i<ssize(v1);++i)
+	{
+		multiply_equals(v1[i],v2[i]);
+	}
+
+	return v1;
+}
+
+#endif // Element-wise multiply_equals
+
+// Element-wise divide_equals
+#if (1)
+
+template< typename T1, typename T2,
+typename std::enable_if<!brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & divide_equals( T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(divide(v1,v2))>::value,
+			"basic divide_equals cannot be compiled due to incompatible types.");
+	return v1/=v2;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & divide_equals( T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(divide(v1,v2))>::value,
+			"stl-container,scalar divide_equals cannot be compiled due to incompatible types.");
+
+	for(ssize_t i=0; i<ssize(v1);++i)
+	{
+		divide_equals(v1[i],v2);
+	}
+
+	return v1;
+}
+
+template< typename T1, typename T2,
+typename std::enable_if<brgastro::is_stl_container<T1>::value,char>::type = 0,
+typename std::enable_if<brgastro::is_stl_container<T2>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!brgastro::is_boost_tuple<T2>::value,char>::type = 0 >
+T1 & divide_equals( const T1 & v1, const T2 &v2 )
+{
+	static_assert(std::is_same<typename std::decay<T1>::type,
+			decltype(divide(v1,v2))>::value,
+			"stl-container,stl-container divide_equals cannot be compiled due to incompatible types.");
+
+	assert(v1.size()==v2.size());
+
+	for(ssize_t i=0; i<ssize(v1);++i)
+	{
+		divide_equals(v1[i],v2[i]);
+	}
+
+	return v1;
+}
+
+#endif // Element-wise divide_equals
+
+#endif
 
 // Element-wise comparison (always return a vector of bools)
 #if (1)

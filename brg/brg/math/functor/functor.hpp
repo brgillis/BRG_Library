@@ -34,6 +34,9 @@
 
 namespace brgastro {
 
+/**
+ * An abstract base class representing a functor which can store parameters in a "param_struct" object.
+ */
 template<typename Tin, typename Tout, typename param_struct=char> // Defaults to using the minimum size for the param structure
 class functor
 {
