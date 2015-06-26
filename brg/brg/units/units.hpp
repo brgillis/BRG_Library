@@ -35,7 +35,7 @@
 
 //#include "brg/math/misc_math.hpp"
 
-#undef _BRG_USE_UNITS_
+#define _BRG_USE_UNITS_
 
 #ifdef _BRG_USE_UNITS_
 
@@ -435,10 +435,7 @@ inline T abs( const T & x)
 	return std::abs(x);
 }
 
-inline flt_type sqrt( const flt_type & x)
-{
-	return std::sqrt(x);
-}
+using std::sqrt;
 
 //template< int_type e>
 //flt_type ipow( const flt_type & x)
@@ -452,40 +449,13 @@ inline flt_type ipow( const flt_type & x)
 	return std::pow(x,static_cast<flt_type>(en)/ed);
 }
 
-inline flt_type sin( const flt_type & x)
-{
-	return std::sin(x);
-}
-
-inline flt_type cos( const flt_type & x)
-{
-	return std::cos(x);
-}
-
-inline flt_type tan( const flt_type & x)
-{
-	return std::tan(x);
-}
-
-inline flt_type asin( const flt_type & x)
-{
-	return std::asin(x);
-}
-
-inline flt_type acos( const flt_type & x)
-{
-	return std::acos(x);
-}
-
-inline flt_type atan( const flt_type & y)
-{
-	return std::atan(y);
-}
-
-inline flt_type atan2( const flt_type & y, const flt_type & x=1.)
-{
-	return std::atan2(y,x);
-}
+using std::sin;
+using std::cos;
+using std::tan;
+using std::asin;
+using std::acos;
+using std::atan;
+using std::atan2;
 
 #endif // Math functions
 
