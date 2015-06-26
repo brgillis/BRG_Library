@@ -77,14 +77,14 @@ T Gaus_rand( T_in && mean, T_in && stddev = 1.0, T_gen & gen=rng )
 template< typename T=flt_type, typename T_gen=decltype(rng) >
 T log10Gaus_rand( T_gen & gen=rng )
 {
-	const flt_type fact = std::exp( -square( std::log( 10. ) ) / 2 );
+	const flt_type & fact = std::exp( -square( std::log( 10. ) ) / 2 );
 
 	return ( fact * std::pow(10., Gaus_rand<T>(gen) ) );
 } // flt_type log10Gaus_rand()
 template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
 T log10Gaus_rand( T_in && mean, T_in && stddev = 1., T_gen & gen=rng )
 {
-	const flt_type fact = std::exp( -square( stddev*std::log(10.) ) / 2 );
+	const flt_type & fact = std::exp( -square( stddev*std::log(10.) ) / 2 );
 
 	return ( fact * std::pow(10., Gaus_rand<T,T_in>(std::forward<T_in>(mean),std::forward<T_in>(stddev),gen) ) );
 } // flt_type log10Gaus_rand(flt_type mean, flt_type stddev)

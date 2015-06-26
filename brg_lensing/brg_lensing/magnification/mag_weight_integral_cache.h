@@ -64,7 +64,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	const flt_type _calculate( const flt_type in_param_1 ) const;
+	flt_type _calculate( const flt_type & in_param_1 ) const;
 	void _load_cache_dependencies() const;
 
 public:

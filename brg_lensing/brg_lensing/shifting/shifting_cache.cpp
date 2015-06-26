@@ -41,14 +41,14 @@ DEFINE_BRG_CACHE_2D_STATIC_VARS( shifting_cache,
 
 // brgastro::tNFW_sig_cache class methods
 #if (1)
-const flt_type brgastro::shifting_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2) const
+flt_type brgastro::shifting_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2) const
 {
-	const flt_type t = std::fabs(in_param_1);
-	const flt_type z = std::fabs(in_param_2);
+	const flt_type & t = std::fabs(in_param_1);
+	const flt_type & z = std::fabs(in_param_2);
 
 	if(t==0) return 0;
 
-	const flt_type zero_shift = shifting_loader().get(0,z);
+	const flt_type & zero_shift = shifting_loader().get(0,z);
 	return safe_sqrt(shifting_loader().get(t,z)-zero_shift);
 }
 

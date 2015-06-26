@@ -335,7 +335,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	const flt_type _calculate(const flt_type x) const
+	flt_type _calculate(const flt_type & x) const
 	{
 		return 0;
 	}
@@ -363,8 +363,8 @@ public:
 		}
 	} // set_file_name()
 
-	void set_range( const flt_type new_mins, const flt_type new_maxes,
-			const flt_type new_steps)
+	void set_range( const flt_type & new_mins, const flt_type & new_maxes,
+			const flt_type & new_steps)
 	{
 		// First we try to load, so we can see if there are any changes from
 		// the existing cache
@@ -484,7 +484,7 @@ public:
 
 	} // get()
 
-	const any_units_type inverse_get( const flt_type y ) const
+	const any_units_type inverse_get( const flt_type & y ) const
 	{
 		// Check if it's possible to do an inverse get
 		if((SPCP(name)->_is_monotonic_!=1)&&((SPCP(name)->_is_monotonic_!=-1)))

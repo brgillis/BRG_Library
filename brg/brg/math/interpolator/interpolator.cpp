@@ -132,14 +132,14 @@ void brgastro::interpolator::clear_points()
 	_sorted_data_cached_ = false;
 }
 
-void brgastro::interpolator::add_point(const flt_type x, const flt_type y)
+void brgastro::interpolator::add_point(const flt_type & x, const flt_type & y)
 {
 	_data_.push_back(std::make_pair(x,y));
 	_spline_cached_ = false;
 	_sorted_data_cached_ = false;
 }
 
-void brgastro::interpolator::try_add_point(const flt_type x, const flt_type y)
+void brgastro::interpolator::try_add_point(const flt_type & x, const flt_type & y)
 {
 	for (ssize_t i=0;i<ssize(_data_);i++)
 	{
@@ -162,7 +162,7 @@ std::vector< std::pair<flt_type,flt_type> > & brgastro::interpolator::sorted_dat
 	return _sorted_data_;
 }
 
-const flt_type brgastro::interpolator::operator()(const flt_type x) const
+flt_type brgastro::interpolator::operator()(const flt_type & x) const
 {
 	if(_interpolation_type_==SPLINE)
 	{

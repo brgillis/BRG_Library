@@ -49,7 +49,7 @@ bool brgastro::expected_count_fit_loader::_loaded_(false);
 brgastro::table_map_t<flt_type> brgastro::expected_count_fit_loader::_data_map_;
 #endif
 
-const flt_type num_columns=8;
+const flt_type & num_columns=8;
 
 void brgastro::expected_count_fit_loader::_load()
 {
@@ -90,10 +90,10 @@ std::vector<flt_type> brgastro::expected_count_fit_loader::get(const flt_type & 
 
 	const size_t zi = _lower_z_index(z);
 
-	const flt_type zlo = _data_map_["z_mid"][zi];
-	const flt_type zhi = _data_map_["z_mid"][zi+1];
+	const flt_type & zlo = _data_map_["z_mid"][zi];
+	const flt_type & zhi = _data_map_["z_mid"][zi+1];
 
-	const flt_type weight = zhi-zlo;
+	const flt_type & weight = zhi-zlo;
 
 	std::vector<flt_type> r_lo, r_hi;
 

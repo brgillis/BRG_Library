@@ -32,7 +32,7 @@
 
 namespace brgastro {
 
-const flt_type min_x = 0.000001;
+const flt_type & min_x = 0.000001;
 
 surface_density_type brgastro::lensing_tNFW_profile::_quick_Delta_Sigma( const distance_type & r ) const
 {

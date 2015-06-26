@@ -65,8 +65,8 @@ public:
 	lensing_tNFW_profile()
 	{
 	}
-	lensing_tNFW_profile( const mass_type & init_mvir0, const flt_type init_z,
-			const flt_type init_c = -1, const flt_type init_tau = -1 )
+	lensing_tNFW_profile( const mass_type & init_mvir0, const flt_type & init_z,
+			const flt_type & init_c = -1, const flt_type & init_tau = -1 )
 	: tNFW_profile(init_mvir0, init_z, init_c, init_tau)
 	{
 	}

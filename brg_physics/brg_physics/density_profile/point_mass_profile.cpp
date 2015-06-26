@@ -43,7 +43,7 @@ brgastro::point_mass_profile::point_mass_profile()
 }
 
 brgastro::point_mass_profile::point_mass_profile( const mass_type init_mass,
-		const flt_type init_z )
+		const flt_type & init_z )
 {
 	set_mvir( init_mass );
 	set_z( init_z );
@@ -140,7 +140,7 @@ std::vector< std::string > brgastro::point_mass_profile::get_parameter_names() c
 	return parameter_names;
 }
 
-void brgastro::point_mass_profile::truncate_to_fraction( const flt_type f)
+void brgastro::point_mass_profile::truncate_to_fraction( const flt_type & f)
 {
 	if ( ( f <= 0 ) || ( isbad( f ) ) )
 	{

@@ -102,12 +102,12 @@ flt_type brgastro::shifting_loader::get(flt_type t, flt_type z)
 	const ssize_t ti = _lower_theta_index(t);
 	const ssize_t zi = _lower_z_index(z);
 
-	const flt_type tlo = _data_[0][ti];
-	const flt_type thi = _data_[0][ti+1];
-	const flt_type zlo = _zvals_[zi];
-	const flt_type zhi = _zvals_[zi+1];
+	const flt_type & tlo = _data_[0][ti];
+	const flt_type & thi = _data_[0][ti+1];
+	const flt_type & zlo = _zvals_[zi];
+	const flt_type & zhi = _zvals_[zi+1];
 
-	const flt_type weight = (thi-tlo)*(zhi-zlo);
+	const flt_type & weight = (thi-tlo)*(zhi-zlo);
 
 	flt_type result = 0;
 

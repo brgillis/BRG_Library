@@ -57,7 +57,7 @@ namespace brgastro
 // max_counter: Maximum number of loops the solver can take before it gives up.
 template< typename f, typename T, BRG_F_NOT_CONTAINER(T) >
 inline const T solve_iterate( const f & func, const T &init_param = 0,
-		const int_type slowdown = 1, const flt_type precision = 0.0001,
+		const int_type slowdown = 1, const flt_type & precision = 0.0001,
 		const int_type max_counter = 10000 )
 {
 	bool converged_flag;
@@ -154,8 +154,8 @@ inline const T solve_iterate( const f & func, const T &init_param = 0,
 // WARNING: This function hasn't been tested in a long while; it may no longer work.
 template< typename f, typename T, BRG_F_NOT_CONTAINER(T) >
 T solve_sd( const f & func, const T & init_in_params,
-		const flt_type precision = 0.00001, const flt_type lambda = 0.1,
-		const flt_type cusp_override_power = 0, const int_type max_steps = 10000)
+		const flt_type & precision = 0.00001, const flt_type & lambda = 0.1,
+		const flt_type & cusp_override_power = 0, const int_type max_steps = 10000)
 {
 	T Jacobian( 0 );
 	T current_in_params( 0 );
@@ -165,13 +165,13 @@ T solve_sd( const f & func, const T & init_in_params,
 	T mag;
 
 	const int_type lambda_shortening_intervals = 10;
-	const flt_type lambda_shortening_factor = 10;
+	const flt_type & lambda_shortening_factor = 10;
 	int_type num_out_params = 0;
 	int_type num_steps_taken = 0;
 	bool converged_flag = false;
 
 	// Sanity checks on variables
-	const flt_type lambda_to_use = max( SMALL_FACTOR,
+	const flt_type & lambda_to_use = max( SMALL_FACTOR,
 			min( 1 / SMALL_FACTOR, lambda ) );
 	const int_type max_steps_to_use = (int_type)max( 1, max_steps );
 
@@ -236,8 +236,8 @@ T solve_sd( const f & func, const T & init_in_params,
 // WARNING: This function hasn't been tested in a long while; it may no longer work.
 template< typename f, typename T, BRG_F_NOT_CONTAINER(T) >
 std::vector< T > solve_sd( const f & func, const std::vector< T > & init_in_params,
-		const flt_type precision = 0.00001,
-		const flt_type lambda = 0.1, const flt_type cusp_override_power = 0,
+		const flt_type & precision = 0.00001,
+		const flt_type & lambda = 0.1, const flt_type & cusp_override_power = 0,
 		const int_type max_steps = 10000)
 {
 	std::vector< std::vector< T > > Jacobian( 0 );
@@ -251,14 +251,14 @@ std::vector< T > solve_sd( const f & func, const std::vector< T > & init_in_para
 	vsize_t num_in_params = ssize(init_in_params);
 
 	const int_type lambda_shortening_intervals = 10;
-	const flt_type lambda_shortening_factor = 10;
+	const flt_type & lambda_shortening_factor = 10;
 	vsize_t num_out_params = 0;
 	int_type num_steps_taken = 0;
 	bool converged_flag = false;
 
 	// Sanity checks on variables
 	assert(num_in_params >= 1);
-	const flt_type lambda_to_use = max( SMALL_FACTOR,
+	const flt_type & lambda_to_use = max( SMALL_FACTOR,
 			min( 1 / SMALL_FACTOR, lambda ) );
 	const int_type max_steps_to_use = (int_type)max( 1, max_steps );
 
@@ -376,7 +376,7 @@ Tin solve_grid( const f & func, const Tin & init_min_in_param, const Tin & init_
 			init_max_in_param;
 
 	const int_type default_step_number = 10;
-	const flt_type grid_shortening_factor = 0.5;
+	const flt_type & grid_shortening_factor = 0.5;
 
 	flt_type init_precision = init_init_precision, precision = init_precision;
 	flt_type step_dist = 1;
@@ -543,7 +543,7 @@ std::vector< Tin > solve_grid( const f & func,
 	std::vector< flt_type > out_params_weight = init_out_params_weight;
 
 	const int_type default_step_number = 10;
-	const flt_type grid_shortening_factor = 0.5;
+	const flt_type & grid_shortening_factor = 0.5;
 
 	flt_type init_precision = init_init_precision, precision = init_precision;
 	flt_type step_dist = 1;

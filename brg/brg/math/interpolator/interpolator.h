@@ -104,11 +104,11 @@ public:
 
 	// This version doesn't check for duplicate x values, but if one does exist, an exception will
 	// eventually be thrown
-	void add_point(const flt_type x, const flt_type y);
+	void add_point(const flt_type & x, const flt_type & y);
 
 	// This version checks if there's a point with a duplicate x value. If so, it throws an
 	// exception
-	void try_add_point(const flt_type x, const flt_type y);
+	void try_add_point(const flt_type & x, const flt_type & y);
 
 	ssize_t size() const
 	{
@@ -122,7 +122,7 @@ public:
 
 	std::vector< std::pair<flt_type,flt_type> > & sorted_data() const;
 
-	const flt_type operator()(const flt_type x) const;
+	flt_type operator()(const flt_type & x) const;
 
 #endif // public
 

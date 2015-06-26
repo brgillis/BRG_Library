@@ -72,7 +72,7 @@ private:
 		if(!_data_stored_) store_data();
 	}
 
-	void _calc_gamma(const flt_type gamma_1, const flt_type gamma_2) const;
+	void _calc_gamma(const flt_type & gamma_1, const flt_type & gamma_2) const;
 
 public:
 

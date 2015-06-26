@@ -111,8 +111,8 @@ public:
 	void reset_interpolation_type();
 
 	// Functions for adding/clearing points
-	void add_point( const flt_type t, const flt_type x );
-	void add_unknown_point( const flt_type t );
+	void add_point( const flt_type & t, const flt_type & x );
+	void add_unknown_point( const flt_type & t );
 
 	void clear_known_points();
 	void clear_unknown_points();

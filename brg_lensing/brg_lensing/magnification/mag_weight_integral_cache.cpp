@@ -41,7 +41,7 @@ DEFINE_BRG_CACHE_STATIC_VARS( mag_weight_integral_cache,
 
 // brgastro::mag_weight_integral_cache class methods
 #if (1)
-const flt_type brgastro::mag_weight_integral_cache::_calculate( const flt_type in_param_1 ) const
+flt_type brgastro::mag_weight_integral_cache::_calculate( const flt_type & in_param_1 ) const
 {
 	mu_weight_integration_functor func(in_param_1);
 

@@ -496,7 +496,7 @@ template< typename f, typename T >
 inline auto integrate_Romberg( const f & func,
 		const std::vector< T > & min_in_param,
 		const std::vector< T > & max_in_param,
-		const flt_type precision = 0.00001,
+		const flt_type & precision = 0.00001,
 		const bool tighten_precision = false,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(multiply(func(min_in_param),min_in_param))
@@ -742,7 +742,7 @@ inline auto integrate_Romberg( const f & func,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_product_Romberg( const f_in_1 & func1,
 		const f_in_2 & func2, const T & min_in_param, const T & max_in_param,
-		const flt_type precision = 0.00001, const bool tighten_precision = false ) ->
+		const flt_type & precision = 0.00001, const bool tighten_precision = false ) ->
 			decltype(func1(min_in_param)*func2(min_in_param)*min_in_param)
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
@@ -755,7 +755,7 @@ inline auto integrate_product_Romberg( const f_in_1 & func1,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_product_Romberg( const f_in_1 & func1,
 		const f_in_2 & func2, const std::vector< T > & min_in_param,
-		const std::vector< T > & max_in_param, const flt_type precision = 0.00001,
+		const std::vector< T > & max_in_param, const flt_type & precision = 0.00001,
 		const bool tighten_precision = false,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(multiply(multiply(func1(min_in_param),func2(min_in_param)),min_in_param))
@@ -770,7 +770,7 @@ inline auto integrate_product_Romberg( const f_in_1 & func1,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_weighted_Romberg( const f_in_1 & func,
 		const f_in_2 & func_weight, const T & min_in_param, const T & max_in_param,
-		const flt_type precision = 0.00001, const bool tighten_precision = false ) ->
+		const flt_type & precision = 0.00001, const bool tighten_precision = false ) ->
 			decltype(func(min_in_param))
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func, func_weight );
@@ -788,7 +788,7 @@ inline auto integrate_weighted_Romberg( const f_in_1 & func,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_weighted_Romberg( const f_in_1 & func,
 		const f_in_2 & func_weight,	const std::vector< T > & min_in_param,
-		const std::vector< T > & max_in_param, const flt_type precision = 0.00001,
+		const std::vector< T > & max_in_param, const flt_type & precision = 0.00001,
 		const bool tighten_precision = false,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(func(min_in_param))

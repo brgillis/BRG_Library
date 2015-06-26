@@ -32,7 +32,7 @@ namespace brgastro {
 
 long_flt_type Schechter_like_functor::operator()( const long_flt_type & in_param) const
 {
-	const flt_type mag_jump_limit = 23.;
+	const flt_type & mag_jump_limit = 23.;
 
 	const long_flt_type x = std::pow(10,0.4*(m_star()-in_param));
 	long_flt_type result = 0.4*std::log(10.)*N_scale()*std::pow(x,alpha()+1)*

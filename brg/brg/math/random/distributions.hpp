@@ -47,49 +47,49 @@ inline Tx erfc(Tx && x)
 
 // Gaussian PDF
 template< typename Tx, typename Tmean, typename Tstddev >
-inline const flt_type Gaus_pdf( const Tx x, const Tmean mean,
+inline flt_type Gaus_pdf( const Tx x, const Tmean mean,
 		const Tstddev std_dev )
 {
 	return std::exp( -square( x - mean ) / ( 2 * square(std_dev) ) )
 			/ ( std_dev * std::sqrt( 2 * pi ) );
 }
 template< typename Tx, typename Tmean >
-inline const flt_type Gaus_pdf( const Tx x, const Tmean mean )
+inline flt_type Gaus_pdf( const Tx x, const Tmean mean )
 {
 	return Gaus_pdf(x,mean,1.);
 }
 template< typename Tx >
-inline const flt_type Gaus_pdf( const Tx x )
+inline flt_type Gaus_pdf( const Tx x )
 {
 	return Gaus_pdf(x,0.,1.);
 }
 
 // Spherical Gaussian PDF
 template< typename Tr, typename Tstddev >
-inline const flt_type spherical_Gaus_pdf( const Tr & r, const Tstddev & stddev )
+inline flt_type spherical_Gaus_pdf( const Tr & r, const Tstddev & stddev )
 {
 	return std::exp(-square(r/stddev)/2.)/std::pow(2*pi*stddev*stddev,1.5);
 }
 template< typename Tr >
-inline const flt_type spherical_Gaus_pdf( const Tr & r )
+inline flt_type spherical_Gaus_pdf( const Tr & r )
 {
 	return spherical_Gaus_pdf(r,1.);
 }
 
 // Function to integrate a Gaussian from min to max
 template< typename Tlo, typename Thi, typename Tmean, typename Tstddev >
-inline const flt_type Gaus_int( const Tlo min, const Thi max)
+inline flt_type Gaus_int( const Tlo min, const Thi max)
 {
 	return Gaus_int(min,max,0.,1.);
 }
 template< typename Tlo, typename Thi, typename Tmean>
-inline const flt_type Gaus_int( const Tlo min, const Thi max,
+inline flt_type Gaus_int( const Tlo min, const Thi max,
 		const Tmean mean)
 {
 	return Gaus_int(min,max,mean,1.);
 }
 template< typename Tlo, typename Thi, typename Tmean, typename Tstddev >
-inline const flt_type Gaus_int( const Tlo min, const Thi max,
+inline flt_type Gaus_int( const Tlo min, const Thi max,
 		const Tmean mean, const Tstddev std_dev )
 {
 	flt_type klo = ( min - mean ) / std_dev;

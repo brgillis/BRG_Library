@@ -57,7 +57,7 @@
 #if (1)
 #ifndef _BRG_PI_DEFINED_
 #define _BRG_PI_DEFINED_
-const flt_type pi = M_PI;
+const flt_type & pi = M_PI;
 #endif
 
 
@@ -86,13 +86,13 @@ const velocity_type c(brgastro::unitconv::ctomps * mps);
 const inverse_time_type H_0(
 		70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / brgastro::second); // So all results will implicitly be in h_70 units
 
-const float Omega_m = 0.288; // WMAP9 + priors
-const float Omega_r = 0.000086; // WMAP9 + priors
-const float Omega_k = 0; // Assuming flat space
-const float Omega_l = 1 - Omega_k - Omega_m - Omega_r;
-const float Omega_b = 0.0472; // WMAP9 + priors
-const float sigma_8 = 0.830; // WMAP9 + priors
-const float n_s = 0.971;     // WMAP9 + priors
+constexpr flt_type Omega_m = 0.288; // WMAP9 + priors
+constexpr flt_type Omega_r = 0.000086; // WMAP9 + priors
+constexpr flt_type Omega_k = 0; // Assuming flat space
+constexpr flt_type Omega_l = 1 - Omega_k - Omega_m - Omega_r;
+constexpr flt_type Omega_b = 0.0472; // WMAP9 + priors
+constexpr flt_type sigma_8 = 0.830; // WMAP9 + priors
+constexpr flt_type n_s = 0.971;     // WMAP9 + priors
 
 #endif
 
@@ -103,8 +103,8 @@ const float n_s = 0.971;     // WMAP9 + priors
 #ifndef _BRG_DEFAULT_ASTRO_VARS_DEFINED_
 #define _BRG_DEFAULT_ASTRO_VARS_DEFINED_
 
-const flt_type default_c = 6.; // To help prevent crashes. Warning will be output
-const flt_type default_tau_factor = 2.;
+constexpr flt_type default_c = 6.; // To help prevent crashes. Warning will be output
+constexpr flt_type default_tau_factor = 2.;
 
 #endif
 #endif
@@ -127,7 +127,7 @@ distance_type dfa( const angle_type & da, const flt_type & z ); // Performs conv
 distance_type dfa( const angle_type & a1, const angle_type & a2,
 		const flt_type & z ); // Performs conversion of dist between two angles
 distance_type dfa( const angle_type & a1x, const angle_type & a1y,
-		const angle_type & a2x, const angle_type & a2y, const flt_type  &z ); // Performs conversion of dist between two positions
+		const angle_type & a2x, const angle_type & a2y, const flt_type & z ); // Performs conversion of dist between two positions
 
 custom_unit_type<-1,0,0,1,0> afd( const flt_type & z );
 angle_type afd( const distance_type & dd, const flt_type & z );
@@ -216,12 +216,12 @@ public:
 
 	// Set functions
 #if (1)
-	virtual void set_z( const flt_type new_z ) // Sets z
+	virtual void set_z( const flt_type & new_z ) // Sets z
 	{
 		_z_ = new_z;
 		_H_cached_ = false;
 	}
-	virtual void set_z_err( const flt_type new_z_err ) // Sets z error
+	virtual void set_z_err( const flt_type & new_z_err ) // Sets z error
 	{
 		_z_err_ = new_z_err;
 	}

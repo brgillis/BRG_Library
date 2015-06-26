@@ -84,8 +84,8 @@ DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_Sigma_cache,
 
 // brgastro::tNFW_sig_cache class methods
 #if (1)
-const flt_type brgastro::tNFW_sig_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
-		const flt_type in_param_3 ) const
+flt_type brgastro::tNFW_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+		const flt_type & in_param_3 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -99,8 +99,8 @@ const flt_type brgastro::tNFW_sig_cache::_calculate( const flt_type in_param_1, 
 // brgastro::NFW_offset_sig_cache class methods
 #if (1)
 
-const flt_type brgastro::tNFW_offset_sig_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
-		const flt_type in_param_3, const flt_type in_param_4 ) const
+flt_type brgastro::tNFW_offset_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+		const flt_type & in_param_3, const flt_type & in_param_4 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -115,8 +115,8 @@ const flt_type brgastro::tNFW_offset_sig_cache::_calculate( const flt_type in_pa
 // brgastro::tNFW_group_sig_cache class methods
 #if (1)
 
-const flt_type brgastro::tNFW_group_sig_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
-		const flt_type in_param_3, const flt_type in_param_4 ) const
+flt_type brgastro::tNFW_group_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+		const flt_type & in_param_3, const flt_type & in_param_4 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -130,8 +130,8 @@ const flt_type brgastro::tNFW_group_sig_cache::_calculate( const flt_type in_par
 
 // brgastro::tNFW_shifted_sig_cache class methods
 #if (1)
-const flt_type brgastro::tNFW_shifted_sig_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
-		const flt_type in_param_3 ) const
+flt_type brgastro::tNFW_shifted_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+		const flt_type & in_param_3 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -144,8 +144,8 @@ const flt_type brgastro::tNFW_shifted_sig_cache::_calculate( const flt_type in_p
 
 // brgastro::tNFW_Sigma_cache class methods
 #if (1)
-const flt_type brgastro::tNFW_Sigma_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
-		const flt_type in_param_3 ) const
+flt_type brgastro::tNFW_Sigma_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+		const flt_type & in_param_3 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -159,8 +159,8 @@ const flt_type brgastro::tNFW_Sigma_cache::_calculate( const flt_type in_param_1
 // brgastro::NFW_offset_Sigma_cache class methods
 #if (1)
 
-const flt_type brgastro::tNFW_offset_Sigma_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
-		const flt_type in_param_3, const flt_type in_param_4 ) const
+flt_type brgastro::tNFW_offset_Sigma_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+		const flt_type & in_param_3, const flt_type & in_param_4 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -175,8 +175,8 @@ const flt_type brgastro::tNFW_offset_Sigma_cache::_calculate( const flt_type in_
 // brgastro::tNFW_group_Sigma_cache class methods
 #if (1)
 
-const flt_type brgastro::tNFW_group_Sigma_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2,
-		const flt_type in_param_3, const flt_type in_param_4 ) const
+flt_type brgastro::tNFW_group_Sigma_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+		const flt_type & in_param_3, const flt_type & in_param_4 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;

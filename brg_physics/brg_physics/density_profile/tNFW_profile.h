@@ -70,7 +70,7 @@ protected:
 
 	void _uncache_mass();
 
-	flt_type _taufm( const flt_type mratio, flt_type precision = 0.00001 ) const; // tau from Mtot/Mvir
+	flt_type _taufm( const flt_type & mratio, flt_type precision = 0.00001 ) const; // tau from Mtot/Mvir
 	flt_type _delta_c() const // Simple function of concentration used as a step in calculating NFW densities
 	{
 		return ( 200. / 3. ) * cube( _c_ )
@@ -78,7 +78,7 @@ protected:
 	}
 
 	// Functions relating to tNFW profiles
-	flt_type _cfm( const mass_type mass_type, const flt_type z=0 ) const // Concentration from mass_type relationship, from Neto
+	flt_type _cfm( const mass_type mass_type, const flt_type & z=0 ) const // Concentration from mass_type relationship, from Neto
 	{
 		//return 4.67 * std::pow( mass_type * unitconv::kgtottMsun / ( 1e4 ), -0.11 );
 		return 4.67 * std::pow( mass_type / ( 1e14 * unitconv::kgtoMsun * brgastro::kilogram ), -0.11 );
@@ -87,7 +87,7 @@ protected:
 	{
 		return _cfm(_mvir0_,z());
 	}
-	flt_type _mftau( const flt_type tau, const flt_type conc ) const // Mtot/Mvir from tau
+	flt_type _mftau( const flt_type & tau, const flt_type & conc ) const // Mtot/Mvir from tau
 	{
 		if(tau<=0) return 0;
 		flt_type M0oM200 = 1 / ( std::log( 1 + conc ) - conc / ( 1 + conc ) );
@@ -98,7 +98,7 @@ protected:
 								- ( tautau + 1 ) );
 		return result;
 	}
-	flt_type _mftau( const flt_type tau ) const // Mtot/Mvir from tau
+	flt_type _mftau( const flt_type & tau ) const // Mtot/Mvir from tau
 	{
 		return _mftau(tau,_c_);
 	}
@@ -112,8 +112,8 @@ public:
 #if (1) // Constructors
 	tNFW_profile();
 
-	explicit tNFW_profile( const mass_type & init_mvir0, const flt_type init_z = 0,
-			const flt_type init_c = -1, const flt_type init_tau = -1 );
+	explicit tNFW_profile( const mass_type & init_mvir0, const flt_type & init_z = 0,
+			const flt_type & init_c = -1, const flt_type & init_tau = -1 );
 
 #endif // End constructors
 
@@ -126,9 +126,9 @@ public:
 			false );
 	void set_parameters( const std::vector< any_units_type > & new_parameters );
 
-	void set_z( const flt_type new_z );
-	void set_tau( const flt_type new_halo_tau );
-	void set_c( const flt_type new_halo_c );
+	void set_z( const flt_type & new_z );
+	void set_tau( const flt_type & new_halo_tau );
+	void set_c( const flt_type & new_halo_c );
 
 #endif // End set functions
 
@@ -166,7 +166,7 @@ public:
 
 #if (1) // Other operations
 
-	virtual void truncate_to_fraction( const flt_type fraction );
+	virtual void truncate_to_fraction( const flt_type & fraction );
 	virtual redshift_obj *redshift_obj_clone() const
 	{
 		return new tNFW_profile( *this );

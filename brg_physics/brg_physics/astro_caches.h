@@ -52,7 +52,7 @@ protected:
 	}
 
 	// Long-form calculation function.
-	const flt_type _calculate( const flt_type in_param ) const;
+	flt_type _calculate( const flt_type & in_param ) const;
 
 #ifdef _BRG_USE_UNITS_
 
@@ -85,7 +85,7 @@ protected:
 	}
 
 	// Long-form calculation function.
-	const flt_type _calculate( const flt_type in_param_1, const flt_type in_param_2 ) const;
+	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2 ) const;
 
 #ifdef _BRG_USE_UNITS_
 
@@ -117,7 +117,7 @@ protected:
 	}
 
 	// Long-form calculation function.
-	const flt_type _calculate( const flt_type in_params ) const;
+	flt_type _calculate( const flt_type & in_param ) const;
 
 #ifdef _BRG_USE_UNITS_
 

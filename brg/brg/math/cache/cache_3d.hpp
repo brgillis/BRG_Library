@@ -376,7 +376,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	virtual const flt_type _calculate(const flt_type x_1, const flt_type x_2, const flt_type x_3) const
+	virtual flt_type _calculate(const flt_type & x_1, const flt_type & x_2, const flt_type & x_3) const
 	{
 		return 0;
 	}
@@ -412,9 +412,9 @@ public:
 		}
 	} // void set_file_name()
 
-	void set_range( const flt_type new_min_1, const flt_type new_max_1, const flt_type new_step_1,
-	         const flt_type new_min_2, const flt_type new_max_2, const flt_type new_step_2,
- 	         const flt_type new_min_3, const flt_type new_max_3, const flt_type new_step_3)
+	void set_range( const flt_type & new_min_1, const flt_type & new_max_1, const flt_type & new_step_1,
+	         const flt_type & new_min_2, const flt_type & new_max_2, const flt_type & new_step_2,
+ 	         const flt_type & new_min_3, const flt_type & new_max_3, const flt_type & new_step_3)
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 

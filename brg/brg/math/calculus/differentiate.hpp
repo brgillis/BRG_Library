@@ -55,7 +55,7 @@ namespace brgastro {
 // Scalar-in, scalar-out version
 template< typename f, typename T >
 inline T differentiate( const f * func, const T & in_param,
-		const int_type order = 1, const flt_type power = 1,
+		const int_type order = 1, const flt_type & power = 1,
 		const T & factor=SMALL_FACTOR )
 {
 
@@ -153,7 +153,7 @@ inline T differentiate( const f * func, const T & in_param,
 // Vector-in, vector-out version
 template< typename f, typename T >
 inline std::vector< std::vector< T > > differentiate( const f * func, const std::vector< T > & in_params,
-		const int_type order = 1, const flt_type power = 1 )
+		const int_type order = 1, const flt_type & power = 1 )
 {
 	auto num_in_params = ssize(in_params);
 	std::vector< std::vector< T > > Jacobian;

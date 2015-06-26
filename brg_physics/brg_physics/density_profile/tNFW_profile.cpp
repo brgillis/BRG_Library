@@ -34,7 +34,7 @@
 
 #include "tNFW_profile.h"
 
-const flt_type min_x = 0.0001;
+const flt_type & min_x = 0.0001;
 
 // brgastro::tNFW_profile class methods
 #if (1)
@@ -46,7 +46,7 @@ void brgastro::tNFW_profile::_uncache_mass()
 	hmtot_cached = false;
 }
 
-flt_type brgastro::tNFW_profile::_taufm( const flt_type m_ratio,
+flt_type brgastro::tNFW_profile::_taufm( const flt_type & m_ratio,
 		flt_type precision ) const
 {
 	flt_type m_target = m_ratio * _mftau();
@@ -91,7 +91,7 @@ brgastro::tNFW_profile::tNFW_profile()
 }
 
 brgastro::tNFW_profile::tNFW_profile( const mass_type & init_mvir0,
-		const flt_type init_z, const flt_type init_c, const flt_type init_tau )
+		const flt_type & init_z, const flt_type & init_c, const flt_type & init_tau )
 {
 	_mvir0_ = init_mvir0;
 	_rvir_cache_ = 0;
@@ -129,17 +129,17 @@ void brgastro::tNFW_profile::set_mvir( const mass_type & new_halo_mass )
 	_mvir0_ = new_halo_mass;
 	_uncache_mass();
 }
-void brgastro::tNFW_profile::set_tau( const flt_type new_halo_tau )
+void brgastro::tNFW_profile::set_tau( const flt_type & new_halo_tau )
 {
 	_tau_ = new_halo_tau;
 	_uncache_mass();
 }
-void brgastro::tNFW_profile::set_c( const flt_type new_halo_c )
+void brgastro::tNFW_profile::set_c( const flt_type & new_halo_c )
 {
 	_c_ = new_halo_c;
 	_uncache_mass();
 }
-void brgastro::tNFW_profile::set_z( const flt_type new_z )
+void brgastro::tNFW_profile::set_z( const flt_type & new_z )
 {
 	redshift_obj::set_z( new_z );
 	_uncache_mass();
@@ -323,7 +323,7 @@ std::vector< std::string > brgastro::tNFW_profile::get_parameter_names() const
 	return parameter_names;
 }
 
-void brgastro::tNFW_profile::truncate_to_fraction( const flt_type f )
+void brgastro::tNFW_profile::truncate_to_fraction( const flt_type & f )
 {
 	if ( f <= 0 )
 	{

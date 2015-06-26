@@ -54,7 +54,7 @@
 namespace brgastro{ namespace sgsmooth {
 
 //! default convergence
-static const flt_type TINY_FLOAT = 1.0e-300;
+static const flt_type & TINY_FLOAT = 1.0e-300;
 
 //! comfortable array of ints;
 typedef std::vector<size_t> uint_vect;
@@ -78,7 +78,7 @@ private:
     float_mat &operator =(const float_mat &) { return *this; };
 public:
     //! constructor with sizes
-    float_mat(const size_t rows, const size_t cols, const flt_type def=0.0);
+    float_mat(const size_t rows, const size_t cols, const flt_type & def=0.0);
     //! copy constructor for matrix
     float_mat(const float_mat &m);
     //! copy constructor for vector
@@ -96,7 +96,7 @@ public:
 
 
 // constructor with sizes
-float_mat::float_mat(const size_t rows,const size_t cols,const flt_type defval)
+float_mat::float_mat(const size_t rows,const size_t cols,const flt_type & defval)
         : std::vector<flt_vector_type>(rows) {
     size_t i;
     for (i = 0; i < rows; ++i) {
@@ -189,7 +189,7 @@ static int_type partial_pivot(float_mat &A, const size_t row, const size_t col,
     size_t j;
     for (j = row + 1; j < A.nr_rows(); ++j) {
 
-        const flt_type tmp = fabs(A[idx[j]][col]) * scale[idx[j]];
+        const flt_type & tmp = fabs(A[idx[j]][col]) * scale[idx[j]];
 
         // if this elem is larger, then it becomes the pivot
         if (tmp > piv_elem) {

@@ -66,8 +66,8 @@ public:
 		_dec_grid_change_num_++;
 	}
 
-	static void set_z_grid( const flt_type new_z_grid_min,
-			const flt_type new_z_grid_max, const flt_type new_z_grid_step )
+	static void set_z_grid( const flt_type & new_z_grid_min,
+			const flt_type & new_z_grid_max, const flt_type & new_z_grid_step )
 	{
 		_z_grid_min_ = new_z_grid_min;
 		_z_grid_max_ = new_z_grid_max;
@@ -99,7 +99,7 @@ public:
 	{
 		return _dec_grid_min_;
 	}
-	static const flt_type z_grid_min()
+	static const flt_type & z_grid_min()
 	{
 		return _z_grid_min_;
 	}
@@ -111,7 +111,7 @@ public:
 	{
 		return _dec_grid_max_;
 	}
-	static const flt_type z_grid_max()
+	static const flt_type & z_grid_max()
 	{
 		return _z_grid_max_;
 	}
@@ -123,7 +123,7 @@ public:
 	{
 		return _dec_grid_step_;
 	}
-	static const flt_type z_grid_step()
+	static const flt_type & z_grid_step()
 	{
 		return _z_grid_step_;
 	}
@@ -140,7 +140,7 @@ public:
 	{
 		return (int_type)floor( ( dec - _dec_grid_min_ ) / _dec_grid_step_ );
 	}
-	static int_type get_z_grid( const flt_type z )
+	static int_type get_z_grid( const flt_type & z )
 	{
 		return (int_type)floor( ( z - _z_grid_min_ ) / _z_grid_step_ );
 	}

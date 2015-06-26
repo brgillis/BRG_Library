@@ -382,7 +382,7 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_c( const flt_type new_c )
+	void set_c( const flt_type & new_c )
 	{
 		_c_ = new_c;
 	}
@@ -412,7 +412,7 @@ public:
 	}
 
 	group_Delta_Sigma_weight_functor( const name *init_host=NULL,
-			const flt_type init_c = -1 )
+			const flt_type & init_c = -1 )
 	{
 		_host_ptr_ = init_host;
 		_c_ = init_c;
@@ -497,7 +497,7 @@ public:
 		const distance_type R_actual(lc_add(_R_, _R_shift_, in_param));
 
 		const angle_type theta(asin(_R_shift_/R_actual * sin(in_param)));
-		const flt_type angle_factor = cos(theta);
+		const flt_type & angle_factor = cos(theta);
 
 		flt_type extra_shear_factor;
 		if(value_of(_R_shift_)==0)
@@ -564,7 +564,7 @@ public:
 
 		const angle_type min_in_param = 0 * rad;
 		const angle_type max_in_param = pi * rad;
-		const flt_type precision = 0.000001;
+		const flt_type & precision = 0.000001;
 
 		auto out_param = brgastro::integrate_Romberg( func, min_in_param, max_in_param,
 				precision, false );

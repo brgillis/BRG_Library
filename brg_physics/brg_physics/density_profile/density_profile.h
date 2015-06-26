@@ -39,7 +39,7 @@ namespace brgastro {
 
 #ifndef _BRG_VIRIAL_DENSITY_FACTOR_DEFFED_
 #define _BRG_VIRIAL_DENSITY_FACTOR_DEFFED_
-const flt_type virial_density_factor = 200;
+constexpr flt_type virial_density_factor = 200.;
 #endif
 
 class density_profile: public virtual redshift_obj
@@ -144,11 +144,11 @@ public:
 	{
 		throw std::logic_error("density_profile::set_parameters(...) must be overloaded to be used.\n");
 	}
-	virtual void set_tau( const flt_type new_tau ) // Truncation parameter
+	virtual void set_tau( const flt_type & new_tau ) // Truncation parameter
 	{
 		throw std::logic_error("density_profile::set_tau(...) must be overloaded to be used.\n");
 	}
-	virtual void set_c( const flt_type new_c ) // Concentration
+	virtual void set_c( const flt_type & new_c ) // Concentration
 	{
 		throw std::logic_error("density_profile::set_c(...) must be overloaded to be used.\n");
 	}
@@ -295,7 +295,7 @@ public:
 
 #if (1) // Other operations
 
-	virtual void truncate_to_fraction( const flt_type fraction ) // Adjusts parameters of this class to decrease the mass to fraction of its previous mass.
+	virtual void truncate_to_fraction( const flt_type & fraction ) // Adjusts parameters of this class to decrease the mass to fraction of its previous mass.
 	{
 		throw std::logic_error("density_profile::truncate_to_fraction() must be overloaded to be used.\n");
 	}

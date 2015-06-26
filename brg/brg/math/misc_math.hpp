@@ -194,7 +194,7 @@ inline bool divisible( const Ta & a, const Tb & b )
 }
 
 // Rounds to nearest integer, favouring even
-inline int_type round_int( flt_type value, const flt_type epsilon=std::numeric_limits<flt_type>::epsilon() )
+inline int_type round_int( flt_type value, const flt_type & epsilon=std::numeric_limits<flt_type>::epsilon() )
 {
 
 	if ( value < 0.0 )

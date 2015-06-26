@@ -55,9 +55,9 @@ DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
 // brgastro::dfa_cache class methods
 #if (1)
 
-const flt_type brgastro::dfa_cache::_calculate( const flt_type in_params ) const
+flt_type brgastro::dfa_cache::_calculate( const flt_type & in_param ) const
 {
-	return value_of(brgastro::integrate_add( 0, in_params ));
+	return value_of(brgastro::integrate_add( 0, in_param ));
 }
 
 #ifdef _BRG_USE_UNITS_
@@ -79,7 +79,8 @@ const brgastro::any_units_type brgastro::dfa_cache::_inverse_units(const flt_typ
 // brgastro::add_cache class methods
 #if(1)
 
-const flt_type brgastro::add_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2) const
+flt_type brgastro::add_cache::_calculate( const flt_type & in_param_1,
+		const flt_type & in_param_2) const
 {
 	return value_of(brgastro::integrate_add(in_param_1,in_param_2));
 }
@@ -103,9 +104,9 @@ const brgastro::any_units_type brgastro::add_cache::_inverse_units(const flt_typ
 // brgastro::tfa_cache class methods
 #if(1)
 
-const flt_type brgastro::tfa_cache::_calculate( const flt_type in_params ) const
+flt_type brgastro::tfa_cache::_calculate( const flt_type & in_param ) const
 {
-	return value_of(-brgastro::integrate_ltd( 0, brgastro::zfa( in_params ) ) / c);
+	return value_of(-brgastro::integrate_ltd( 0, brgastro::zfa( in_param ) ) / c);
 }
 
 #ifdef _BRG_USE_UNITS_

@@ -39,9 +39,9 @@ DEFINE_BRG_CACHE_2D_STATIC_VARS( expected_count_cache,
 
 // brgastro::expected_count_cache class methods
 #if (1)
-const flt_type brgastro::expected_count_cache::_calculate( const flt_type in_param_1, const flt_type in_param_2) const
+flt_type brgastro::expected_count_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2) const
 {
-	const flt_type m = std::fabs(in_param_1);
+	const flt_type & m = std::fabs(in_param_1);
 	const long_flt_type z_min = std::fabs(in_param_2);
 
 	return expected_count_loader::get_count(m,z_min);

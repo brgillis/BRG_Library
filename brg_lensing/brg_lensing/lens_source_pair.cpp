@@ -47,7 +47,7 @@ namespace brgastro {
 
 #if(1) // Private methods
 
-void lens_source_pair::_calc_gamma(const flt_type gamma_1, const flt_type gamma_2) const
+void lens_source_pair::_calc_gamma(const flt_type & gamma_1, const flt_type & gamma_2) const
 {
 	flt_type rot_cos = cos(-2.*_theta_);
 	flt_type rot_sin = sin(-2.*_theta_);

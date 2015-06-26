@@ -63,7 +63,7 @@ T runtime_ipow( T v, int_type p )
 
 template< int_type p >
 struct _ipow_s {
-	const flt_type value;
+	const flt_type & value;
 
 	_ipow_s( const flt_type & v )
 	: value([&](){
@@ -77,7 +77,7 @@ struct _ipow_s {
 
 template<>
 struct _ipow_s<1> {
-	const flt_type value;
+	const flt_type & value;
 
 	_ipow_s( const flt_type & v )
 	: value(v)
@@ -87,7 +87,7 @@ struct _ipow_s<1> {
 
 template<>
 struct _ipow_s<0> {
-	const flt_type value;
+	const flt_type & value;
 
 	_ipow_s( const flt_type & v )
 	: value(1.)
@@ -97,7 +97,7 @@ struct _ipow_s<0> {
 
 template< int_type p >
 struct ipow_s {
-	const flt_type value;
+	const flt_type & value;
 
 	ipow_s( const flt_type & v )
 	: value([&](){

@@ -350,7 +350,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long calculation function, which is used to generate the cache
-	const flt_type _calculate(const brgastro::multi_vector<flt_type> & x) const
+	flt_type _calculate(const brgastro::multi_vector<flt_type> & x) const
 	{
 		return 0;
 	}

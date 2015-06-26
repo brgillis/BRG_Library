@@ -216,14 +216,14 @@ void brgastro::interpolator_derivative::clear()
 	_sample_precision_ = _default_sample_precision_;
 }
 
-void brgastro::interpolator_derivative::add_point( const flt_type t,
-		const flt_type x )
+void brgastro::interpolator_derivative::add_point( const flt_type & t,
+		const flt_type & x )
 {
 	_known_interpolator_.add_point( t, x );
 	_calculated_ = false;
 }
 
-void brgastro::interpolator_derivative::add_unknown_point( const flt_type t )
+void brgastro::interpolator_derivative::add_unknown_point( const flt_type & t )
 {
 	_unknown_t_list_.push_back( t );
 	_calculated_ = false;
@@ -337,6 +337,6 @@ flt_type brgastro::interpolator_derivative::operator()( flt_type xval ) const
 	_calculated_ = true;
 
 	return _estimated_interpolator_( xval );
-} // const flt_type operator()(flt_type xval)
+} // const flt_type & operator()(flt_type xval)
 
 #endif

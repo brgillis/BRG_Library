@@ -62,8 +62,8 @@ public:
 	// Public member functions
 
 	// Constructor
-	sky_obj( const angle_type & init_ra = 0*rad, const angle_type & init_dec = 0*rad, flt_type init_z = 0,
-			const angle_type & init_ra_err = 0*rad, const angle_type & init_dec_err = 0*rad, flt_type init_z_err =
+	sky_obj( const angle_type & init_ra = 0*rad, const angle_type & init_dec = 0*rad, const flt_type & init_z = 0,
+			const angle_type & init_ra_err = 0*rad, const angle_type & init_dec_err = 0*rad, const flt_type & init_z_err =
 			0 ); // Normal constructor
 
 	//sky_obj(const sky_obj & other_sky_obj); // Copy constructor (Default is fine for us)
@@ -83,16 +83,16 @@ public:
 	virtual void set_ra_dec( const angle_type & new_ra,
 			const angle_type & new_dec ); // Sets ra and dec
 	virtual void set_ra_dec_z( const angle_type & new_ra,
-			const angle_type & new_dec, const flt_type new_z ); // Sets all values
+			const angle_type & new_dec, const flt_type & new_z ); // Sets all values
 	virtual void set_ra_dec_z_err( const angle_type & new_ra,
-			const angle_type & new_dec, const flt_type new_z,
+			const angle_type & new_dec, const flt_type & new_z,
 			const angle_type & new_ra_err, const angle_type & new_dec_err,
-			const flt_type new_z_err ); // Sets all values and error
+			const flt_type & new_z_err ); // Sets all values and error
 	virtual void set_ra_dec_err( const angle_type & new_ra,
 			const angle_type & new_dec, const angle_type & new_ra_err,
 			const angle_type & new_dec_err ); // Sets ra and dec and error
 
-	void set_weight( const flt_type new_weight );
+	void set_weight( const flt_type & new_weight );
 	void set_index( const int_type new_index );
 	void set_ID( const std::string &new_ID );
 #endif // end set functions
@@ -116,7 +116,7 @@ public:
 		return _dec_err_;
 	}
 
-	const flt_type weight() const
+	const flt_type & weight() const
 	{
 		return _weight_;
 	}

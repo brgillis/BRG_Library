@@ -33,8 +33,8 @@
 #if (1)
 
 brgastro::sky_obj::sky_obj( const angle_type & init_ra, const angle_type & init_dec,
-		const flt_type init_z, const angle_type & init_ra_err,
-		const angle_type & init_dec_err, const flt_type init_z_err )
+		const flt_type & init_z, const angle_type & init_ra_err,
+		const angle_type & init_dec_err, const flt_type & init_z_err )
 {
 	partial_clear();
 	set_ra_dec_z_err( init_ra, init_dec, init_z, init_ra_err, init_dec_err,
@@ -77,16 +77,16 @@ void brgastro::sky_obj::set_ra_dec( const angle_type & new_ra,
 	set_dec( new_dec );
 }
 void brgastro::sky_obj::set_ra_dec_z( const angle_type & new_ra,
-		const angle_type & new_dec, const flt_type new_z )
+		const angle_type & new_dec, const flt_type & new_z )
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
 	set_z( new_z );
 }
 void brgastro::sky_obj::set_ra_dec_z_err( const angle_type & new_ra,
-		const angle_type & new_dec, const flt_type new_z,
+		const angle_type & new_dec, const flt_type & new_z,
 		const angle_type & new_ra_err, const angle_type & new_dec_err,
-		const flt_type new_z_err )
+		const flt_type & new_z_err )
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
@@ -104,7 +104,7 @@ void brgastro::sky_obj::set_ra_dec_err( const angle_type & new_ra,
 	set_ra_err( new_ra_err );
 	set_dec_err( new_dec_err );
 }
-void brgastro::sky_obj::set_weight( const flt_type new_weight )
+void brgastro::sky_obj::set_weight( const flt_type & new_weight )
 {
 	_weight_ = new_weight;
 }

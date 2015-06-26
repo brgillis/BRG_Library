@@ -262,9 +262,9 @@ flt_type pair_bin::mu_hat() const
 	{
 		// Not cached, so calculate and cache it
 
-		const flt_type mu_observed = extract_weighted_sum(_mu_obs_values_)/(extract_mean_weight(_mu_obs_values_)*mu_W());
+		const flt_type & mu_observed = extract_weighted_sum(_mu_obs_values_)/(extract_mean_weight(_mu_obs_values_)*mu_W());
 
-		const flt_type mu_base = area()*
+		const flt_type & mu_base = area()*
 				any_cast<custom_unit_type<0,0,0,-2,0>>(mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_))
 				/mu_W();
 
