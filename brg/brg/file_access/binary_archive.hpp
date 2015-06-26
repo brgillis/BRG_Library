@@ -37,7 +37,8 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 
-#include "brg/container/is_container.hpp"
+#include "../container/is_stl_container.hpp"
+
 #include "brg/file_access/open_file.hpp"
 #include "brg/utility.hpp"
 

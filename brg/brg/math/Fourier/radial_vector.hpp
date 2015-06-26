@@ -351,7 +351,7 @@ public:
 	template< typename To, typename Ts,
 		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
 		typename std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
-		typename std::enable_if<brgastro::is_stl_or_eigen_container<To>::value,char>::type = 0>
+		typename std::enable_if<brgastro::is_container<To>::value,char>::type = 0>
 	explicit radial_vector(const To & other, Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
 	: _N_(other.size()), _scale_(std::forward<Ts>(scale)),
@@ -364,7 +364,7 @@ public:
 	/// Set up with scale only
 	template< typename Ts,
 		typename std::enable_if<std::is_convertible<Ts,flt_type>::value,char>::type = 0,
-		typename std::enable_if<!brgastro::is_stl_or_eigen_container<Ts>::value,char>::type = 0>
+		typename std::enable_if<!brgastro::is_container<Ts>::value,char>::type = 0>
 	explicit radial_vector(Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
 	: _N_(0), _scale_(std::forward<Ts>(scale))
@@ -430,7 +430,7 @@ public:
 	template< typename To, typename Ts,
 		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
 		typename std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
-		typename std::enable_if<brgastro::is_stl_or_eigen_container<To>::value,char>::type = 0>
+		typename std::enable_if<brgastro::is_container<To>::value,char>::type = 0>
 	radial_vector & operator=(const To & other)
 	{
 		_N_ = other.size();

@@ -30,6 +30,9 @@
 #include <type_traits>
 #include <utility>
 
+#include "brg/container/is_container.hpp"
+#include "brg/container/generic_functions.hpp"
+#include "brg/container/tuple.hpp"
 #include "brg/math/misc_math.hpp"
 #include "brg/math/random/random_functions.hpp"
 #include "brg/units/units.hpp"
@@ -52,10 +55,7 @@ namespace brgastro
 // precision: How close successive values must be to each other (in a fraction of the mean) before they're said to have converged.
 //            Smaller values make the output more precise, but make the solver take longer.
 // max_counter: Maximum number of loops the solver can take before it gives up.
-//
-// IMPORTANT: This solver returns a value of 0 on failure, and otherwise the solution.
-
-template< typename f, typename T >
+template< typename f, typename T, BRG_F_NOT_CONTAINER(T) >
 inline const T solve_iterate( const f & func, const T &init_param = 0,
 		const int_type slowdown = 1, const flt_type precision = 0.0001,
 		const int_type max_counter = 10000 )
@@ -150,16 +150,16 @@ inline const T solve_iterate( const f & func, const T &init_param = 0,
 //                      a cusp at the minimum, set this value to some higher value (the specific value needed will depend on the order of
 //                      the cusp).
 // max_steps: Maximum number of steps the solver can take before it gives up.
-template< typename f, typename T >
+//
+// WARNING: This function hasn't been tested in a long while; it may no longer work.
+template< typename f, typename T, BRG_F_NOT_CONTAINER(T) >
 T solve_sd( const f & func, const T & init_in_params,
 		const flt_type precision = 0.00001, const flt_type lambda = 0.1,
 		const flt_type cusp_override_power = 0, const int_type max_steps = 10000)
 {
-
 	T Jacobian( 0 );
 	T current_in_params( 0 );
 	T last_in_params( 0 );
-	T out_params( 0 );
 	T in_params_to_use = init_in_params;
 	T lambda_norm( 0 );
 	T mag;
@@ -232,7 +232,9 @@ T solve_sd( const f & func, const T & init_in_params,
 }
 
 // Vector-in, vector-out version
-template< typename f, typename T >
+//
+// WARNING: This function hasn't been tested in a long while; it may no longer work.
+template< typename f, typename T, BRG_F_NOT_CONTAINER(T) >
 std::vector< T > solve_sd( const f & func, const std::vector< T > & init_in_params,
 		const flt_type precision = 0.00001,
 		const flt_type lambda = 0.1, const flt_type cusp_override_power = 0,
@@ -357,10 +359,10 @@ std::vector< T > solve_sd( const f & func, const std::vector< T > & init_in_para
 //                    value.
 
 // Scalar-in, scalar-out version
-template< typename f, typename Tin, typename Tout >
+template< typename f, typename Tin, typename Tout, BRG_F_NOT_CONTAINER(Tin), BRG_F_NOT_CONTAINER(Tout) >
 Tin solve_grid( const f & func, const Tin & init_min_in_param, const Tin & init_max_in_param,
 		const Tin & init_init_in_params_step, const Tout & target_out_param,
-		const flt_type init_init_precision = 0.00001, const int_type search_precision = 0.1 )
+		const flt_type & init_init_precision = 0.00001, const flt_type & search_precision = 0.1 )
 {
 
 	Tout d = 0, d_best = units_cast<Tout>(std::numeric_limits<flt_type>::max());
@@ -513,7 +515,9 @@ Tin solve_grid( const f & func, const Tin & init_min_in_param, const Tin & init_
 }
 
 // Vector-in, vector-out version
-template< typename f, typename Tin >
+//
+// WARNING: This function hasn't been tested in a long while; it may no longer work.
+template< typename f, typename Tin, BRG_F_NOT_CONTAINER(Tin) >
 std::vector< Tin > solve_grid( const f & func,
 		const std::vector< Tin > & init_min_in_params,
 		const std::vector< Tin > & init_max_in_params,
@@ -712,7 +716,7 @@ std::vector< Tin > solve_grid( const f & func,
 
 	// Narrowing search
 	step_dist = 1;
-	num_test_points = ipow( 3, num_in_params );
+	num_test_points = runtime_ipow( 3, num_in_params );
 	in_params_step = init_in_params_step;
 	precision = init_precision;
 
@@ -782,7 +786,7 @@ std::vector< Tin > solve_grid( const f & func,
 }
 
 // Scalar-in, scalar-out version
-template< typename f, typename Tin, typename Tout >
+template< typename f, typename Tin, typename Tout, BRG_F_NOT_CONTAINER(Tin), BRG_F_NOT_CONTAINER(Tout)>
 Tin solve_grid( const f & func, const Tin & init_min_in_params, const Tin & init_max_in_params,
 		const int_type & num_search_steps, const Tout & target_out_params,
 		const flt_type & init_init_precision = 0.00001,
@@ -797,16 +801,16 @@ Tin solve_grid( const f & func, const Tin & init_min_in_params, const Tin & init
 } // const int_type solve_grid(...)
 
 // Vector-in, vector-out version
-template< typename f, typename T >
-std::vector<T> solve_grid( const f & func,
-		const std::vector< T > & init_min_in_params,
-		const std::vector< T > & init_max_in_params,
-		const int_type & num_search_steps, const std::vector< T > & target_out_params,
+template< typename f, typename Tin, typename Tout, BRG_F_NOT_CONTAINER(Tin), BRG_F_NOT_CONTAINER(Tout) >
+std::vector<Tin> solve_grid( const f & func,
+		const std::vector< Tin > & init_min_in_params,
+		const std::vector< Tin > & init_max_in_params,
+		const int_type & num_search_steps, const std::vector< Tout > & target_out_params,
 		const flt_type & init_init_precision = 0.00001, const flt_type & search_precision = 0.1,
 		const std::vector< flt_type > & out_params_weight =
 				std::vector< flt_type >( 0 ) )
 {
-	std::vector< T > in_params_step( ssize(init_min_in_params), 0 );
+	std::vector< Tin > in_params_step( ssize(init_min_in_params), 0 );
 
 	const int_type steps = (int_type)max( num_search_steps, 1 );
 
@@ -822,8 +826,9 @@ std::vector<T> solve_grid( const f & func,
 			out_params_weight );
 } // const int_type solve_grid(...)
 
-/** Attempts to find the minimum output value for the passed function using a Metropolis-Hastings
- *  MCMC algorithm with simulated annealing.
+/**
+ * Attempts to find the minimum output value for the passed function using a Metropolis-Hastings
+ * MCMC algorithm with simulated annealing.
  *
  * @param func
  * @param init_in_param
@@ -837,13 +842,15 @@ std::vector<T> solve_grid( const f & func,
  * @param annealing_factor
  * @return
  */
-template< typename f, typename T >
-T solve_MCMC( const f & func, const T init_in_param, const T init_min_in_param,
-		const T init_max_in_param, const T init_in_param_step_sigma,
-		const int_type max_steps=1000000, const int_type annealing_period=100000,
-		const flt_type annealing_factor=4)
+template< typename f, typename T, BRG_F_NOT_CONTAINER(T) >
+T solve_MCMC( const f & func, const T & init_in_param, const T & init_min_in_param,
+		const T  &init_max_in_param, const T & init_in_param_step_sigma,
+		const int_type & max_steps=1000000, const int_type & annealing_period=100000,
+		const flt_type & annealing_factor=4)
 {
-	int_type step_num = 0;
+	static_assert(boost::is_convertible<decltype(func(init_in_param)),flt_type>::value,
+			"The output of the function passed to solve_MCMC must be convertible to a float-type.");
+
 	bool bounds_check = true;
 
 	// Check how bounds were passed in
@@ -1000,117 +1007,91 @@ T solve_MCMC( const f & func, const T init_in_param, const T init_min_in_param,
  * @param annealing_factor
  * @return
  */
-template< typename f, typename T >
-std::vector<T> solve_MCMC( const f & func, const std::vector<T> & init_in_params,
-		const std::vector<T> & init_min_in_params,
-		const std::vector<T> & init_max_in_params,
-		const std::vector<T> & init_in_param_step_sigmas,
-		const int_type max_steps=1000000,
-		const int_type annealing_period=100000, const flt_type annealing_factor=4)
+template< typename f, typename T, BRG_F_IS_CONTAINER_OR_TUPLE(T) >
+T solve_MCMC( const f & func, const T & init_in_params,
+		const T & init_min_in_params,
+		const T & init_max_in_params,
+		const T & init_in_param_step_sigmas,
+		const int_type & max_steps=1000000,
+		const int_type & annealing_period=100000, const flt_type & annealing_factor=4)
 {
-	bool bounds_check = true;
+	static_assert(boost::is_convertible<decltype(func(init_in_params)),flt_type>::value,
+			"The output of the function passed to solve_MCMC must be convertible to a float-type.");
+
+	bool check_lower_bound = true;
+	bool check_upper_bound = true;
 
 	// Check how bounds were passed in
-	if((ssize(init_min_in_params)==0) and (ssize(init_max_in_params)==0))
-		bounds_check = false;
+	if(ssize(init_min_in_params)==0)
+		check_lower_bound = false;
+	if(ssize(init_min_in_params)==0)
+		check_upper_bound = false;
 
-	std::vector<T> min_in_params = init_min_in_params;
-	std::vector<T> max_in_params = init_max_in_params;
+	T min_in_params = init_min_in_params;
+	T max_in_params = init_max_in_params;
 
-	if(min_in_params.size() < max_in_params.size())
-	{
-		min_in_params.resize(max_in_params.size(),-std::numeric_limits<flt_type>::max());
-	}
-	if(max_in_params.size() < min_in_params.size())
-	{
-		max_in_params.resize(min_in_params.size(),std::numeric_limits<flt_type>::max());
-	}
-
-	// Check if any of the params likely have max and min mixed up
-	if(bounds_check)
-	{
-		for(int_type i = 0; i < ssize(max_in_params); i++)
-		{
-			if(min_in_params.at(i)>max_in_params.at(i))
-			{
-				std::swap(min_in_params.at(i),max_in_params.at(i));
-			} // if(min_in_params.at(i)>max_in_params.at(i))
-		} // for(int_type i = 0; i < max_in_params.size(); i++)
-	} // if(bounds_check)
+	if(check_lower_bound && check_upper_bound)
+		fix_min_and_max(min_in_params,max_in_params);
 
 	// Check step sizes
 
-	std::vector<T> in_param_step_sigmas = init_in_param_step_sigmas;
+	T in_param_step_sigmas = init_in_param_step_sigmas;
 
-	if(ssize(in_param_step_sigmas) < ssize(min_in_params))
-		in_param_step_sigmas.resize(min_in_params.size(),0);
-
-	for(int_type i = 0; i < ssize(in_param_step_sigmas); i++)
-	{
-		if(in_param_step_sigmas.at(i) <= 0)
-		{
-			if(bounds_check)
-			{
-				in_param_step_sigmas.at(i) =
-						(max_in_params.at(i)-min_in_params.at(i))/10.;
-			}
-			else
-			{
-				in_param_step_sigmas.at(i) = 1; // Default behaviour
-			}
-		}
-	}
+	if(check_lower_bound && check_upper_bound)
+		fix_step_sigmas(in_param_step_sigmas,min_in_params,max_in_params);
+	else
+		fix_step_sigmas(in_param_step_sigmas);
 
 	// Initialise
 	flt_type annealing = 1;
 	bool last_cycle = false;
-	std::vector<T> current_in_params = init_in_params, test_in_params = init_in_params,
+	T current_in_params = init_in_params, test_in_params = init_in_params,
 			best_in_params = init_in_params;
-	std::vector<T> out_params, best_out_params;
-	std::vector<T> mean_in_params(min_in_params.size(),0);
+	flt_type out_param, best_out_param;
+	T mean_in_params(multiply(init_in_params,0.));
 	int_type last_cycle_count = 0;
 
 	// Get value at initial point
 	try
 	{
-		out_params = ( func )(test_in_params);
+		out_param = func(test_in_params);
 	}
 	catch(const std::exception &e)
 	{
 		std::cerr << "Cannot execute solve_MCMC at initial point.\n";
 		throw;
 	}
-	best_out_params = out_params;
-	flt_type last_log_likelihood = brgastro::sum(
-			brgastro::multiply(-annealing/2,out_params));
+	best_out_param = out_param;
+	flt_type last_log_likelihood = -annealing*out_param/2.;
 
-	auto new_Gaus_rand = [] (const T & mean, const T & std) {return brgastro::Gaus_rand(mean,std);};
+	auto new_Gaus_rand = [] () {return brgastro::Gaus_rand();};
 
 	for(int_type step = 0; step < max_steps; step++)
 	{
 		// Get a new value
-		test_in_params = brgastro::rand_vector(new_Gaus_rand,
-				                               current_in_params,
-				                               brgastro::divide(in_param_step_sigmas,annealing));
+
+		test_in_params = add(current_in_params, multiply(
+				rand_container_of_size<typename all_flt_type<T>::type>(new_Gaus_rand,
+						ssize(current_in_params)),
+				divide(in_param_step_sigmas,annealing)));
 
 		// Check if it's in bounds
-		if(bounds_check)
-		{
-			test_in_params = bound(min_in_params,test_in_params,max_in_params);
-		}
+		if(check_lower_bound)
+			test_in_params = max(min_in_params,test_in_params);
+		if(check_upper_bound)
+			test_in_params = min(test_in_params,max_in_params);
 
 		// Find the result for this value
 		bool good_result = true;
 		try
 		{
-			out_params = func(test_in_params);
+			out_param = func(test_in_params);
 		}
 		catch(const std::exception &e)
 		{
 			good_result = false;
 		}
-		flt_type new_log_likelihood = brgastro::sum(
-				brgastro::multiply(-annealing/2,out_params));
+		flt_type new_log_likelihood = -annealing*out_param/2.;
 
 		// If it's usable, check if we should step to it
 		bool step_to_it = false;
@@ -1131,9 +1112,9 @@ std::vector<T> solve_MCMC( const f & func, const std::vector<T> & init_in_params
 				current_in_params = test_in_params;
 
 				// Check if we have a new best point
-				if(brgastro::sum(out_params) < brgastro::sum(best_out_params))
+				if(out_param < best_out_param)
 				{
-					best_out_params = out_params;
+					best_out_param = out_param;
 					best_in_params = current_in_params;
 				}
 			}
@@ -1160,16 +1141,16 @@ std::vector<T> solve_MCMC( const f & func, const std::vector<T> & init_in_params
 	} // for(int_type step = 0; step < max_steps; step++)
 
 	// Calculate mean now
-	mean_in_params = brgastro::divide(mean_in_params,brgastro::safe_d(last_cycle_count));
+	mean_in_params = brgastro::divide(mean_in_params,(flt_type)safe_d(last_cycle_count));
 
 	// Check if mean actually gives a better best
 	try
 	{
-		out_params = ( func )(mean_in_params);
-		if(brgastro::sum(out_params) < brgastro::sum(best_out_params))
+		out_param = func(mean_in_params);
+		if(out_param < best_out_param)
 		{
 			best_in_params = mean_in_params;
-			best_out_params = out_params;
+			best_out_param = out_param;
 		}
 	}
 	catch(const std::exception &e)

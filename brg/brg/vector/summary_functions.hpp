@@ -25,9 +25,9 @@
 
 #include <vector>
 
+#include "../container/is_stl_container.hpp"
 #include "brg/common.h"
 
-#include "brg/container/is_container.hpp"
 #include "brg/container/is_eigen_container.hpp"
 #include "brg/utility.hpp"
 #include "brg/vector/elementwise_functions.hpp"

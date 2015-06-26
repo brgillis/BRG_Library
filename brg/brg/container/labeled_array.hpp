@@ -42,7 +42,6 @@
 #include "brg/container/coerce.hpp"
 #include "brg/container/comparison_type.hpp"
 #include "brg/container/insertion_ordered_map.hpp"
-#include "brg/container/is_container.hpp"
 #include "brg/container/table_typedefs.hpp"
 
 #include "brg/file_access/ascii_table.hpp"
@@ -50,6 +49,7 @@
 
 #include "brg/math/misc_math.hpp"
 
+#include "is_stl_container.hpp"
 #include "labeled_array/labeled_array_col_iterator.hpp"
 #include "labeled_array/labeled_array_col_reference.hpp"
 #include "labeled_array/labeled_array_element_iterator.hpp"

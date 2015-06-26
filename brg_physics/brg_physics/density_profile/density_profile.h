@@ -81,7 +81,7 @@ private:
 		acceleration_type a = accel( fabs( r ) );
 		if ( a >= acceleration_type(0) )
 			return 0;
-		return boost::units::sqrt( -a * fabs( r ) );
+		return sqrt( -a * fabs( r ) );
 	}
 #endif
 
@@ -222,7 +222,7 @@ public:
 	}
 	virtual density_type enc_dens( const distance_type & r ) const // Mean density enclosed with sphere of radius r
 	{
-		distance_type r_to_use = safe_d( boost::units::abs(r) );
+		distance_type r_to_use = safe_d( abs(r) );
 		return enc_mass( r_to_use )
 				/ ( 4. / 3. * pi * cube( fabs( r_to_use ) ) );
 	}

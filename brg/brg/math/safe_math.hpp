@@ -32,9 +32,9 @@
 #include <boost/units/get_dimension.hpp>
 #include <boost/units/is_quantity.hpp>
 
+#include "../container/is_stl_container.hpp"
 #include "brg/common.h"
 
-#include "brg/container/is_container.hpp"
 #include "brg/container/is_eigen_container.hpp"
 #include "brg/utility.hpp"
 

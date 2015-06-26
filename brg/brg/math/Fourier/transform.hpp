@@ -45,7 +45,7 @@ namespace Fourier {
 // Fourier transform of discrete values
 #if(1)
 template< typename array_type,
-typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
+typename std::enable_if<brgastro::is_container<array_type>::value,char>::type = 0 >
 complex_array_type Fourier_transform(const array_type & vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
@@ -91,7 +91,7 @@ complex_array_type Fourier_transform(const array_type & vals,
 // Inverse Fourier transform of discrete values
 #if(1)
 template< typename array_type,
-typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
+typename std::enable_if<brgastro::is_container<array_type>::value,char>::type = 0 >
 flt_array_type inverse_Fourier_transform(const array_type & vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
@@ -133,7 +133,7 @@ flt_array_type inverse_Fourier_transform(const array_type & vals,
 // Fourier sin transform of discrete values
 #if(1)
 template< typename array_type,
-typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
+typename std::enable_if<brgastro::is_container<array_type>::value,char>::type = 0 >
 flt_array_type Fourier_sin_transform(const array_type & vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
@@ -176,7 +176,7 @@ flt_array_type Fourier_sin_transform(const array_type & vals,
 #if(1)
 
 template< typename array_type,
-typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
+typename std::enable_if<brgastro::is_container<array_type>::value,char>::type = 0 >
 flt_array_type inverse_Fourier_sin_transform(const array_type & vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
@@ -219,7 +219,7 @@ flt_array_type inverse_Fourier_sin_transform(const array_type & vals,
 // spherical Fourier transform of discrete values
 #if(1)
 template< typename array_type,
-typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
+typename std::enable_if<brgastro::is_container<array_type>::value,char>::type = 0 >
 flt_array_type spherical_Fourier_transform(array_type vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
@@ -263,7 +263,7 @@ flt_array_type spherical_Fourier_transform(array_type vals,
 // Inverse spherical Fourier transform of discrete values
 #if(1)
 template< typename array_type,
-typename std::enable_if<brgastro::is_stl_or_eigen_container<array_type>::value,char>::type = 0 >
+typename std::enable_if<brgastro::is_container<array_type>::value,char>::type = 0 >
 flt_array_type inverse_spherical_Fourier_transform(array_type vals,
 		const boost::optional<fftw_wisdom_accumulator &> & wisdom = boost::none )
 {
@@ -310,7 +310,7 @@ flt_array_type inverse_spherical_Fourier_transform(array_type vals,
 #if(1)
 
 template< typename func_type,
-typename std::enable_if<!brgastro::is_stl_or_eigen_container<func_type>::value,char>::type = 0 >
+typename std::enable_if<!brgastro::is_container<func_type>::value,char>::type = 0 >
 complex_array_type Fourier_transform( const func_type & func,
 		const flt_type & min = 0.,
 		const flt_type & max = 1.,
@@ -322,7 +322,7 @@ complex_array_type Fourier_transform( const func_type & func,
 }
 
 template< typename func_type,
-typename std::enable_if<!brgastro::is_stl_or_eigen_container<func_type>::value,char>::type = 0 >
+typename std::enable_if<!brgastro::is_container<func_type>::value,char>::type = 0 >
 flt_array_type Fourier_sin_transform( const func_type & func,
 		const flt_type & max = 1.,
 		const int_type & samples = 1024,
@@ -335,7 +335,7 @@ flt_array_type Fourier_sin_transform( const func_type & func,
 }
 
 template< typename func_type,
-typename std::enable_if<!brgastro::is_stl_or_eigen_container<func_type>::value,char>::type = 0 >
+typename std::enable_if<!brgastro::is_container<func_type>::value,char>::type = 0 >
 flt_array_type spherical_Fourier_transform( const func_type & func,
 		const flt_type & max = 1.,
 		const int_type & samples = 1024,

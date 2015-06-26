@@ -32,21 +32,10 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
-#include "brg/container/is_boost_tuple.hpp"
+#include "brg/container/is_container.hpp"
 #include "brg/units/units.hpp"
 #include "brg/vector/elementwise_functions.hpp" // So we have primary definition of math funcs
 
-// Define some macros to save space
-#define BRG_S_IS_TUPLE(T1) typename std::enable_if<brgastro::is_boost_tuple<T1>::value && \
-	!brgastro::is_null_type<T1>::value>::type
-#define BRG_S_NOT_TUPLE(T1) typename std::enable_if<!brgastro::is_boost_tuple<T1>::value>::type
-#define BRG_S_IS_NULL(T1) typename std::enable_if<brgastro::is_null_type<T1>::value>::type
-#define BRG_F_IS_TUPLE(T1) typename std::enable_if<brgastro::is_boost_tuple<T1>::value && \
-	!brgastro::is_null_type<T1>::value,char>::type = 0
-#define BRG_F_NOT_TUPLE(T1) typename std::enable_if<!brgastro::is_boost_tuple<T1>::value,char>::type = 0
-#define BRG_F_IS_NULL(T1) typename std::enable_if<brgastro::is_null_type<T1>::value,char>::type = 0
-#define BRG_F_EITHER_IS_NULL(T1,T2) typename std::enable_if<brgastro::is_null_type<T1>::value || \
-	brgastro::is_null_type<T2>::value,char>::type = 0
 
 namespace brgastro {
 
@@ -560,6 +549,129 @@ struct asct_typeof_helper<boost::tuples::null_type,void>
 };
 
 #endif // asct_typeof_helper
+
+// unary_rand_typeof_helper
+#if(1)
+
+/**
+ * Helper structure to determine the type of generating a random tuple from a function.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class f, class T1, class Enable1 = void>
+struct unary_rand_typeof_helper
+{
+};
+
+/**
+ * Helper structure to determine the type of generating a random tuple from a function.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class f, class T1>
+struct unary_rand_typeof_helper<f,T1,BRG_S_IS_TUPLE(T1)>
+{
+	typedef typename std::decay<T1>::type T1d;
+
+	typedef boost::tuples::cons<decltype(std::declval<f>()(T1d().get_head())),
+			typename unary_rand_typeof_helper<f,decltype(T1d().get_tail())>::type> type;
+};
+
+/**
+ * Null type overload to end recursion.
+ */
+template<class f>
+struct unary_rand_typeof_helper<f,boost::tuples::null_type,void>
+{
+	typedef boost::tuples::null_type type;
+};
+
+#endif // unary_rand_typeof_helper
+
+// binary_rand_typeof_helper
+#if(1)
+
+/**
+ * Helper structure to determine the type of generating a random tuple from a function.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class f, class T1, class T2, class Enable1 = void, class Enable2 = void>
+struct binary_rand_typeof_helper
+{
+};
+
+/**
+ * Helper structure to determine the type of generating a random tuple from a function.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class f, class T1, class T2>
+struct binary_rand_typeof_helper<f,T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
+{
+	typedef typename std::decay<T1>::type T1d;
+	typedef typename std::decay<T2>::type T2d;
+
+	typedef boost::tuples::cons<decltype(std::declval<f>()(T1d().get_head(),T2d().get_head())),
+			typename binary_rand_typeof_helper<f,decltype(T1d().get_tail()),decltype(T2d().get_tail())>::type> type;
+};
+
+/**
+ * Helper structure to determine the type of generating a random tuple from a function.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class f, class T1, class T2>
+struct binary_rand_typeof_helper<f,T1,T2,BRG_S_IS_TUPLE(T1), BRG_S_NOT_TUPLE(T2)>
+{
+	typedef typename std::decay<T1>::type T1d;
+	typedef typename std::decay<T2>::type T2d;
+
+	typedef boost::tuples::cons<decltype(std::declval<f>()(T1d().get_head(),T2d())),
+			typename binary_rand_typeof_helper<f,decltype(T1d().get_tail()),T2>::type> type;
+};
+
+/**
+ * Helper structure to determine the type of generating a random tuple from a function.
+ * This is needed since the compiler won't fully recurse function decltypes, but it
+ * will fully recurse a structure.
+ */
+template< class f, class T1, class T2>
+struct binary_rand_typeof_helper<f,T1,T2,BRG_S_NOT_TUPLE(T1), BRG_S_IS_TUPLE(T2)>
+{
+	typedef typename std::decay<T1>::type T1d;
+	typedef typename std::decay<T2>::type T2d;
+
+	typedef boost::tuples::cons<decltype(std::declval<f>()(T1d(),T2d().get_head())),
+			typename binary_rand_typeof_helper<f,T1d,decltype(T2d().get_tail())>::type> type;
+};
+
+/**
+ * Null type overload to end recursion.
+ */
+template<class f, typename T>
+struct binary_rand_typeof_helper<f,boost::tuples::null_type,T,void>
+{
+	typedef boost::tuples::null_type type;
+};
+/**
+ * Null type overload to end recursion.
+ */
+template<class f, typename T>
+struct binary_rand_typeof_helper<f,T,boost::tuples::null_type,void>
+{
+	typedef boost::tuples::null_type type;
+};
+/**
+ * Null type overload to end recursion.
+ */
+template<class f>
+struct binary_rand_typeof_helper<f,boost::tuples::null_type,boost::tuples::null_type,void>
+{
+	typedef boost::tuples::null_type type;
+};
+
+#endif // binary_rand_typeof_helper
 
 } // namespace tuples
 
@@ -1248,6 +1360,287 @@ inline typename tuples::asct_typeof_helper<T1>::type atan( const T1 & t1 )
 }
 
 #endif // atan
+
+#endif // Trig functions
+
+// Min/max
+#if(1)
+
+template<class T1, class T2,
+BRG_F_IS_NULL(T1),
+BRG_F_IS_NULL(T2)>
+inline boost::tuples::null_type min( const T1 & t1,
+		const T2 & t2)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1, class T2,
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 min( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(min(t1.get_head(),t2.get_head()),min(t1.get_tail(),t2.get_tail()));
+}
+
+template <class T1, class T2,
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
+inline T1 min( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(min(t1.get_head(),t2),min(t1.get_tail(),t2));
+}
+
+template <class T1, class T2,
+BRG_F_NOT_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 min( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(min(t1,t2.get_head()),min(t1,t2.get_tail()));
+}
+
+template<class T1, class T2,
+BRG_F_IS_NULL(T1),
+BRG_F_IS_NULL(T2)>
+inline boost::tuples::null_type max( const T1 & t1,
+		const T2 & t2)
+{
+	return boost::tuples::null_type();
+}
+
+template <class T1, class T2,
+BRG_F_IS_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 max( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(max(t1.get_head(),t2.get_head()),max(t1.get_tail(),t2.get_tail()));
+}
+
+template <class T1, class T2,
+BRG_F_IS_TUPLE(T1),
+BRG_F_NOT_TUPLE(T2)>
+inline T1 max( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(max(t1.get_head(),t2),max(t1.get_tail(),t2));
+}
+
+template <class T1, class T2,
+BRG_F_NOT_TUPLE(T1),
+BRG_F_IS_TUPLE(T2)>
+inline T1 max( const T1 & t1,
+		const T2 & t2)
+{
+	return tuples::make_cons(max(t1,t2.get_head()),max(t1,t2.get_tail()));
+}
+
+#endif
+
+// Random generation
+#if(1)
+
+template<typename f, typename T1, BRG_F_IS_NULL(T1) >
+boost::tuples::null_type rand_container(const f func, const T1 & v1)
+{
+	return boost::tuples::null_type();
+}
+template<typename f, typename T1, BRG_F_IS_TUPLE(T1) >
+typename tuples::unary_rand_typeof_helper<f,T1>::type rand_container(const f func, const T1 & v1)
+{
+	typename tuples::unary_rand_typeof_helper<f,T1>::type vo;
+
+	vo.get_head() = func(v1.get_head());
+
+	vo.get_tail() = rand_container(func,v1.get_tail());
+
+	return vo;
+}
+
+template<typename f, typename T1, typename T2, BRG_F_IS_NULL(T1), BRG_F_IS_NULL(T2) >
+boost::tuples::null_type rand_container(const f func, const T1 & v1, const T2 & v2)
+{
+	return boost::tuples::null_type();
+}
+template<typename f, typename T1, typename T2, BRG_F_IS_TUPLE(T1), BRG_F_IS_TUPLE(T2) >
+typename tuples::binary_rand_typeof_helper<f,T1,T2>::type rand_container(const f func, const T1 & v1, const T2 & v2)
+{
+	assert(ssize(v1)==ssize(v2));
+
+	typename tuples::binary_rand_typeof_helper<f,T1,T2>::type vo;
+
+	vo.get_head() = func(v1.get_head(),v2.get_head());
+
+	vo.get_tail() = rand_container(func,v1.get_tail(),v2.get_tail());
+
+	return vo;
+}
+
+template<typename f, typename T1, typename T2, BRG_F_IS_NULL(T1), BRG_F_NOT_CONTAINER(T2) >
+boost::tuples::null_type rand_container(const f func, const T1 & v1, const T2 & v2)
+{
+	return boost::tuples::null_type();
+}
+template<typename f, typename T1, typename T2, BRG_F_IS_TUPLE(T1), BRG_F_NOT_CONTAINER(T2) >
+typename tuples::binary_rand_typeof_helper<f,T1,T2>::type rand_container(const f func, const T1 & v1, const T2 & v2)
+{
+	typename tuples::binary_rand_typeof_helper<f,T1,T2>::type vo;
+
+	vo.get_head() = func(v1.get_head(),v2);
+
+	vo.get_tail() = rand_container(func,v1.get_tail(),v2);
+
+	return vo;
+}
+
+template<typename f, typename T1, typename T2, BRG_F_NOT_CONTAINER(T1), BRG_F_IS_NULL(T2) >
+boost::tuples::null_type rand_container(const f func, const T1 & v1, const T2 & v2)
+{
+	return boost::tuples::null_type();
+}
+template<typename f, typename T1, typename T2, BRG_F_NOT_CONTAINER(T1), BRG_F_IS_TUPLE(T2) >
+typename tuples::binary_rand_typeof_helper<f,T1,T2>::type rand_container(const f func, const T1 & v1, const T2 & v2)
+{
+	typename tuples::binary_rand_typeof_helper<f,T1,T2>::type vo;
+
+	vo.get_head() = func(v1,v2.get_head());
+
+	vo.get_tail() = rand_container(func,v1,v2.get_tail());
+
+	return vo;
+}
+
+#endif
+
+// Random generation for a given result type
+#if(1)
+
+template<typename T, typename f, typename Tout=typename std::decay<T>::type, BRG_F_IS_NULL(Tout) >
+boost::tuples::null_type rand_container_of_size(const f func,
+		const int_type &)
+{
+	return boost::tuples::null_type();
+}
+template<typename T, typename f, typename Tout=typename std::decay<T>::type, BRG_F_IS_TUPLE(Tout) >
+Tout rand_container_of_size(const f func,
+		const int_type &)
+{
+	Tout vo;
+
+	vo.get_head() = func();
+
+	vo.get_tail() = rand_container_of_size<decltype(vo.get_tail())>(func,
+			ssize(vo)-1);
+
+	return vo;
+}
+
+template<typename T, typename f, typename T1, typename Tout=typename std::decay<T>::type,
+		BRG_F_IS_NULL(Tout) >
+boost::tuples::null_type rand_container_of_size(const f func, const T1 & v1,
+		const int_type &)
+{
+	return boost::tuples::null_type();
+}
+template<typename T, typename f, typename T1, typename Tout=typename std::decay<T>::type,
+		BRG_F_IS_TUPLE(Tout),
+		BRG_F_IS_TUPLE(T1) >
+Tout rand_container_of_size(const f func, const T1 & v1,
+		const int_type &)
+{
+	Tout vo;
+
+	assert(ssize(vo)==ssize(v1));
+
+	vo.get_head() = func(v1.get_head());
+
+	vo.get_tail() = rand_container_of_size<decltype(vo.get_tail())>(func,v1.get_tail(),
+			ssize(vo)-1);
+
+	return vo;
+}
+
+template<typename T, typename f, typename T1, typename T2, typename Tout=typename std::decay<T>::type,
+		BRG_F_IS_NULL(Tout) >
+boost::tuples::null_type rand_container_of_size(const f func, const T1 & v1, const T2 & v2,
+		const int_type &)
+{
+	return boost::tuples::null_type();
+}
+template<typename T, typename f, typename T1, typename T2, typename Tout=typename std::decay<T>::type,
+		BRG_F_IS_TUPLE(Tout),
+		BRG_F_IS_TUPLE(T1), BRG_F_IS_TUPLE(T2) >
+Tout rand_container_of_size(const f func, const T1 & v1,
+		const T2 & v2, const int_type &)
+{
+	assert(ssize(v1)==ssize(v2));
+
+	Tout vo;
+
+	assert(ssize(vo)==ssize(v1));
+
+	vo.get_head() = func(v1.get_head(),v2.get_head());
+
+	vo.get_tail() = rand_container_of_size<decltype(vo.get_tail())>(func,v1.get_tail(),v2.get_tail(),
+			ssize(vo)-1);
+
+	return vo;
+}
+
+template<typename T, typename f, typename T1, typename T2, typename Tout=typename std::decay<T>::type,
+		BRG_F_IS_TUPLE(Tout),
+		BRG_F_IS_TUPLE(T1), BRG_F_NOT_CONTAINER(T2) >
+Tout rand_container_of_size(const f func, const T1 & v1,
+		const T2 & v2, const int_type &)
+{
+	Tout vo;
+
+	assert(ssize(vo)==ssize(v1));
+
+	vo.get_head() = func(v1.get_head(),v2);
+
+	vo.get_tail() = rand_container_of_size<decltype(vo.get_tail())>(func,v1.get_tail(),v2,
+			ssize(vo)-1);
+
+	return vo;
+}
+
+template<typename T, typename f, typename T1, typename T2, typename Tout=typename std::decay<T>::type,
+		BRG_F_IS_TUPLE(Tout),
+		BRG_F_NOT_CONTAINER(T1), BRG_F_IS_TUPLE(T2) >
+Tout rand_container_of_size(const f func, const T1 & v1,
+		const T2 & v2, const int_type &)
+{
+	Tout vo;
+
+	assert(ssize(vo)==ssize(v2));
+
+	vo.get_head() = func(v1,v2.get_head());
+
+	vo.get_tail() = rand_container_of_size<decltype(vo.get_tail())>(func,v1,v2.get_head(),
+			ssize(vo)-1);
+
+	return vo;
+}
+
+template<typename T, typename f, typename T1, typename T2, typename Tout=typename std::decay<T>::type,
+		BRG_F_IS_TUPLE(Tout),
+		BRG_F_NOT_CONTAINER(T1), BRG_F_NOT_CONTAINER(T2) >
+Tout rand_container_of_size(const f func, const T1 & v1,
+		const T2 & v2, const int_type &)
+{
+	Tout vo;
+
+	vo.get_head() = func(v1,v2);
+
+	vo.get_tail() = rand_container_of_size<decltype(vo.get_tail())>(func,v1,v2,
+			ssize(vo)-1);
+
+	return vo;
+}
 
 #endif
 

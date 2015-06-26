@@ -33,8 +33,11 @@
 #include <utility>
 #include <vector>
 
-#include "common.h"
+#include <boost/tuple/tuple.hpp>
 
+#include "brg/common.h"
+
+#include "brg/container/is_container.hpp"
 
 namespace brgastro
 {
@@ -48,10 +51,22 @@ namespace brgastro
 #if(1)
 
 // Function to get the size of a container casted to a signed integer
-template<typename T>
-auto ssize( const T & container) -> typename std::make_signed<decltype(container.size())>::type
+template<typename T, BRG_F_IS_CONTAINER(T)>
+int_type ssize( const T & container)
 {
 	return container.size(); // The return type really does all the work here
+}
+
+template<typename T, BRG_F_IS_TUPLE(T)>
+constexpr int_type ssize( const T & tuple)
+{
+	return boost::tuples::length<T>::value;
+}
+
+template<typename T, BRG_F_NOT_CONTAINER(T)>
+int_type ssize( const T & container)
+{
+	return container.size(); // TODO: Fix so it'll give a result of 1 for those without a size() method
 }
 
 // Generic functions

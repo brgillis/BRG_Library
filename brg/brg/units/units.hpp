@@ -35,7 +35,7 @@
 
 //#include "brg/math/misc_math.hpp"
 
-#define _BRG_USE_UNITS_
+#undef _BRG_USE_UNITS_
 
 #ifdef _BRG_USE_UNITS_
 
@@ -387,38 +387,40 @@ typedef flt_type acceleration_type;
 typedef flt_type density_type;
 typedef flt_type surface_density_type;
 
-constexpr flt_type meter(1);
-constexpr flt_type second(1);
-constexpr flt_type kilogram(1);
-constexpr flt_type radian(1);
-constexpr flt_type meter_per_second(1);
+typedef flt_type any_units_type;
 
-constexpr auto m = meter;
-constexpr auto s = second;
-constexpr auto kg = kilogram;
-constexpr auto rad = radian;
-constexpr auto mps = meter_per_second;
+constexpr flt_type meter(1.);
+constexpr flt_type second(1.);
+constexpr flt_type kilogram(1.);
+constexpr flt_type radian(1.);
+constexpr flt_type meter_per_second(1.);
+
+constexpr flt_type m = meter;
+constexpr flt_type s = second;
+constexpr flt_type kg = kilogram;
+constexpr flt_type rad = radian;
+constexpr flt_type mps = meter_per_second;
 
 template<typename T>
-flt_type value_of( const T & x)
+inline flt_type value_of( const T & x)
 {
 	return static_cast<flt_type>(x);
 }
 
 template<typename Tout, typename Tin>
-Tout units_cast( const Tin & x)
+inline Tout units_cast( const Tin & x)
 {
 	return static_cast<Tout>(x);
 }
 
 template<typename Tout, typename Tin>
-Tout any_cast( const Tin & x)
+inline Tout any_cast( const Tin & x)
 {
 	return static_cast<Tout>(x);
 }
 
 template<typename Tout, typename Tin>
-any_units_type any_units_cast( const Tin & x)
+inline any_units_type any_units_cast( const Tin & x)
 {
 	return static_cast<Tout>(x);
 }
@@ -428,12 +430,12 @@ any_units_type any_units_cast( const Tin & x)
 
 template<typename T,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-T abs( const T & x)
+inline T abs( const T & x)
 {
 	return std::abs(x);
 }
 
-flt_type sqrt( const flt_type & x)
+inline flt_type sqrt( const flt_type & x)
 {
 	return std::sqrt(x);
 }
@@ -445,44 +447,44 @@ flt_type sqrt( const flt_type & x)
 //}
 
 template< int_type en, int_type ed>
-flt_typepow( const flt_type & x)
+inline flt_type ipow( const flt_type & x)
 {
 	return std::pow(x,static_cast<flt_type>(en)/ed);
 }
 
-flt_type sin( const flt_type & x)
+inline flt_type sin( const flt_type & x)
 {
 	return std::sin(x);
 }
 
-flt_type cos( const flt_type & x)
+inline flt_type cos( const flt_type & x)
 {
 	return std::cos(x);
 }
 
-flt_type tan( const flt_type & x)
+inline flt_type tan( const flt_type & x)
 {
 	return std::tan(x);
 }
 
-flt_type asin( const flt_type & x)
+inline flt_type asin( const flt_type & x)
 {
 	return std::asin(x);
 }
 
-flt_type acos( const flt_type & x)
+inline flt_type acos( const flt_type & x)
 {
 	return std::acos(x);
 }
 
-flt_type atan( const flt_type & y)
+inline flt_type atan( const flt_type & y)
 {
 	return std::atan(y);
 }
 
-flt_type atan2( const flt_type & y, const flt_type & x=1.)
+inline flt_type atan2( const flt_type & y, const flt_type & x=1.)
 {
-	return std::atan(y,x);
+	return std::atan2(y,x);
 }
 
 #endif // Math functions

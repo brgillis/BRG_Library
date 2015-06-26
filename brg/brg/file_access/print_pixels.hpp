@@ -28,10 +28,10 @@
 
 #include <type_traits>
 
-#include "brg/container/is_container.hpp"
 #include "brg/file_access/ascii_table_map.hpp"
 #include "brg/file_access/open_file.hpp"
 #include "brg/utility.hpp"
+#include "../container/is_stl_container.hpp"
 
 namespace brgastro {
 

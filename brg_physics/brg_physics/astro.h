@@ -166,7 +166,7 @@ template< typename Tr1, typename Td1, typename Tr2, typename Td2 >
 inline const Tr1 skydist2d( const Tr1 & ra1, const Td1 & dec1,
 		const Tr2 & ra2, const Td2 & dec2 )
 {
-	return quad_add( ( ra2 - ra1 ) * boost::units::cos( ( dec2 + dec1 ) / 2. ), dec2 - dec1 );
+	return quad_add( ( ra2 - ra1 ) * cos( ( dec2 + dec1 ) / 2. ), dec2 - dec1 );
 }
 
 #endif // end function declarations
