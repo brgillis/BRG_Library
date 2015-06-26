@@ -65,11 +65,11 @@ const flt_type brgastro::dfa_cache::_calculate( const flt_type in_params ) const
 // Gets the result in the proper units
 const brgastro::any_units_type brgastro::dfa_cache::_units( const flt_type & v ) const
 {
-	return any_units_cast<custom_unit_type<1,0,0,-1,0>>(v);
+	return units_cast<custom_unit_type<1,0,0,-1,0>>(v);
 }
 const brgastro::any_units_type brgastro::dfa_cache::_inverse_units(const flt_type & v) const
 {
-	return any_units_cast<dimensionless_type>(v);
+	return v;
 }
 
 #endif
@@ -89,11 +89,11 @@ const flt_type brgastro::add_cache::_calculate( const flt_type in_param_1, const
 // Gets the result in the proper units
 const brgastro::any_units_type brgastro::add_cache::_units( const flt_type & v ) const
 {
-	return any_units_cast<distance_type>(v);
+	return units_cast<distance_type>(v);
 }
 const brgastro::any_units_type brgastro::add_cache::_inverse_units(const flt_type & v) const
 {
-	return any_units_cast<dimensionless_type>(v);
+	return v;
 }
 
 #endif
@@ -113,11 +113,11 @@ const flt_type brgastro::tfa_cache::_calculate( const flt_type in_params ) const
 // Gets the result in the proper units
 const brgastro::any_units_type brgastro::tfa_cache::_units( const flt_type & v ) const
 {
-	return any_units_cast<time_type>(v);
+	return units_cast<time_type>(v);
 }
 const brgastro::any_units_type brgastro::tfa_cache::_inverse_units(const flt_type & v) const
 {
-	return any_units_cast<dimensionless_type>(v);
+	return dimensionless_type(v);
 }
 
 #endif

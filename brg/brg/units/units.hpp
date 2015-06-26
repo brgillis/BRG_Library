@@ -35,7 +35,7 @@
 
 //#include "brg/math/misc_math.hpp"
 
-#define _BRG_USE_UNITS_
+#undef _BRG_USE_UNITS_
 
 #ifdef _BRG_USE_UNITS_
 
@@ -112,11 +112,7 @@ const auto mps = meter_per_second;
 // Utility functions
 #if(1)
 
-template<typename Tout, typename Tin>
-Tout any_cast( const Tin & x)
-{
-	return boost::any_cast<Tout>(x);
-}
+using boost::any_cast;
 
 template<typename T,
 	typename std::enable_if<!std::is_same<T,any_units_type>::value &&
@@ -156,7 +152,7 @@ Tout units_cast( const Tin & x)
 template<typename Tout, typename Tin>
 any_units_type any_units_cast( const Tin & x)
 {
-	return any_cast<any_units_type>(units_cast<Tout>(x));
+	return units_cast<Tout>(x);
 }
 
 #endif // Utility functions

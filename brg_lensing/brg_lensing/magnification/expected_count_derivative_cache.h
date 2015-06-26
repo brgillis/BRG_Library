@@ -58,7 +58,7 @@ protected:
 	// Tells what units the result should have
 	const any_units_type _units( const flt_type & v ) const
 	{
-		return any_units_cast<dimensionless_type>(v);
+		return v;
 	}
 
 #endif // _BRG_USE_UNITS_
