@@ -60,7 +60,13 @@ DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_sig_cache,
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_shifted_sig_cache,
 	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/100,
 	0.1,1.5,0.4,
-	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/100);
+	std::log(0.1*unitconv::kpctom),std::log(10000*unitconv::kpctom),(std::log(10000)-std::log(0.1))/100);
+
+// Initialisation for IceBRG::tNFW_shifted_sig_no_enh_cache
+DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_shifted_no_enh_sig_cache,
+	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/100,
+	0.1,1.5,0.4,
+	std::log(0.1*unitconv::kpctom),std::log(10000*unitconv::kpctom),(std::log(10000)-std::log(0.1))/100);
 
 // Initialisation for IceBRG::tNFW_Sigma_cache
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_Sigma_cache,
@@ -141,6 +147,20 @@ flt_type IceBRG::tNFW_shifted_sig_cache::_calculate( const flt_type & in_param_1
 }
 
 #endif // end IceBRG::tNFW_sig_cache methods
+
+// IceBRG::tNFW_shifted_sig_no_enh_cache class methods
+#if (1)
+flt_type IceBRG::tNFW_shifted_no_enh_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+		const flt_type & in_param_3 ) const
+{
+	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
+	const auto z = in_param_2;
+	const auto R = units_cast<distance_type>(std::exp(in_param_3));
+	IceBRG::lensing_tNFW_profile profile(mass,z);
+	return value_of(profile.semiquick_shifted_no_enh_Delta_Sigma( R ));
+}
+
+#endif // end IceBRG::tNFW_shifted_sig_no_enh_cache methods
 
 // IceBRG::tNFW_Sigma_cache class methods
 #if (1)

@@ -460,6 +460,7 @@ private:
 
 	const name *_host_ptr_;
 	distance_type _R_, _R_shift_;
+	bool _use_extra_shear_;
 
 public:
 
@@ -492,7 +493,7 @@ public:
 
 	surface_density_type operator()( const angle_type &  in_param ) const
 	{
-		// in_param here will be angle_type theta in radians
+		// in_param here will be theta in radians
 
 		const distance_type R_actual(lc_add(_R_, _R_shift_, in_param));
 
@@ -500,7 +501,7 @@ public:
 		const flt_type & angle_factor = cos(theta);
 
 		flt_type extra_shear_factor;
-		if(value_of(_R_shift_)==0)
+		if((value_of(_R_shift_)==0) or (!_use_extra_shear_))
 			extra_shear_factor = 0;
 		else
 			extra_shear_factor = (R_actual-_R_)/_R_shift_*
@@ -514,16 +515,18 @@ public:
 		else
 		{
 			return _host_ptr_->Delta_Sigma(R_actual)*angle_factor +
-					extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z()); //TODO Should there be a factor of 1/2 here?
+					extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z());
 		}
 	}
 
 	shifted_Delta_Sigma_circ_functor( const name *new_host=NULL,
-			const distance_type & new_R_shift=0, const distance_type & new_R=0 )
+			const distance_type & new_R_shift=0, const distance_type & new_R=0,
+			const bool & new_use_extra_shear=true)
+	: _host_ptr_(new_host),
+	  _R_(new_R),
+	  _R_shift_(new_R_shift),
+	  _use_extra_shear_(new_use_extra_shear)
 	{
-		_host_ptr_ = new_host;
-		_R_shift_ = new_R_shift;
-		_R_ = new_R;
 	}
 
 };
@@ -536,6 +539,7 @@ private:
 
 	const name *_host_ptr_;
 	distance_type _R_;
+	bool _use_extra_shear_;
 
 public:
 
@@ -560,7 +564,7 @@ public:
 	surface_density_type operator()( const distance_type & in_param ) const
 	{
 		// in_param here will be R_shift
-		shifted_Delta_Sigma_circ_functor<name> func(_host_ptr_,in_param,_R_);
+		shifted_Delta_Sigma_circ_functor<name> func(_host_ptr_,in_param,_R_,_use_extra_shear_);
 
 		const angle_type min_in_param = 0 * rad;
 		const angle_type max_in_param = pi * rad;
@@ -573,10 +577,11 @@ public:
 	}
 
 	shifted_Delta_Sigma_functor( const name *new_host=NULL,
-			const distance_type & new_R=0 )
+			const distance_type & new_R=0, const bool & new_use_extra_shear=true )
+	: _host_ptr_(new_host),
+	  _R_(new_R),
+	  _use_extra_shear_(new_use_extra_shear)
 	{
-		_host_ptr_ = new_host;
-		_R_ = new_R;
 	}
 
 };

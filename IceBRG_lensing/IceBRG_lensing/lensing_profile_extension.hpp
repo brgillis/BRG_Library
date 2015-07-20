@@ -264,7 +264,7 @@ private:
 		distance_type R_to_use = abs( R );
 		distance_type sigma = SPCP(name)->_shift_sigma(R_to_use);
 
-		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use );
+		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, true );
 		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
 
 		flt_type precision = 0.00001;
@@ -282,7 +282,40 @@ private:
 		distance_type R_to_use = abs( R );
 		distance_type sigma = SPCP(name)->_shift_sigma(R_to_use);
 
-		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use );
+		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, true );
+		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
+
+		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
+
+		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
+				min_in_param, max_in_param, 0.00001, false);
+		return out_param;
+	}
+
+	surface_density_type _shifted_no_enh_Delta_Sigma( const distance_type & R ) const
+	{
+		distance_type R_to_use = abs( R );
+		distance_type sigma = SPCP(name)->_shift_sigma(R_to_use);
+
+		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, false );
+		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
+
+		flt_type precision = 0.00001;
+
+		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
+
+		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
+				min_in_param, max_in_param, precision, false );
+
+		return out_param;
+	}
+
+	surface_density_type _semiquick_shifted_no_enh_Delta_Sigma( const distance_type & R ) const
+	{
+		distance_type R_to_use = abs( R );
+		distance_type sigma = SPCP(name)->_shift_sigma(R_to_use);
+
+		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, false );
 		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
 
 		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
@@ -336,6 +369,10 @@ private:
 	surface_density_type _quick_shifted_Delta_Sigma( const distance_type & R ) const
 	{
 		return SPCP(name)->_shifted_Delta_Sigma( R );
+	}
+	surface_density_type _quick_shifted_no_enh_Delta_Sigma( const distance_type & R ) const
+	{
+		return SPCP(name)->_shifted_no_enh_Delta_Sigma( R );
 	}
 
 #endif // Quick functions - should be overridden if a cache is implemented for the halo
@@ -498,6 +535,18 @@ public:
 	surface_density_type quick_shifted_Delta_Sigma( const distance_type & R ) const
 	{
 		return SPCP(name)->_quick_shifted_Delta_Sigma( R );
+	}
+	surface_density_type shifted_no_enh_Delta_Sigma( const distance_type & R ) const
+	{
+		return SPCP(name)->_shifted_no_enh_Delta_Sigma( R );
+	}
+	surface_density_type semiquick_shifted_no_enh_Delta_Sigma( const distance_type & R ) const
+	{
+		return SPCP(name)->_semiquick_shifted_no_enh_Delta_Sigma( R );
+	}
+	surface_density_type quick_shifted_no_enh_Delta_Sigma( const distance_type & R ) const
+	{
+		return SPCP(name)->_quick_shifted_no_enh_Delta_Sigma( R );
 	}
 #endif
 

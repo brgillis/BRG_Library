@@ -198,6 +198,50 @@ public:
 
 }; // class tNFW_shifted_sig_cache
 
+class tNFW_shifted_no_enh_sig_cache : public brg_cache_3d<tNFW_shifted_no_enh_sig_cache>
+{
+	// Weak lensing signal delta-sigma from truncated NFW profile, using default c and tau,
+	// with correction for shift due to lensing translation, but no enhancement of shear
+private:
+
+	DECLARE_BRG_CACHE_3D_STATIC_VARS();
+
+	friend class brg_cache_3d<tNFW_shifted_no_enh_sig_cache>;
+
+protected:
+
+	const std::string _name_base() const
+	{
+		char name_base[BRG_CACHE_ND_NAME_SIZE] = "tNsnhsig";
+		return name_base;
+	}
+
+	void _load_cache_dependencies() const
+	{
+		// This depends on offset_sig, so we'll have to load it through a dummy get
+		IceBRG::tNFW_offset_sig_cache().get(0,0,0,0);
+	}
+
+#ifdef _BRG_USE_UNITS_
+
+	// Tells what units the result should have
+	any_units_type _units( const flt_type & v ) const
+	{
+		return any_units_cast<surface_density_type>(v);
+	}
+
+#endif // _BRG_USE_UNITS_
+
+	// Long-form calculation function.
+	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
+			const flt_type & in_param_3 ) const;
+
+public:
+
+	~tNFW_shifted_no_enh_sig_cache() {}
+
+}; // class tNFW_shifted_sig_no_enh_cache
+
 class tNFW_Sigma_cache : public brg_cache_3d<tNFW_Sigma_cache>
 {
 	// Magnification signal Sigma from truncated NFW profile, using default c and tau
