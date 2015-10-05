@@ -51,6 +51,7 @@ public:
 	typedef T_value_type value_type;
 	typedef Eigen::Array<value_type,T_num_params,1> array_type;
 	typedef Eigen::Array<value_type,T_num_params,Eigen::Dynamic> array2d_type;
+	typedef Eigen::Matrix<value_type,T_num_params,T_num_params> matrix_type;
 	typedef decltype(array_type().size()) size_type;
 
 private:
@@ -58,18 +59,18 @@ private:
 	mutable boost::optional<array2d_type> _test_run_points_;
 	mutable boost::optional<array_type> _means_;
 	mutable boost::optional<array_type> _best_fits_;
-	mutable boost::optional<array2d_type> _covars_;
+	mutable boost::optional<matrix_type> _covars_;
 	mutable boost::optional<array_type> _stddevs_;
 
 public:
 
 	void clear()
 	{
-		IceBRG::set_zero(_test_run_points_);
-		IceBRG::set_zero(_means_);
-		IceBRG::set_zero(_best_fits_);
-		IceBRG::set_zero(_covars_);
-		IceBRG::set_zero(_stddevs_);
+		set_zero(_test_run_points_);
+		set_zero(_means_);
+		set_zero(_best_fits_);
+		set_zero(_covars_);
+		set_zero(_stddevs_);
 	}
 
 	template< typename f >
@@ -180,12 +181,13 @@ public:
 		best_out_param = out_param;
 		flt_type last_log_likelihood = -annealing*out_param/2;
 
-		auto new_Gaus_rand = [] (const value_type & dummy) {return IceBRG::Gaus_rand();};
+		auto new_Gaus_rand = [] (const value_type & dummy) {return Gaus_rand();};
 
 		for(int_type step = 0; step < max_steps; step++)
 		{
 			// Get a new value
-			test_in_params = current_in_params + array_type::Zero(array_size).unaryExpr(new_Gaus_rand)*in_param_step_sigmas/annealing;
+			test_in_params = current_in_params + array_type::Zero(array_size).unaryExpr(new_Gaus_rand) *
+					                             in_param_step_sigmas/annealing;
 
 			// Check if it's in bounds
 			if(bounds_check)
@@ -235,7 +237,7 @@ public:
 			// If we're on the second cycle, add to the recorded list of test points
 			if(second_cycle)
 			{
-				if(IceBRG::divisible(step,skip_factor))
+				if(divisible(step,skip_factor))
 				{
 					size_type c_i = (step-annealing_period)/skip_factor-1;
 					auto col = _test_run_points_->col(c_i);
@@ -253,7 +255,7 @@ public:
 				last_cycle_count += 1;
 			}
 
-			if((step!=0)&&(IceBRG::divisible(step,annealing_period)))
+			if((step!=0)&&(divisible(step,annealing_period)))
 			{
 				if(first_cycle) // Special handling for end of first cycle
 				{
@@ -276,7 +278,7 @@ public:
 		} // for(int_type step = 0; step < max_steps; step++)
 
 		// Calculate mean now
-		mean_in_params = mean_in_params/IceBRG::safe_d(last_cycle_count);
+		mean_in_params = mean_in_params/safe_d(last_cycle_count);
 
 		// Check if mean actually gives a better best
 		try
@@ -326,7 +328,7 @@ public:
 		if(!_best_fits_) throw std::logic_error("Must solve before requesting result data.");
 		return *_best_fits_;
 	}
-	const array2d_type & get_covars() const
+	const matrix_type & get_covars() const
 	{
 		if(!_covars_)
 		{
@@ -335,13 +337,14 @@ public:
 			const auto & test_points = get_test_run_points();
 			assert(num_params==test_points.rows());
 
-			_covars_ = array2d_type(num_params,num_params);
+			_covars_ = matrix_type();
 
 			for(size_type p1_i=0; p1_i<num_params; ++p1_i)
 			{
 				for(size_type p2_i=0; p2_i<num_params; ++p2_i)
 				{
-					_covars_->operator()(p1_i,p2_i) = ((test_points.row(p1_i)-means(p1_i))*(test_points.row(p2_i)-means(p2_i))).mean();
+					_covars_->operator()(p1_i,p2_i) = ((test_points.row(p1_i)-means(p1_i)) *
+							                           (test_points.row(p2_i)-means(p2_i))).mean();
 				}
 			}
 
