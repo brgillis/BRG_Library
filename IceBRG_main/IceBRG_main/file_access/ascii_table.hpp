@@ -60,8 +60,8 @@ template<typename T>
 void print_table( std::ostream & out_stream,
 		const table_t<T> & data,
 		const header_t & header = header_t(),
-		const char major_tag = Eigen::ColMajor,
-		const char precision = 10)
+		const short_int_type & major_tag = Eigen::ColMajor,
+		const short_int_type & precision = 10)
 {
 	// Set up the value we'll print if an entry is bad
 	std::stringstream ss("");
@@ -225,12 +225,13 @@ template<typename T>
 void print_table( const std::string & file_name,
 		const table_t<T> & data,
 		const header_t & header = header_t(),
-		const char major_tag = Eigen::ColMajor)
+		const short_int_type & major_tag = Eigen::ColMajor,
+		const short_int_type & precision = 10)
 {
 	std::ofstream fo;
 	open_file_output(fo,file_name);
 
-	print_table<T>(fo,data,header,major_tag);
+	print_table<T>(fo,data,header,major_tag,precision);
 }
 
 // Load in entire table
