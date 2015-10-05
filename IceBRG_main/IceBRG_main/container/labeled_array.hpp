@@ -210,7 +210,7 @@ private:
 	typedef typename boost::bimap<label_type,size_type> map_type;
 
 	typedef typename Eigen::Array<value_type,Eigen::Dynamic,1> column_buffer_column_type;
-	typedef typename IceBRG::insertion_ordered_map<label_type,column_buffer_column_type> column_buffer_type;
+	typedef insertion_ordered_map<label_type,column_buffer_column_type> column_buffer_type;
 	typedef typename column_buffer_type::value_type column_buffer_labeled_column_type;
 
 	typedef typename std::vector<value_type> row_buffer_row_type;
@@ -417,8 +417,8 @@ private:
 		_clear_label_map();
 		for(size_type i=0; i<num_cols; ++i)
 		{
-			std::stringstream ss("col_");
-			ss << i;
+			std::stringstream ss("");
+			ss << "col_" << i;
 			_label_map_.left.insert(typename map_type::left_value_type(ss.str(),i));
 		}
 	}
@@ -440,7 +440,7 @@ private:
 	void _set_label_map(other_map_type && new_labels)
 	{
 		_clear_label_map();
-		typename IceBRG::ct<typename map_type::left_value_type::second_type>::type i = 0;
+		typename ct<typename map_type::left_value_type::second_type>::type i = 0;
 		for(auto & label : new_labels)
 		{
 			_label_map_.left.insert(typename map_type::left_value_type(std::move(label),i++));
@@ -470,7 +470,7 @@ private:
 	}
 
 	template< typename other_map_type,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<other_map_type>::type,map_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename ct<other_map_type>::type,map_type>::value,char>::type = 0>
 	void _set_label_map(other_map_type && other_map)
 	{
 		_label_map_ = std::forward<other_map_type>(other_map);
@@ -567,8 +567,8 @@ public:
 
 	/// Copy/move from table_map
 	template< typename other_table_map_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<other_table_map_type>::type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<other_table_map_type>::type::mapped_type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<other_table_map_type>::type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<other_table_map_type>::type::mapped_type>::value,char>::type = 0>
 	explicit labeled_array(other_table_map_type && init_column_buffer)
 	: _column_buffer_(std::forward<other_table_map_type>(init_column_buffer))
 	{
@@ -576,7 +576,7 @@ public:
 
 	/// Copy/move from vector of vectors
 	template< typename other_table_map_type,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<other_table_map_type>::type,row_buffer_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename ct<other_table_map_type>::type,row_buffer_type>::value,char>::type = 0>
 	explicit labeled_array(other_table_map_type && init_row_buffer)
 	: _row_buffer_(std::forward<other_table_map_type>(init_row_buffer))
 	{
@@ -585,10 +585,10 @@ public:
 	/// Copy/move from vector of vectors and copy label map
 	template< typename other_table_map_type,
 	typename init_label_map_type,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<other_table_map_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<init_label_map_type>::type::value_type,label_type>::value ||
-	                std::is_convertible<typename IceBRG::ct<init_label_map_type>::type::value_type,typename map_type::left_value_type>::value ||
-					std::is_convertible<typename IceBRG::ct<init_label_map_type>::type,map_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename ct<other_table_map_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<init_label_map_type>::type::value_type,label_type>::value ||
+	                std::is_convertible<typename ct<init_label_map_type>::type::value_type,typename map_type::left_value_type>::value ||
+					std::is_convertible<typename ct<init_label_map_type>::type,map_type>::value,char>::type = 0>
 	explicit labeled_array(other_table_map_type && init_row_buffer,
 						   init_label_map_type && init_label_map)
 	: _row_buffer_(std::forward<other_table_map_type>(init_row_buffer))
@@ -598,7 +598,7 @@ public:
 
 	/// Copy/move from array
 	template< typename other_data_table_type,
-	typename std::enable_if<IceBRG::is_eigen_container<typename IceBRG::ct<other_data_table_type>::type>::value,char>::type = 0>
+	typename std::enable_if<is_eigen_container<typename ct<other_data_table_type>::type>::value,char>::type = 0>
 	explicit labeled_array(other_data_table_type && other_data_table)
 	: _data_table_(std::forward<other_data_table_type>(other_data_table))
 	{
@@ -608,10 +608,10 @@ public:
 	/// Copy/move from array and copy label map
 	template< typename other_data_table_type,
 	typename init_label_map_type,
-	typename std::enable_if<IceBRG::is_eigen_container<typename IceBRG::ct<other_data_table_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<init_label_map_type>::type::value_type,label_type>::value ||
-	                std::is_convertible<typename IceBRG::ct<init_label_map_type>::type::value_type,typename map_type::left_value_type>::value ||
-					std::is_convertible<typename IceBRG::ct<init_label_map_type>::type,map_type>::value,char>::type = 0>
+	typename std::enable_if<is_eigen_container<typename ct<other_data_table_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<init_label_map_type>::type::value_type,label_type>::value ||
+	                std::is_convertible<typename ct<init_label_map_type>::type::value_type,typename map_type::left_value_type>::value ||
+					std::is_convertible<typename ct<init_label_map_type>::type,map_type>::value,char>::type = 0>
 	explicit labeled_array(other_data_table_type && other_data_table,
 						   init_label_map_type && init_label_map)
 	: _data_table_(std::forward<other_data_table_type>(other_data_table))
@@ -807,8 +807,8 @@ public:
 #if(1)
 
     template< typename new_column_type,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_column_type>::type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_column_type>::type,column_buffer_labeled_column_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename ct<new_column_type>::type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_column_type>::type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void insert_col(new_column_type && new_column)
     {
     	_add_row_buffer_to_data_table();
@@ -816,24 +816,24 @@ public:
     }
 
     template< typename new_column_type,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_column_type>::type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_column_type>::type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_column_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!(std::is_convertible<typename ct<new_column_type>::type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_column_type>::type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_column_type>::type>::value,char>::type = 0>
     void insert_col(new_column_type && new_column)
     {
     	_add_row_buffer_to_data_table();
-    	_column_buffer_.insert(IceBRG::coerce<column_buffer_column_type>(std::forward<new_column_type>(new_column)),_label_map_.left);
+    	_column_buffer_.insert(coerce<column_buffer_column_type>(std::forward<new_column_type>(new_column)),_label_map_.left);
     }
 
     template< typename new_column_type,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_column_type>::type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_column_type>::type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<!IceBRG::is_stl_container<typename IceBRG::ct<new_column_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!(std::is_convertible<typename ct<new_column_type>::type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_column_type>::type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<!is_stl_container<typename ct<new_column_type>::type>::value,char>::type = 0>
     void insert_col(new_column_type && new_column)
     {
     	// For pairs with a coercible second type
     	_add_row_buffer_to_data_table();
-    	_column_buffer_.insert(std::make_pair(new_column.first,IceBRG::coerce<column_buffer_column_type>(new_column.second)));
+    	_column_buffer_.insert(std::make_pair(new_column.first,coerce<column_buffer_column_type>(new_column.second)));
     }
 
 #endif // Single column insertion
@@ -842,9 +842,9 @@ public:
 #if(1)
 
     template< typename new_columns_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void insert_cols(const new_columns_type & new_columns)
     {
     	_add_row_buffer_to_data_table();
@@ -856,9 +856,9 @@ public:
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void insert_cols(new_columns_type && new_columns)
     {
     	_add_row_buffer_to_data_table();
@@ -870,32 +870,32 @@ public:
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type>::value,char>::type = 0,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type::value_type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type::value_type>::value,char>::type = 0>
     void insert_cols(const new_columns_type & new_columns)
     {
     	_add_row_buffer_to_data_table();
 
     	for(const auto & new_column : new_columns)
     	{
-    		_column_buffer_.insert(IceBRG::coerce<column_buffer_column_type>(new_column),_label_map_.left);
+    		_column_buffer_.insert(coerce<column_buffer_column_type>(new_column),_label_map_.left);
     	}
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type>::value,char>::type = 0,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
     void insert_cols(new_columns_type && new_columns)
     {
     	_add_row_buffer_to_data_table();
 
     	for(auto && new_column : new_columns)
     	{
-    		_column_buffer_.insert(IceBRG::coerce<column_buffer_column_type>(std::move(new_column)),_label_map_.left);
+    		_column_buffer_.insert(coerce<column_buffer_column_type>(std::move(new_column)),_label_map_.left);
     	}
     }
 
@@ -905,8 +905,8 @@ public:
 #if(1)
 
     template< typename new_row_type,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_row_type>::type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_row_type>::type,row_buffer_labeled_row_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename ct<new_row_type>::type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_row_type>::type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void insert_row(new_row_type && new_row)
     {
     	_add_column_buffer_to_data_table();
@@ -914,13 +914,13 @@ public:
     }
 
     template< typename new_row_type,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_row_type>::type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_row_type>::type,row_buffer_labeled_row_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_container<typename IceBRG::ct<new_row_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!(std::is_convertible<typename ct<new_row_type>::type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_row_type>::type,row_buffer_labeled_row_type>::value),char>::type = 0,
+	typename std::enable_if<is_container<typename ct<new_row_type>::type>::value,char>::type = 0>
     void insert_row(new_row_type && new_column)
     {
     	_add_column_buffer_to_data_table();
-    	_row_buffer_.push_back(IceBRG::coerce<row_buffer_row_type>(std::forward<new_row_type>(new_column)));
+    	_row_buffer_.push_back(coerce<row_buffer_row_type>(std::forward<new_row_type>(new_column)));
     }
 
 #endif // Single row insertion
@@ -929,9 +929,9 @@ public:
 #if(1)
 
     template< typename new_rows_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_rows_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void insert_rows(const new_rows_type & new_rows)
     {
     	_add_column_buffer_to_data_table();
@@ -943,9 +943,9 @@ public:
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_rows_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void insert_rows(new_rows_type && new_rows)
     {
     	_add_column_buffer_to_data_table();
@@ -957,32 +957,32 @@ public:
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_rows_type>::type>::value,char>::type = 0,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
     void insert_rows(const new_rows_type & new_rows)
     {
     	_add_column_buffer_to_data_table();
 
     	for(const auto & new_row : new_rows)
     	{
-    		_row_buffer_.push_back(IceBRG::coerce<row_buffer_row_type>(new_row));
+    		_row_buffer_.push_back(coerce<row_buffer_row_type>(new_row));
     	}
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_rows_type>::type>::value,char>::type = 0,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<is_stl_container<typename ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
     void insert_rows(new_rows_type && new_rows)
     {
     	_add_column_buffer_to_data_table();
 
     	for(auto & new_row : new_rows)
     	{
-    		_row_buffer_.push_back(IceBRG::coerce<row_buffer_row_type>(std::move(new_row)));
+    		_row_buffer_.push_back(coerce<row_buffer_row_type>(std::move(new_row)));
     	}
     }
 
@@ -1135,7 +1135,7 @@ public:
 	}
 
     template< typename new_rows_type,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0>
     void set_rows(new_rows_type && new_rows)
     {
 		_clear_buffer();
@@ -1145,10 +1145,10 @@ public:
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<!std::is_convertible<typename IceBRG::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_rows_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+	typename std::enable_if<!std::is_convertible<typename ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void set_rows(const new_rows_type & new_rows)
     {
 		_clear_buffer();
@@ -1161,10 +1161,10 @@ public:
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<!std::is_convertible<typename IceBRG::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_rows_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
+	typename std::enable_if<!std::is_convertible<typename ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_labeled_row_type>::value,char>::type = 0>
     void set_rows(new_rows_type && new_rows)
     {
 		_clear_buffer();
@@ -1177,11 +1177,11 @@ public:
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<!std::is_convertible<typename IceBRG::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_rows_type>::type>::value,char>::type = 0,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!std::is_convertible<typename ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
     void set_rows(const new_rows_type & new_rows)
     {
 		_clear_buffer();
@@ -1189,16 +1189,16 @@ public:
 
     	for(const auto & new_row : new_rows)
     	{
-    		_row_buffer_.push_back(IceBRG::coerce<row_buffer_row_type>(new_row));
+    		_row_buffer_.push_back(coerce<row_buffer_row_type>(new_row));
     	}
     }
 
     template< typename new_rows_type,
-	typename std::enable_if<!std::is_convertible<typename IceBRG::ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_rows_type>::type>::value,char>::type = 0,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!std::is_convertible<typename ct<new_rows_type>::type,row_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_rows_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value ||
+	std::is_convertible<typename ct<new_rows_type>::type::value_type,row_buffer_row_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<typename new_rows_type::value_type>::type>::value,char>::type = 0>
     void set_rows(new_rows_type && new_rows)
     {
 		_clear_buffer();
@@ -1206,12 +1206,12 @@ public:
 
     	for(auto & new_row : new_rows)
     	{
-    		_row_buffer_.push_back(IceBRG::coerce<row_buffer_row_type>(std::move(new_row)));
+    		_row_buffer_.push_back(coerce<row_buffer_row_type>(std::move(new_row)));
     	}
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0>
+	typename std::enable_if<std::is_convertible<typename ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0>
     void set_cols(new_columns_type && new_cols)
     {
 		_clear_buffer();
@@ -1221,10 +1221,10 @@ public:
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<!std::is_convertible<typename IceBRG::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+	typename std::enable_if<!std::is_convertible<typename ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void set_cols(const new_columns_type & new_columns)
     {
 		_clear_buffer();
@@ -1237,10 +1237,10 @@ public:
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<!std::is_convertible<typename IceBRG::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type>::value,char>::type = 0,
-	typename std::enable_if<std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
+	typename std::enable_if<!std::is_convertible<typename ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value,char>::type = 0>
     void set_cols(new_columns_type && new_columns)
     {
 		_clear_buffer();
@@ -1253,11 +1253,11 @@ public:
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<!std::is_convertible<typename IceBRG::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type>::value,char>::type = 0,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!std::is_convertible<typename ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
     void set_cols(const new_columns_type & new_columns)
     {
 		_clear_buffer();
@@ -1265,16 +1265,16 @@ public:
 
     	for(const auto & new_column : new_columns)
     	{
-    		_column_buffer_.insert(IceBRG::coerce<column_buffer_column_type>(new_column),_label_map_.left);
+    		_column_buffer_.insert(coerce<column_buffer_column_type>(new_column),_label_map_.left);
     	}
     }
 
     template< typename new_columns_type,
-	typename std::enable_if<!std::is_convertible<typename IceBRG::ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<new_columns_type>::type>::value,char>::type = 0,
-	typename std::enable_if<!(std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
-	std::is_convertible<typename IceBRG::ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
-	typename std::enable_if<IceBRG::is_stl_container<typename IceBRG::ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
+	typename std::enable_if<!std::is_convertible<typename ct<new_columns_type>::type,column_buffer_type>::value,char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<new_columns_type>::type>::value,char>::type = 0,
+	typename std::enable_if<!(std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_column_type>::value ||
+	std::is_convertible<typename ct<new_columns_type>::type::value_type,column_buffer_labeled_column_type>::value),char>::type = 0,
+	typename std::enable_if<is_stl_container<typename ct<typename new_columns_type::value_type>::type>::value,char>::type = 0>
     void set_cols(new_columns_type && new_columns)
     {
 		_clear_buffer();
@@ -1282,7 +1282,7 @@ public:
 
     	for(auto && new_column : new_columns)
     	{
-    		_column_buffer_.insert(IceBRG::coerce<column_buffer_column_type>(std::move(new_column)),_label_map_.left);
+    		_column_buffer_.insert(coerce<column_buffer_column_type>(std::move(new_column)),_label_map_.left);
     	}
     }
 
@@ -1400,9 +1400,9 @@ public:
     }
 
 	template< typename label_container_type,
-	typename std::enable_if< std::is_convertible<typename IceBRG::ct<label_container_type>::type::value_type,label_type>::value ||
-	                std::is_convertible<typename IceBRG::ct<label_container_type>::type::value_type,typename map_type::left_value_type>::value ||
-					std::is_convertible<typename IceBRG::ct<label_container_type>::type,map_type>::value,char>::type = 0>
+	typename std::enable_if< std::is_convertible<typename ct<label_container_type>::type::value_type,label_type>::value ||
+	                std::is_convertible<typename ct<label_container_type>::type::value_type,typename map_type::left_value_type>::value ||
+					std::is_convertible<typename ct<label_container_type>::type,map_type>::value,char>::type = 0>
     char set_labels(label_container_type && new_labels)
     {
     	// Add in the buffer so the previous label map is fully set up
@@ -1489,7 +1489,8 @@ public:
     // Saving and loading in ascii format
 #if(1)
 
-    void save(std::ostream & fo, bool formatted=false) const
+    void save(std::ostream & fo, const bool & formatted=false,
+    		const short_int_type & precision = 10) const
     {
     	header_t header = get_labels<std::string>();
 
@@ -1504,7 +1505,7 @@ public:
 			{
 				data.push_back(coerce<std::vector<T_value_type>>(row.raw()));
 			}
-	    	print_table(fo,data,header,Eigen::RowMajor);
+	    	print_table(fo,data,header,Eigen::RowMajor,precision);
     	}
     	else
     	{
@@ -1525,12 +1526,13 @@ public:
     	return;
     }
 
-    void save(const std::string & file_name, bool formatted=false) const
+    void save(const std::string & file_name, const bool & formatted=false,
+    		const short_int_type & precision = 10) const
     {
     	std::ofstream fo;
     	open_file_output(fo,file_name);
 
-    	save(fo,formatted);
+    	save(fo,formatted,precision);
     }
 
     void load(std::istream & fi)
