@@ -1,9 +1,9 @@
 /**********************************************************************\
- @file join_path.hpp
+ @file file_system.hpp
  ------------------
 
- A function to join multiple strings in a path, with exactly one '/'
- between each block.
+ Functions relating to the file system, including getting the path of a
+ file, joining paths, and getting the filename without an extension.
 
  **********************************************************************
 
@@ -24,10 +24,12 @@
 
 \**********************************************************************/
 
-#ifndef JOIN_PATH_HPP_
-#define JOIN_PATH_HPP_
+#ifndef FILE_SYSTEM_HPP_
+#define FILE_SYSTEM_HPP_
 
 #include <boost/algorithm/string/replace.hpp>
+
+#include "IceBRG_main/common.h"
 
 namespace IceBRG {
 
@@ -86,6 +88,7 @@ inline std::string join_path(const std::string & s1, const std::string & s2)
 /**
  * Joins multiple strings together with exactly one slash between each pair, regardless of whether
  * they begin or end with slashes.
+ *
  * @param s1
  * @param s2
  * @param s3
@@ -101,6 +104,40 @@ inline std::string join_path(const std::string & s1, const std::string & s2,
 	return join_path(s12,s3,so...); // Recurse down
 }
 
+/**
+ * Gets the path to a file (not including the final slash).
+ *
+ * @param filename
+ * @return
+ */
+inline std::string get_path(const std::string & filename)
+{
+    size_t pos = filename.rfind("/");
+    if(pos == std::string::npos)  // No slashes found
+        return filename;
+
+    return filename.substr(0, pos);
 }
 
-#endif // JOIN_PATH_HPP_
+/**
+ * Gets the base filename, without the last extension. Beware of cases like "file.tar.gz" which
+ * will become "file.tar".
+ *
+ * @param filename
+ * @return
+ */
+inline std::string get_base_filename(const std::string & filename)
+{
+    size_t pos = filename.rfind(".");
+    if(pos == std::string::npos)  // No periods found
+        return filename;
+
+    if(pos == 0)    // It's at the front, so no extension
+        return filename;
+
+    return filename.substr(0, pos);
+}
+
+} // namespace IceBRG
+
+#endif // FILE_SYSTEM_HPP_
