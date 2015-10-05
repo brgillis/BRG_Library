@@ -64,6 +64,13 @@ surface_density_type IceBRG::lensing_tNFW_profile::_quick_shifted_Delta_Sigma(
 			std::log(value_of(mvir0())), z(), std::log(value_of(R))));
 	return result;
 }
+surface_density_type IceBRG::lensing_tNFW_profile::_quick_shifted_no_enh_Delta_Sigma(
+		const distance_type & R ) const
+{
+	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_shifted_no_enh_sig_cache().get(
+			std::log(value_of(mvir0())), z(), std::log(value_of(R))));
+	return result;
+}
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_Sigma( const distance_type & r ) const
 {
 	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_Sigma_cache().get(
@@ -89,9 +96,9 @@ surface_density_type IceBRG::lensing_tNFW_profile::_quick_group_Sigma(
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_proj_dens( const distance_type & r ) const
 {
-	surface_density_type result;
+	surface_density_type res;
 	density_type rho_c_t_4pi;
-	flt_type d_c, x, tau_use, fx, lx;
+	long_flt_type d_c, x, tau_use, fx, lx;
 
 	if ( tau() <= 0 )
 		tau_use = default_tau_factor * c();
@@ -101,10 +108,10 @@ surface_density_type IceBRG::lensing_tNFW_profile::_proj_dens( const distance_ty
 	d_c = _delta_c();
 	rho_c_t_4pi = 3. * square(H()) / ( 2. * Gc );
 	x = max(r / rs(),min_x);
-	flt_type xx = x*x;
-	flt_type tautau = tau_use*tau_use;
-	flt_type tautaup1 = tautau + 1.;
-	flt_type sqrt_tautaupxx = std::sqrt(tautau + xx);
+	long_flt_type xx = x*x;
+	long_flt_type tautau = tau_use*tau_use;
+	long_flt_type tautaup1 = tautau + 1.;
+	long_flt_type sqrt_tautaupxx = std::sqrt(tautau + xx);
 
 	if ( x == 1. )
 		fx = 1.;
@@ -114,33 +121,34 @@ surface_density_type IceBRG::lensing_tNFW_profile::_proj_dens( const distance_ty
 		fx = -std::log( 1. / x - std::sqrt( 1. / ( xx ) - 1. ) ) / std::sqrt( 1. - xx );
 	lx = std::log( x / ( sqrt_tautaupxx + tau_use ) );
 	if ( x == 1 )
-		result =
-				( rs() * d_c * rho_c_t_4pi ) * tautau
+		res = rs() * rho_c_t_4pi * static_cast<flt_type>(
+				d_c * tautau
 						/ ( 2. * pi * square( tautaup1 ) )
 						* ( tautaup1/3. + 2. * fx
 								- pi / sqrt_tautaupxx
 								+ ( tautau - 1. ) * lx
 										/ ( tau_use
-												* sqrt_tautaupxx ) );
+												* sqrt_tautaupxx ) ));
 	else
-		result =
-				( rs() * d_c * rho_c_t_4pi ) * tautau
+		res = rs() * rho_c_t_4pi * static_cast<flt_type>(
+				d_c * tautau
 						/ ( 2. * pi * square( tautaup1 ) )
 						* ( tautaup1 / ( xx - 1. )
 								* ( 1. - fx ) + 2. * fx
 								- pi / sqrt_tautaupxx
 								+ ( tautau - 1. ) * lx
 										/ ( tau_use
-												* sqrt_tautaupxx ) );
-	return result;
+												* sqrt_tautaupxx ) ));
+	return res;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_proj_enc_dens( const distance_type & r ) const
 {
-	surface_density_type result;
+	surface_density_type res;
 	density_type rho_c_t_4pi;
 	//Takes M in kg, r in kpc
-	flt_type d_c = _delta_c();
-	flt_type tau_use, fx;
+	long_flt_type d_c = _delta_c();
+	long_flt_type tau_use;
+	long_flt_type fx;
 	if ( tau() <= 0 )
 		tau_use = default_tau_factor * c();
 	else
@@ -148,11 +156,11 @@ surface_density_type IceBRG::lensing_tNFW_profile::_proj_enc_dens( const distanc
 
 	d_c = _delta_c();
 	rho_c_t_4pi = 3. * square(H()) / ( 2. * Gc );
-	flt_type x = max(r / rs(),min_x);
-	flt_type xx = x*x;
-	flt_type tautau = tau_use*tau_use;
-	flt_type tautaup1 = tautau + 1.;
-	flt_type sqrt_tautaupxx = std::sqrt(tautau + xx);
+	long_flt_type x = max(r / rs(),min_x);
+	long_flt_type xx = x*x;
+	long_flt_type tautau = tau_use*tau_use;
+	long_flt_type tautaup1 = tautau + 1.;
+	long_flt_type sqrt_tautaupxx = std::sqrt(tautau + xx);
 
 	if ( x == 1. )
 		fx = 1.;
@@ -163,15 +171,15 @@ surface_density_type IceBRG::lensing_tNFW_profile::_proj_enc_dens( const distanc
 	flt_type lx = std::log( x / ( sqrt_tautaupxx + tau_use ) );
 	flt_type log_tau = std::log(tau_use);
 
-	result = ( rs() * d_c * rho_c_t_4pi ) * tautau
+	res = rs()*rho_c_t_4pi * static_cast<flt_type>( d_c * tautau
 					/ ( pi * xx * tautaup1 * tautaup1 )
 					* ( ( tautaup1 + 2 * ( xx - 1 ) ) * fx
 							+ pi * tau_use
 							+ ( tautau - 1 ) * log_tau
 							+ sqrt_tautaupxx
 									* ( lx * ( tautau - 1 )
-											/ tau_use - pi ) );
-	return result;
+											/ tau_use - pi ) ));
+	return res;
 }
 mass_type IceBRG::lensing_tNFW_profile::_proj_enc_mass( const distance_type & R ) const
 {

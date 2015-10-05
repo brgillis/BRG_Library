@@ -34,6 +34,7 @@
 #include <vector>
 
 #include "IceBRG_main/common.h"
+#include "IceBRG_main/container/labeled_array.hpp"
 #include "IceBRG_main/utility.hpp"
 
 
@@ -44,7 +45,7 @@ namespace IceBRG {
  */
 class shifting_loader {
 	static bool _loaded_;
-	static std::vector< std::vector<flt_type> > _data_;
+	static labeled_array<flt_type> _data_;
 
 	const ssize_t _zvals_size_;
 	std::vector<flt_type> _zvals_;
@@ -53,11 +54,11 @@ class shifting_loader {
 	const char * _corr_alpha_name_;
 
 	void _load();
-	ssize_t _lower_theta_index(flt_type theta);
-	ssize_t _lower_z_index(flt_type z);
+	ssize_t _lower_theta_index(const flt_type & theta);
+	ssize_t _lower_z_index(const flt_type & z);
 public:
 
-	flt_type get(flt_type theta, flt_type z);
+	flt_type get(const flt_type & theta, const flt_type & z);
 	void unload();
 
 	shifting_loader()

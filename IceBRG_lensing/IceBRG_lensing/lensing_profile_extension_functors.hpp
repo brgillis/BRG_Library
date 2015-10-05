@@ -501,22 +501,22 @@ public:
 		const flt_type & angle_factor = cos(theta);
 
 		flt_type extra_shear_factor;
-		if((value_of(_R_shift_)==0) or (!_use_extra_shear_))
+		if(!_use_extra_shear_)
 			extra_shear_factor = 0;
 		else
-			extra_shear_factor = (R_actual-_R_)/_R_shift_*
-				_host_ptr_->shift_factor(1*IceBRG::unitconv::kpctom*m);
+			extra_shear_factor = (angle_factor*R_actual-_R_)/_R_;
 
-		if(isbad(theta))
-		{
-			return _host_ptr_->Delta_Sigma(R_actual) +
+		surface_density_type base_shear = _host_ptr_->Delta_Sigma(R_actual);
+		if(isgood(theta))
+			base_shear *= angle_factor;
+
+		surface_density_type extra_shear =
 				extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z());
-		}
-		else
-		{
-			return _host_ptr_->Delta_Sigma(R_actual)*angle_factor +
-					extra_shear_factor*sigma_crit(_host_ptr_->z(),2*_host_ptr_->z());
-		}
+
+
+		surface_density_type res = base_shear+extra_shear;
+
+		return res;
 	}
 
 	shifted_Delta_Sigma_circ_functor( const name *new_host=NULL,

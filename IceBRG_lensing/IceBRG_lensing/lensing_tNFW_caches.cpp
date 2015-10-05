@@ -38,9 +38,9 @@
 
 // Initialisation for IceBRG::tNFW_sig_cache
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_sig_cache,
-	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/300,
+	std::log(1e9*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e15)-std::log(1e9))/300,
 	0.1,1.5,0.1,
-	std::log(0.1*unitconv::kpctom),std::log(2000*unitconv::kpctom),(std::log(2000)-std::log(0.1))/300);
+	std::log(1*unitconv::kpctom),std::log(10000*unitconv::kpctom),(std::log(10000)-std::log(1))/300);
 
 // Initialisation for IceBRG::tNFW_offset_sig_cache
 DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_offset_sig_cache,
@@ -58,14 +58,14 @@ DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_sig_cache,
 
 // Initialisation for IceBRG::tNFW_shifted_sig_cache
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_shifted_sig_cache,
-	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/100,
-	0.1,1.5,0.4,
+	std::log(1e9*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e15)-std::log(1e9))/60,
+	0.1,1.5,0.1,
 	std::log(0.1*unitconv::kpctom),std::log(10000*unitconv::kpctom),(std::log(10000)-std::log(0.1))/100);
 
 // Initialisation for IceBRG::tNFW_shifted_sig_no_enh_cache
 DEFINE_BRG_CACHE_3D_STATIC_VARS( tNFW_shifted_no_enh_sig_cache,
-	std::log(1e7*unitconv::Msuntokg),std::log(1e16*unitconv::Msuntokg),(std::log(1e16)-std::log(1e7))/100,
-	0.1,1.5,0.4,
+	std::log(1e9*unitconv::Msuntokg),std::log(1e15*unitconv::Msuntokg),(std::log(1e15)-std::log(1e9))/60,
+	0.1,1.5,0.1,
 	std::log(0.1*unitconv::kpctom),std::log(10000*unitconv::kpctom),(std::log(10000)-std::log(0.1))/100);
 
 // Initialisation for IceBRG::tNFW_Sigma_cache

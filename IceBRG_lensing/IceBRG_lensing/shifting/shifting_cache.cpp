@@ -35,21 +35,21 @@
 
 // Initialise the cache
 DEFINE_BRG_CACHE_2D_STATIC_VARS( shifting_cache,
-	0,3800*IceBRG::unitconv::amintorad,1*IceBRG::unitconv::amintorad,
-	0.1,1.5,0.1);
+	std::log(0.1*IceBRG::unitconv::amintorad),std::log(3800.*IceBRG::unitconv::amintorad),
+		(std::log(3800.)-std::log(0.1))/1000,
+	0.3,1.5,0.1);
 
 
 // IceBRG::tNFW_sig_cache class methods
 #if (1)
 flt_type IceBRG::shifting_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2) const
 {
-	const flt_type & t = std::fabs(in_param_1);
+	const flt_type & t = std::exp(in_param_1);
 	const flt_type & z = std::fabs(in_param_2);
 
 	if(t==0) return 0;
 
-	const flt_type & zero_shift = shifting_loader().get(0,z);
-	return safe_sqrt(shifting_loader().get(t,z)-zero_shift);
+	return safe_sqrt(shifting_loader().get(0,z)-shifting_loader().get(t,z));
 }
 
 #endif // end IceBRG::tNFW_sig_cache methods

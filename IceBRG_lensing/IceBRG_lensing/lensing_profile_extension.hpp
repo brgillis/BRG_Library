@@ -264,6 +264,8 @@ private:
 		distance_type R_to_use = abs( R );
 		distance_type sigma = SPCP(name)->_shift_sigma(R_to_use);
 
+		if(value_of(sigma)<=0) return _Delta_Sigma(R);
+
 		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, true );
 		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
 
@@ -282,6 +284,8 @@ private:
 		distance_type R_to_use = abs( R );
 		distance_type sigma = SPCP(name)->_shift_sigma(R_to_use);
 
+		if(value_of(sigma)<=0) return _Delta_Sigma(R);
+
 		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, true );
 		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
 
@@ -296,6 +300,8 @@ private:
 	{
 		distance_type R_to_use = abs( R );
 		distance_type sigma = SPCP(name)->_shift_sigma(R_to_use);
+
+		if(value_of(sigma)<=0) return _Delta_Sigma(R);
 
 		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, false );
 		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
@@ -314,6 +320,8 @@ private:
 	{
 		distance_type R_to_use = abs( R );
 		distance_type sigma = SPCP(name)->_shift_sigma(R_to_use);
+
+		if(value_of(sigma)<=0) return _Delta_Sigma(R);
 
 		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, false );
 		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
@@ -394,7 +402,8 @@ private:
 	{
 		if(value_of(R)==0) return 0.;
 		const angle_type theta_separation = afd(R,SPCP(name)->z());
-		return any_cast<angle_type>(shifting_cache().get(theta_separation,SPCP(name)->z()))
+		return any_cast<angle_type>(shifting_cache().get(std::log(value_of(theta_separation)),
+				SPCP(name)->z()))
 				/ theta_separation;
 	}
 	surface_density_type _Delta_Sigma( const distance_type & R ) const // Weak lensing signal in tangential shear Delta-Sigma at radius R

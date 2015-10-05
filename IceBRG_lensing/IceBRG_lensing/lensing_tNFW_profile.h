@@ -49,6 +49,7 @@ private:
 	surface_density_type _quick_group_Delta_Sigma( const distance_type & R,
 			const flt_type & group_c ) const;
 	surface_density_type _quick_shifted_Delta_Sigma( const distance_type & R ) const;
+	surface_density_type _quick_shifted_no_enh_Delta_Sigma( const distance_type & R ) const;
 	surface_density_type _quick_Sigma( const distance_type & R ) const;
 	surface_density_type _quick_offset_Sigma( const distance_type & R,
 			const distance_type & offset_R ) const;

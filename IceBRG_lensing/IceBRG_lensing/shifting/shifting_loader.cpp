@@ -31,9 +31,13 @@
 #include <string>
 #include <vector>
 
+#include <boost/lexical_cast.hpp>
+
 #include "IceBRG_main/common.h"
 
 #include "IceBRG_main/file_access/ascii_table.hpp"
+#include "IceBRG_main/math/misc_math.hpp"
+#include "IceBRG_main/units/unit_conversions.hpp"
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/vector/manipulations.hpp"
 
@@ -44,7 +48,7 @@
 // Initialisation of static vars
 #if (1)
 bool IceBRG::shifting_loader::_loaded_(false);
-std::vector< std::vector<flt_type> > IceBRG::shifting_loader::_data_;
+IceBRG::labeled_array<flt_type> IceBRG::shifting_loader::_data_;
 #endif
 
 void IceBRG::shifting_loader::_load()
@@ -57,32 +61,62 @@ void IceBRG::shifting_loader::_load()
 		{
 			std::stringstream ss(corr_alph_data);
 
-			_data_ = load_table<flt_type>(ss);
+			std::vector<std::string> labels({"theta"});
 
-			_data_ = reverse_vertical(_data_);
+			for( const auto & zval : _zvals_)
+			{
+				labels.push_back(boost::lexical_cast<std::string>(zval));
+			}
 
-			assert(ssize(_data_)==_zvals_size_+1);
-			assert(ssize(_data_[0])>=2);
+			_data_.load(ss);
+			_data_.set_labels(std::move(labels));
+
+			assert(_data_.num_cols()==_zvals_size_+1);
+			assert(_data_.num_rows()>=2);
+
+//			// Add a row to the bottom with theta==0, and the rest the same as the row above it,
+//			// so we have proper behavior in the theta->0 limit
+//
+//			flt_array_type new_row(_zvals_size_+1);
+//
+//			new_row[0] = 0.;
+//			for(int i=1; i<=_zvals_size_; ++i)
+//			{
+//				new_row[i] = _data_.rows().back()[i];
+//			}
+//
+//			_data_.insert_row(std::move(new_row));
+
+			_data_.reverse_vertical();
+
+			// Change to SI units
+			_data_.at_label("theta").raw() *= unitconv::amintorad;
+
+			for( const auto & zval : _zvals_)
+			{
+				_data_.at_label(boost::lexical_cast<std::string>(zval)).raw()
+					*= square(unitconv::amintorad);
+			}
 
 			_loaded_ = true;
 		}
 	}
 
 }
-ssize_t IceBRG::shifting_loader::_lower_theta_index(flt_type theta)
+ssize_t IceBRG::shifting_loader::_lower_theta_index(const flt_type & theta)
 {
 	if(!_loaded_) _load();
 
-	auto size = ssize(_data_[0]);
+	auto size = _data_.num_rows();
 
 	for(ssize_t i=1; i<size; ++i)
 	{
-		if(theta<_data_[0][i])
+		if(theta<_data_.col(0).row(i))
 			return i-1;
 	}
-	return size-1;
+	return size-2;
 }
-ssize_t IceBRG::shifting_loader::_lower_z_index(flt_type z)
+ssize_t IceBRG::shifting_loader::_lower_z_index(const flt_type & z)
 {
 	assert(_zvals_size_>=2);
 
@@ -91,18 +125,18 @@ ssize_t IceBRG::shifting_loader::_lower_z_index(flt_type z)
 		if(z<_zvals_[i])
 			return i-1;
 	}
-	return _zvals_size_-1;
+	return _zvals_size_-2;
 }
 
-flt_type IceBRG::shifting_loader::get(flt_type t, flt_type z)
+flt_type IceBRG::shifting_loader::get(const flt_type & t, const flt_type & z)
 {
 	if(!_loaded_) _load();
 
 	const ssize_t ti = _lower_theta_index(t);
 	const ssize_t zi = _lower_z_index(z);
 
-	const flt_type & tlo = _data_[0][ti];
-	const flt_type & thi = _data_[0][ti+1];
+	const flt_type & tlo = _data_.col(0).row(ti);
+	const flt_type & thi = _data_.col(0).row(ti+1);
 	const flt_type & zlo = _zvals_[zi];
 	const flt_type & zhi = _zvals_[zi+1];
 
@@ -110,10 +144,10 @@ flt_type IceBRG::shifting_loader::get(flt_type t, flt_type z)
 
 	flt_type result = 0;
 
-	result += _data_[zi+1][ti]*(zhi-z)*(thi-t);
-	result += _data_[zi+1][ti+1]*(zhi-z)*(t-tlo);
-	result += _data_[zi+2][ti]*(z-zlo)*(thi-t);
-	result += _data_[zi+2][ti+1]*(z-zlo)*(t-tlo);
+	result += _data_.col(zi+1).row(ti)*(zhi-z)*(thi-t);
+	result += _data_.col(zi+1).row(ti+1)*(zhi-z)*(t-tlo);
+	result += _data_.col(zi+2).row(ti)*(z-zlo)*(thi-t);
+	result += _data_.col(zi+2).row(ti+1)*(z-zlo)*(t-tlo);
 
 	result /= weight;
 
