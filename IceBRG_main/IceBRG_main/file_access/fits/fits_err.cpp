@@ -20,6 +20,8 @@
  * @author user
  */
 
+#include <stdexcept>
+
 namespace fitsio {
 extern "C" {
 #include <cfitsio/fitsio.h>

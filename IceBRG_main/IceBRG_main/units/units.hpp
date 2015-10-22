@@ -432,7 +432,12 @@ inline T abs( const T & x)
 	return std::abs(x);
 }
 
-using std::sqrt;
+template<typename T,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+inline T sqrt( const T & x)
+{
+  return std::sqrt(x);
+}
 
 //template< int_type e>
 //flt_type ipow( const flt_type & x)
@@ -446,13 +451,55 @@ inline flt_type ipow( const flt_type & x)
 	return std::pow(x,static_cast<flt_type>(en)/ed);
 }
 
-using std::sin;
-using std::cos;
-using std::tan;
-using std::asin;
-using std::acos;
-using std::atan;
-using std::atan2;
+template<typename T,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+inline T sin( const T & x)
+{
+  return std::sin(x);
+}
+
+template<typename T,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+inline T cos( const T & x)
+{
+  return std::cos(x);
+}
+
+template<typename T,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+inline T tan( const T & x)
+{
+  return std::tan(x);
+}
+
+template<typename T,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+inline T asin( const T & x)
+{
+  return std::asin(x);
+}
+
+template<typename T,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+inline T acos( const T & x)
+{
+  return std::acos(x);
+}
+
+template<typename T,
+typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
+inline T atan( const T & x)
+{
+  return std::atan(x);
+}
+
+template<typename T1, typename T2,
+typename std::enable_if<!is_boost_tuple<T1>::value,char>::type = 0,
+typename std::enable_if<!is_boost_tuple<T2>::value,char>::type = 0>
+inline T1 atan2( const T1 & y, const T2 & x)
+{
+  return std::atan2(y,x);
+}
 
 #endif // Math functions
 
