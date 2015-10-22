@@ -78,11 +78,24 @@ inline std::string join_strings(const std::string & s1, const std::string & s2,
  */
 inline std::string join_path(const std::string & s1, const std::string & s2)
 {
-	std::string res(s1 + "/" + s2); // Combine with an extra slash
+	char s1_end = *(s1.data()+s1.size()-1);
+	char s2_begin = *(s2.data());
 
-	reduce_slashes(res); // Get rid of duplicate slashes
+	bool s1_end_slash = ( s1_end=='/' );
+	bool s2_begin_slash = ( s2_begin=='/' );
 
-	return res;
+	if( s1_end_slash xor s2_begin_slash )
+	{
+	  return s1 + s2;
+	}
+	else if( s1_end_slash and s2_begin_slash)
+	{
+	  return s1 + s2.substr(1);
+	}
+	else
+	{
+	  return s1 + "/" + s2;
+	}
 }
 
 /**
@@ -99,7 +112,7 @@ template<typename... To>
 inline std::string join_path(const std::string & s1, const std::string & s2,
 		const std::string & s3, To... so)
 {
-	const std::string s12(s1 + "/" + s2); // Combine with an extra slash
+	const std::string s12(join_path(s1,s2));
 
 	return join_path(s12,s3,so...); // Recurse down
 }
