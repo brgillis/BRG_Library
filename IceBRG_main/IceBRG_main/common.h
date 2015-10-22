@@ -43,6 +43,8 @@ typedef std::vector<long_complex_type> long_complex_vector_type;
 typedef std::make_signed<size_t>::type ssize_t;
 typedef ssize_t size_type;
 
+typedef std::string str_type;
+
 // Global compiler directives
 // Alter these by switching between #define and #undef
 #if(1)

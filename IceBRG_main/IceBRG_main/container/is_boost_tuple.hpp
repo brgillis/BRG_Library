@@ -29,7 +29,6 @@
 #include <type_traits>
 #include <utility>
 
-#include <boost/tti/has_member_function.hpp>
 #include <boost/tuple/tuple.hpp>
 
 namespace IceBRG {
