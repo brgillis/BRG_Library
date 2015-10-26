@@ -1,16 +1,16 @@
-/*  
+/*
  * Copyright (C) 2015 Bryan R. Gillis
- *  
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General  
- * Public License as published by the Free Software Foundation; either version 3.0 of the License, or (at your option)  
- * any later version.  
- *  
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied  
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more  
- * details.  
- *  
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to  
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA  
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either version 3.0 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 /**
@@ -29,34 +29,26 @@
 #include "IceBRG_main/file_access/fits/fitsfile_deleter.h"
 
 // Forward declare the fitsfile struct
-namespace fitsio {
-struct fitsfile;
-}
+//struct fitsfile;
 
 namespace IceBRG {
 
 
 class fits_file {
 
-  typedef std::unique_ptr<fitsio::fitsfile,fitsfile_deleter>
-    p_fitsfile_type;
-
-  p_fitsfile_type _p_fits_file;
+	struct fits_file_impl;
+	std::unique_ptr<fits_file_impl> _p_impl;
 
 public:
 
   /* Default Constructor */
-  fits_file ()
-  : _p_fits_file(nullptr)
-  { }
+  fits_file ();
 
   // Construct from filename
-  fits_file (const str_type & filename )
-  : fits_file()
-  { open_readonly(filename); }
+  fits_file (const str_type & filename );
 
   /* Deconstructor */
-  virtual ~fits_file () {}
+  virtual ~fits_file ();
 
   // Open/close a file
   void open( const str_type & filename, const int & mode = 1 );
