@@ -37,6 +37,8 @@
 #include <boost/iterator.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include "IceBRG_main/common.h"
+
 #include "IceBRG_main/Eigen.hpp"
 
 #include "IceBRG_main/container/coerce.hpp"
@@ -46,8 +48,6 @@
 
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/file_access/open_file.hpp"
-#include "IceBRG_main/file_access/table_formatter.hpp"
-
 #include "IceBRG_main/math/misc_math.hpp"
 
 #include "is_stl_container.hpp"
@@ -63,7 +63,10 @@
 
 namespace IceBRG {
 
-template<typename T_value_type=flt_type, char T_major_tag = Eigen::RowMajor, typename T_label_type=std::string>
+template<typename T_value>
+struct table_formatters;
+
+template<typename T_value_type=flt_type, char T_major_tag=Eigen::RowMajor, typename T_label_type=std::string>
 class labeled_array
 {
 public:
@@ -551,7 +554,7 @@ private:
 	// Private implementation of loading - doesn't clear first
     void _load(std::istream & fi)
     {
-    	*this = get_formatter<labeled_array_type>("ascii")->read(fi);
+    	*this = table_formatters<value_type>::get_formatter("ascii").read(fi);
     }
 
 #endif // Other private methods
@@ -1496,11 +1499,11 @@ public:
     {
     	if(formatted)
     	{
-    		get_formatter<labeled_array_type>("formatted_ascii")->write(*this,fo);
+    		table_formatters<value_type>::get_formatter("formatted_ascii").write(*this,fo);
     	}
     	else
     	{
-    		get_formatter<labeled_array_type>("ascii")->write(*this,fo);
+    		table_formatters<value_type>::get_formatter("ascii").write(*this,fo);
     	}
 
     	return;
@@ -1535,6 +1538,6 @@ public:
 
 }
 
-
+#include "../file_access/table_formatter.hpp"
 
 #endif // _BRG_CONTAINER_LABELED_ARRAY_HPP_INCLUDED_

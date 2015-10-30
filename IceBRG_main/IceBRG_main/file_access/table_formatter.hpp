@@ -27,6 +27,8 @@
 #define ICEBRG_MAIN_FILE_ACCESS_TABLE_FORMATTER_HPP_
 
 #include <memory>
+#include <vector>
+
 #include <boost/algorithm/string.hpp>
 
 #include "IceBRG_main/file_access/table_formats/ascii_format.hpp"
@@ -36,19 +38,35 @@
 
 namespace IceBRG {
 
-template<typename T_table>
-std::unique_ptr<table_format_base<T_table>> get_formatter(str_type format)
+template<typename T_value>
+using p_formatter_t = std::unique_ptr<table_format_base<T_value>>;
+
+template<typename T_value>
+struct table_formatters
 {
-	typedef std::unique_ptr<table_format_base<T_table>> p_formatter_t;
-	boost::to_lower(format);
+	static const std::initializer_list<p_formatter_t<T_value>> formatters;
 
-	if(format==ascii_format<T_table>().name())
-		return p_formatter_t(new ascii_format<T_table>);
-	if(format==formatted_ascii_format<T_table>().name())
-		return p_formatter_t(new formatted_ascii_format<T_table>);
+	static const table_format_base<T_value> & get_formatter(str_type format)
+	{
+		boost::to_lower(format);
 
-	throw std::runtime_error("Format " + format + " not recognized.");
-}
+		for(const auto & formatter : formatters)
+		{
+			if(format==formatter->name())
+			{
+				return *formatter;
+			}
+		}
+
+		throw std::runtime_error("Format " + format + " not recognized.");
+	}
+};
+
+template<typename T_value>
+const std::initializer_list<p_formatter_t<T_value>> table_formatters<T_value>::formatters({
+	p_formatter_t<T_value>(new ascii_format<T_value>),
+	p_formatter_t<T_value>(new formatted_ascii_format<T_value>),
+});
 
 } // namespace IceBRG
 

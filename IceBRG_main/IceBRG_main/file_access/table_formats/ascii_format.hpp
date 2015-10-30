@@ -32,11 +32,13 @@
 
 namespace IceBRG {
 
-template<typename T_table>
-class ascii_format : public table_format_base<T_table>
+template<typename T_value>
+class ascii_format : public table_format_base<T_value>
 {
 
 public:
+
+	typedef labeled_array<T_value> table_type;
 
 	/// Destructor (default virtual)
 	virtual ~ascii_format() noexcept override {}
@@ -48,18 +50,18 @@ public:
 	}
 
 	/// Read method
-	virtual T_table read(std::istream & fi) const override
+	virtual table_type read(std::istream & fi) const override
 	{
-		T_table table;
+		table_type table;
     	table.set_labels(load_header(fi));
-    	table.set_rows(load_table<typename T_table::value_type>(fi,Eigen::RowMajor,
-    													typename T_table::value_type(),
-    													table.num_cols()));
+    	table.set_rows(load_table<T_value>(fi,Eigen::RowMajor,
+    			T_value(),
+    			table.num_cols()));
     	return table;
 	}
 
 	/// Write method
-	virtual void write(const T_table & table, std::ostream & fo) const override
+	virtual void write(const table_type & table, std::ostream & fo) const override
 	{
     	header_t header = table.get_labels();
 

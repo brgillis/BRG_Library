@@ -26,7 +26,13 @@
 #ifndef ICEBRG_MAIN_FILE_ACCESS_TABLE_FORMATS_TABLE_FORMAT_BASE_HPP_
 #define ICEBRG_MAIN_FILE_ACCESS_TABLE_FORMATS_TABLE_FORMAT_BASE_HPP_
 
+#include <string>
+#include <iostream>
+#include <Eigen/Core>
+
 #include "IceBRG_main/common.h"
+
+#include "IceBRG_main/container/labeled_array.hpp"
 
 namespace IceBRG {
 
@@ -34,7 +40,7 @@ namespace IceBRG {
  * An abstract base class representing a format in which a table can
  * be output.
  */
-template<typename T_table>
+template<typename T_value>
 class table_format_base
 {
 public:
@@ -46,13 +52,13 @@ public:
 	virtual str_type name() const = 0;
 
 	/// Read method to be implemented
-	virtual T_table read(std::istream &) const = 0;
+	virtual labeled_array<T_value> read(std::istream &) const = 0;
 
 	/// Write method to be implemented
-	virtual void write(const T_table &, std::ostream &) const = 0;
+	virtual void write(const labeled_array<T_value> &, std::ostream &) const = 0;
 
 	/// Read from filename - delegates to stream version
-	T_table load(const str_type & file_name)
+	labeled_array<T_value> load(const str_type & file_name)
     {
     	std::ifstream fi;
     	open_file_input(fi,file_name);
@@ -61,7 +67,7 @@ public:
     }
 
 	/// Write to filename - delegates to stream version
-	void write(const T_table & table, const str_type & file_name)
+	void write(const labeled_array<T_value> & table, const str_type & file_name)
     {
     	std::ofstream fi;
     	open_file_output(fi,file_name);
