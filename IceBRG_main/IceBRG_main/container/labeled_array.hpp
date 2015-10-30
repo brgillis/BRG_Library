@@ -46,6 +46,7 @@
 
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/file_access/open_file.hpp"
+#include "IceBRG_main/file_access/table_formatter.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 
@@ -70,6 +71,7 @@ public:
 	// Public typedefs
 #if(1)
 
+
 	typedef typename Eigen::Array<T_value_type,Eigen::Dynamic,Eigen::Dynamic,T_major_tag> data_table_type;
 	typedef typename Eigen::Array<const T_value_type,Eigen::Dynamic,Eigen::Dynamic,T_major_tag> const_data_table_type;
 
@@ -84,48 +86,50 @@ public:
 	typedef int_type size_type;
 	typedef ptrdiff_t difference_type;
 
+	typedef labeled_array<value_type,T_major_tag,label_type> labeled_array_type;
+
 	// Col typedefs
 #if(1)
 
 	typedef typename data_table_type::ColXpr col_type;
 	typedef typename data_table_type::ConstColXpr const_col_type;
 
-	typedef labeled_array_col_reference<labeled_array<value_type,T_major_tag,label_type>,col_type> col_reference;
-	typedef labeled_array_col_reference<const labeled_array<value_type,T_major_tag,label_type>,const_col_type> const_col_reference;
+	typedef labeled_array_col_reference<labeled_array_type,col_type> col_reference;
+	typedef labeled_array_col_reference<const labeled_array_type,const_col_type> const_col_reference;
 
-	typedef labeled_array_col_iterator<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_col_iterator<labeled_array_type,
 		col_type,col_reference> col_iterator;
-	typedef labeled_array_col_iterator<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_col_iterator<const labeled_array_type,
 		const_col_type,const_col_reference> const_col_iterator;
 	typedef typename boost::reverse_iterator<col_iterator> reverse_col_iterator;
 	typedef typename boost::reverse_iterator<const_col_iterator> const_reverse_col_iterator;
 
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<labeled_array_type,
 		col_type,const_col_type,col_reference,const_col_reference,col_iterator,const_col_iterator> cols_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<const labeled_array_type,
 		const_col_type,const_col_type,const_col_reference,const_col_reference,const_col_iterator,const_col_iterator> const_cols_type;
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<labeled_array_type,
 		col_type,const_col_type,col_reference,const_col_reference,col_iterator,const_col_iterator,reverse_tag> reverse_cols_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<const labeled_array_type,
 		const_col_type,const_col_type,const_col_reference,const_col_reference,const_col_iterator,const_col_iterator,reverse_tag> const_reverse_cols_type;
 
-	typedef labeled_array_raw_col_iterator<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_raw_col_iterator<labeled_array_type,
 		col_type,col_type> raw_col_iterator;
-	typedef labeled_array_raw_col_iterator<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_raw_col_iterator<const labeled_array_type,
 		const_col_type,const_col_type> const_raw_col_iterator;
 	typedef typename boost::reverse_iterator<raw_col_iterator> reverse_raw_col_iterator;
 	typedef typename boost::reverse_iterator<const_raw_col_iterator> const_reverse_raw_col_iterator;
 
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<labeled_array_type,
 		col_type,const_col_type,col_reference,const_col_reference,
 		raw_col_iterator,const_raw_col_iterator> raw_cols_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<const labeled_array_type,
 		const_col_type,const_col_type,const_col_reference,const_col_reference,
 		const_raw_col_iterator,const_raw_col_iterator> const_raw_cols_type;
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<labeled_array_type,
 		col_type,const_col_type,col_reference,const_col_reference,
 		raw_col_iterator,const_raw_col_iterator,reverse_tag> reverse_raw_cols_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<const labeled_array_type,
 		const_col_type,const_col_type,const_col_reference,const_col_reference,
 		const_raw_col_iterator,const_raw_col_iterator,reverse_tag> const_reverse_raw_cols_type;
 
@@ -137,42 +141,42 @@ public:
 	typedef typename data_table_type::RowXpr row_type;
 	typedef typename data_table_type::ConstRowXpr const_row_type;
 
-	typedef labeled_array_row_reference<labeled_array<value_type,T_major_tag,label_type>,row_type> row_reference;
-	typedef labeled_array_row_reference<const labeled_array<value_type,T_major_tag,label_type>,const_row_type> const_row_reference;
+	typedef labeled_array_row_reference<labeled_array_type,row_type> row_reference;
+	typedef labeled_array_row_reference<const labeled_array_type,const_row_type> const_row_reference;
 
-	typedef labeled_array_row_iterator<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_row_iterator<labeled_array_type,
 		row_type,row_reference> row_iterator;
-	typedef labeled_array_row_iterator<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_row_iterator<const labeled_array_type,
 		const_row_type,const_row_reference> const_row_iterator;
 	typedef typename boost::reverse_iterator<row_iterator> reverse_row_iterator;
 	typedef typename boost::reverse_iterator<const_row_iterator> const_reverse_row_iterator;
 
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<labeled_array_type,
 		row_type,const_row_type,row_reference,const_row_reference,row_iterator,const_row_iterator> rows_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<const labeled_array_type,
 		const_row_type,const_row_type,const_row_reference,const_row_reference,const_row_iterator,const_row_iterator> const_rows_type;
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<labeled_array_type,
 		row_type,const_row_type,row_reference,const_row_reference,row_iterator,const_row_iterator,reverse_tag> reverse_rows_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<const labeled_array_type,
 		const_row_type,const_row_type,const_row_reference,const_row_reference,const_row_iterator,const_row_iterator,reverse_tag> const_reverse_rows_type;
 
-	typedef labeled_array_raw_row_iterator<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_raw_row_iterator<labeled_array_type,
 		row_type,row_type> raw_row_iterator;
-	typedef labeled_array_raw_row_iterator<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_raw_row_iterator<const labeled_array_type,
 		const_row_type,const_row_type> const_raw_row_iterator;
 	typedef typename boost::reverse_iterator<raw_row_iterator> reverse_raw_row_iterator;
 	typedef typename boost::reverse_iterator<const_raw_row_iterator> const_reverse_raw_row_iterator;
 
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<labeled_array_type,
 		row_type,const_row_type,row_reference,const_row_reference,
 		raw_row_iterator,const_raw_row_iterator> raw_rows_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<const labeled_array_type,
 		const_row_type,const_row_type,const_row_reference,const_row_reference,
 		const_raw_row_iterator,const_raw_row_iterator> const_raw_rows_type;
-	typedef labeled_array_vecs<labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<labeled_array_type,
 		row_type,const_row_type,row_reference,const_row_reference,
 		raw_row_iterator,const_raw_row_iterator,reverse_tag> reverse_raw_rows_type;
-	typedef labeled_array_vecs<const labeled_array<value_type,T_major_tag,label_type>,
+	typedef labeled_array_vecs<const labeled_array_type,
 		const_row_type,const_row_type,const_row_reference,const_row_reference,
 		const_raw_row_iterator,const_raw_row_iterator,reverse_tag> const_reverse_raw_rows_type;
 
@@ -547,8 +551,7 @@ private:
 	// Private implementation of loading - doesn't clear first
     void _load(std::istream & fi)
     {
-    	set_labels(load_header(fi));
-    	set_rows(load_table<T_value_type>(fi,Eigen::RowMajor,T_value_type(),ssize(_label_map_)));
+    	*this = get_formatter<labeled_array_type>("ascii")->read(fi);
     }
 
 #endif // Other private methods
@@ -1489,50 +1492,26 @@ public:
     // Saving and loading in ascii format
 #if(1)
 
-    void save(std::ostream & fo, const bool & formatted=false,
-    		const short_int_type & precision = 10) const
+    void save(std::ostream & fo, const bool & formatted=false) const
     {
-    	header_t header = get_labels<std::string>();
-
     	if(formatted)
     	{
-    		// To print formatted, we'll use the existing print_table function
-
-			table_t<T_value_type> data;
-
-			// Fill up the output table
-			for( const auto & row : rows())
-			{
-				data.push_back(coerce<std::vector<T_value_type>>(row.raw()));
-			}
-	    	print_table(fo,data,header,Eigen::RowMajor,precision);
+    		get_formatter<labeled_array_type>("formatted_ascii")->write(*this,fo);
     	}
     	else
     	{
-    		// If not formatted, we'll use Eigen's output to simply print the table
-
-    		// First, the header
-    		fo << "# ";
-    		for(const auto & label : header)
-    		{
-    			fo << label << "\t";
-    		}
-    		fo << std::endl;
-
-    		// And now the data table
-    		fo << data_table();
+    		get_formatter<labeled_array_type>("ascii")->write(*this,fo);
     	}
 
     	return;
     }
 
-    void save(const std::string & file_name, const bool & formatted=false,
-    		const short_int_type & precision = 10) const
+    void save(const std::string & file_name, const bool & formatted=false) const
     {
     	std::ofstream fo;
     	open_file_output(fo,file_name);
 
-    	save(fo,formatted,precision);
+    	save(fo,formatted);
     }
 
     void load(std::istream & fi)
