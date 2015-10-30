@@ -1492,11 +1492,12 @@ public:
 
 #endif
 
-    // Saving and loading in ascii format
+    // Saving and loading
 #if(1)
 
-    void save(std::ostream & fo, const bool & formatted=false) const
+    void write(std::ostream & fo, const bool & formatted=false) const
     {
+    	_add_buffer_to_data_table();
     	if(formatted)
     	{
     		table_formatters<value_type>::get_formatter("formatted_ascii").write(*this,fo);
@@ -1509,29 +1510,50 @@ public:
     	return;
     }
 
-    void save(const std::string & file_name, const bool & formatted=false) const
+    void write(const std::string & file_name, const bool & formatted=false) const
     {
     	std::ofstream fo;
     	open_file_output(fo,file_name);
 
-    	save(fo,formatted);
+    	write(fo,formatted);
     }
 
-    void load(std::istream & fi)
+    void read(std::istream & fi)
     {
     	clear();
 
     	_load(fi);
     }
 
-    void load(const std::string & file_name)
+    void read(const std::string & file_name)
     {
     	std::ifstream fi;
     	open_file_input(fi,file_name);
 
-    	load(fi);
+    	read(fi);
     }
 
+#endif
+
+	// Serialization (to save it to a file)
+#if(1)
+	friend class boost::serialization::access;
+
+    template<class Archive>
+    void save(Archive & ar, const unsigned int version) const
+	{
+    	_add_buffer_to_data_table();
+		ar & _data_table_;
+		ar & _label_map_;
+	}
+
+    template<class Archive>
+    void load(Archive & ar, const unsigned int version) const
+	{
+		ar & _data_table_;
+		ar & _label_map_;
+		_clear_buffer();
+	}
 #endif
 
 };

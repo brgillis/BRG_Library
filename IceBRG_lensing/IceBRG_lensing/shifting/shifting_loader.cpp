@@ -68,7 +68,7 @@ void IceBRG::shifting_loader::_load()
 				labels.push_back(boost::lexical_cast<std::string>(zval));
 			}
 
-			_data_.load(ss);
+			_data_.read(ss);
 			_data_.set_labels(std::move(labels));
 
 			assert(_data_.num_cols()==_zvals_size_+1);
