@@ -48,6 +48,8 @@
 
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/file_access/open_file.hpp"
+#include "IceBRG_main/file_access/table_formats/ascii_format.hpp"
+#include "IceBRG_main/file_access/table_formats/formatted_ascii_format.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 
 #include "is_stl_container.hpp"
@@ -62,9 +64,6 @@
 #include "labeled_array/labeled_array_vecs.hpp"
 
 namespace IceBRG {
-
-template<typename T_value>
-struct table_formatters;
 
 template<typename T_value_type=flt_type, char T_major_tag=Eigen::RowMajor, typename T_label_type=std::string>
 class labeled_array
@@ -552,9 +551,10 @@ private:
 #if(1)
 
 	// Private implementation of loading - doesn't clear first
-    void _load(std::istream & fi)
+	template<typename T_format=ascii_format<labeled_array_type>>
+    void _read( std::istream & fi)
     {
-    	*this = table_formatters<value_type>::get_formatter("ascii").read(fi);
+    	*this = T_format::read(fi);
     }
 
 #endif // Other private methods
@@ -629,7 +629,7 @@ public:
 	/// Load from file stream
 	explicit labeled_array(std::istream & fi)
     {
-    	_load(fi);
+		_read(fi);
     }
 
 	/// Load from file name
@@ -638,7 +638,7 @@ public:
     	std::ifstream fi;
     	open_file_input(fi,file_name);
 
-    	_load(fi);
+    	_read(fi);
     }
 
 #endif
@@ -1495,22 +1495,36 @@ public:
     // Saving and loading
 #if(1)
 
+    template<typename T_format=ascii_format<labeled_array_type>>
+    void write(std::ostream & fo) const
+    {
+    	_add_buffer_to_data_table();
+
+    	T_format::write(*this,fo);
+
+    	return;
+    }
     void write(std::ostream & fo, const bool & formatted=false) const
     {
     	_add_buffer_to_data_table();
+
     	if(formatted)
-    	{
-    		table_formatters<value_type>::get_formatter("formatted_ascii").write(*this,fo);
-    	}
+    		write<formatted_ascii_format<labeled_array_type>>(fo);
     	else
-    	{
-    		table_formatters<value_type>::get_formatter("ascii").write(*this,fo);
-    	}
+    		write<ascii_format<labeled_array_type>>(fo);
 
     	return;
     }
 
-    void write(const std::string & file_name, const bool & formatted=false) const
+    template<typename T_format=ascii_format<labeled_array_type>>
+    void write(const std::string & file_name) const
+    {
+    	std::ofstream fo;
+    	open_file_output(fo,file_name);
+
+    	write<T_format>(fo);
+    }
+    void write(const std::string & file_name, const bool & formatted) const
     {
     	std::ofstream fo;
     	open_file_output(fo,file_name);
@@ -1518,19 +1532,20 @@ public:
     	write(fo,formatted);
     }
 
+    template<typename T_format=ascii_format<labeled_array_type>>
     void read(std::istream & fi)
     {
     	clear();
-
-    	_load(fi);
+    	_read<T_format>(fi);
     }
 
+    template<typename T_format=ascii_format<labeled_array_type>>
     void read(const std::string & file_name)
     {
     	std::ifstream fi;
     	open_file_input(fi,file_name);
 
-    	read(fi);
+    	read<T_format>(fi);
     }
 
 #endif
@@ -1554,12 +1569,12 @@ public:
 		ar & _label_map_;
 		_clear_buffer();
 	}
+
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 #endif
 
 };
 
 }
-
-#include "../file_access/table_formatter.hpp"
 
 #endif // _BRG_CONTAINER_LABELED_ARRAY_HPP_INCLUDED_

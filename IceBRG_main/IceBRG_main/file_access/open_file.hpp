@@ -76,7 +76,7 @@ void open_file_io( stream_type & stream, const std::string & name )
 {
 	stream.close();
 	stream.clear();
-	stream.open( name.c_str(), std::ios::out | std::ios::out );
+	stream.open( name.c_str(), std::ios::in | std::ios::out );
 	if ( !stream )
 	{
 		throw std::runtime_error("Could not open file " + name + ".");

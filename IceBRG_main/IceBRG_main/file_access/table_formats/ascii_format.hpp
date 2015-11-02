@@ -28,40 +28,40 @@
 
 #include "IceBRG_main/common.h"
 #include "IceBRG_main/file_access/ascii_table.hpp"
-#include "IceBRG_main/file_access/table_formats/table_format_base.hpp"
 
 namespace IceBRG {
 
-template<typename T_value>
-class ascii_format : public table_format_base<T_value>
+template<typename T_table>
+class ascii_format
 {
 
 public:
 
-	typedef labeled_array<T_value> table_type;
+	typedef T_table table_type;
+	typedef typename table_type::value_type value_type;
 
 	/// Destructor (default virtual)
-	virtual ~ascii_format() noexcept override {}
+	virtual ~ascii_format() noexcept {}
 
 	/// Name for this format (all in lower case)
-	virtual str_type name() const override
+	static str_type name()
 	{
 		return "ascii";
 	}
 
 	/// Read method
-	virtual table_type read(std::istream & fi) const override
+	static table_type read(std::istream & fi)
 	{
 		table_type table;
     	table.set_labels(load_header(fi));
-    	table.set_rows(load_table<T_value>(fi,Eigen::RowMajor,
-    			T_value(),
+    	table.set_rows(load_table<value_type>(fi,Eigen::RowMajor,
+    			value_type(),
     			table.num_cols()));
     	return table;
 	}
 
 	/// Write method
-	virtual void write(const table_type & table, std::ostream & fo) const override
+	static void write(const table_type & table, std::ostream & fo)
 	{
     	header_t header = table.get_labels();
 
