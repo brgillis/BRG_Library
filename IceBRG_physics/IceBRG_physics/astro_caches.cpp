@@ -38,14 +38,14 @@
 #if (1)
 
 // Initialisation for IceBRG::dfa_cache
-DEFINE_BRG_CACHE_STATIC_VARS( dfa_cache, 0, 5, 0.001 );
+DEFINE_BRG_CACHE_STATIC_VARS( dfa_cache, IceBRG::angle_type, IceBRG::distance_type, 0, 5, 0.001 );
 
 // Initialisation for IceBRG::add_cache
 DEFINE_BRG_CACHE_2D_STATIC_VARS( add_cache, 0, 5, 0.01,
 		                                    0, 5, 0.01);
 
 // Initialisation for IceBRG::tfa_cache
-DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
+DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, IceBRG::flt_t, IceBRG::time_type, 0.001, 1.02, 0.001 );
 
 #endif // end Static Class Initialisation
 
@@ -55,24 +55,10 @@ DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
 // IceBRG::dfa_cache class methods
 #if (1)
 
-IceBRG::flt_t IceBRG::dfa_cache::_calculate( const flt_t & in_param ) const
+IceBRG::distance_type IceBRG::dfa_cache::_calculate( const angle_type & in_param ) const
 {
 	return value_of(IceBRG::integrate_add( 0, in_param ));
 }
-
-#ifdef _BRG_USE_UNITS_
-
-// Gets the result in the proper units
-IceBRG::any_units_type IceBRG::dfa_cache::_units( const flt_t & v ) const
-{
-	return units_cast<custom_unit_type<1,0,0,-1,0>>(v);
-}
-IceBRG::any_units_type IceBRG::dfa_cache::_inverse_units(const flt_t & v) const
-{
-	return v;
-}
-
-#endif
 
 #endif // end IceBRG::dfa_cache functions
 
@@ -100,24 +86,10 @@ IceBRG::any_units_type IceBRG::add_cache::_units( const flt_t & v ) const
 // IceBRG::tfa_cache class methods
 #if(1)
 
-IceBRG::flt_t IceBRG::tfa_cache::_calculate( const flt_t & in_param ) const
+IceBRG::time_type IceBRG::tfa_cache::_calculate( const flt_t & in_param ) const
 {
 	return value_of(-IceBRG::integrate_ltd( 0, IceBRG::zfa( in_param ) ) / c);
 }
-
-#ifdef _BRG_USE_UNITS_
-
-// Gets the result in the proper units
-IceBRG::any_units_type IceBRG::tfa_cache::_units( const flt_t & v ) const
-{
-	return units_cast<time_type>(v);
-}
-IceBRG::any_units_type IceBRG::tfa_cache::_inverse_units(const flt_t & v) const
-{
-	return dimensionless_type(v);
-}
-
-#endif
 
 #endif // IceBRG::tfa_cache class methods
 

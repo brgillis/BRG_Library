@@ -207,7 +207,7 @@ T Pois_rand( T_in && lambda=1., T_gen & gen=rng )
 } // T Pois_rand( T_in && lambda=1., T_gen & gen=rng )
 
 template< typename T=flt_t, typename T_gen=decltype(rng) >
-T rand_from_cdf_arrays( array_type<T> const & xvals, array_type<T> cvals, T_gen & gen = rng )
+T rand_from_cdf_arrays( array_t<T> const & xvals, array_t<T> cvals, T_gen & gen = rng )
 {
 	assert(xvals.size()>=2 and xvals.size()==cvals.size());
 
@@ -227,7 +227,7 @@ T rand_from_cdf_arrays( array_type<T> const & xvals, array_type<T> cvals, T_gen 
 	T const r = drand(0.,1.,rng);
 
 	// Get the index on the cdf where this lies
-	array_type<T> diffs = (cvals-r).abs();
+	array_t<T> diffs = (cvals-r).abs();
 	int_t i,j;
 	diffs.minCoeff(&i,&j);
 
@@ -258,8 +258,8 @@ T rand_from_cdf( Tf const & f, int_t const & N_samples=1000,
 		T const & xlow=-5., T const & xhigh=5., T_gen & gen = rng )
 {
 	// Get an array of x points and cdf values at those points
-	array_type<T> xvals = array_type<T>::LinSpaced(N_samples, xlow, xhigh);
-	array_type<T> cvals = xvals.unaryExpr(f);
+	array_t<T> xvals = array_t<T>::LinSpaced(N_samples, xlow, xhigh);
+	array_t<T> cvals = xvals.unaryExpr(f);
 
 	T res = rand_from_cdf_arrays( xvals, cvals, gen );
 
@@ -271,11 +271,11 @@ T rand_from_pdf( Tf const & f, int_t const & N_samples=1000,
 		T const & xlow=-5., T const & xhigh=5., T_gen & gen = rng )
 {
 	// Get an array of x points and pdf values at those points
-	array_type<T> xvals = array_type<T>::LinSpaced(N_samples, xlow, xhigh);
-	array_type<T> pvals = xvals.unaryExpr(f);
+	array_t<T> xvals = array_t<T>::LinSpaced(N_samples, xlow, xhigh);
+	array_t<T> pvals = xvals.unaryExpr(f);
 
 	// Get (unnormalized) cdf values
-	array_type<T> cvals(pvals.size());
+	array_t<T> cvals(pvals.size());
 
 	std::partial_sum(pvals.data(), pvals.data()+pvals.size(), cvals.data(), std::plus<T>());
 

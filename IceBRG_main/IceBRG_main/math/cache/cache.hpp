@@ -31,6 +31,7 @@
 #include <sstream>
 #include "IceBRG_main/common.h"
 
+#include "IceBRG_main/Eigen.hpp"
 #include "IceBRG_main/error_handling.h"
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/file_access/open_file.hpp"
@@ -49,10 +50,10 @@
 // SPP: "Static Polymorphic Pointer"
 #define SPP(name) static_cast<name*>(this)
 
-#define DECLARE_BRG_CACHE_STATIC_VARS()		\
-	static IceBRG::flt_t _min_1_, _max_1_, _step_1_; \
+#define DECLARE_BRG_CACHE_STATIC_VARS(Tin,Tout)		\
+	static Tin _min_1_, _max_1_, _step_1_; \
 	static IceBRG::ssize_t _resolution_1_;      		\
-	static IceBRG::flt_vector_t _results_; \
+	static IceBRG::array_t<Tout> _results_; \
 											\
 	static IceBRG::str_t _file_name_;         \
 	static IceBRG::str_t _header_string_;     \
@@ -61,10 +62,11 @@
 	static IceBRG::short_int_t _is_monotonic_;		\
 											\
 	static int_t _sig_digits_;
-#define DEFINE_BRG_CACHE_STATIC_VARS(class_name,init_min,init_max,init_step) \
-	IceBRG::flt_t IceBRG::class_name::_min_1_ = init_min;						\
-	IceBRG::flt_t IceBRG::class_name::_max_1_ = init_max; 						\
-	IceBRG::flt_t IceBRG::class_name::_step_1_ = init_step; 						\
+
+#define DEFINE_BRG_CACHE_STATIC_VARS(class_name,Tin,Tout,init_min,init_max,init_step) \
+	Tin IceBRG::class_name::_min_1_ = init_min;						\
+	Tin IceBRG::class_name::_max_1_ = init_max; 						\
+	Tin IceBRG::class_name::_step_1_ = init_step; 						\
 	bool IceBRG::class_name::_loaded_ = false;							\
 	bool IceBRG::class_name::_initialised_ = false;						\
 	IceBRG::short_int_t IceBRG::class_name::_is_monotonic_ = 0;						\
@@ -72,12 +74,12 @@
 	IceBRG::ssize_t IceBRG::class_name::_resolution_1_ = 0;						\
 	IceBRG::str_t IceBRG::class_name::_file_name_ = "";						\
 	IceBRG::str_t IceBRG::class_name::_header_string_ = "";					\
-	IceBRG::flt_vector_t IceBRG::class_name::_results_;
+	IceBRG::array_t<Tout> IceBRG::class_name::_results_;
 
 namespace IceBRG
 {
 
-template<typename name>
+template<typename name, typename Tin=flt_t, typename Tout=flt_t>
 class brg_cache
 {
 private:
@@ -85,7 +87,7 @@ private:
 	// Private variables
 #if (1)
 
-	DECLARE_BRG_CACHE_STATIC_VARS();
+	DECLARE_BRG_CACHE_STATIC_VARS(Tin,Tout);
 
 #endif // Private variables
 
@@ -124,7 +126,8 @@ private:
 		{
 			if ( loop_counter >= 2 )
 			{
-				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in IceBRG::brg_cache.\n");
+				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_
+						+ " in IceBRG::brg_cache.\n");
 			}
 			else
 			{
@@ -160,7 +163,8 @@ private:
 			trim_comments_all_at_top( in_file );
 
 			// Load range parameters;
-			if ( !( in_file >> SPCP(name)->_min_1_ >> SPCP(name)->_max_1_ >> SPCP(name)->_step_1_ ) )
+			flt_t v_min, v_max, v_step;
+			if ( !( in_file >> v_min >> v_max >> v_step ) )
 			{
 				need_to_calc = true;
 				SPCP(name)->_calc();
@@ -168,9 +172,13 @@ private:
 				SPCP(name)->_unload();
 				continue;
 			}
+			SPCP(name)->_min_1_ = units_cast<Tin>(v_min);
+			SPCP(name)->_max_1_ = units_cast<Tin>(v_max);
+			SPCP(name)->_step_1_ = units_cast<Tin>(v_step);
 
 			// Set up data
-			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) /
+					safe_d(SPCP(name)->_step_1_)) + 1, 2);
 			SPCP(name)->_results_.resize(SPCP(name)->_resolution_1_ );
 
 			// Read in data
@@ -183,7 +191,7 @@ private:
 			while ( ( !in_file.eof() ) && ( i < SPCP(name)->_resolution_1_ ) )
 			{
 				in_file >> temp_data;
-				SPCP(name)->_results_.at(i) = temp_data;
+				SPCP(name)->_results_[i] = units_cast<Tout>(temp_data);
 				if(i==1)
 				{
 					// First monotonic check, so we don't compare to its past values
@@ -241,7 +249,7 @@ private:
 	void _unload() const
 	{
 		SPCP(name)->_loaded_ = false;
-		SPCP(name)->_results_.clear();
+		set_zero(SPCP(name)->_results_);
 	}
 	void _calc() const
 	{
@@ -249,14 +257,16 @@ private:
 		// Test that range is sane
 		if ( ( SPCP(name)->_max_1_ <= SPCP(name)->_min_1_ ) || ( SPCP(name)->_step_1_ <= 0 ) )
 		{
-			throw std::runtime_error("ERROR: Bad range passed to brg_cache::_calc() for " + SPCP(name)->_name_base() + "\n");
+			throw std::runtime_error("ERROR: Bad range passed to brg_cache::_calc() for " +
+					SPCP(name)->_name_base() + "\n");
 		}
 
 		// Print a message that we're generating the cache
 		handle_notification("Generating " + SPCP(name)->_file_name_ + ". This may take some time.");
 
 		// Set up data
-		SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+		SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) /
+				safe_d(SPCP(name)->_step_1_)) + 1, 2);
 		SPCP(name)->_results_.resize(SPCP(name)->_resolution_1_ );
 
 		// Calculate data
@@ -267,8 +277,8 @@ private:
 		#endif
 		for ( ssize_t i = 0; i < SPCP(name)->_resolution_1_; i++ )
 		{
-			flt_t result = 0;
-			flt_t x = SPCP(name)->_min_1_ + i*SPCP(name)->_step_1_;
+			Tout result = 0;
+			Tin x = SPCP(name)->_min_1_ + i*SPCP(name)->_step_1_;
 			try
 			{
 				result = SPCP(name)->_calculate(x);
@@ -281,7 +291,8 @@ private:
 			SPCP(name)->_results_[i] = result;
 		}
 
-		if(bad_result) throw std::runtime_error("One or more calculations failed in generating cache " + SPCP(name)->_name_base());
+		if(bad_result) throw std::runtime_error("One or more calculations failed in generating cache " +
+				SPCP(name)->_name_base());
 		SPCP(name)->_loaded_ = true;
 
 		// Print a message that we've finished generating the cache
@@ -307,12 +318,13 @@ private:
 		out_file.precision(SPCP(name)->_sig_digits_);
 
 		// Output range
-		out_file << SPCP(name)->_min_1_ << "\t" << SPCP(name)->_max_1_ << "\t" << SPCP(name)->_step_1_ << "\n";
+		out_file << value_of(SPCP(name)->_min_1_) << "\t" << value_of(SPCP(name)->_max_1_) << "\t"
+				<< value_of(SPCP(name)->_step_1_) << "\n";
 
 		// Output data
 		for ( ssize_t i = 0; i < SPCP(name)->_resolution_1_; i++ )
 		{
-			out_file << SPCP(name)->_results_.at(i) << "\n";
+			out_file << value_of(SPCP(name)->_results_[i]) << "\n";
 		}
 
 		out_file.close();
@@ -326,27 +338,12 @@ protected:
 	// These are made protected instead of private so base classes can overload them
 #if (1)
 
-#ifdef _BRG_USE_UNITS_
-
-	/// Gets the result in the proper units; must be overloaded if units are used.
-	any_units_type _units( const flt_t & v ) const
-	{
-		return v;
-	}
-	/// Gets the inverse result in the proper units; must be overloaded if units are used.
-	any_units_type _inverse_units(const flt_t & v) const
-	{
-		return v;
-	}
-
-#endif // _BRG_USE_UNITS_
-
 	/// Long calculation function, which is used to generate the cache; must be overloaded by each
 	/// child.
-	flt_t _calculate(const flt_t & x) const;
+	Tout _calculate(Tin const & x) const;
 
 	/// The default name (without extension) for the cache file; should be unique for each cache.
-	std::string _name_base() const;
+	str_t _name_base() const;
 
 	/// This function should be overloaded to call each cache of the same dimensionality as
 	/// this cache, which this depends upon in calculation. This is necessary in order to avoid critical
@@ -367,7 +364,7 @@ public:
 	 *
 	 * @param new_name The name of the cache file to use
 	 */
-	void set_file_name( const std::string & new_name )
+	void set_file_name( str_t const & new_name )
 	{
 		SPP(name)->_file_name_ = new_name;
 		if ( SPCP(name)->_loaded_ )
@@ -384,8 +381,8 @@ public:
 	 * @param new_max The new maximum value
 	 * @param new_step The number of points at which to cache the results
 	 */
-	void set_range( const flt_t & new_min, const flt_t & new_max,
-			const flt_t & new_step)
+	void set_range( Tin const & new_min, Tin const & new_max,
+			Tin const & new_step)
 	{
 		// First we try to load, so we can see if there are any changes from
 		// the existing cache
@@ -403,14 +400,14 @@ public:
 			SPCP(name)->_unload();
 			SPCP(name)->_calc();
 		}
-	} // const int_t set_range()
+	} // void set_range()
 
 	/**
 	 * Set the precision you wish the values stored in the cache to have.
 	 *
 	 * @param new_precision The desired precision
 	 */
-	void set_precision( const ssize_t & new_precision)
+	void set_precision( ssize_t const & new_precision)
 	{
 		if ( new_precision > 0 )
 		{
@@ -420,7 +417,7 @@ public:
 		{
 			throw std::runtime_error("Precision for dfa_cache must be > 0.\n");
 		}
-	} // const int_t set_precision()
+	} // void set_precision()
 
 	/**
 	 * Print the cached input and output values to an output stream.
@@ -439,22 +436,22 @@ public:
 		}
 
 		// Fill up header
-		std::vector< std::string > header(3);
+		vector_t< str_t > header(3);
 		header[0] = "#";
 		header[1] = "x_1";
 		header[2] = "y";
 
 		// Fill up data
-		std::vector< std::vector<std::string> > data(3);
+		vector_t< vector_t<str_t> > data(3);
 		std::stringstream ss;
 		for(ssize_t i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
 		{
 			data[0].push_back("");
 			ss.str("");
-			ss << SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
+			ss << value_of(SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_);
 			data[1].push_back(ss.str());
 			ss.str("");
-			ss << SPCP(name)->_results_[i_1];
+			ss << value_of(SPCP(name)->_results_[i_1]);
 			data[2].push_back(ss.str());
 		}
 
@@ -467,14 +464,11 @@ public:
 	 * @param init_x The value for which you desired the cached result.
 	 * @return The cached result for the input value.
 	 */
-	template<typename Tx>
-	const any_units_type get( const Tx & init_x ) const
+	Tout get( const Tin & x ) const
 	{
-		flt_t x = value_of(init_x);
-
-		flt_t xlo, xhi;
+		Tin xlo, xhi;
 		ssize_t x_i; // Lower nearby array point
-		flt_t result = 0;
+		Tout result = 0;
 
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
@@ -510,7 +504,7 @@ public:
 		xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
 		xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
 
-		result = ( ( x - xlo ) * SPCP(name)->_results_.at(x_i + 1) + ( xhi - x ) * SPCP(name)->_results_.at(x_i) )
+		result = ( ( x - xlo ) * SPCP(name)->_results_[x_i + 1] + ( xhi - x ) * SPCP(name)->_results_[x_i] )
 				/ SPCP(name)->_step_1_;
 
 #ifdef _BRG_USE_UNITS_
@@ -528,19 +522,21 @@ public:
 	 * @param y The independent parameter of the cached function
 	 * @return The corresponding independent parameter of the cached function
 	 */
-	const any_units_type inverse_get( const flt_t & y ) const
+	Tin inverse_get( Tout const & y ) const
 	{
 		// Check if it's possible to do an inverse get
 		if((SPCP(name)->_is_monotonic_!=1)&&((SPCP(name)->_is_monotonic_!=-1)))
 		{
 			// Not a monotonic function. Inverse get isn't possible
-			std::string err = "ERROR: Attempt to use inverse_get in cache for " + SPCP(name)->_file_name_ + " for function which isn't monotonic.\n";
+			str_t err = "ERROR: Attempt to use inverse_get in cache for " + SPCP(name)->_file_name_ +
+					" for function which isn't monotonic.\n";
 			throw std::runtime_error(err);
 		}
 
 
-		flt_t xlo, xhi, ylo, yhi;
-		flt_t result = 0;
+		Tin xlo, xhi;
+		Tout ylo, yhi;
+		Tin result = 0;
 
 		if ( !SPCP(name)->_loaded_ )
 		{
@@ -550,7 +546,8 @@ public:
 		}
 		if ( result == -1 )
 		{
-			std::string err = "ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache::inverse_get()\n";
+			str_t err = "ERROR: Could neither load " + SPCP(name)->_file_name_ +
+					" nor calculate in brg_cache::inverse_get()\n";
 			throw std::runtime_error(err);
 		}
 
@@ -560,10 +557,10 @@ public:
 			for ( ssize_t x_i = 0; x_i < SPCP(name)->_resolution_1_ - 1; x_i++ )
 			{
 				// Loop through till we find the proper y or reach the end
-				yhi = SPCP(name)->_results_.at(x_i);
+				yhi = SPCP(name)->_results_[x_i];
 				if ( ( yhi > y ) || (x_i >= SPCP(name)->_resolution_1_ - 2) )
 				{
-					ylo = SPCP(name)->_results_.at(x_i + 1);
+					ylo = SPCP(name)->_results_[x_i + 1];
 
 					xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
 					xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
@@ -578,10 +575,10 @@ public:
 			for ( ssize_t x_i = 0; x_i < SPCP(name)->_resolution_1_ - 1; x_i++ )
 			{
 				// Loop through till we find the proper y or reach the end
-				ylo = SPCP(name)->_results_.at(x_i);
+				ylo = SPCP(name)->_results_[x_i];
 				if ( ( ylo < y ) || (x_i >= SPCP(name)->_resolution_1_ - 2) )
 				{
-					yhi = SPCP(name)->_results_.at(x_i + 1);
+					yhi = SPCP(name)->_results_[x_i + 1];
 
 					xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
 					xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
@@ -592,11 +589,7 @@ public:
 
 		} // _is_monotonic == -1
 
-#ifdef _BRG_USE_UNITS_
-		return SPCP(name)->_inverse_units(result);
-#else
 		return result;
-#endif
 
 	}
 

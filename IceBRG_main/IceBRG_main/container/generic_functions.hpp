@@ -52,7 +52,7 @@ struct all_flt_t<T,BRG_S_IS_STL(T)>
 template<typename T>
 struct all_flt_t<T,BRG_S_IS_EIGEN(T)>
 {
-	typedef flt_array_type type;
+	typedef flt_array_t type;
 };
 
 template<typename T>
