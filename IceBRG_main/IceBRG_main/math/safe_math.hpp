@@ -56,11 +56,11 @@ const T safe_sqrt( const T & a )
 #endif
 	return std::sqrt( std::fabs( a ) );
 }
-inline flt_type safe_sqrt( const int_type a ) // Special case for integers due to -INT_MIN > INT_MAX
+inline flt_t safe_sqrt( const int_t a ) // Special case for integers due to -INT_MIN > INT_MAX
 {
 	using std::sqrt;
 
-	flt_type res;
+	flt_t res;
 
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
 	if(a < 0)
@@ -69,9 +69,9 @@ inline flt_type safe_sqrt( const int_type a ) // Special case for integers due t
 	}
 #endif
 
-	if ( a == std::numeric_limits<int_type>::min() )
+	if ( a == std::numeric_limits<int_t>::min() )
 	{
-		res = std::numeric_limits<int_type>::max();
+		res = std::numeric_limits<int_t>::max();
 	}
 	else
 	{
@@ -80,10 +80,10 @@ inline flt_type safe_sqrt( const int_type a ) // Special case for integers due t
 	return sqrt( res );
 }
 template< class Ta >
-inline const Ta safe_pow( const Ta & a, const flt_type & x )
+inline const Ta safe_pow( const Ta & a, const flt_t & x )
 {
 	Ta res;
-	flt_type ipart;
+	flt_t ipart;
 
 	std::modf( x, &ipart );
 

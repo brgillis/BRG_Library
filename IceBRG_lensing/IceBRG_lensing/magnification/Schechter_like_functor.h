@@ -39,8 +39,8 @@ namespace IceBRG {
 /**
  *
  */
-class Schechter_like_functor: public IceBRG::functor<flt_type,flt_type,
-	std::vector<flt_type>> {
+class Schechter_like_functor: public IceBRG::functor<flt_t,flt_t,
+	std::vector<flt_t>> {
 private:
 	constexpr static ssize_t _num_params_ = 7;
 
@@ -48,7 +48,7 @@ public:
 	Schechter_like_functor()
 	{
 	}
-	Schechter_like_functor(const std::vector<flt_type> & init_params )
+	Schechter_like_functor(const std::vector<flt_t> & init_params )
 	: functor(init_params)
 	{
 	}
@@ -59,37 +59,37 @@ public:
 	// Params accessors
 #if (1)
 
-	long_flt_type N_scale() const
+	long_flt_t N_scale() const
 	{
 		assert(ssize(params())==_num_params_);
 		return params()[0];
 	}
-	long_flt_type m_star() const
+	long_flt_t m_star() const
 	{
 		assert(ssize(params())==_num_params_);
 		return params()[1];
 	}
-	long_flt_type alpha() const
+	long_flt_t alpha() const
 	{
 		assert(ssize(params())==_num_params_);
 		return params()[2];
 	}
-	long_flt_type mag_lower_lim_sharpness() const
+	long_flt_t mag_lower_lim_sharpness() const
 	{
 		assert(ssize(params())==_num_params_);
 		return params()[3];
 	}
-	long_flt_type mag23_jump() const
+	long_flt_t mag23_jump() const
 	{
 		assert(ssize(params())==_num_params_);
 		return params()[4];
 	}
-	long_flt_type mag_upper_lim() const
+	long_flt_t mag_upper_lim() const
 	{
 		assert(ssize(params())==_num_params_);
 		return params()[5];
 	}
-	long_flt_type mag_upper_lim_sharpness() const
+	long_flt_t mag_upper_lim_sharpness() const
 	{
 		assert(ssize(params())==_num_params_);
 		return params()[6];
@@ -99,7 +99,7 @@ public:
 
 	// Function method
 
-	long_flt_type operator()( const long_flt_type & in_params) const;
+	long_flt_t operator()( const long_flt_t & in_params) const;
 
 };
 

@@ -52,7 +52,7 @@ bool mag_correlation_function_estimator::_set_up() const
 
 // Calculation functions
 Eigen::ArrayXd mag_correlation_function_estimator::calculate_weighted(
-		const std::function<flt_type(angle_type)> & weight_function) const
+		const std::function<flt_t(angle_type)> & weight_function) const
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
@@ -63,20 +63,20 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate_weighted(
 	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
-	int_type D1D2_pairs = 0;
-	int_type D1R2_pairs = 0;
-	int_type R1D2_pairs = 0;
-	int_type R1R2_pairs = 0;
+	int_t D1D2_pairs = 0;
+	int_t D1R2_pairs = 0;
+	int_t R1D2_pairs = 0;
+	int_t R1R2_pairs = 0;
 
 	const angle_type & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of an array
-	auto increment_bin = [&] (Eigen::ArrayXd & array, int_type & pair_counter,
+	auto increment_bin = [&] (Eigen::ArrayXd & array, int_t & pair_counter,
 			const position & p1,
 			const position & p2,
-			const flt_type & scale = 1.)
+			const flt_t & scale = 1.)
 	{
-		flt_type dz = std::get<2>(p2)-std::get<2>(p1);
+		flt_t dz = std::get<2>(p2)-std::get<2>(p1);
 		if(dz<_z_buffer_) return;
 
 		++pair_counter;
@@ -99,15 +99,15 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate_weighted(
 		return;
 	};
 
-	flt_type am1m = 0;
-	int_type p2_count = 0;
+	flt_t am1m = 0;
+	int_t p2_count = 0;
 
 	// Loop over all combinations
 	for(const auto & p1 : _D1_pos_list_)
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			flt_type am1 = IceBRG::magnification_alpha(std::get<3>(p2),std::get<2>(p1)+_z_buffer_)-1;
+			flt_t am1 = IceBRG::magnification_alpha(std::get<3>(p2),std::get<2>(p1)+_z_buffer_)-1;
 
 			increment_bin(D1D2_counts,D1D2_pairs,p1,p2,am1);
 		}
@@ -120,7 +120,7 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate_weighted(
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			flt_type am1 = IceBRG::magnification_alpha(std::get<3>(p2),std::get<2>(p1)+_z_buffer_)-1;
+			flt_t am1 = IceBRG::magnification_alpha(std::get<3>(p2),std::get<2>(p1)+_z_buffer_)-1;
 			am1m += am1;
 			++p2_count;
 
@@ -163,22 +163,22 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate() const
 	Eigen::ArrayXd R1R2_unnorm_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
-	long_int_type D1D2_unnorm_pairs = 0;
-	long_int_type D1D2_pairs = 0;
-	long_int_type D1R2_unnorm_pairs = 0;
-	long_int_type D1R2_pairs = 0;
-	long_int_type R1D2_unnorm_pairs = 0;
-	long_int_type R1D2_pairs = 0;
-	long_int_type R1R2_unnorm_pairs = 0;
-	long_int_type R1R2_pairs = 0;
+	long_int_t D1D2_unnorm_pairs = 0;
+	long_int_t D1D2_pairs = 0;
+	long_int_t D1R2_unnorm_pairs = 0;
+	long_int_t D1R2_pairs = 0;
+	long_int_t R1D2_unnorm_pairs = 0;
+	long_int_t R1D2_pairs = 0;
+	long_int_t R1R2_unnorm_pairs = 0;
+	long_int_t R1R2_pairs = 0;
 
 	const angle_type & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of an array
-	auto increment_bin = [&] (Eigen::ArrayXd & array, long_int_type & pair_counter,
+	auto increment_bin = [&] (Eigen::ArrayXd & array, long_int_t & pair_counter,
 			const position & p1,
 			const position & p2,
-			const flt_type & scale = 1.)
+			const flt_t & scale = 1.)
 	{
 		++pair_counter;
 
@@ -198,8 +198,8 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate() const
 		return;
 	};
 
-	flt_type am1m = 0;
-	int_type p2_count = 0;
+	flt_t am1m = 0;
+	int_t p2_count = 0;
 
 	// Loop over all combinations
 	for(const auto & p1 : _D1_pos_list_)
@@ -207,10 +207,10 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate() const
 
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			flt_type dz = std::get<2>(p2)-std::get<2>(p1);
+			flt_t dz = std::get<2>(p2)-std::get<2>(p1);
 			if(dz<_z_buffer_) continue;
 
-			flt_type am1 = IceBRG::magnification_alpha(std::get<3>(p2),std::get<2>(p1)+_z_buffer_)-1;
+			flt_t am1 = IceBRG::magnification_alpha(std::get<3>(p2),std::get<2>(p1)+_z_buffer_)-1;
 			am1m += am1;
 			++p2_count;
 
@@ -227,10 +227,10 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate() const
 	{
 		for(const auto & p2 : _D2_pos_list_)
 		{
-			flt_type dz = std::get<2>(p2)-std::get<2>(p1);
+			flt_t dz = std::get<2>(p2)-std::get<2>(p1);
 			if(dz<_z_buffer_) continue;
 
-			flt_type am1 = IceBRG::magnification_alpha(std::get<3>(p2),std::get<2>(p1)+_z_buffer_)-1;
+			flt_t am1 = IceBRG::magnification_alpha(std::get<3>(p2),std::get<2>(p1)+_z_buffer_)-1;
 
 			increment_bin(R1D2_unnorm_counts,R1D2_unnorm_pairs,p1,p2);
 			increment_bin(R1D2_counts,R1D2_pairs,p1,p2,am1);
@@ -296,7 +296,7 @@ Eigen::ArrayXd mag_correlation_function_estimator::errors() const
 	return _unweighted_cached_error_;
 }
 
-Eigen::ArrayXd mag_correlation_function_estimator::calculate_dipole(const flt_type & offset) const
+Eigen::ArrayXd mag_correlation_function_estimator::calculate_dipole(const flt_t & offset) const
 {
 	auto weight_function = [&offset] (const angle_type & theta)
 	{
@@ -304,7 +304,7 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate_dipole(const flt_ty
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-Eigen::ArrayXd mag_correlation_function_estimator::calculate_quadrupole(const flt_type & offset) const
+Eigen::ArrayXd mag_correlation_function_estimator::calculate_quadrupole(const flt_t & offset) const
 {
 	auto weight_function = [&offset] (const angle_type & theta)
 	{
@@ -312,7 +312,7 @@ Eigen::ArrayXd mag_correlation_function_estimator::calculate_quadrupole(const fl
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-Eigen::ArrayXd mag_correlation_function_estimator::calculate_octopole(const flt_type & offset) const
+Eigen::ArrayXd mag_correlation_function_estimator::calculate_octopole(const flt_t & offset) const
 {
 	auto weight_function = [&offset] (const angle_type & theta)
 	{

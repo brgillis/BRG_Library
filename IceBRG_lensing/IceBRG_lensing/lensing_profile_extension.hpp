@@ -43,7 +43,7 @@
 
 namespace IceBRG {
 
-constexpr flt_type delta_c = 1.686;
+constexpr flt_t delta_c = 1.686;
 
 template<typename name>
 class lensing_profile_extension {
@@ -58,7 +58,7 @@ private:
 	const surface_density_type _proj_dens( const distance_type & R ) const // Projected surface density_type at radius R
 	{
 		distance_type R_to_use = abs( R );
-		flt_type inf_factor = 20;
+		flt_t inf_factor = 20;
 		IceBRG::projected_density_functor<name> func( SPCP(name), R_to_use );
 		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( inf_factor * SPCP(name)->rvir() );
 		surface_density_type out_param( units_cast<mass_type>(0.) );
@@ -66,7 +66,7 @@ private:
 		if ( value_of(R_to_use) == 0 )
 		{
 			// In this case, we might be integrating over a singularity, so the trapezoid method is safer
-			const int_type num_steps = 10000;
+			const int_t num_steps = 10000;
 
 			out_param = IceBRG::integrate_trapezoid( func, min_in_param,
 					max_in_param, num_steps );
@@ -114,7 +114,7 @@ private:
 		surface_density_type ringmean;
 		surface_density_type result;
 
-		flt_type precision = 0.001;
+		flt_t precision = 0.001;
 
 		angle_type min_in_param_ring(0. * rad);
 		angle_type max_in_param_ring(pi * rad);
@@ -137,7 +137,7 @@ private:
 		return result;
 	}
 	surface_density_type _group_Delta_Sigma( const distance_type & R,
-			const flt_type & group_c ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+			const flt_t & group_c ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	{
 		distance_type R_to_use = abs( R );
 		IceBRG::offset_Delta_Sigma_functor<name> func( SPCP(name), R_to_use );
@@ -151,7 +151,7 @@ private:
 		return out_param;
 	}
 	surface_density_type _semiquick_group_Delta_Sigma( const distance_type & R,
-			const flt_type & group_c ) const // As _group_Delta_Sigma, but uses offset_Delta_sigma cache to speed it up if overwritten
+			const flt_t & group_c ) const // As _group_Delta_Sigma, but uses offset_Delta_sigma cache to speed it up if overwritten
 	{
 		distance_type R_to_use = abs( R );
 		IceBRG::quick_offset_Delta_Sigma_functor<name> func( SPCP(name), R_to_use );
@@ -164,7 +164,7 @@ private:
 		return out_param;
 	}
 	surface_density_type _two_halo_Delta_Sigma( const distance_type & R,
-			const flt_type & group_c ) const
+			const flt_t & group_c ) const
 	{
 		assert(false); // TODO: Fill this out
 		return surface_density_type();
@@ -179,7 +179,7 @@ private:
 		distance_type offset_R_to_use = abs( offset_R );
 		offset_ring_dens_functor<name> ringfunc( SPCP(name), offset_R_to_use, R_to_use );
 
-		flt_type precision = 0.001;
+		flt_t precision = 0.001;
 
 		angle_type min_in_param_ring = 0 * rad;
 		angle_type max_in_param_ring = pi * rad;
@@ -192,7 +192,7 @@ private:
 		return ringmean;
 	}
 	surface_density_type _group_Sigma( const distance_type & R,
-			const flt_type & group_c ) const // Expected Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+			const flt_t & group_c ) const // Expected Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	{
 		distance_type R_to_use = abs( R );
 		auto func = [=, &R_to_use] (const distance_type & offset_R)
@@ -223,7 +223,7 @@ private:
 		return out_param;
 	}
 	surface_density_type _semiquick_group_Sigma( const distance_type & R,
-			const flt_type & group_c ) const // As group_Delta_Sigma, but uses offset_Delta_Sigma cache to speed it up if overwritten
+			const flt_t & group_c ) const // As group_Delta_Sigma, but uses offset_Delta_Sigma cache to speed it up if overwritten
 	{
 		distance_type R_to_use = abs( R );
 		auto func = [=, &R] (const distance_type & offset_R )
@@ -252,7 +252,7 @@ private:
 		return out_param;
 	}
 	surface_density_type _two_halo_Sigma( const distance_type & R,
-			const flt_type & group_c ) const
+			const flt_t & group_c ) const
 	{
 		assert(false); // TODO: Fill this out
 
@@ -269,7 +269,7 @@ private:
 		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, true );
 		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
 
-		flt_type precision = 0.00001;
+		flt_t precision = 0.00001;
 
 		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
 
@@ -306,7 +306,7 @@ private:
 		IceBRG::shifted_Delta_Sigma_functor<name> func( SPCP(name), R_to_use, false );
 		IceBRG::shifted_Delta_Sigma_weight_functor<name> weight_func( sigma );
 
-		flt_type precision = 0.00001;
+		flt_t precision = 0.00001;
 
 		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
 
@@ -348,7 +348,7 @@ private:
 		return SPCP(name)->_offset_Delta_Sigma( R, offset_R );
 	}
 	surface_density_type _quick_group_Delta_Sigma( const distance_type & R,
-			const flt_type & group_c ) const
+			const flt_t & group_c ) const
 	{
 		return SPCP(name)->_group_Delta_Sigma( R, group_c );
 	}
@@ -366,7 +366,7 @@ private:
 		return SPCP(name)->_offset_Sigma( R, offset_R );
 	}
 	surface_density_type _quick_group_Sigma( const distance_type & R,
-			const flt_type & group_c ) const // As Sigma, but uses group_Delta_Sigma cache to speed it up if overwritten
+			const flt_t & group_c ) const // As Sigma, but uses group_Delta_Sigma cache to speed it up if overwritten
 	{
 		return SPCP(name)->_group_Sigma( R, group_c );
 	}
@@ -398,7 +398,7 @@ private:
 	{
 		return R*shift_factor(R);
 	}
-	flt_type _shift_factor( const distance_type & R ) const
+	flt_t _shift_factor( const distance_type & R ) const
 	{
 		if(value_of(R)==0) return 0.;
 		const angle_type theta_separation = afd(R,SPCP(name)->z());
@@ -447,7 +447,7 @@ public:
 	{
 		return SPCP(name)->_proj_dens(R);
 	}
-	flt_type proj_enc_mass( const distance_type & R ) const // Mass enclosed within a cylinder of radius R
+	flt_t proj_enc_mass( const distance_type & R ) const // Mass enclosed within a cylinder of radius R
 	{
 		return SPCP(name)->_proj_enc_mass(R);
 	}
@@ -495,17 +495,17 @@ public:
 	// Group Delta Sigma
 #if (1)
 	surface_density_type group_Delta_Sigma( const distance_type & R,
-			const flt_type & group_c=2.5 ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+			const flt_t & group_c=2.5 ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	{
 		return SPCP(name)->_group_Delta_Sigma( R, group_c );
 	}
 	surface_density_type semiquick_group_Delta_Sigma( const distance_type & R,
-			const flt_type & group_c=2.5 ) const // As group_Delta_Sigma, but uses offset_Delta_Sigma cache to speed it up if overwritten
+			const flt_t & group_c=2.5 ) const // As group_Delta_Sigma, but uses offset_Delta_Sigma cache to speed it up if overwritten
 	{
 		return SPCP(name)->_semiquick_group_Delta_Sigma( R, group_c );
 	}
 	surface_density_type quick_group_Delta_Sigma( const distance_type & R,
-			const flt_type & group_c=2.5 ) const // As deltasigma, but uses group_Delta_Sigma cache to speed it up if overwritten
+			const flt_t & group_c=2.5 ) const // As deltasigma, but uses group_Delta_Sigma cache to speed it up if overwritten
 	{
 		return SPCP(name)->_quick_group_Delta_Sigma( R, group_c );
 	}
@@ -528,7 +528,7 @@ public:
 	// This represents the weak-lensing signal after being corrected for errors due to relative
 	// shifting of the lens and source due to an intervening mass_type distribution
 
-	flt_type shift_factor( const distance_type & R ) const
+	flt_t shift_factor( const distance_type & R ) const
 	{
 		return SPCP(name)->_shift_factor( R );
 	}
@@ -588,17 +588,17 @@ public:
 	// Group Sigma
 #if (1)
 	surface_density_type group_Sigma( const distance_type & R,
-			const flt_type & group_c=2.5 ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
+			const flt_t & group_c=2.5 ) const // Expected weak lensing signal in tangential shear Delta-Sigma at radius R from ensemble of satellites in group with satellite concentration group_c
 	{
 		return SPCP(name)->_group_Sigma( R, group_c );
 	}
 	surface_density_type semiquick_group_Sigma( const distance_type & R,
-			const flt_type & group_c=2.5 ) const // As group_Delta_Sigma, but uses offset_Delta_Sigma cache to speed it up if overwritten
+			const flt_t & group_c=2.5 ) const // As group_Delta_Sigma, but uses offset_Delta_Sigma cache to speed it up if overwritten
 	{
 		return SPCP(name)->_semiquick_group_Sigma( R, group_c );
 	}
 	surface_density_type quick_group_Sigma( const distance_type & R,
-			const flt_type & group_c=2.5 ) const // As deltasigma, but uses group_Delta_Sigma cache to speed it up if overwritten
+			const flt_t & group_c=2.5 ) const // As deltasigma, but uses group_Delta_Sigma cache to speed it up if overwritten
 	{
 		return SPCP(name)->_quick_group_Sigma( R, group_c );
 	}

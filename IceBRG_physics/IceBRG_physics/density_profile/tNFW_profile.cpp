@@ -26,6 +26,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include "IceBRG_main/common.h"
+
 #include "IceBRG_main/error_handling.h"
 #include "IceBRG_main/math/solvers/solvers.hpp"
 #include "IceBRG_physics/density_profile/tNFW_profile_functors.hpp"
@@ -34,7 +36,7 @@
 
 #include "tNFW_profile.h"
 
-const flt_type & min_x = 0.0001;
+constexpr IceBRG::flt_t min_x = 0.0001;
 
 // IceBRG::tNFW_profile class methods
 #if (1)
@@ -46,14 +48,14 @@ void IceBRG::tNFW_profile::_uncache_mass()
 	hmtot_cached = false;
 }
 
-flt_type IceBRG::tNFW_profile::_taufm( const flt_type & m_ratio,
-		flt_type precision ) const
+IceBRG::flt_t IceBRG::tNFW_profile::_taufm( const flt_t & m_ratio,
+		flt_t precision ) const
 {
-	flt_type m_target = m_ratio * _mftau();
-	flt_type taustepsize = _tau_ / 2;
-	flt_type tautest[3];
-	flt_type mtest, mbest;
-	int_type i, ibest;
+	flt_t m_target = m_ratio * _mftau();
+	flt_t taustepsize = _tau_ / 2;
+	flt_t tautest[3];
+	flt_t mtest, mbest;
+	int_t i, ibest;
 
 	tautest[0] = _tau_ / 2;
 	mbest = 1e99;
@@ -91,7 +93,7 @@ IceBRG::tNFW_profile::tNFW_profile()
 }
 
 IceBRG::tNFW_profile::tNFW_profile( const mass_type & init_mvir0,
-		const flt_type & init_z, const flt_type & init_c, const flt_type & init_tau )
+		const flt_t & init_z, const flt_t & init_c, const flt_t & init_tau )
 {
 	_mvir0_ = init_mvir0;
 	_rvir_cache_ = 0;
@@ -124,17 +126,17 @@ void IceBRG::tNFW_profile::set_mvir( const mass_type & new_halo_mass )
 	_mvir0_ = new_halo_mass;
 	_uncache_mass();
 }
-void IceBRG::tNFW_profile::set_tau( const flt_type & new_halo_tau )
+void IceBRG::tNFW_profile::set_tau( const flt_t & new_halo_tau )
 {
 	_tau_ = new_halo_tau;
 	_uncache_mass();
 }
-void IceBRG::tNFW_profile::set_c( const flt_type & new_halo_c )
+void IceBRG::tNFW_profile::set_c( const flt_t & new_halo_c )
 {
 	_c_ = new_halo_c;
 	_uncache_mass();
 }
-void IceBRG::tNFW_profile::set_z( const flt_type & new_z )
+void IceBRG::tNFW_profile::set_z( const flt_t & new_z )
 {
 	redshift_obj::set_z( new_z );
 	_uncache_mass();
@@ -145,8 +147,8 @@ void IceBRG::tNFW_profile::set_parameters(
 	assert(parameters.size()==num_parameters());
 
 	set_mvir( any_cast<mass_type>(parameters[0]) );
-	set_z( any_cast<flt_type>(parameters[1]) );
-	flt_type new_c = any_cast<flt_type>(parameters[2]);
+	set_z( any_cast<flt_t>(parameters[1]) );
+	flt_t new_c = any_cast<flt_t>(parameters[2]);
 	if ( new_c <= 0 )
 	{
 		set_c( _cfm( mvir(), z() ) );
@@ -155,7 +157,7 @@ void IceBRG::tNFW_profile::set_parameters(
 	{
 		set_c( new_c );
 	}
-	flt_type new_tau = any_cast<flt_type>(parameters[3]);
+	flt_t new_tau = any_cast<flt_t>(parameters[3]);
 	if ( new_tau <= 0 )
 	{
 		set_tau( default_tau_factor * _c_ );
@@ -177,11 +179,11 @@ const IceBRG::mass_type & IceBRG::tNFW_profile::mvir0() const
 	return _mvir0_;
 }
 
-flt_type IceBRG::tNFW_profile::tau() const
+IceBRG::flt_t IceBRG::tNFW_profile::tau() const
 {
 	return _tau_;
 }
-flt_type IceBRG::tNFW_profile::c() const
+IceBRG::flt_t IceBRG::tNFW_profile::c() const
 {
 	return _c_;
 }
@@ -248,7 +250,7 @@ IceBRG::density_type IceBRG::tNFW_profile::dens( const distance_type & r ) const
 {
 	density_type result, rho_c;
 
-	flt_type d_c, x, tau_use;
+	flt_t d_c, x, tau_use;
 	if ( _tau_ <= 0 )
 		tau_use = default_tau_factor * _c_;
 	else
@@ -271,8 +273,8 @@ IceBRG::mass_type IceBRG::tNFW_profile::enc_mass( const distance_type & r ) cons
 	using std::atan;
 
 	density_type rho_c;
-	flt_type m0, mx;
-	flt_type d_c, x, tau_use;
+	flt_t m0, mx;
+	flt_t d_c, x, tau_use;
 	if(value_of(r)<=0) return units_cast<mass_type>(0.);
 	if ( _tau_ < 0 )
 		tau_use = default_tau_factor * _c_;
@@ -281,7 +283,7 @@ IceBRG::mass_type IceBRG::tNFW_profile::enc_mass( const distance_type & r ) cons
 	else
 		tau_use = _tau_;
 
-	flt_type tau_sq = square(tau_use);
+	flt_t tau_sq = square(tau_use);
 
 	d_c = _delta_c();
 	rho_c = 3. * square(H()) / ( 8. * pi * Gc );
@@ -318,7 +320,7 @@ std::vector< std::string > IceBRG::tNFW_profile::get_parameter_names() const
 	return parameter_names;
 }
 
-void IceBRG::tNFW_profile::truncate_to_fraction( const flt_type & f )
+void IceBRG::tNFW_profile::truncate_to_fraction( const flt_t & f )
 {
 	if ( f <= 0 )
 	{
@@ -332,7 +334,7 @@ void IceBRG::tNFW_profile::truncate_to_fraction( const flt_type & f )
 	}
 	else
 	{
-		flt_type new_tau_val = _taufm( f, bound(SMALL_FACTOR, std::fabs(0.1*(1-f)),0.00001) );
+		flt_t new_tau_val = _taufm( f, bound(SMALL_FACTOR, std::fabs(0.1*(1-f)),0.00001) );
 		if ( new_tau_val < 0 )
 		{
 			handle_error(std::string("Could not solve for new tau value in truncate_to_fraction.\n")

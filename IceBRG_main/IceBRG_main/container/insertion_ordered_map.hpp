@@ -60,7 +60,7 @@ public:
 	typedef typename base_type::reverse_iterator reverse_iterator;
 	typedef typename base_type::const_reverse_iterator const_reverse_iterator;
 	typedef typename base_type::difference_type difference_type;
-	typedef typename base_type::size_type size_type;
+	typedef typename base_type::size_type ssize_t;
 private:
 
 	base_type _val_vector_;
@@ -102,7 +102,7 @@ private:
 		// If we try more values than are in the key map, something's gone wrong, so throw an
 		// exception.
 		new_key_type test_key = ssize(_key_map_);
-		size_type counter=0;
+		ssize_t counter=0;
 		while((_key_map_.find(test_key) != _key_map_.end()) &&
 			  (other_map.find(test_key) != other_map.end()) &&
 			  (counter<=ssize(_key_map_)))
@@ -123,7 +123,7 @@ private:
 		// elements in the map. If that's in, we'll add 1 to N. Repeat till we find an unused value.
 		// If we try more values than are in the key map, something's gone wrong, so throw an
 		// exception.
-		size_type N = ssize(_key_map_);
+		ssize_t N = ssize(_key_map_);
 
 		std::stringstream ss;
 
@@ -131,7 +131,7 @@ private:
 		ss << "col_" << N;
 		std::string test_key = ss.str();
 
-		size_type counter=0;
+		ssize_t counter=0;
 		while((_key_map_.count(test_key) + other_map.count(test_key) > 0) &&
 			  (counter<=ssize(_key_map_)+other_map.size()))
 		{

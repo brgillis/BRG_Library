@@ -44,7 +44,7 @@ public:
 	typedef typename labeled_array_type::label_type label_type;
 	typedef typename labeled_array_type::value_type value_type;
 	typedef typename labeled_array_type::const_value_type const_value_type;
-	typedef typename labeled_array_type::size_type size_type;
+	typedef typename labeled_array_type::size_type ssize_t;
 
 	typedef T_row_type row_type;
 	typedef typename labeled_array_type::const_row_type const_row_type;
@@ -67,14 +67,14 @@ private:
 	// Members
 	labeled_array_type * _array_;
 	row_type _row_;
-	size_type _num_rows_;
+	ssize_t _num_rows_;
 
 public:
 
 	/// Constructor. Requires a pointer to a labeled_array's label map and row number
 	labeled_array_row_reference(labeled_array_type * array,
-			const size_type & row,
-			const size_type & num_rows)
+			const ssize_t & row,
+			const ssize_t & num_rows)
 	: _array_(array),
 	  _row_(_array_->raw_row(row)),
 	  _num_rows_(num_rows)
@@ -260,7 +260,7 @@ public:
 #if(1)
 
 	/// size
-	size_type size() const noexcept
+	ssize_t size() const noexcept
 	{
 		return _row_.size();
 	}
@@ -277,49 +277,49 @@ public:
 #if(1)
 
 	/// Element access
-	value_type operator[] (const size_type & n) const
+	value_type operator[] (const ssize_t & n) const
 	{
 		return _row_[n];
 	}
 
 	/// Element access
-	reference operator[] (const size_type & n)
+	reference operator[] (const ssize_t & n)
 	{
 		return _row_[n];
 	}
 
 	/// Range-checked element access
-	value_type operator()( const size_type & n ) const
+	value_type operator()( const ssize_t & n ) const
 	{
 		return _row_[n];
 	}
 
 	/// Range-checked element access
-	reference operator()( const size_type & n )
+	reference operator()( const ssize_t & n )
 	{
 		return _row_[n];
 	}
 
 	/// Range-checked element access
-	value_type at( const size_type & n ) const
+	value_type at( const ssize_t & n ) const
 	{
 		return _row_[n];
 	}
 
 	/// Range-checked element access
-	reference at( const size_type & n )
+	reference at( const ssize_t & n )
 	{
 		return _row_[n];
 	}
 
 	/// Range-checked element access
-	value_type col( const size_type & n ) const
+	value_type col( const ssize_t & n ) const
 	{
 		return _row_[n];
 	}
 
 	/// Range-checked element access
-	reference col( const size_type & n )
+	reference col( const ssize_t & n )
 	{
 		return _row_[n];
 	}
@@ -377,7 +377,7 @@ public:
 	// Label access
 #if(1)
 
-	label_type label(const size_type & n) const
+	label_type label(const ssize_t & n) const
 	{
 		return _array_->_label_map_->right.at(n);
 	}

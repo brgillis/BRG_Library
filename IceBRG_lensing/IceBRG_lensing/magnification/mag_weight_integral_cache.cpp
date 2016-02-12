@@ -41,11 +41,11 @@ DEFINE_BRG_CACHE_STATIC_VARS( mag_weight_integral_cache,
 
 // IceBRG::mag_weight_integral_cache class methods
 #if (1)
-flt_type IceBRG::mag_weight_integral_cache::_calculate( const flt_type & in_param_1 ) const
+IceBRG::flt_t IceBRG::mag_weight_integral_cache::_calculate( const flt_t & in_param_1 ) const
 {
 	mu_weight_integration_functor func(in_param_1);
 
-	return integrate_Romberg<decltype(func),long_flt_type>(func,IceBRG::mag_m_min,IceBRG::mag_m_max,
+	return integrate_Romberg<decltype(func),long_flt_t>(func,IceBRG::mag_m_min,IceBRG::mag_m_max,
 			0.000001);
 }
 void IceBRG::mag_weight_integral_cache::_load_cache_dependencies() const

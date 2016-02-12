@@ -59,8 +59,8 @@ private:
 
 	error_behavior_type _error_behavior_ = error_behavior_type::THROW;
 
-	size_type _N_; ///< The number of points in the array
-	flt_type _scale_; ///< The physical size of the array in real-space (_scale_/_N_ is the scale of one step)
+	ssize_t _N_; ///< The number of points in the array
+	flt_t _scale_; ///< The physical size of the array in real-space (_scale_/_N_ is the scale of one step)
 
 	mutable boost::optional<flt_array_type> _r_array_; ///< The values in a real-space representation
 	mutable boost::optional<flt_array_type> _k_array_; ///< The values in a Fourier-space representation
@@ -83,7 +83,7 @@ private:
 #if(1)
 
 	/// Determine whether we should be using the r or k array for rescaling
-	bool _use_r_array_for_rescale(const flt_type & new_scale, const int_type & new_N) const
+	bool _use_r_array_for_rescale(const flt_t & new_scale, const int_t & new_N) const
 	{
 		assert(new_scale>0.);
 		assert(new_N>=2);
@@ -91,27 +91,27 @@ private:
 		// Determine which of the r and k arrays has better coverage of the new space
 
 		// First, get the min and max values covered by each array presently
-		flt_type r_min_old = r_min();
-		flt_type r_max_old = r_max();
+		flt_t r_min_old = r_min();
+		flt_t r_max_old = r_max();
 
-		flt_type r_min_new = r_min(new_scale,new_N);
-		flt_type r_max_new = r_max(new_scale,new_N);
+		flt_t r_min_new = r_min(new_scale,new_N);
+		flt_t r_max_new = r_max(new_scale,new_N);
 
-		flt_type k_min_old = k_min();
-		flt_type k_max_old = k_max();
+		flt_t k_min_old = k_min();
+		flt_t k_max_old = k_max();
 
-		flt_type k_min_new = k_min(new_scale,new_N);
-		flt_type k_max_new = k_max(new_scale,new_N);
+		flt_t k_min_new = k_min(new_scale,new_N);
+		flt_t k_max_new = k_max(new_scale,new_N);
 
 		// Determine which of the old/new min and max pairs are larger or smaller, as needed
-		flt_type larger_r_min = IceBRG::max(r_min_old,r_min_new);
-		flt_type smaller_r_max = IceBRG::min(r_max_old,r_max_new);
-		flt_type larger_k_min = IceBRG::max(k_min_old,k_min_new);
-		flt_type smaller_k_max = IceBRG::min(k_max_old,k_max_new);
+		flt_t larger_r_min = IceBRG::max(r_min_old,r_min_new);
+		flt_t smaller_r_max = IceBRG::min(r_max_old,r_max_new);
+		flt_t larger_k_min = IceBRG::max(k_min_old,k_min_new);
+		flt_t smaller_k_max = IceBRG::min(k_max_old,k_max_new);
 
 		// Get the coverage for r and k
-		flt_type r_coverage = (smaller_r_max-larger_r_min)/(r_max_new-r_min_new);
-		flt_type k_coverage = (smaller_k_max-larger_k_min)/(k_max_new-k_min_new);
+		flt_t r_coverage = (smaller_r_max-larger_r_min)/(r_max_new-r_min_new);
+		flt_t k_coverage = (smaller_k_max-larger_k_min)/(k_max_new-k_min_new);
 
 		if(r_coverage>k_coverage) return true;
 		if(r_coverage<k_coverage) return false;
@@ -126,17 +126,17 @@ private:
 	}
 
 	/// Private implementation of how to rescale the r array
-	void _rescale_r_array( const flt_type & new_scale, const size_type & new_N )
+	void _rescale_r_array( const flt_t & new_scale, const ssize_t & new_N )
 	{
 		// Generate the r array if necessary
 		if(!_r_array_) _calculate_r_array();
 
 		// Cache the values of the new and old r_mins, r_maxes and r_steps
-		flt_type old_r_min = r_min();
-		flt_type new_r_min = r_min(new_scale, new_N);
+		flt_t old_r_min = r_min();
+		flt_t new_r_min = r_min(new_scale, new_N);
 
-		flt_type old_r_step = _scale_/_N_;
-		flt_type new_r_step = new_scale/new_N;
+		flt_t old_r_step = _scale_/_N_;
+		flt_t new_r_step = new_scale/new_N;
 
 		// Get the new array
 		flt_array_type new_r_array = _interpolate_new_array(old_r_min,
@@ -151,17 +151,17 @@ private:
 	}
 
 	/// Private implementation of how to rescale the k array
-	void _rescale_k_array( const flt_type & new_scale, const size_type & new_N )
+	void _rescale_k_array( const flt_t & new_scale, const ssize_t & new_N )
 	{
 		// Generate the k array if necessary
 		if(!_k_array_) _calculate_k_array();
 
 		// Cache the values of the new and old r_mins, r_maxes and r_steps
-		flt_type old_k_min = k_min();
-		flt_type new_k_min = k_min(new_scale, new_N);
+		flt_t old_k_min = k_min();
+		flt_t new_k_min = k_min(new_scale, new_N);
 
-		flt_type old_k_step = 1./_scale_;
-		flt_type new_k_step = 1./new_scale;
+		flt_t old_k_step = 1./_scale_;
+		flt_t new_k_step = 1./new_scale;
 
 		// Get the new array
 		flt_array_type new_k_array = _interpolate_new_array(old_k_min,
@@ -175,23 +175,23 @@ private:
 	}
 
 	/// Interpolate a new, expanded or contracted array given an existing one and the dimensions of both
-	flt_array_type _interpolate_new_array(const flt_type & old_x_min,
-			const flt_type & old_x_step, const size_type & new_N,
-			const flt_type & new_x_min, const flt_type & new_x_step, const flt_array_type & x_array)
+	flt_array_type _interpolate_new_array(const flt_t & old_x_min,
+			const flt_t & old_x_step, const ssize_t & new_N,
+			const flt_t & new_x_min, const flt_t & new_x_step, const flt_array_type & x_array)
 	{
-		flt_type new_x_max = new_x_min + (new_N-1) * new_x_step;
-		flt_type old_x_max = old_x_min + (_N_-1) * old_x_step;
+		flt_t new_x_max = new_x_min + (new_N-1) * new_x_step;
+		flt_t old_x_max = old_x_min + (_N_-1) * old_x_step;
 
 		// Set up interpolators using the current data
 		interpolator linear_interpolator;
 		interpolator log_interpolator;
-		for (size_type i = 0; i < _N_; ++i)
+		for (ssize_t i = 0; i < _N_; ++i)
 		{
-			flt_type value = x_array[i];
+			flt_t value = x_array[i];
 			linear_interpolator.add_point(old_x_min + i * old_x_step, value);
 
 			// Get the value for the log interpolator
-			flt_type log_value;
+			flt_t log_value;
 			if (value > 0.)
 				log_value = std::log(value);
 			else if (value < 0.)
@@ -212,8 +212,8 @@ private:
 
 				// First, let's see if we can approximate the decay by using the max value of the
 				// log array
-				size_type max_i;
-				flt_type max_value = x_array.abs().maxCoeff(&max_i);
+				ssize_t max_i;
+				flt_t max_value = x_array.abs().maxCoeff(&max_i);
 
 				// Is this the final value?
 				if(max_i==_N_-1)
@@ -224,7 +224,7 @@ private:
 				else
 				{
 					// It isn't, so we can use it to estimate the decay
-					flt_type decay_rate = (log_interpolator(old_x_max) - max_value)
+					flt_t decay_rate = (log_interpolator(old_x_max) - max_value)
 									/((_N_-1-max_i)*old_x_step);
 					assert(decay_rate<0);
 
@@ -239,9 +239,9 @@ private:
 		// Create the new r array, using the linear interpolator for all points less than the old max,
 		// and the log interpolator for all points greater
 		flt_array_type new_x_array(new_N);
-		for (size_type i = 0; i < new_N; ++i)
+		for (ssize_t i = 0; i < new_N; ++i)
 		{
-			flt_type x = new_x_min + i * new_x_step;
+			flt_t x = new_x_min + i * new_x_step;
 			if (x <= old_x_max)
 			{
 				new_x_array[i] = linear_interpolator(x);
@@ -252,7 +252,7 @@ private:
 				// essentially results in constant exponential decay in most normal cases
 
 				// Make sure we match the sign of the last value
-				short_int_type sign = IceBRG::sign(new_x_array[i - 1]);
+				short_int_t sign = IceBRG::sign(new_x_array[i - 1]);
 				new_x_array[i] = sign * std::exp(log_interpolator(x));
 			}
 		}
@@ -301,7 +301,7 @@ private:
 #endif // Methods for rescaling to match up with another radial_vector
 
 	/// Necessary factor to multiply by for convolution
-	flt_type _convolution_factor()
+	flt_t _convolution_factor()
 	{
 		return 2*IceBRG::cube(get_scale());
 	}
@@ -324,8 +324,8 @@ public:
 
 	/// Copy/move from Eigen array - this loads into real-space array
 	template< typename To, typename Ts,
-		typename std::enable_if<std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
-		typename std::enable_if<std::is_convertible<Ts,flt_type>::value,char>::type = 0>
+		typename std::enable_if<std::is_same<typename std::decay<To>::type,flt_t>::value,char>::type = 0,
+		typename std::enable_if<std::is_convertible<Ts,flt_t>::value,char>::type = 0>
 	explicit radial_vector(To && other, Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
 	: _N_(other.size()), _scale_(std::forward<Ts>(scale)), _r_array_(std::forward<To>(other))
@@ -336,9 +336,9 @@ public:
 
 	/// Convert from Eigen-like array - this loads into real-space array
 	template< typename To, typename Ts,
-		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
-		typename std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
-		typename std::enable_if<!std::is_convertible<Ts,flt_type>::value,char>::type = 0>
+		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_t>::value,char>::type = 0,
+		typename std::enable_if<!std::is_convertible<To,flt_t>::value,char>::type = 0,
+		typename std::enable_if<!std::is_convertible<Ts,flt_t>::value,char>::type = 0>
 	explicit radial_vector(const To & other, Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
 	: _N_(other.size()), _scale_(std::forward<Ts>(scale)), _r_array_(other)
@@ -349,8 +349,8 @@ public:
 
 	/// Convert from container - this loads into real-space array
 	template< typename To, typename Ts,
-		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
-		typename std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
+		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_t>::value,char>::type = 0,
+		typename std::enable_if<!std::is_convertible<To,flt_t>::value,char>::type = 0,
 		typename std::enable_if<IceBRG::is_container<To>::value,char>::type = 0>
 	explicit radial_vector(const To & other, Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
@@ -363,7 +363,7 @@ public:
 
 	/// Set up with scale only
 	template< typename Ts,
-		typename std::enable_if<std::is_convertible<Ts,flt_type>::value,char>::type = 0,
+		typename std::enable_if<std::is_convertible<Ts,flt_t>::value,char>::type = 0,
 		typename std::enable_if<!IceBRG::is_container<Ts>::value,char>::type = 0>
 	explicit radial_vector(Ts && scale=1.,
 			boost::optional<fftw_wisdom_accumulator &> wisdom = boost::none)
@@ -401,7 +401,7 @@ public:
 
 	/// Copy/move from Eigen array - this loads into real-space array
 	template< typename To, typename Ts,
-		typename std::enable_if<std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0>
+		typename std::enable_if<std::is_same<typename std::decay<To>::type,flt_t>::value,char>::type = 0>
 	radial_vector & operator=(To && other)
 	{
 		_N_ = other.size();
@@ -414,8 +414,8 @@ public:
 
 	/// Convert from Eigen-like array - this loads into real-space array
 	template< typename To, typename Ts,
-		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
-		typename std::enable_if<std::is_convertible<To,flt_type>::value,char>::type = 0>
+		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_t>::value,char>::type = 0,
+		typename std::enable_if<std::is_convertible<To,flt_t>::value,char>::type = 0>
 	radial_vector & operator=(const To & other)
 	{
 		_N_ = other.size();
@@ -428,8 +428,8 @@ public:
 
 	/// Convert from container - this loads into real-space array
 	template< typename To, typename Ts,
-		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_type>::value,char>::type = 0,
-		typename std::enable_if<!std::is_convertible<To,flt_type>::value,char>::type = 0,
+		typename std::enable_if<!std::is_same<typename std::decay<To>::type,flt_t>::value,char>::type = 0,
+		typename std::enable_if<!std::is_convertible<To,flt_t>::value,char>::type = 0,
 		typename std::enable_if<IceBRG::is_container<To>::value,char>::type = 0>
 	radial_vector & operator=(const To & other)
 	{
@@ -460,12 +460,12 @@ public:
 		return *_r_array_;
 	}
 
-	const size_type & get_N() const noexcept
+	const ssize_t & get_N() const noexcept
 	{
 		return _N_;
 	}
 
-	const flt_type & get_scale() const noexcept
+	const flt_t & get_scale() const noexcept
 	{
 		return _scale_;
 	}
@@ -494,7 +494,7 @@ public:
 		_N_ = _r_array_->size();
 	}
 
-	void set_scale(const flt_type & scale)
+	void set_scale(const flt_t & scale)
 	{
 		_scale_ = scale;
 	}
@@ -509,19 +509,19 @@ public:
 
 	// Get min/max r and k
 #if(1)
-	flt_type r_min() const
+	flt_t r_min() const
 	{
 		return r_min(_scale_,_N_);
 	}
-	flt_type r_max() const
+	flt_t r_max() const
 	{
 		return r_max(_scale_,_N_);
 	}
-	flt_type k_min() const
+	flt_t k_min() const
 	{
 		return k_min(_scale_,_N_);
 	}
-	flt_type k_max() const
+	flt_t k_max() const
 	{
 		return k_max(_scale_,_N_);
 	}
@@ -529,19 +529,19 @@ public:
 
 	// Get min/max r and k for arbitrary scale and N
 #if(1)
-	static flt_type r_min(const flt_type & scale, const int_type & N)
+	static flt_t r_min(const flt_t & scale, const int_t & N)
 	{
 		return scale/(2*N);
 	}
-	static flt_type r_max(const flt_type & scale, const int_type & N)
+	static flt_t r_max(const flt_t & scale, const int_t & N)
 	{
 		return scale - r_min(scale,N);
 	}
-	static flt_type k_min(const flt_type & scale, const int_type & N)
+	static flt_t k_min(const flt_t & scale, const int_t & N)
 	{
 		return 1./scale;
 	}
-	static flt_type k_max(const flt_type & scale, const int_type & N)
+	static flt_t k_max(const flt_t & scale, const int_t & N)
 	{
 		return N/scale - k_min(scale,N);
 	}
@@ -554,7 +554,7 @@ public:
 	 * Rescale - change scale and conserving data so it represents the same
 	 * physical data as well as possible.
 	 */
-	void rescale( const flt_type & new_scale, size_type new_N=-1 )
+	void rescale( const flt_t & new_scale, ssize_t new_N=-1 )
 	{
 		// If new_N wasn't given or is invalid, don't change _N_
 		if(new_N<2) new_N = _N_;
@@ -574,7 +574,7 @@ public:
 		}
 	}
 
-	void rescale_r_array( const flt_type & new_scale, size_type new_N )
+	void rescale_r_array( const flt_t & new_scale, ssize_t new_N )
 	{
 		if(new_N<2) new_N = _N_;
 
@@ -585,7 +585,7 @@ public:
 
 	}
 
-	void rescale_k_array( const flt_type & new_scale, size_type new_N )
+	void rescale_k_array( const flt_t & new_scale, ssize_t new_N )
 	{
 		if(new_N<2) new_N = _N_;
 
@@ -599,7 +599,7 @@ public:
 	/**
 	 * Get a rescaled copy of this. The rescale
 	 */
-	radial_vector get_rescaled( const flt_type & new_scale, size_type new_N=-1 )
+	radial_vector get_rescaled( const flt_t & new_scale, ssize_t new_N=-1 )
 	{
 		radial_vector new_radial_vector(*this);
 

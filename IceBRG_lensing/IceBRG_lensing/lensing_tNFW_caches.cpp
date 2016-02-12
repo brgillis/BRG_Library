@@ -90,8 +90,8 @@ DEFINE_BRG_CACHE_4D_STATIC_VARS( tNFW_group_Sigma_cache,
 
 // IceBRG::tNFW_sig_cache class methods
 #if (1)
-flt_type IceBRG::tNFW_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-		const flt_type & in_param_3 ) const
+IceBRG::flt_t IceBRG::tNFW_sig_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+		const flt_t & in_param_3 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -105,8 +105,8 @@ flt_type IceBRG::tNFW_sig_cache::_calculate( const flt_type & in_param_1, const 
 // IceBRG::NFW_offset_sig_cache class methods
 #if (1)
 
-flt_type IceBRG::tNFW_offset_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-		const flt_type & in_param_3, const flt_type & in_param_4 ) const
+IceBRG::flt_t IceBRG::tNFW_offset_sig_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+		const flt_t & in_param_3, const flt_t & in_param_4 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -121,8 +121,8 @@ flt_type IceBRG::tNFW_offset_sig_cache::_calculate( const flt_type & in_param_1,
 // IceBRG::tNFW_group_sig_cache class methods
 #if (1)
 
-flt_type IceBRG::tNFW_group_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-		const flt_type & in_param_3, const flt_type & in_param_4 ) const
+IceBRG::flt_t IceBRG::tNFW_group_sig_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+		const flt_t & in_param_3, const flt_t & in_param_4 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -136,8 +136,8 @@ flt_type IceBRG::tNFW_group_sig_cache::_calculate( const flt_type & in_param_1, 
 
 // IceBRG::tNFW_shifted_sig_cache class methods
 #if (1)
-flt_type IceBRG::tNFW_shifted_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-		const flt_type & in_param_3 ) const
+IceBRG::flt_t IceBRG::tNFW_shifted_sig_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+		const flt_t & in_param_3 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -150,8 +150,8 @@ flt_type IceBRG::tNFW_shifted_sig_cache::_calculate( const flt_type & in_param_1
 
 // IceBRG::tNFW_shifted_sig_no_enh_cache class methods
 #if (1)
-flt_type IceBRG::tNFW_shifted_no_enh_sig_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-		const flt_type & in_param_3 ) const
+IceBRG::flt_t IceBRG::tNFW_shifted_no_enh_sig_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+		const flt_t & in_param_3 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -164,8 +164,8 @@ flt_type IceBRG::tNFW_shifted_no_enh_sig_cache::_calculate( const flt_type & in_
 
 // IceBRG::tNFW_Sigma_cache class methods
 #if (1)
-flt_type IceBRG::tNFW_Sigma_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-		const flt_type & in_param_3 ) const
+IceBRG::flt_t IceBRG::tNFW_Sigma_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+		const flt_t & in_param_3 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -179,8 +179,8 @@ flt_type IceBRG::tNFW_Sigma_cache::_calculate( const flt_type & in_param_1, cons
 // IceBRG::NFW_offset_Sigma_cache class methods
 #if (1)
 
-flt_type IceBRG::tNFW_offset_Sigma_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-		const flt_type & in_param_3, const flt_type & in_param_4 ) const
+IceBRG::flt_t IceBRG::tNFW_offset_Sigma_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+		const flt_t & in_param_3, const flt_t & in_param_4 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;
@@ -195,8 +195,8 @@ flt_type IceBRG::tNFW_offset_Sigma_cache::_calculate( const flt_type & in_param_
 // IceBRG::tNFW_group_Sigma_cache class methods
 #if (1)
 
-flt_type IceBRG::tNFW_group_Sigma_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-		const flt_type & in_param_3, const flt_type & in_param_4 ) const
+IceBRG::flt_t IceBRG::tNFW_group_Sigma_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+		const flt_t & in_param_3, const flt_t & in_param_4 ) const
 {
 	const auto mass = units_cast<mass_type>(std::exp(in_param_1));
 	const auto z = in_param_2;

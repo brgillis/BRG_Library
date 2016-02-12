@@ -49,7 +49,7 @@ public:
 
 private:
 	value_type * _ptr_;
-	const int_type _multiplier_;
+	const int_t _multiplier_;
 
 	friend class boost::iterator_core_access;
 
@@ -82,7 +82,7 @@ public:
 	{
 	}
 
-    labeled_array_element_iterator(value_type * ptr, const int_type & multiplier = 1)
+    labeled_array_element_iterator(value_type * ptr, const int_t & multiplier = 1)
 	: _ptr_(ptr), _multiplier_(multiplier)
 	{
 	}

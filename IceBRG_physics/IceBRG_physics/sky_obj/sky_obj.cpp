@@ -33,8 +33,8 @@
 #if (1)
 
 IceBRG::sky_obj::sky_obj( const angle_type & init_ra, const angle_type & init_dec,
-		const flt_type & init_z, const angle_type & init_ra_err,
-		const angle_type & init_dec_err, const flt_type & init_z_err )
+		const flt_t & init_z, const angle_type & init_ra_err,
+		const angle_type & init_dec_err, const flt_t & init_z_err )
 {
 	partial_clear();
 	set_ra_dec_z_err( init_ra, init_dec, init_z, init_ra_err, init_dec_err,
@@ -77,16 +77,16 @@ void IceBRG::sky_obj::set_ra_dec( const angle_type & new_ra,
 	set_dec( new_dec );
 }
 void IceBRG::sky_obj::set_ra_dec_z( const angle_type & new_ra,
-		const angle_type & new_dec, const flt_type & new_z )
+		const angle_type & new_dec, const flt_t & new_z )
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
 	set_z( new_z );
 }
 void IceBRG::sky_obj::set_ra_dec_z_err( const angle_type & new_ra,
-		const angle_type & new_dec, const flt_type & new_z,
+		const angle_type & new_dec, const flt_t & new_z,
 		const angle_type & new_ra_err, const angle_type & new_dec_err,
-		const flt_type & new_z_err )
+		const flt_t & new_z_err )
 {
 	set_ra( new_ra );
 	set_dec( new_dec );
@@ -104,11 +104,11 @@ void IceBRG::sky_obj::set_ra_dec_err( const angle_type & new_ra,
 	set_ra_err( new_ra_err );
 	set_dec_err( new_dec_err );
 }
-void IceBRG::sky_obj::set_weight( const flt_type & new_weight )
+void IceBRG::sky_obj::set_weight( const flt_t & new_weight )
 {
 	_weight_ = new_weight;
 }
-void IceBRG::sky_obj::set_index( const int_type new_index )
+void IceBRG::sky_obj::set_index( const int_t new_index )
 {
 	_index_ = new_index;
 }
@@ -120,9 +120,9 @@ void IceBRG::sky_obj::set_ID( const std::string &new_ID )
 #endif // end IceBRG::sky_obj class methods
 
 IceBRG::distance_type IceBRG::dfa( const IceBRG::sky_obj *obj1,
-		const IceBRG::sky_obj *obj2, const flt_type & z )
+		const IceBRG::sky_obj *obj2, const flt_t & z )
 {
-	flt_type z_to_use;
+	flt_t z_to_use;
 	if ( z == -1 )
 		z_to_use = obj1->z();
 	else

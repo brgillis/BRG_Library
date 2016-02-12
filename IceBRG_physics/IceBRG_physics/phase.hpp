@@ -69,7 +69,7 @@ struct phase
 		vz = init_vz;
 		t = init_t;
 	}
-	const int_type set_phase( const distance_type & init_x = 0, const distance_type & init_y = 0,
+	const int_t set_phase( const distance_type & init_x = 0, const distance_type & init_y = 0,
 			const distance_type & init_z = 0, const velocity_type & init_vx = 0,
 			const velocity_type & init_vy = 0, const velocity_type & init_vz = 0,
 	time_type init_t = 0 )

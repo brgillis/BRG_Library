@@ -38,15 +38,15 @@ namespace IceBRG {
 class source_obj: public virtual sky_obj {
 private:
 
-	flt_type _gamma_1_, _gamma_2_; // Gamma components in ra/dec coordinates
-	flt_type _kappa_; // Convergence
+	flt_t _gamma_1_, _gamma_2_; // Gamma components in ra/dec coordinates
+	flt_t _kappa_; // Convergence
 
 public:
 
 	// Constructors and destructor
 #if(1)
-	source_obj( const angle_type & init_ra = 0, const angle_type & init_dec = 0, flt_type init_z = 0,
-			flt_type init_gamma_1 = 0, flt_type init_gamma_2 = 0, flt_type init_kappa = 0 )
+	source_obj( const angle_type & init_ra = 0, const angle_type & init_dec = 0, flt_t init_z = 0,
+			flt_t init_gamma_1 = 0, flt_t init_gamma_2 = 0, flt_t init_kappa = 0 )
 	: sky_obj(init_ra,init_dec,init_z),
 	  _gamma_1_(init_gamma_1),
 	  _gamma_2_(init_gamma_2),
@@ -64,15 +64,15 @@ public:
 	// Accessors
 #if (1)
 
-	flt_type gamma_1() const
+	flt_t gamma_1() const
 	{
 		return _gamma_1_;
 	}
-	flt_type gamma_2() const
+	flt_t gamma_2() const
 	{
 		return _gamma_2_;
 	}
-	flt_type kappa() const
+	flt_t kappa() const
 	{
 		return _kappa_;
 	}
@@ -82,15 +82,15 @@ public:
 	// Setters
 #if (1)
 
-	void set_gamma_1(flt_type new_gamma_1)
+	void set_gamma_1(flt_t new_gamma_1)
 	{
 		_gamma_1_ = new_gamma_1;
 	}
-	void set_gamma_2(flt_type new_gamma_2)
+	void set_gamma_2(flt_t new_gamma_2)
 	{
 		_gamma_2_ = new_gamma_2;
 	}
-	void set_kappa(flt_type new_kappa)
+	void set_kappa(flt_t new_kappa)
 	{
 		_kappa_ = new_kappa;
 	}

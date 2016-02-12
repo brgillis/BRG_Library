@@ -35,26 +35,26 @@
 
 namespace IceBRG {
 
-constexpr flt_type test_fudge_factor = 1.;
+constexpr flt_t test_fudge_factor = 1.;
 
-flt_type mag_expected_count_functor::operator() (const long_flt_type & m) const
+flt_t mag_expected_count_functor::operator() (const long_flt_t & m) const
 {
-	flt_type res = any_cast<flt_type>(expected_count_cache().get(m,_z_mean_));
+	flt_t res = any_cast<flt_t>(expected_count_cache().get(m,_z_mean_));
 
 	return res;
 }
 
-flt_type mu_signal_integration_functor::operator() (const long_flt_type & m) const
+flt_t mu_signal_integration_functor::operator() (const long_flt_t & m) const
 {
-	long_flt_type alpha = magnification_alpha(m,_z_mean_);
-	long_flt_type count = test_fudge_factor*any_cast<flt_type>(expected_count_cache().get(m,_z_mean_));
+	long_flt_t alpha = magnification_alpha(m,_z_mean_);
+	long_flt_t count = test_fudge_factor*any_cast<flt_t>(expected_count_cache().get(m,_z_mean_));
 	return count*(alpha-1);
 }
 
-flt_type mu_weight_integration_functor::operator() (const long_flt_type & m) const
+flt_t mu_weight_integration_functor::operator() (const long_flt_t & m) const
 {
-	long_flt_type alpha = magnification_alpha(m,_z_mean_);
-	long_flt_type count = test_fudge_factor*any_cast<flt_type>(expected_count_cache().get(m,_z_mean_));
+	long_flt_t alpha = magnification_alpha(m,_z_mean_);
+	long_flt_t count = test_fudge_factor*any_cast<flt_t>(expected_count_cache().get(m,_z_mean_));
 	return count*square(alpha-1);
 }
 

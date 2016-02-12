@@ -34,11 +34,11 @@
 
 namespace IceBRG {
 
-flt_type magnification_alpha(const flt_type & m, const flt_type & z)
+flt_t magnification_alpha(const flt_t & m, const flt_t & z)
 {
 	//return 2; // For sanity test purposes - this leads to alpha-1 = 1, so a the measured mag signal is the count overdensity
 
-	flt_type res = any_cast<flt_type>(expected_count_derivative_cache().get(m,z));
+	flt_t res = any_cast<flt_t>(expected_count_derivative_cache().get(m,z));
 
 	if(res<=0) return 1.; // 1 corresponds to a flat profile, so this is appropriate for zero counts
 

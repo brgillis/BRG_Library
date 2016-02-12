@@ -48,7 +48,7 @@
 // Initialisation of static vars
 #if (1)
 bool IceBRG::shifting_loader::_loaded_(false);
-IceBRG::labeled_array<flt_type> IceBRG::shifting_loader::_data_;
+IceBRG::labeled_array<IceBRG::flt_t> IceBRG::shifting_loader::_data_;
 #endif
 
 void IceBRG::shifting_loader::_load()
@@ -103,7 +103,7 @@ void IceBRG::shifting_loader::_load()
 	}
 
 }
-ssize_t IceBRG::shifting_loader::_lower_theta_index(const flt_type & theta)
+ssize_t IceBRG::shifting_loader::_lower_theta_index(const flt_t & theta)
 {
 	if(!_loaded_) _load();
 
@@ -116,7 +116,7 @@ ssize_t IceBRG::shifting_loader::_lower_theta_index(const flt_type & theta)
 	}
 	return size-2;
 }
-ssize_t IceBRG::shifting_loader::_lower_z_index(const flt_type & z)
+ssize_t IceBRG::shifting_loader::_lower_z_index(const flt_t & z)
 {
 	assert(_zvals_size_>=2);
 
@@ -128,21 +128,21 @@ ssize_t IceBRG::shifting_loader::_lower_z_index(const flt_type & z)
 	return _zvals_size_-2;
 }
 
-flt_type IceBRG::shifting_loader::get(const flt_type & t, const flt_type & z)
+IceBRG::flt_t IceBRG::shifting_loader::get(const flt_t & t, const flt_t & z)
 {
 	if(!_loaded_) _load();
 
 	const ssize_t ti = _lower_theta_index(t);
 	const ssize_t zi = _lower_z_index(z);
 
-	const flt_type & tlo = _data_.col(0).row(ti);
-	const flt_type & thi = _data_.col(0).row(ti+1);
-	const flt_type & zlo = _zvals_[zi];
-	const flt_type & zhi = _zvals_[zi+1];
+	const flt_t & tlo = _data_.col(0).row(ti);
+	const flt_t & thi = _data_.col(0).row(ti+1);
+	const flt_t & zlo = _zvals_[zi];
+	const flt_t & zhi = _zvals_[zi+1];
 
-	const flt_type & weight = (thi-tlo)*(zhi-zlo);
+	const flt_t & weight = (thi-tlo)*(zhi-zlo);
 
-	flt_type result = 0;
+	flt_t result = 0;
 
 	result += _data_.col(zi+1).row(ti)*(zhi-z)*(thi-t);
 	result += _data_.col(zi+1).row(ti+1)*(zhi-z)*(t-tlo);

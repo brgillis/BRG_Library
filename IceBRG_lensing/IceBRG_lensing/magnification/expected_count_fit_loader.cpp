@@ -46,10 +46,10 @@
 // Initialisation of static vars
 #if (1)
 bool IceBRG::expected_count_fit_loader::_loaded_(false);
-IceBRG::table_map_t<flt_type> IceBRG::expected_count_fit_loader::_data_map_;
+IceBRG::table_map_t<IceBRG::flt_t> IceBRG::expected_count_fit_loader::_data_map_;
 #endif
 
-const flt_type & num_columns=8;
+constexpr IceBRG::flt_t num_columns=8;
 
 void IceBRG::expected_count_fit_loader::_load()
 {
@@ -61,7 +61,7 @@ void IceBRG::expected_count_fit_loader::_load()
 		{
 			std::stringstream ss(count_fitting_result_data);
 
-			_data_map_ = load_table_map<flt_type>(ss);
+			_data_map_ = load_table_map<flt_t>(ss);
 
 			assert(ssize(_data_map_)==num_columns);
 			assert(ssize(_data_map_.at("z_mid"))>=2);
@@ -71,7 +71,7 @@ void IceBRG::expected_count_fit_loader::_load()
 	}
 
 }
-ssize_t IceBRG::expected_count_fit_loader::_lower_z_index(const flt_type & z)
+IceBRG::ssize_t IceBRG::expected_count_fit_loader::_lower_z_index(const flt_t & z)
 {
 	auto size = ssize(_data_map_.at("z_mid"));
 	assert(size>=2);
@@ -84,18 +84,18 @@ ssize_t IceBRG::expected_count_fit_loader::_lower_z_index(const flt_type & z)
 	return size-2;
 }
 
-std::vector<flt_type> IceBRG::expected_count_fit_loader::get(const flt_type & z)
+IceBRG::flt_vector_t IceBRG::expected_count_fit_loader::get(const flt_t & z)
 {
 	if(!_loaded_) _load();
 
 	const size_t zi = _lower_z_index(z);
 
-	const flt_type & zlo = _data_map_["z_mid"][zi];
-	const flt_type & zhi = _data_map_["z_mid"][zi+1];
+	const flt_t & zlo = _data_map_["z_mid"][zi];
+	const flt_t & zhi = _data_map_["z_mid"][zi+1];
 
-	const flt_type & weight = zhi-zlo;
+	const flt_t & weight = zhi-zlo;
 
-	std::vector<flt_type> r_lo, r_hi;
+	std::vector<flt_t> r_lo, r_hi;
 
 #ifdef _BRG_USE_UNITS_
 	r_lo.push_back(_data_map_["N_scale"].at(zi)*(zhi-z));

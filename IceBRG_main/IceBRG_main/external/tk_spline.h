@@ -39,30 +39,30 @@ namespace tk {
 // band matrix solver
 class band_matrix {
 private:
-   std::vector< std::vector<flt_type> > m_upper;  // upper band
-   std::vector< std::vector<flt_type> > m_lower;  // lower band
+   std::vector< ::IceBRG::flt_vector_t > m_upper;  // upper band
+   std::vector< ::IceBRG::flt_vector_t > m_lower;  // lower band
 public:
    band_matrix() {};                             // constructor
-   band_matrix(int_type dim, int_type n_u, int_type n_l);       // constructor
+   band_matrix(::IceBRG::int_t dim, ::IceBRG::int_t n_u, ::IceBRG::int_t n_l);       // constructor
    ~band_matrix() {};                            // destructor
-   void resize(int_type dim, int_type n_u, int_type n_l);      // init with dim,n_u,n_l
-   int_type dim() const;                             // matrix dimension
-   int_type num_upper() const {
+   void resize(::IceBRG::int_t dim, ::IceBRG::int_t n_u, ::IceBRG::int_t n_l);      // init with dim,n_u,n_l
+   ::IceBRG::int_t dim() const;                             // matrix dimension
+   ::IceBRG::int_t num_upper() const {
       return m_upper.size()-1;
    }
-   int_type num_lower() const {
+   ::IceBRG::int_t num_lower() const {
       return m_lower.size()-1;
    }
    // access operator
-   flt_type & operator () (int_type i, int_type j);            // write
-   flt_type   operator () (int_type i, int_type j) const;      // read
+   ::IceBRG::flt_t & operator () (::IceBRG::int_t i, ::IceBRG::int_t j);            // write
+   ::IceBRG::flt_t   operator () (::IceBRG::int_t i, ::IceBRG::int_t j) const;      // read
    // we can store an additional diogonal (in m_lower)
-   flt_type& saved_diag(int_type i);
-   flt_type  saved_diag(int_type i) const;
+   ::IceBRG::flt_t& saved_diag(::IceBRG::int_t i);
+   ::IceBRG::flt_t  saved_diag(::IceBRG::int_t i) const;
    void lu_decompose();
-   std::vector<flt_type> r_solve(const std::vector<flt_type>& b) const;
-   std::vector<flt_type> l_solve(const std::vector<flt_type>& b) const;
-   std::vector<flt_type> lu_solve(const std::vector<flt_type>& b,
+   ::IceBRG::flt_vector_t r_solve(const ::IceBRG::flt_vector_t & b) const;
+   ::IceBRG::flt_vector_t l_solve(const ::IceBRG::flt_vector_t & b) const;
+   ::IceBRG::flt_vector_t lu_solve(const ::IceBRG::flt_vector_t & b,
                                 bool is_lu_decomposed=false);
 
 };
@@ -71,14 +71,14 @@ public:
 // spline interpolation
 class spline {
 private:
-   std::vector<flt_type> m_x,m_y;           // x,y coordinates of points
+   ::IceBRG::flt_vector_t m_x,m_y;           // x,y coordinates of points
    // interpolation parameters
    // f(x) = a*(x-x_i)^3 + b*(x-x_i)^2 + c*(x-x_i) + y_i
-   std::vector<flt_type> m_a,m_b,m_c,m_d;
+   ::IceBRG::flt_vector_t m_a,m_b,m_c,m_d;
 public:
-   void set_points(const std::vector<flt_type>& x,
-                   const std::vector<flt_type>& y, bool cubic_spline=true);
-   flt_type operator() (flt_type x) const;
+   void set_points(const ::IceBRG::flt_vector_t & x,
+                   const ::IceBRG::flt_vector_t & y, bool cubic_spline=true);
+   ::IceBRG::flt_t operator() (::IceBRG::flt_t x) const;
 };
 
 } // namespace tk

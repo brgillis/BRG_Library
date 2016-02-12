@@ -40,34 +40,34 @@ namespace IceBRG {
 #if(1)
 
 template<typename T, typename Enable = void>
-struct all_flt_type
+struct all_flt_t
 { };
 
 template<typename T>
-struct all_flt_type<T,BRG_S_IS_STL(T)>
+struct all_flt_t<T,BRG_S_IS_STL(T)>
 {
-	typedef std::vector<flt_type> type;
+	typedef std::vector<flt_t> type;
 };
 
 template<typename T>
-struct all_flt_type<T,BRG_S_IS_EIGEN(T)>
+struct all_flt_t<T,BRG_S_IS_EIGEN(T)>
 {
 	typedef flt_array_type type;
 };
 
 template<typename T>
-struct all_flt_type<T,BRG_S_IS_NULL(T)>
+struct all_flt_t<T,BRG_S_IS_NULL(T)>
 {
 	typedef boost::tuples::null_type type;
 };
 
 template<typename T>
-struct all_flt_type<T,BRG_S_IS_TUPLE(T)>
+struct all_flt_t<T,BRG_S_IS_TUPLE(T)>
 {
 	typedef typename std::decay<T>::type Td;
 
-	typedef boost::tuples::cons<flt_type,
-			typename all_flt_type<decltype(Td().get_tail())>::type> type;
+	typedef boost::tuples::cons<flt_t,
+			typename all_flt_t<decltype(Td().get_tail())>::type> type;
 };
 
 #endif // Generic structs
@@ -78,7 +78,7 @@ struct all_flt_type<T,BRG_S_IS_TUPLE(T)>
 // Get a reference to an element
 
 template< typename T, BRG_F_IS_CONTAINER(T) >
-auto get( T & v, const int_type & i ) -> decltype(v[i])
+auto get( T & v, const int_t & i ) -> decltype(v[i])
 {
 	assert(i>=0);
 	assert(i<ssize(v));
@@ -89,7 +89,7 @@ auto get( T & v, const int_type & i ) -> decltype(v[i])
 // Note - the tuple version of this may not work if the tuple includes
 // incompatible types.
 template< typename T, BRG_F_IS_TUPLE(T) >
-auto get( T & v, const int_type & i ) -> decltype(v.get_head())
+auto get( T & v, const int_t & i ) -> decltype(v.get_head())
 {
 	assert(i>=0);
 	assert(i<ssize(v));
@@ -107,7 +107,7 @@ void fix_min_and_max( T & v1, T & v2 )
 {
 	assert(ssize(v1)==ssize(v2));
 
-	for(int_type i=0; i<ssize(v1); ++i)
+	for(int_t i=0; i<ssize(v1); ++i)
 	{
 		if(v1[i]>v2[i]) std::swap(v1[i],v2[i]);
 	}
@@ -152,7 +152,7 @@ void fix_step_sigmas( T & v_sigmas, const T & v_min, const T & v_max )
 			set_zero(v);
 	}
 
-	for(int_type i=0; i<ssize(v_sigmas); ++i)
+	for(int_t i=0; i<ssize(v_sigmas); ++i)
 	{
 		if( (v_sigmas[i]<=zero) || (v_sigmas[i] >= v_max[i]-v_min[i]))
 			v_sigmas[i] = (v_max[i]-v_min[i])/10.;
@@ -193,7 +193,7 @@ void fix_step_sigmas( const T & v_sigmas )
 	value_type zero;
 	set_zero(zero);
 
-	for(int_type i=0; i<ssize(v_sigmas); ++i)
+	for(int_t i=0; i<ssize(v_sigmas); ++i)
 	{
 		if( v_sigmas[i]<=zero )
 			v_sigmas[i] = units_cast<value_type>(1.);
@@ -233,7 +233,7 @@ void fix_step_sigmas( T & v_sigmas )
 // Get a reference to an element
 
 template< typename T, BRG_F_IS_CONTAINER(T) >
-auto attempt_get( T & v, const int_type & i ) -> decltype(v[i])
+auto attempt_get( T & v, const int_t & i ) -> decltype(v[i])
 {
 	assert(i>=0);
 	assert(i<ssize(v));
@@ -244,7 +244,7 @@ auto attempt_get( T & v, const int_type & i ) -> decltype(v[i])
 // Note - the tuple version of this may not work if the tuple includes
 // incompatible types.
 template< typename T, BRG_F_IS_TUPLE(T) >
-auto attempt_get( T & v, const int_type & i ) -> decltype(v.get_head())
+auto attempt_get( T & v, const int_t & i ) -> decltype(v.get_head())
 {
 	assert(i>=0);
 	assert(i<ssize(v));

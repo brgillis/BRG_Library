@@ -60,12 +60,12 @@ template<typename T>
 void print_table( std::ostream & out_stream,
 		const table_t<T> & data,
 		const header_t & header = header_t(),
-		const short_int_type & major_tag = Eigen::ColMajor,
-		const short_int_type & precision = 10)
+		const short_int_t & major_tag = Eigen::ColMajor,
+		const short_int_t & precision = 10)
 {
 	// Set up the value we'll print if an entry is bad
 	std::stringstream ss("");
-	ss << std::numeric_limits<flt_type>::max();
+	ss << std::numeric_limits<flt_t>::max();
 	std::string bad_value = ss.str();
 	ss.clear();
 	ss.str("");
@@ -106,7 +106,7 @@ void print_table( std::ostream & out_stream,
 					// For the first header element, we'll check if it starts with a
 					// '#'. If it doesn't, we'll add one to it.
 					ss.str(header[c]);
-					if ( ss.peek() != (int_type)( *"#" ) )
+					if ( ss.peek() != (int_t)( *"#" ) )
 					{
 						add_comment_marker = true;
 					}
@@ -115,7 +115,7 @@ void print_table( std::ostream & out_stream,
 				{
 					width[c] = header[c].length();
 				}
-			} // for( int_type c = 0; c < num_columns; c++ )
+			} // for( int_t c = 0; c < num_columns; c++ )
 		}
 
 		// Now loop through the data
@@ -148,8 +148,8 @@ void print_table( std::ostream & out_stream,
 				{
 					width[c] = str_val.length();
 				}
-			} // for( int_type c = 0; c < num_columns; c++ )
-		} // for( int_type i = 0; i < num_rows; i++ ) (testing width)
+			} // for( int_t c = 0; c < num_columns; c++ )
+		} // for( int_t i = 0; i < num_rows; i++ ) (testing width)
 
 		if(add_comment_marker)
 		{
@@ -225,8 +225,8 @@ template<typename T>
 void print_table( const std::string & file_name,
 		const table_t<T> & data,
 		const header_t & header = header_t(),
-		const short_int_type & major_tag = Eigen::ColMajor,
-		const short_int_type & precision = 10)
+		const short_int_t & major_tag = Eigen::ColMajor,
+		const short_int_t & precision = 10)
 {
 	std::ofstream fo;
 	open_file_output(fo,file_name);
@@ -290,7 +290,7 @@ inline header_t load_header( std::istream & table_stream )
 	// Get all comment lines at the top of the file
 	while ( table_stream )
 	{
-		if ( table_stream.peek() == (int_type)( *"#" ) )
+		if ( table_stream.peek() == (int_t)( *"#" ) )
 		{
 			getline( table_stream, temp_line );
 
@@ -312,7 +312,7 @@ inline header_t load_header( std::istream & table_stream )
 	// go to the data and count the columns in the first line. If only one possible header has
 	// the right length, we know that's the one.
 
-	int_type n_cols = 0;
+	int_t n_cols = 0;
 	do
 	{
 		getline( table_stream, temp_line );
@@ -330,7 +330,7 @@ inline header_t load_header( std::istream & table_stream )
 	}
 
 	// Search through the possible headers, and see if we find exactly one with the right size
-	int_type num_right_size = 0;
+	int_t num_right_size = 0;
 	ssize_t i_best = 0;
 	for(ssize_t i=0; i<ssize(possible_headers); ++i)
 	{

@@ -56,7 +56,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have. Only the units matter in the return, not the value
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return units_cast<custom_unit_type<0,0,0,-2,0>>(v);
 	}
@@ -64,7 +64,7 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1 ) const;
+	flt_t _calculate( const flt_t & in_param_1 ) const;
 	void _load_cache_dependencies() const;
 
 public:

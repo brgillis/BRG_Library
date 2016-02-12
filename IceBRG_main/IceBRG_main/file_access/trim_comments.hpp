@@ -47,7 +47,7 @@ void trim_comments_one_line( streamtype & stream )
 	std::string file_data;
 	if ( stream )
 	{
-		if ( stream.peek() == (int_type)( *"#" ) )
+		if ( stream.peek() == (int_t)( *"#" ) )
 			getline( stream, file_data );
 	}
 }
@@ -57,7 +57,7 @@ void trim_comments_all_at_top( streamtype & stream )
 	std::string file_data;
 	while ( stream )
 	{
-		if ( stream.peek() == (int_type)( *"#" ) )
+		if ( stream.peek() == (int_t)( *"#" ) )
 		{
 			getline( stream, file_data );
 		}

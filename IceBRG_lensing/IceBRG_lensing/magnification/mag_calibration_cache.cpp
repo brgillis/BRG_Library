@@ -41,7 +41,7 @@ DEFINE_BRG_CACHE_STATIC_VARS( mag_calibration_cache,
 
 // IceBRG::mag_calibration_cache class methods
 #if (1)
-flt_type IceBRG::mag_calibration_cache::_calculate( const flt_type & in_param_1 ) const
+IceBRG::flt_t IceBRG::mag_calibration_cache::_calculate( const flt_t & in_param_1 ) const
 {
 	return mag_calibration_loader::get(in_param_1);
 }

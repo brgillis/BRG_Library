@@ -67,11 +67,11 @@ IceBRG::density_type IceBRG::redshift_obj::rho_crit() const
 /** Global Function Definitions **/
 #if (1)
 
-IceBRG::inverse_time_type IceBRG::H( const flt_type & test_z )
+IceBRG::inverse_time_type IceBRG::H( const flt_t & test_z )
 {
 	// Friedmann equation, assuming omega = -1
 	if(test_z==0) return H_0;
-	flt_type zp1 = 1.+test_z;
+	flt_t zp1 = 1.+test_z;
 	return H_0 * sqrt( Omega_r * quart( zp1 )
 							+ Omega_m * cube( zp1 )
 							+ Omega_k * square( zp1 ) + Omega_l );
@@ -85,123 +85,123 @@ IceBRG::inverse_time_type IceBRG::H( const flt_type & test_z )
 // dfa and afd functions
 #if (1)
 
-IceBRG::custom_unit_type<1,0,0,-1,0> IceBRG::dfa( const flt_type & z )
+IceBRG::custom_unit_type<1,0,0,-1,0> IceBRG::dfa( const flt_t & z )
 {
 	return any_cast<custom_unit_type<1,0,0,-1,0>>(dfa_cache().get( z ));
 }
-IceBRG::distance_type IceBRG::dfa( const angle_type & da, const flt_type & z )
+IceBRG::distance_type IceBRG::dfa( const angle_type & da, const flt_t & z )
 {
 	return da * dfa(z);
 }
 IceBRG::distance_type IceBRG::dfa( const angle_type & a1, const angle_type & a2,
-		const flt_type & z )
+		const flt_t & z )
 {
 	return IceBRG::dfa( a2 - a1, z );
 }
 IceBRG::distance_type IceBRG::dfa( const angle_type & a1x, const angle_type & a1y,
-		const angle_type & a2x, const angle_type & a2y, const flt_type & z )
+		const angle_type & a2x, const angle_type & a2y, const flt_t & z )
 {
 	return IceBRG::dfa( skydist2d( a1x, a1y, a2x, a2y ), z );
 }
-IceBRG::custom_unit_type<-1,0,0,1,0> IceBRG::afd( const flt_type & z )
+IceBRG::custom_unit_type<-1,0,0,1,0> IceBRG::afd( const flt_t & z )
 {
 	return 1./dfa(z);
 }
-IceBRG::angle_type IceBRG::afd( const distance_type & dd, const flt_type & z )
+IceBRG::angle_type IceBRG::afd( const distance_type & dd, const flt_t & z )
 {
 	return dd / dfa(z);
 }
 IceBRG::angle_type IceBRG::afd( const distance_type & d1, const distance_type & d2,
-		const flt_type & z )
+		const flt_t & z )
 {
 	return IceBRG::afd( abs( d2 - d1 ), z );
 }
 IceBRG::angle_type IceBRG::afd( const distance_type & d1x,
 		const distance_type & d1y, const distance_type & d2x,
-		const distance_type & d2y, const flt_type & z )
+		const distance_type & d2y, const flt_t & z )
 {
 	return IceBRG::afd( dist2d( d1x, d1y, d2x, d2y ), z );
 }
 
-flt_type IceBRG::zfa( const flt_type & a )
+IceBRG::flt_t IceBRG::zfa( const flt_t & a )
 {
 	return 1. / safe_d( a ) - 1.;
 }
-flt_type IceBRG::afz( const flt_type & z )
+IceBRG::flt_t IceBRG::afz( const flt_t & z )
 {
 	return 1. / safe_d( 1 + z );
 }
 
-IceBRG::time_type IceBRG::tfz( const flt_type & z )
+IceBRG::time_type IceBRG::tfz( const flt_t & z )
 {
 	return IceBRG::tfa( afz( z ) );
 }
-IceBRG::time_type IceBRG::tfa( const flt_type & a )
+IceBRG::time_type IceBRG::tfa( const flt_t & a )
 {
 	return any_cast<time_type>(tfa_cache().get( a ));
 }
-flt_type IceBRG::zft( const time_type & t )
+IceBRG::flt_t IceBRG::zft( const time_type & t )
 {
 	return IceBRG::zfa( IceBRG::aft( t ) );
 }
-flt_type IceBRG::aft( const time_type & t )
+IceBRG::flt_t IceBRG::aft( const time_type & t )
 {
 	IceBRG::tfa_cache cache;
-	return any_cast<flt_type>(cache.inverse_get( value_of(t) ));
+	return any_cast<flt_t>(cache.inverse_get( value_of(t) ));
 }
 
 #endif
 
 // Functions to integrate out distances
 #if (1)
-IceBRG::distance_type IceBRG::integrate_add( const flt_type & z1, const flt_type & z2 )
+IceBRG::distance_type IceBRG::integrate_add( const flt_t & z1, const flt_t & z2 )
 {
 	return integrate_distance( z1, z2, 0, 100000 );
 }
-IceBRG::distance_type IceBRG::integrate_cmd( const flt_type & z1, const flt_type & z2 )
+IceBRG::distance_type IceBRG::integrate_cmd( const flt_t & z1, const flt_t & z2 )
 {
 	return integrate_distance( z1, z2, 1, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_Ld( const flt_type & z1, const flt_type & z2 )
+IceBRG::distance_type IceBRG::integrate_Ld( const flt_t & z1, const flt_t & z2 )
 {
 	return integrate_distance( z1, z2, 2, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_ltd( const flt_type & z1, const flt_type & z2 )
+IceBRG::distance_type IceBRG::integrate_ltd( const flt_t & z1, const flt_t & z2 )
 {
 	return integrate_distance( z1, z2, 3, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_add( const flt_type & z )
+IceBRG::distance_type IceBRG::integrate_add( const flt_t & z )
 {
 	return integrate_distance( 0, z, 0, 100000 );
 }
-IceBRG::distance_type IceBRG::integrate_cmd( const flt_type & z )
+IceBRG::distance_type IceBRG::integrate_cmd( const flt_t & z )
 {
 	return integrate_distance( 0, z, 1, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_Ld( const flt_type & z )
+IceBRG::distance_type IceBRG::integrate_Ld( const flt_t & z )
 {
 	return integrate_distance( 0, z, 2, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_ltd( const flt_type & z )
+IceBRG::distance_type IceBRG::integrate_ltd( const flt_t & z )
 {
 	return integrate_distance( 0, z, 3, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_distance( const flt_type & z1_init,
-		const flt_type & z2_init, const int_type & mode, const int_type & n )
+IceBRG::distance_type IceBRG::integrate_distance( const flt_t & z1_init,
+		const flt_t & z2_init, const int_t & mode, const int_t & n )
 {
 	// Function that will help calculate cosmic distances, thanks to Richard Powell - http://www.atlasoftheuniverse.com/
 	// NOTE: Will return a negative value if z2 < z1. This is by design.
 
-	flt_type OK0;
-	flt_type OM0 = Omega_m, OR0 = Omega_r, OL0 = Omega_l;
-	flt_type OM, OR, OL, OK;
-	flt_type z1 = z1_init, z2 = z2_init;
-	flt_type HD; //Hubble distance_type in billions of lightyears
-	flt_type z, a, a1, a2, adot, h1;
-	flt_type DC = std::numeric_limits<flt_type>::max(), DCC = 0, DT = std::numeric_limits<flt_type>::max(), DTT = 0, DM;
-	//flt_type age, size;
-	int_type i;
-	short_int_type sign = 1;
+	flt_t OK0;
+	flt_t OM0 = Omega_m, OR0 = Omega_r, OL0 = Omega_l;
+	flt_t OM, OR, OL, OK;
+	flt_t z1 = z1_init, z2 = z2_init;
+	flt_t HD; //Hubble distance_type in billions of lightyears
+	flt_t z, a, a1, a2, adot, h1;
+	flt_t DC = std::numeric_limits<flt_t>::max(), DCC = 0, DT = std::numeric_limits<flt_t>::max(), DTT = 0, DM;
+	//flt_t age, size;
+	int_t i;
+	short_int_t sign = 1;
 
 	if(z1==z2) return 0;
 
@@ -267,7 +267,7 @@ IceBRG::distance_type IceBRG::integrate_distance( const flt_type & z1_init,
 	//age = HD*DTT;                 // Age of the universe (billions of years)
 	//size = HD*DCC;                // Comoving radius of the observable universe
 
-	flt_type res;
+	flt_t res;
 
 	switch ( mode )
 	{
@@ -294,15 +294,15 @@ IceBRG::distance_type IceBRG::integrate_distance( const flt_type & z1_init,
 // Other functions
 #if (1)
 
-IceBRG::distance_type IceBRG::ad_distance( flt_type z1, flt_type z2 )
+IceBRG::distance_type IceBRG::ad_distance( flt_t z1, flt_t z2 )
 {
 	if ( z2 < z1 )
 		std::swap( z1, z2 );
 	return any_cast<distance_type>(add_cache().get( z1, z2 ));
 }
 
-IceBRG::surface_density_type IceBRG::sigma_crit( const flt_type & z_lens,
-		const flt_type & z_source )
+IceBRG::surface_density_type IceBRG::sigma_crit( const flt_t & z_lens,
+		const flt_t & z_source )
 {
 	return square( c ) / ( 4. * pi * Gc )
 			* ad_distance( 0, z_source )

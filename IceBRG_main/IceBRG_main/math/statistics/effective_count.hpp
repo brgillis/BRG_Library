@@ -48,7 +48,7 @@ template<typename Sample>
 struct effective_count_accumulator
 : accumulator_base
 {
-  typedef flt_type result_type;
+  typedef IceBRG::flt_t result_type;
 
   effective_count_accumulator(dont_care)
   {

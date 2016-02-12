@@ -55,7 +55,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<surface_density_type>(v);
 	}
@@ -63,8 +63,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-			const flt_type & in_param_3 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+			const flt_t & in_param_3 ) const;
 
 public:
 
@@ -93,7 +93,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<surface_density_type>(v);
 	}
@@ -101,8 +101,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-			const flt_type & in_param_3, const flt_type & in_param_4 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+			const flt_t & in_param_3, const flt_t & in_param_4 ) const;
 
 public:
 
@@ -137,7 +137,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<surface_density_type>(v);
 	}
@@ -145,8 +145,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-			const flt_type & in_param_3, const flt_type & in_param_4 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+			const flt_t & in_param_3, const flt_t & in_param_4 ) const;
 
 public:
 
@@ -181,7 +181,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<surface_density_type>(v);
 	}
@@ -189,8 +189,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-			const flt_type & in_param_3 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+			const flt_t & in_param_3 ) const;
 
 public:
 
@@ -225,7 +225,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<surface_density_type>(v);
 	}
@@ -233,8 +233,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-			const flt_type & in_param_3 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+			const flt_t & in_param_3 ) const;
 
 public:
 
@@ -262,7 +262,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<surface_density_type>(v);
 	}
@@ -270,8 +270,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-			const flt_type & in_param_3 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+			const flt_t & in_param_3 ) const;
 
 public:
 
@@ -300,7 +300,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<surface_density_type>(v);
 	}
@@ -308,8 +308,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-			const flt_type & in_param_3, const flt_type & in_param_4 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+			const flt_t & in_param_3, const flt_t & in_param_4 ) const;
 
 public:
 
@@ -344,7 +344,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Tells what units the result should have
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<surface_density_type>(v);
 	}
@@ -352,8 +352,8 @@ protected:
 #endif // _BRG_USE_UNITS_
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2,
-			const flt_type & in_param_3, const flt_type & in_param_4 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2,
+			const flt_t & in_param_3, const flt_t & in_param_4 ) const;
 
 public:
 

@@ -46,7 +46,7 @@ public:
 	typedef typename labeled_array_type::const_label_type label_type;
 	typedef typename labeled_array_type::value_type value_type;
 	typedef typename labeled_array_type::const_value_type const_value_type;
-	typedef typename labeled_array_type::size_type size_type;
+	typedef typename labeled_array_type::size_type ssize_t;
 
 	typedef T_col_type col_type;
 	typedef const col_type const_col_type;
@@ -67,13 +67,13 @@ private:
 	// Private Members
 	label_type * _label_;
 	col_type _col_;
-	size_type _num_cols_;
+	ssize_t _num_cols_;
 
 public:
 
 	/// Constructor. Requires a pointer to a labeled_array's label, the column, and the number of rows
-	labeled_array_col_reference(labeled_array_type * array, const size_type & col,
-			const size_type & num_cols)
+	labeled_array_col_reference(labeled_array_type * array, const ssize_t & col,
+			const ssize_t & num_cols)
 	: _label_(&array->_label_map_.right.at(col)),
 	  _col_(array->raw_col(col)),
 	  _num_cols_(num_cols)
@@ -259,7 +259,7 @@ public:
 #if(1)
 
 	/// size
-	size_type size() const noexcept
+	ssize_t size() const noexcept
 	{
 		return _col_.size();
 	}
@@ -276,49 +276,49 @@ public:
 #if(1)
 
 	/// Element access
-	const_reference operator[] (const size_type & n) const
+	const_reference operator[] (const ssize_t & n) const
 	{
 		return _col_[n];
 	}
 
 	/// Element access
-	reference operator[] (const size_type & n)
+	reference operator[] (const ssize_t & n)
 	{
 		return _col_[n];
 	}
 
 	/// Range-checked element access
-	const_reference row( const size_type & n ) const
+	const_reference row( const ssize_t & n ) const
 	{
 		return _col_[n];
 	}
 
 	/// Range-checked element access
-	reference row( const size_type & n )
+	reference row( const ssize_t & n )
 	{
 		return _col_[n];
 	}
 
 	/// Range-checked element access
-	const_reference at( const size_type & n ) const
+	const_reference at( const ssize_t & n ) const
 	{
 		return _col_[n];
 	}
 
 	/// Range-checked element access
-	reference at( const size_type & n )
+	reference at( const ssize_t & n )
 	{
 		return _col_[n];
 	}
 
 	/// Range-checked element access
-	const_reference operator()( const size_type & n ) const
+	const_reference operator()( const ssize_t & n ) const
 	{
 		return _col_[n];
 	}
 
 	/// Range-checked element access
-	reference operator()( const size_type & n )
+	reference operator()( const ssize_t & n )
 	{
 		return _col_[n];
 	}

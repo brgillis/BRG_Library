@@ -48,7 +48,7 @@ template<typename Sample>
 struct mean_weight_accumulator
 : accumulator_base
 {
-  typedef flt_type result_type;
+  typedef IceBRG::flt_t result_type;
 
   mean_weight_accumulator(dont_care)
   {

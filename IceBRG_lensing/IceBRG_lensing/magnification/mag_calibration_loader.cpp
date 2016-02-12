@@ -46,8 +46,8 @@ namespace IceBRG {
 #if (1)
 bool mag_calibration_loader::_loaded_(false);
 
-std::vector<flt_type> mag_calibration_loader::_z_mins_;
-std::vector<flt_type> mag_calibration_loader::_calibration_values_;
+std::vector<flt_t> mag_calibration_loader::_z_mins_;
+std::vector<flt_t> mag_calibration_loader::_calibration_values_;
 
 std::string mag_calibration_loader::_filename_("/disk2/brg/git/CFHTLenS_cat/Data/gg_calibration_lensing_signal.dat");
 
@@ -58,7 +58,7 @@ void mag_calibration_loader::_load()
 	if(_loaded_) return;
 
 	// Load in the calibration file
-	auto calibration_data_table = IceBRG::load_table_map<flt_type>(_filename_);
+	auto calibration_data_table = IceBRG::load_table_map<flt_t>(_filename_);
 
 	if(is_monotonically_increasing(calibration_data_table.at("z_min")))
 	{
@@ -77,7 +77,7 @@ void mag_calibration_loader::_load()
 
 // Setting parameters for where the data can be loaded from
 #if(1)
-void mag_calibration_loader::set_z_mins(const std::vector<flt_type> & z_mins)
+void mag_calibration_loader::set_z_mins(const std::vector<flt_t> & z_mins)
 {
 	if(!is_monotonically_increasing(z_mins))
 	{
@@ -85,7 +85,7 @@ void mag_calibration_loader::set_z_mins(const std::vector<flt_type> & z_mins)
 	}
 	_z_mins_ = z_mins;
 }
-void mag_calibration_loader::set_z_mins(std::vector<flt_type> && z_mins)
+void mag_calibration_loader::set_z_mins(std::vector<flt_t> && z_mins)
 {
 	if(!is_monotonically_increasing(z_mins))
 	{
@@ -106,7 +106,7 @@ void mag_calibration_loader::set_filename(std::string && new_filename)
 // Access data
 #if(1)
 
-flt_type mag_calibration_loader::get(const flt_type & z)
+flt_t mag_calibration_loader::get(const flt_t & z)
 {
 	_load();
 
@@ -123,9 +123,9 @@ flt_type mag_calibration_loader::get(const flt_type & z)
 
 	--z_i; // Decrease it by one, so it now represents the lower limit of the two we'll interpolate between
 
-	flt_type w = _z_mins_[z_i+1]-_z_mins_[z_i];
+	flt_t w = _z_mins_[z_i+1]-_z_mins_[z_i];
 
-	flt_type res = 0;
+	flt_t res = 0;
 	res += _calibration_values_[z_i]*(_z_mins_[z_i+1]-z);
 	res += _calibration_values_[z_i+1]*(z-_z_mins_[z_i]);
 	res /= w;

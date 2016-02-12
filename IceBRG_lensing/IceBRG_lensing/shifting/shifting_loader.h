@@ -45,20 +45,20 @@ namespace IceBRG {
  */
 class shifting_loader {
 	static bool _loaded_;
-	static labeled_array<flt_type> _data_;
+	static labeled_array<flt_t> _data_;
 
 	const ssize_t _zvals_size_;
-	std::vector<flt_type> _zvals_;
+	flt_vector_t _zvals_;
 
 	const char * _class_source_name_;
 	const char * _corr_alpha_name_;
 
 	void _load();
-	ssize_t _lower_theta_index(const flt_type & theta);
-	ssize_t _lower_z_index(const flt_type & z);
+	ssize_t _lower_theta_index(const flt_t & theta);
+	ssize_t _lower_z_index(const flt_t & z);
 public:
 
-	flt_type get(const flt_type & theta, const flt_type & z);
+	flt_t get(const flt_t & theta, const flt_t & z);
 	void unload();
 
 	shifting_loader()

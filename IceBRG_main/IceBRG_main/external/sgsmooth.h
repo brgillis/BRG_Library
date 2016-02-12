@@ -38,12 +38,12 @@ namespace IceBRG{ namespace sgsmooth{
 
 /* common definitions for the sgsmooth plugin */
 
-flt_vector_type sg_smooth(const flt_vector_type & input,
+flt_vector_t sg_smooth(const flt_vector_t & input,
                              const size_t & window, const size_t & order);
 
-flt_vector_type sg_derivative(const flt_vector_type & input,
+flt_vector_t sg_derivative(const flt_vector_t & input,
                              const size_t & window, const size_t & order,
-                             const flt_type & delta=1.0);
+                             const flt_t & delta=1.0);
 
 void sgs_error(const char *errmsg);
 

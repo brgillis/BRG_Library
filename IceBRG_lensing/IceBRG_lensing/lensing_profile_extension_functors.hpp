@@ -369,7 +369,7 @@ class group_Delta_Sigma_weight_functor
 private:
 
 	const name *_host_ptr_;
-	flt_type _c_;
+	flt_t _c_;
 
 public:
 
@@ -382,16 +382,16 @@ public:
 		return _host_ptr_;
 	}
 
-	void set_c( const flt_type & new_c )
+	void set_c( const flt_t & new_c )
 	{
 		_c_ = new_c;
 	}
-	const flt_type & c() noexcept
+	const flt_t & c() noexcept
 	{
 		return _c_;
 	}
 
-	flt_type operator()( const distance_type &  in_param ) const
+	flt_t operator()( const distance_type &  in_param ) const
 	{
 		if ( _host_ptr_ == NULL )
 		{
@@ -412,7 +412,7 @@ public:
 	}
 
 	group_Delta_Sigma_weight_functor( const name *init_host=NULL,
-			const flt_type & init_c = -1 )
+			const flt_t & init_c = -1 )
 	{
 		_host_ptr_ = init_host;
 		_c_ = init_c;
@@ -439,7 +439,7 @@ public:
 		return _sigma_;
 	}
 
-	flt_type operator()( const distance_type &  in_param ) const
+	flt_t operator()( const distance_type &  in_param ) const
 	{
 		// The output here is the height of a Rayleigh distribution at in_param
 		return value_of(in_param/square(_sigma_) * std::exp(-square(in_param)/(2.*square(_sigma_))));
@@ -498,9 +498,9 @@ public:
 		const distance_type R_actual(lc_add(_R_, _R_shift_, in_param));
 
 		const angle_type theta(asin(_R_shift_/R_actual * sin(in_param)));
-		const flt_type & angle_factor = cos(theta);
+		const flt_t & angle_factor = cos(theta);
 
-		flt_type extra_shear_factor;
+		flt_t extra_shear_factor;
 		if(!_use_extra_shear_)
 			extra_shear_factor = 0;
 		else
@@ -568,7 +568,7 @@ public:
 
 		const angle_type min_in_param = 0 * rad;
 		const angle_type max_in_param = pi * rad;
-		const flt_type & precision = 0.000001;
+		const flt_t & precision = 0.000001;
 
 		auto out_param = IceBRG::integrate_Romberg( func, min_in_param, max_in_param,
 				precision, false );

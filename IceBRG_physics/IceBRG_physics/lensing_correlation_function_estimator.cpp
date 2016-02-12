@@ -50,7 +50,7 @@ bool lensing_correlation_function_estimator::_set_up() const
 
 // Calculation functions
 Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
-		const std::function<flt_type(angle_type)> & weight_function) const
+		const std::function<flt_t(angle_type)> & weight_function) const
 {
 	if(!_set_up())
 		throw std::logic_error("Cannot calculate correlation function without data set up.\n");
@@ -61,19 +61,19 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_weighted(
 	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
-	int_type D1D2_pairs = 0;
-	int_type D1R2_pairs = 0;
-	int_type R1D2_pairs = 0;
-	int_type R1R2_pairs = 0;
+	int_t D1D2_pairs = 0;
+	int_t D1R2_pairs = 0;
+	int_t R1D2_pairs = 0;
+	int_t R1R2_pairs = 0;
 
 	const angle_type & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of an array
-	auto increment_bin = [&] (Eigen::ArrayXd & array, int_type & pair_counter,
+	auto increment_bin = [&] (Eigen::ArrayXd & array, int_t & pair_counter,
 			const position & p1,
 			const position & p2)
 	{
-		flt_type dz = std::get<2>(p2)-std::get<2>(p1);
+		flt_t dz = std::get<2>(p2)-std::get<2>(p1);
 		if(dz<_z_buffer_) return;
 
 		++pair_counter;
@@ -144,19 +144,19 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate() const
 	Eigen::ArrayXd R1D2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 	Eigen::ArrayXd R1R2_counts = Eigen::ArrayXd::Zero(_r_bin_limits_.num_bins());
 
-	long_int_type D1D2_pairs = 0;
-	long_int_type D1R2_pairs = 0;
-	long_int_type R1D2_pairs = 0;
-	long_int_type R1R2_pairs = 0;
+	long_int_t D1D2_pairs = 0;
+	long_int_t D1R2_pairs = 0;
+	long_int_t R1D2_pairs = 0;
+	long_int_t R1R2_pairs = 0;
 
 	const angle_type & max_r = _r_bin_limits_.max();
 
 	// Set up a function to add to the correct bin of an array
-	auto increment_bin = [&] (Eigen::ArrayXd & array, long_int_type & pair_counter,
+	auto increment_bin = [&] (Eigen::ArrayXd & array, long_int_t & pair_counter,
 			const position & p1,
 			const position & p2)
 	{
-		flt_type dz = std::get<2>(p2)-std::get<2>(p1);
+		flt_t dz = std::get<2>(p2)-std::get<2>(p1);
 		if(dz<_z_buffer_) return;
 
 		++pair_counter;
@@ -238,7 +238,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::errors() const
 	return _unweighted_cached_error_;
 }
 
-Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const flt_type & offset) const
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const flt_t & offset) const
 {
 	auto weight_function = [&offset] (const angle_type & theta)
 	{
@@ -246,7 +246,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_dipole(const fl
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-Eigen::ArrayXd lensing_correlation_function_estimator::calculate_quadrupole(const flt_type & offset) const
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_quadrupole(const flt_t & offset) const
 {
 	auto weight_function = [&offset] (const angle_type & theta)
 	{
@@ -254,7 +254,7 @@ Eigen::ArrayXd lensing_correlation_function_estimator::calculate_quadrupole(cons
 	};
 	return calculate_weighted(weight_function)-calculate();
 }
-Eigen::ArrayXd lensing_correlation_function_estimator::calculate_octopole(const flt_type & offset) const
+Eigen::ArrayXd lensing_correlation_function_estimator::calculate_octopole(const flt_t & offset) const
 {
 	auto weight_function = [&offset] (const angle_type & theta)
 	{

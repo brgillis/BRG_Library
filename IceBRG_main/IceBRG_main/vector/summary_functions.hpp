@@ -114,7 +114,7 @@ template< typename T, typename std::enable_if<IceBRG::is_stl_container<T>::value
 typename T::value_type product(const T &v)
 {
 	typename T::value_type result = 1;
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		result *= v[i];
 	}

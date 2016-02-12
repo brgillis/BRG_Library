@@ -57,22 +57,22 @@ private:
 	BRG_SHARED_PTR<const source_obj> _source_clone_;
 
 	mutable bool _data_stored_;
-	mutable flt_type _z_lens_, _z_source_;
+	mutable flt_t _z_lens_, _z_source_;
 	mutable mass_type _m_lens_;
 	mutable size_t _id_lens_;
-	mutable flt_type _mag_lens_, _mag_source_;
-	mutable flt_type _weight_lens_, _weight_source_;
-	flt_type _weight_pair_;
+	mutable flt_t _mag_lens_, _mag_source_;
+	mutable flt_t _weight_lens_, _weight_source_;
+	flt_t _weight_pair_;
 	mutable distance_type _R_proj_;
 	mutable angle_type _theta_;
-	mutable flt_type _gamma_t_, _gamma_x_;
+	mutable flt_t _gamma_t_, _gamma_x_;
 
 	void _conditional_store_data() const
 	{
 		if(!_data_stored_) store_data();
 	}
 
-	void _calc_gamma(const flt_type & gamma_1, const flt_type & gamma_2) const;
+	void _calc_gamma(const flt_t & gamma_1, const flt_t & gamma_2) const;
 
 public:
 
@@ -85,7 +85,7 @@ public:
 #if(1)
 	lens_source_pair();
 	lens_source_pair( const sky_obj* lens_ptr, const source_obj* source_ptr,
-			flt_type init_weight_pair=1, bool make_clones=false);
+			flt_t init_weight_pair=1, bool make_clones=false);
 	virtual ~lens_source_pair();
 #endif
 
@@ -97,7 +97,7 @@ public:
 
 	// Set pair weight
 #if(1)
-	void set_weight_pair( flt_type new_weight_pair );
+	void set_weight_pair( flt_t new_weight_pair );
 #endif
 
 	// Lens and source access
@@ -109,22 +109,22 @@ public:
 	// Access to stored values
 #if(1)
 
-	const flt_type & z_lens() const;
-	const flt_type & z_source() const;
-	flt_type z_diff() const;
+	const flt_t & z_lens() const;
+	const flt_t & z_source() const;
+	flt_t z_diff() const;
 	const mass_type & m_lens() const;
 	const size_t & id_lens() const;
-	const flt_type & mag_lens() const;
-	const flt_type & mag_source() const;
+	const flt_t & mag_lens() const;
+	const flt_t & mag_source() const;
 	const distance_type & R_proj() const;
 	const angle_type & theta() const;
-	const flt_type & gamma_t() const;
-	const flt_type & gamma_x() const;
-	const flt_type & weight_lens() const;
-	const flt_type & weight_source() const;
-	const flt_type & weight_pair() const;
-	flt_type shear_weight() const;
-	flt_type mag_weight() const;
+	const flt_t & gamma_t() const;
+	const flt_t & gamma_x() const;
+	const flt_t & weight_lens() const;
+	const flt_t & weight_source() const;
+	const flt_t & weight_pair() const;
+	flt_t shear_weight() const;
+	flt_t mag_weight() const;
 
 #endif // Access to stored values
 

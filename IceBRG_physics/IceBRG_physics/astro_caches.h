@@ -52,13 +52,13 @@ protected:
 	}
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param ) const;
+	flt_t _calculate( const flt_t & in_param ) const;
 
 #ifdef _BRG_USE_UNITS_
 
 	// Gets the result in the proper units
-	any_units_type _units( const flt_type & v ) const;
-	any_units_type _inverse_units(const flt_type & v) const;
+	any_units_type _units( const flt_t & v ) const;
+	any_units_type _inverse_units(const flt_t & v) const;
 
 #endif
 
@@ -87,12 +87,12 @@ protected:
 	}
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param_1, const flt_type & in_param_2 ) const;
+	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2 ) const;
 
 #ifdef _BRG_USE_UNITS_
 
 	// Gets the result in the proper units
-	any_units_type _units( const flt_type & v ) const;
+	any_units_type _units( const flt_t & v ) const;
 
 #endif
 
@@ -120,13 +120,13 @@ protected:
 	}
 
 	// Long-form calculation function.
-	flt_type _calculate( const flt_type & in_param ) const;
+	flt_t _calculate( const flt_t & in_param ) const;
 
 #ifdef _BRG_USE_UNITS_
 
 	// Gets the result in the proper units
-	any_units_type _units( const flt_type & v ) const;
-	any_units_type _inverse_units(const flt_type & v) const;
+	any_units_type _units( const flt_t & v ) const;
+	any_units_type _inverse_units(const flt_t & v) const;
 
 #endif
 

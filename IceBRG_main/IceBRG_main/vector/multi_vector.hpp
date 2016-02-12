@@ -40,9 +40,9 @@ class multi_vector: private std::vector<T,A>
 public:
 	// Some typedefs that we can allow users to access
 	typedef typename std::vector<T,A>::size_type vsize_t;
-	typedef int_type dsize_t;
-	typedef int_type ssize_t;
-	typedef std::vector< int_type > shape_t;
+	typedef int_t dsize_t;
+	typedef int_t ssize_t;
+	typedef std::vector< int_t > shape_t;
 private:
 	typedef std::vector<T,A> vec;
 
@@ -62,7 +62,7 @@ private:
 		return p;
 	}
 
-	vsize_t _get_p(const multi_vector<int_type> & position) const
+	vsize_t _get_p(const multi_vector<int_t> & position) const
 	{
 		vsize_t p = 0;
 		vsize_t m = 1;
@@ -428,7 +428,7 @@ public:
 			vec::operator[](i) += 1;
 		return *this;
 	}
-	const multi_vector<T, A> & operator++(int_type)
+	const multi_vector<T, A> & operator++(int_t)
 	{
 		multi_vector<T,A> old(*this);
 		for(vsize_t i=0; i<size(); i++)
@@ -471,11 +471,11 @@ public:
 	{
 		return vec::operator[](_get_p(position));
 	}
-	T & operator() (const multi_vector<int_type> & position)
+	T & operator() (const multi_vector<int_t> & position)
 	{
 		return vec::operator[](_get_p(position));
 	}
-	const T & operator() (const multi_vector<int_type> & position) const
+	const T & operator() (const multi_vector<int_t> & position) const
 	{
 		return vec::operator[](_get_p(position));
 	}
@@ -499,7 +499,7 @@ public:
 
 		return (*this)(position);
 	}
-	T & at(const multi_vector<int_type> & position)
+	T & at(const multi_vector<int_t> & position)
 	{
 		if(position.size() != _num_dim_)
 			throw std::out_of_range("Attempt to access vector with invalid position vector size.");
@@ -508,7 +508,7 @@ public:
 
 		return (*this)(position);
 	}
-	const T & at(const multi_vector<int_type> &position) const
+	const T & at(const multi_vector<int_t> &position) const
 	{
 		if(position.size() != _num_dim_)
 			throw std::out_of_range("Attempt to access vector with invalid position vector size.");
@@ -1010,7 +1010,7 @@ const multi_vector<T1,A1> pow( multi_vector<T1,A1> v1, const multi_vector<T2,A2>
 {
 	if(v1.shape()!= v2.shape())
 		throw std::out_of_range("Cannot raise vector to power vector of different shape element-wise.");
-	for(int_type i = 0; i < v1.size(); i++)
+	for(int_t i = 0; i < v1.size(); i++)
 	{
 		v1[i] = std::pow(v1[i], v2[i]);
 	}
@@ -1021,7 +1021,7 @@ const multi_vector<T1,A1> pow( multi_vector<T1,A1> v1, const multi_vector<T2,A2>
 template< typename T1, typename A1, typename T2 >
 const multi_vector<T1,A1> pow( const multi_vector<T1,A1> & v1, const T2 &v2 )
 {
-	for(int_type i = 0; i < v1.size(); i++)
+	for(int_t i = 0; i < v1.size(); i++)
 	{
 		v1[i] = std::pow(v1[i], v2);
 	}
@@ -1032,7 +1032,7 @@ const multi_vector<T1,A1> pow( const multi_vector<T1,A1> & v1, const T2 &v2 )
 template< typename T1, typename T2, typename A2 >
 const multi_vector<T2,A2> pow( const T1 & v1, multi_vector<T2,A2> v2 )
 {
-	for(int_type i = 0; i < v2.size(); i++)
+	for(int_t i = 0; i < v2.size(); i++)
 	{
 		v2[i] = std::pow(v1, v2[i]);
 	}
@@ -1050,7 +1050,7 @@ const multi_vector<T1,A1> safe_pow( multi_vector<T1,A1> v1, const multi_vector<T
 {
 	if(v1.shape()!= v2.shape())
 		throw std::out_of_range("Cannot raise vector to power vector of different shape element-wise.");
-	for(int_type i = 0; i < v1.size(); i++)
+	for(int_t i = 0; i < v1.size(); i++)
 	{
 		v1[i] = safe_pow(v1[i], v2[i]);
 	}
@@ -1061,7 +1061,7 @@ const multi_vector<T1,A1> safe_pow( multi_vector<T1,A1> v1, const multi_vector<T
 template< typename T1, typename A1, typename T2 >
 const multi_vector<T1,A1> safe_pow( const multi_vector<T1,A1> & v1, const T2 &v2 )
 {
-	for(int_type i = 0; i < v1.size(); i++)
+	for(int_t i = 0; i < v1.size(); i++)
 	{
 		v1[i] = safe_pow(v1[i], v2);
 	}
@@ -1072,7 +1072,7 @@ const multi_vector<T1,A1> safe_pow( const multi_vector<T1,A1> & v1, const T2 &v2
 template< typename T1, typename T2, typename A2 >
 const multi_vector<T2,A2> safe_pow( const T1 & v1, multi_vector<T2,A2> v2 )
 {
-	for(int_type i = 0; i < v2.size(); i++)
+	for(int_t i = 0; i < v2.size(); i++)
 	{
 		v2[i] = safe_pow(v1, v2[i]);
 	}
@@ -1088,7 +1088,7 @@ const multi_vector<T2,A2> safe_pow( const T1 & v1, multi_vector<T2,A2> v2 )
 template< typename T, typename A >
 const multi_vector<T,A> operator-( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = -v[i];
 	}
@@ -1106,7 +1106,7 @@ const multi_vector<T,A> abs( multi_vector<T,A> v )
 	using std::abs;
 	using IceBRG::abs;
 
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = abs(v[i]);
 	}
@@ -1125,7 +1125,7 @@ const multi_vector<T,A> sqrt( multi_vector<T,A> v )
 	using std::sqrt;
 	using IceBRG::sqrt;
 
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = sqrt(v[i]);
 	}
@@ -1141,7 +1141,7 @@ const multi_vector<T,A> sqrt( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> safe_sqrt( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = safe_sqrt(v[i]);
 	}
@@ -1160,7 +1160,7 @@ const multi_vector<T,A> exp( multi_vector<T,A> v )
 	using std::exp;
 	using IceBRG::exp;
 
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 		v[i] = exp(v[i]);
 
 	return v;
@@ -1174,7 +1174,7 @@ const multi_vector<T,A> exp( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> square( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = square(v[i]);
 	}
@@ -1190,7 +1190,7 @@ const multi_vector<T,A> square( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> cube( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = cube(v[i]);
 	}
@@ -1206,7 +1206,7 @@ const multi_vector<T,A> cube( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> quart( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = quart(v[i]);
 	}
@@ -1222,7 +1222,7 @@ const multi_vector<T,A> quart( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> inverse( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = inverse(v[i]);
 	}
@@ -1238,7 +1238,7 @@ const multi_vector<T,A> inverse( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> inv_square( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = inv_square(v[i]);
 	}
@@ -1254,7 +1254,7 @@ const multi_vector<T,A> inv_square( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> inv_cube( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = inv_cube(v[i]);
 	}
@@ -1270,7 +1270,7 @@ const multi_vector<T,A> inv_cube( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> inv_quart( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		v[i] = inv_quart(v[i]);
 	}
@@ -1286,7 +1286,7 @@ const multi_vector<T,A> inv_quart( multi_vector<T,A> v )
 template< typename T, typename A >
 const multi_vector<T,A> safe_d( multi_vector<T,A> v )
 {
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 		v[i] = safe_d(v[i]);
 
 	return v;
@@ -1306,7 +1306,7 @@ template< typename T, typename A >
 const T sum(const IceBRG::multi_vector<T,A> &v)
 {
 	T result = 0;
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		result += v[i];
 	}
@@ -1322,7 +1322,7 @@ template< typename T, typename A >
 const T product(const IceBRG::multi_vector<T,A> &v)
 {
 	T result = 1;
-	for(int_type i = 0; i < v.size(); i++)
+	for(int_t i = 0; i < v.size(); i++)
 	{
 		result *= v[i];
 	}

@@ -65,7 +65,7 @@
 
 namespace IceBRG {
 
-template<typename T_value_type=flt_type, char T_major_tag=Eigen::RowMajor, typename T_label_type=std::string>
+template<typename T_value_type=flt_t, char T_major_tag=Eigen::RowMajor, typename T_label_type=std::string>
 class labeled_array
 {
 public:
@@ -85,7 +85,7 @@ public:
 	typedef T_label_type label_type;
 	typedef const label_type const_label_type;
 
-	typedef int_type size_type;
+	typedef ssize_t size_type;
 	typedef ptrdiff_t difference_type;
 
 	typedef labeled_array<value_type,T_major_tag,label_type> labeled_array_type;
@@ -213,7 +213,7 @@ private:
 
 	// Private typedefs
 #if(1)
-	typedef typename boost::bimap<label_type,size_type> map_type;
+	typedef typename boost::bimap<label_type,ssize_t> map_type;
 
 	typedef typename Eigen::Array<value_type,Eigen::Dynamic,1> column_buffer_column_type;
 	typedef insertion_ordered_map<label_type,column_buffer_column_type> column_buffer_type;
@@ -276,10 +276,10 @@ private:
 		if(_column_buffer_.empty()) return;
 
 		// Get the number of columns
-		const size_type num_cols_to_add = ssize(_column_buffer_);
-		const size_type old_num_cols = _data_table_.cols();
-		const size_type new_num_cols = _data_table_.cols() + num_cols_to_add;
-		size_type num_rows;
+		const ssize_t num_cols_to_add = ssize(_column_buffer_);
+		const ssize_t old_num_cols = _data_table_.cols();
+		const ssize_t new_num_cols = _data_table_.cols() + num_cols_to_add;
+		ssize_t num_rows;
 
 		// If the data table is initially empty, we'll get the number of rows from the first
 		// buffered column
@@ -308,8 +308,8 @@ private:
 
 		// Go through the buffer and add each column to the data table. If the label already exists,
 		// replace that column instead
-		size_type current_column = old_num_cols;
-		size_type num_preexisting_cols = 0; // number of labels which we find already exist
+		ssize_t current_column = old_num_cols;
+		ssize_t num_preexisting_cols = 0; // number of labels which we find already exist
 		for( const auto & column : _column_buffer_)
 		{
 			const_label_type & label = column.first;
@@ -319,8 +319,8 @@ private:
 			if(_label_map_.left.count(label)==1)
 			{
 				// Instead of adding a new column, we'll replace the existing one
-				const size_type & column_index = _label_map_.left.at(label);
-				for(size_type i=0; i<ssize(column_data); ++i)
+				const ssize_t & column_index = _label_map_.left.at(label);
+				for(ssize_t i=0; i<ssize(column_data); ++i)
 				{
 					_data_table_(i,column_index) = column_data[i];
 				}
@@ -330,7 +330,7 @@ private:
 			{
 				// Add this to the label map
 				_label_map_.left.insert(std::make_pair(label,current_column));
-				for(size_type i=0; i<ssize(column_data); ++i)
+				for(ssize_t i=0; i<ssize(column_data); ++i)
 				{
 					_data_table_(i,current_column) = column_data[i];
 				}
@@ -357,10 +357,10 @@ private:
 		if(_row_buffer_.empty()) return;
 
 		// Get the number of rows
-		const size_type num_rows_to_add = ssize(_row_buffer_);
-		const size_type old_num_rows = _data_table_.rows();
-		const size_type new_num_rows = _data_table_.rows() + num_rows_to_add;
-		size_type num_cols;
+		const ssize_t num_rows_to_add = ssize(_row_buffer_);
+		const ssize_t old_num_rows = _data_table_.rows();
+		const ssize_t new_num_rows = _data_table_.rows() + num_rows_to_add;
+		ssize_t num_cols;
 
 		// If the data table is initially empty, we'll get the number of columns from the first
 		// buffered row
@@ -378,7 +378,7 @@ private:
 		for( const auto & row : _row_buffer_)
 		{
 			// Check that the row is the proper size
-			if(static_cast<size_type>(ssize(row))!=num_cols)
+			if(static_cast<ssize_t>(ssize(row))!=num_cols)
 			{
 				throw std::logic_error("All rows added to a labeled_array must have the same size.\n");
 			}
@@ -387,17 +387,17 @@ private:
 		// If this is the first row being added, check if we need to create a dummy label map
 		if(ssize(_data_table_)==0)
 		{
-			if(static_cast<size_type>(ssize(_label_map_.left))!=num_cols)
+			if(static_cast<ssize_t>(ssize(_label_map_.left))!=num_cols)
 			{
 				_generate_dummy_label_map(num_cols);
-				assert(static_cast<size_type>(ssize(_label_map_.left))==num_cols);
+				assert(static_cast<ssize_t>(ssize(_label_map_.left))==num_cols);
 			}
 		}
 
 		// Resize the data table, conserving existing elements
 		_data_table_.conservativeResize(new_num_rows, num_cols);
 
-		size_type current_row = old_num_rows;
+		ssize_t current_row = old_num_rows;
 		// Go through the buffer and add each row to the data table
 		for( const auto & row : _row_buffer_)
 		{
@@ -418,10 +418,10 @@ private:
 	// Private label map methods
 #if(1)
 
-	void _generate_dummy_label_map(const size_type & num_cols) const
+	void _generate_dummy_label_map(const ssize_t & num_cols) const
 	{
 		_clear_label_map();
-		for(size_type i=0; i<num_cols; ++i)
+		for(ssize_t i=0; i<num_cols; ++i)
 		{
 			std::stringstream ss("");
 			ss << "col_" << i;
@@ -434,7 +434,7 @@ private:
 	void _set_label_map(const other_map_type & new_labels)
 	{
 		_clear_label_map();
-		size_type i = 0;
+		ssize_t i = 0;
 		for(const auto & label : new_labels)
 		{
 			_label_map_.left.insert(typename map_type::left_value_type(label,i++));
@@ -521,7 +521,7 @@ private:
 	// Private range-checking methods
 #if(1)
 
-	void _check_valid_col_index(const size_type & i) const
+	void _check_valid_col_index(const ssize_t & i) const
 	{
 		_add_buffer_to_data_table();
 
@@ -529,7 +529,7 @@ private:
 			throw std::out_of_range(std::string("Invalid column index requested from labeled_array: ") + std::to_string(i));
 	}
 
-	void _check_valid_row_index(const size_type & i) const
+	void _check_valid_row_index(const ssize_t & i) const
 	{
 		_add_buffer_to_data_table();
 
@@ -654,25 +654,25 @@ public:
 
 	// Column access
 #if(1)
-	col_reference col(const size_type & index)
+	col_reference col(const ssize_t & index)
 	{
 		_check_valid_col_index(index);
 
 		return col_reference(this,index,num_cols());
 	}
-	const_col_reference col(const size_type & index) const
+	const_col_reference col(const ssize_t & index) const
 	{
 		_check_valid_col_index(index);
 
 		return const_col_reference(this,index,num_cols());
 	}
-	col_type raw_col(const size_type & index)
+	col_type raw_col(const ssize_t & index)
 	{
 		_check_valid_col_index(index);
 
 		return _data_table_.col(index);
 	}
-	const_col_type raw_col(const size_type & index) const
+	const_col_type raw_col(const ssize_t & index) const
 	{
 		_check_valid_col_index(index);
 
@@ -1012,45 +1012,45 @@ public:
 
 	// Row access
 #if(1)
-	row_reference row(const size_type & index)
+	row_reference row(const ssize_t & index)
 	{
 		_check_valid_row_index(index);
 
 		return row_reference(this,index,num_rows());
 	}
-	const_row_reference row(const size_type & index) const
+	const_row_reference row(const ssize_t & index) const
 	{
 		_check_valid_row_index(index);
 
 		return const_row_reference(this,index,num_rows());
 	}
-	row_reference operator[](const size_type & index)
+	row_reference operator[](const ssize_t & index)
 	{
 		return row(index);
 	}
-	const_row_reference operator[](const size_type & index) const
+	const_row_reference operator[](const ssize_t & index) const
 	{
 		return row(index);
 	}
-	row_reference operator()(const size_type & index)
-	{
-		_check_valid_row_index(index);
-
-		return row(index);
-	}
-	const_row_reference operator()(const size_type & index) const
+	row_reference operator()(const ssize_t & index)
 	{
 		_check_valid_row_index(index);
 
 		return row(index);
 	}
-	row_type raw_row(const size_type & index)
+	const_row_reference operator()(const ssize_t & index) const
+	{
+		_check_valid_row_index(index);
+
+		return row(index);
+	}
+	row_type raw_row(const ssize_t & index)
 	{
 		_check_valid_row_index(index);
 
 		return _data_table_.row(index);
 	}
-	const_row_type raw_row(const size_type & index) const
+	const_row_type raw_row(const ssize_t & index) const
 	{
 		_check_valid_row_index(index);
 
@@ -1060,11 +1060,11 @@ public:
 
 	// Element access
 #if(1)
-	const_reference operator()(const size_type & row_index, const size_type & col_index) const
+	const_reference operator()(const ssize_t & row_index, const ssize_t & col_index) const
 	{
 		return base()(row_index,col_index);
 	}
-	reference operator()(const size_type & row_index, const size_type & col_index)
+	reference operator()(const ssize_t & row_index, const ssize_t & col_index)
 	{
 		return base()(row_index,col_index);
 	}
@@ -1296,31 +1296,31 @@ public:
 
 	// Size information
 #if(1)
-	size_type nrow() const
+	ssize_t nrow() const
 	{
 		return num_rows();
 	}
-	size_type nrows() const
+	ssize_t nrows() const
 	{
 		return num_rows();
 	}
-	size_type num_rows() const
+	ssize_t num_rows() const
 	{
 		return base().rows();
 	}
-	size_type ncol() const
+	ssize_t ncol() const
 	{
 		return num_cols();
 	}
-	size_type ncols() const
+	ssize_t ncols() const
 	{
 		return num_cols();
 	}
-	size_type num_cols() const
+	ssize_t num_cols() const
 	{
 		return base().cols();
 	}
-	size_type size() const
+	ssize_t size() const
 	{
 		return ssize(base());
 	}
@@ -1340,7 +1340,7 @@ public:
 		return _label_map_.left.count(k);
     }
 
-    const label_type & get_label_for_column(const size_type & index) const
+    const label_type & get_label_for_column(const ssize_t & index) const
     {
     	// Add in the buffer so the label map is fully set up
 		_add_buffer_to_data_table();
@@ -1349,7 +1349,7 @@ public:
     	return _label_map_.right.at(index);
     }
 
-    const size_type & get_index_for_label(const label_type & label) const
+    const ssize_t & get_index_for_label(const label_type & label) const
     {
     	// Add in the buffer so the label map is fully set up
 		_add_buffer_to_data_table();
@@ -1363,7 +1363,7 @@ public:
 	{
     	std::vector<T_res_label_type> res;
 
-    	for( size_type i=0; i<num_cols(); ++i )
+    	for( ssize_t i=0; i<num_cols(); ++i )
     	{
     		res.push_back(get_label_for_column(i));
     	}
@@ -1416,13 +1416,13 @@ public:
 
 		// Allow this if the new labels vector is equal in size to the number of
 		// columns or if the table is empty
-		if((static_cast<size_type>(ssize(new_labels))==ncols()) || (ncols()==0))
+		if((static_cast<ssize_t>(ssize(new_labels))==ncols()) || (ncols()==0))
 		{
 			_set_label_map(std::forward<label_container_type>(new_labels));
 			return 0;
 		}
 
-		if(static_cast<size_type>(ssize(new_labels))>ncols()) return 1;
+		if(static_cast<ssize_t>(ssize(new_labels))>ncols()) return 1;
     	return 2; // Implicitly ssize(new_labels)<ncols()
     }
 
@@ -1447,7 +1447,7 @@ public:
     	_add_buffer_to_data_table();
     	for(auto u_it=u_map.begin(); u_it!=u_map.end(); ++u_it)
     	{
-			flt_type factor = 1./(u_it->second);
+			flt_t factor = 1./(u_it->second);
 			if(isbad(factor)) factor = 1; // To catch user mistakes
 
     		auto d_it = _label_map_.left.find(u_it->first);
@@ -1467,7 +1467,7 @@ public:
     	_add_buffer_to_data_table();
     	for(auto u_it=u_map.begin(); u_it!=u_map.end(); ++u_it)
     	{
-			flt_type factor = u_it->second;
+			flt_t factor = u_it->second;
 			if(isbad(factor)) factor = 1; // To catch user mistakes
 
     		auto d_it = _label_map_.left.find(u_it->first);

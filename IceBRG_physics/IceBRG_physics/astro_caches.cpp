@@ -55,7 +55,7 @@ DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, 0.001, 1.02, 0.001 );
 // IceBRG::dfa_cache class methods
 #if (1)
 
-flt_type IceBRG::dfa_cache::_calculate( const flt_type & in_param ) const
+IceBRG::flt_t IceBRG::dfa_cache::_calculate( const flt_t & in_param ) const
 {
 	return value_of(IceBRG::integrate_add( 0, in_param ));
 }
@@ -63,11 +63,11 @@ flt_type IceBRG::dfa_cache::_calculate( const flt_type & in_param ) const
 #ifdef _BRG_USE_UNITS_
 
 // Gets the result in the proper units
-IceBRG::any_units_type IceBRG::dfa_cache::_units( const flt_type & v ) const
+IceBRG::any_units_type IceBRG::dfa_cache::_units( const flt_t & v ) const
 {
 	return units_cast<custom_unit_type<1,0,0,-1,0>>(v);
 }
-IceBRG::any_units_type IceBRG::dfa_cache::_inverse_units(const flt_type & v) const
+IceBRG::any_units_type IceBRG::dfa_cache::_inverse_units(const flt_t & v) const
 {
 	return v;
 }
@@ -79,8 +79,8 @@ IceBRG::any_units_type IceBRG::dfa_cache::_inverse_units(const flt_type & v) con
 // IceBRG::add_cache class methods
 #if(1)
 
-flt_type IceBRG::add_cache::_calculate( const flt_type & in_param_1,
-		const flt_type & in_param_2) const
+IceBRG::flt_t IceBRG::add_cache::_calculate( const flt_t & in_param_1,
+		const flt_t & in_param_2) const
 {
 	return value_of(IceBRG::integrate_add(in_param_1,in_param_2));
 }
@@ -88,7 +88,7 @@ flt_type IceBRG::add_cache::_calculate( const flt_type & in_param_1,
 #ifdef _BRG_USE_UNITS_
 
 // Gets the result in the proper units
-IceBRG::any_units_type IceBRG::add_cache::_units( const flt_type & v ) const
+IceBRG::any_units_type IceBRG::add_cache::_units( const flt_t & v ) const
 {
 	return units_cast<distance_type>(v);
 }
@@ -100,7 +100,7 @@ IceBRG::any_units_type IceBRG::add_cache::_units( const flt_type & v ) const
 // IceBRG::tfa_cache class methods
 #if(1)
 
-flt_type IceBRG::tfa_cache::_calculate( const flt_type & in_param ) const
+IceBRG::flt_t IceBRG::tfa_cache::_calculate( const flt_t & in_param ) const
 {
 	return value_of(-IceBRG::integrate_ltd( 0, IceBRG::zfa( in_param ) ) / c);
 }
@@ -108,11 +108,11 @@ flt_type IceBRG::tfa_cache::_calculate( const flt_type & in_param ) const
 #ifdef _BRG_USE_UNITS_
 
 // Gets the result in the proper units
-IceBRG::any_units_type IceBRG::tfa_cache::_units( const flt_type & v ) const
+IceBRG::any_units_type IceBRG::tfa_cache::_units( const flt_t & v ) const
 {
 	return units_cast<time_type>(v);
 }
-IceBRG::any_units_type IceBRG::tfa_cache::_inverse_units(const flt_type & v) const
+IceBRG::any_units_type IceBRG::tfa_cache::_inverse_units(const flt_t & v) const
 {
 	return dimensionless_type(v);
 }

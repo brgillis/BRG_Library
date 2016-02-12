@@ -66,7 +66,7 @@ inline bool isinf( T val )
 {
 	using std::fabs;
 #ifdef _BRG_USE_UNITS_
-	if(std::numeric_limits<T>::max()==0) return fabs( (flt_type)val ) > std::numeric_limits<flt_type>::max();
+	if(std::numeric_limits<T>::max()==0) return fabs( (flt_t)val ) > std::numeric_limits<flt_t>::max();
 #endif
 	return fabs( val ) > std::numeric_limits<T>::max();
 }
@@ -139,11 +139,11 @@ inline void fixbad( T & val )
 	{
 		if(value_of(val)>0)
 		{
-			val = units_cast<T>(std::numeric_limits<flt_type>::max());
+			val = units_cast<T>(std::numeric_limits<flt_t>::max());
 		}
 		else
 		{
-			val = units_cast<T>(std::numeric_limits<flt_type>::lowest());
+			val = units_cast<T>(std::numeric_limits<flt_t>::lowest());
 		}
 	}
 }
@@ -152,7 +152,7 @@ inline void fixbad( T & val )
 // The return type is a bit complicated if the variables are of
 // different types, so the function goes for the most general
 // type of number allowed (unit_obj if units are being used,
-// otherwise flt_type).
+// otherwise flt_t).
 template< class T1, class T2, BRG_F_NOT_CONTAINER(T1), BRG_F_NOT_CONTAINER(T2) >
 inline T1 min( const T1 & a, const T2 & b )
 {
@@ -194,13 +194,13 @@ inline bool divisible( const Ta & a, const Tb & b )
 }
 
 // Rounds to nearest integer, favouring even
-inline int_type round_int( flt_type value, const flt_type & epsilon=std::numeric_limits<flt_type>::epsilon() )
+inline int_t round_int( flt_t value, const flt_t & epsilon=std::numeric_limits<flt_t>::epsilon() )
 {
 
 	if ( value < 0.0 )
 		return -round_int( -value, epsilon );
 
-	flt_type ipart;
+	flt_t ipart;
 	std::modf( value, &ipart );
 
 	// If 'value' is exactly halfway between two integers
@@ -208,15 +208,15 @@ inline int_type round_int( flt_type value, const flt_type & epsilon=std::numeric
 	{
 		// If 'ipart' is even then return 'ipart'
 		if ( std::fmod( ipart, 2.0 ) < epsilon )
-			return (int_type)ipart;
+			return (int_t)ipart;
 
 		// Else return the nearest even integer
-		return (int_type)std::ceil( ipart + 0.5 );
+		return (int_t)std::ceil( ipart + 0.5 );
 	}
 
 	// Otherwise use the usual round to closest
 	// (Either symmetric half-up or half-down will do0
-	return (int_type)std::floor( value + 0.5 );
+	return (int_t)std::floor( value + 0.5 );
 }
 
 // Inline square
@@ -271,17 +271,17 @@ decltype(inverse(quart(T()))) inv_quart(const T & v1)
 // Returns 1 if a is positive, -1 if it is negative, and 0 if it is 0
 
 template <typename T, BRG_F_NOT_CONTAINER(T) >
-inline constexpr short_int_type sign(const T & x, std::false_type is_signed) {
+inline constexpr short_int_t sign(const T & x, std::false_type is_signed) {
     return T(0) < x;
 }
 
 template <typename T, BRG_F_NOT_CONTAINER(T) >
-inline constexpr short_int_type sign(const T & x, std::true_type is_signed) {
+inline constexpr short_int_t sign(const T & x, std::true_type is_signed) {
     return (T(0) < x) - (x < T(0));
 }
 
 template <typename T, BRG_F_NOT_CONTAINER(T) >
-inline constexpr short_int_type sign(const T & x) {
+inline constexpr short_int_t sign(const T & x) {
     return sign(x, std::is_signed<T>());
 }
 
@@ -442,16 +442,16 @@ inline T1 sqrt_err( const T1 & v, T1 v_err )
 // Gets the error in a power of a value
 template < typename T1,
 BRG_F_IS_EIGEN_OR_SCALAR(T1) >
-inline T1 pow_err( const T1 & v, T1 v_err, const long_flt_type & p  )
+inline T1 pow_err( const T1 & v, T1 v_err, const long_flt_t & p  )
 {
-	flt_type f_err = v_err/v;
+	flt_t f_err = v_err/v;
 	return v_err*=(p*std::pow(v,p-1.));
 }
 template < typename T1,
 BRG_F_IS_EIGEN_OR_SCALAR(T1) >
-inline T1 ipow_err( const T1 & v, T1 v_err, int_type p  )
+inline T1 ipow_err( const T1 & v, T1 v_err, int_t p  )
 {
-	flt_type f_err = v_err/v;
+	flt_t f_err = v_err/v;
 	return v_err*=(p*runtime_ipow(v,p-1));
 }
 

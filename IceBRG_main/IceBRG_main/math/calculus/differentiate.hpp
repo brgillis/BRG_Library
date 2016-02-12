@@ -55,7 +55,7 @@ namespace IceBRG {
 // Scalar-in, scalar-out version
 template< typename f, typename T >
 inline T differentiate( const f * func, const T & in_param,
-		const int_type order = 1, const flt_type & power = 1,
+		const int_t order = 1, const flt_t & power = 1,
 		const T & factor=SMALL_FACTOR )
 {
 
@@ -69,7 +69,7 @@ inline T differentiate( const f * func, const T & in_param,
 	bool power_flag = false;
 	bool zero_in_flag = false;
 
-	int_type order_to_use = max( order, 1 );
+	int_t order_to_use = max( order, 1 );
 
 	if ( ( order_to_use > 1 ) )
 	{
@@ -108,7 +108,7 @@ inline T differentiate( const f * func, const T & in_param,
 	}
 
 	bool bad_function_result = false;
-	int_type counter = 0;
+	int_t counter = 0;
 
 	T Jacobian=0;
 
@@ -153,7 +153,7 @@ inline T differentiate( const f * func, const T & in_param,
 // Vector-in, vector-out version
 template< typename f, typename T >
 inline std::vector< std::vector< T > > differentiate( const f * func, const std::vector< T > & in_params,
-		const int_type order = 1, const flt_type & power = 1 )
+		const int_t order = 1, const flt_t & power = 1 )
 {
 	auto num_in_params = ssize(in_params);
 	std::vector< std::vector< T > > Jacobian;
@@ -167,7 +167,7 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 	bool power_flag = false;
 	bool zero_in_flag = false;
 
-	int_type order_to_use = (int_type)max( order, 1 );
+	int_t order_to_use = (int_t)max( order, 1 );
 
 	if ( ( order_to_use > 1 ) )
 	{
@@ -240,7 +240,7 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 	// Loop over input and output dimensions to get Jacobian
 
 	bool bad_function_result = false;
-	int_type counter = 0;
+	int_t counter = 0;
 	do {
 		counter++;
 		bad_function_result = false;
@@ -287,7 +287,7 @@ inline std::vector< std::vector< T > > differentiate( const f * func, const std:
 						d_in_params[j] /= 10; // Try again with smaller step size
 					continue;
 				}
-			} // for( int_type i = 0; i < num_out_params; i++)
+			} // for( int_t i = 0; i < num_out_params; i++)
 		} // for( size_t j = 0; j < num_in_params; j++)
 	} while (bad_function_result && (counter<3));
 

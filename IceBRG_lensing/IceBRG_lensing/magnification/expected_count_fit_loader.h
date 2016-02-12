@@ -43,13 +43,13 @@ namespace IceBRG {
  */
 class expected_count_fit_loader {
 	static bool _loaded_;
-	static IceBRG::table_map_t<flt_type> _data_map_;
+	static IceBRG::table_map_t<flt_t> _data_map_;
 
 	static void _load();
-	static ssize_t _lower_z_index(const flt_type & z);
+	static ssize_t _lower_z_index(const flt_t & z);
 public:
 
-	static std::vector<flt_type> get(const flt_type & z);
+	static std::vector<flt_t> get(const flt_t & z);
 	static void unload();
 };
 

@@ -51,9 +51,9 @@ private:
 #if (1)
 	std::string _ID_; // Name for it or ID number
 
-	int_type _index_; // Position in an array
+	int_t _index_; // Position in an array
 
-	flt_type _weight_;
+	flt_t _weight_;
 
 	angle_type _ra_, _ra_err_, _dec_, _dec_err_;
 #endif
@@ -62,8 +62,8 @@ public:
 	// Public member functions
 
 	// Constructor
-	sky_obj( const angle_type & init_ra = 0*rad, const angle_type & init_dec = 0*rad, const flt_type & init_z = 0,
-			const angle_type & init_ra_err = 0*rad, const angle_type & init_dec_err = 0*rad, const flt_type & init_z_err =
+	sky_obj( const angle_type & init_ra = 0*rad, const angle_type & init_dec = 0*rad, const flt_t & init_z = 0,
+			const angle_type & init_ra_err = 0*rad, const angle_type & init_dec_err = 0*rad, const flt_t & init_z_err =
 			0 ); // Normal constructor
 
 	//sky_obj(const sky_obj & other_sky_obj); // Copy constructor (Default is fine for us)
@@ -83,17 +83,17 @@ public:
 	virtual void set_ra_dec( const angle_type & new_ra,
 			const angle_type & new_dec ); // Sets ra and dec
 	virtual void set_ra_dec_z( const angle_type & new_ra,
-			const angle_type & new_dec, const flt_type & new_z ); // Sets all values
+			const angle_type & new_dec, const flt_t & new_z ); // Sets all values
 	virtual void set_ra_dec_z_err( const angle_type & new_ra,
-			const angle_type & new_dec, const flt_type & new_z,
+			const angle_type & new_dec, const flt_t & new_z,
 			const angle_type & new_ra_err, const angle_type & new_dec_err,
-			const flt_type & new_z_err ); // Sets all values and error
+			const flt_t & new_z_err ); // Sets all values and error
 	virtual void set_ra_dec_err( const angle_type & new_ra,
 			const angle_type & new_dec, const angle_type & new_ra_err,
 			const angle_type & new_dec_err ); // Sets ra and dec and error
 
-	void set_weight( const flt_type & new_weight );
-	void set_index( const int_type new_index );
+	void set_weight( const flt_t & new_weight );
+	void set_index( const int_t new_index );
 	void set_ID( const std::string &new_ID );
 #endif // end set functions
 
@@ -116,11 +116,11 @@ public:
 		return _dec_err_;
 	}
 
-	const flt_type & weight() const
+	const flt_t & weight() const
 	{
 		return _weight_;
 	}
-	const int_type index() const
+	const int_t index() const
 	{
 		return _index_;
 	}
@@ -135,7 +135,7 @@ public:
 #if (1)
 
 	virtual mass_type m() const = 0;
-	virtual flt_type mag() const = 0;
+	virtual flt_t mag() const = 0;
 
 #endif
 
@@ -149,7 +149,7 @@ public:
 // class sky_obj
 
 distance_type dfa( const sky_obj *obj1, const sky_obj *obj2,
-		const flt_type & z = -1. );
+		const flt_t & z = -1. );
 
 angle_type skydist2d( const sky_obj *obj1, const sky_obj *obj2 );
 

@@ -11,39 +11,46 @@
 #include <complex>
 #include <vector>
 
-typedef double flt_type;
-typedef long double long_flt_type;
+namespace IceBRG {
 
-typedef int int_type;
-typedef long int long_int_type;
-typedef short int short_int_type;
+typedef double flt_t;
+typedef long double long_flt_t;
 
-typedef unsigned int unsigned_int_type;
-typedef long unsigned int long_unsigned_int_type;
-typedef short unsigned int short_unsigned_int_type;
+typedef int int_t;
+typedef long int long_int_t;
+typedef short int short_int_t;
 
-typedef std::complex<flt_type> complex_type;
-typedef std::complex<long_flt_type> long_complex_type;
+typedef unsigned int unsigned_int_t;
+typedef long unsigned int long_unsigned_int_t;
+typedef short unsigned int short_unsigned_int_t;
 
-typedef std::vector<int_type> int_vector_type;
-typedef std::vector<long_int_type> long_int_vector_type;
-typedef std::vector<short_int_type> short_int_vector_type;
+typedef std::complex<flt_t> complex_t;
+typedef std::complex<long_flt_t> long_complex_t;
 
-typedef std::vector<unsigned_int_type> unsigned_int_vector_type;
-typedef std::vector<long_unsigned_int_type> long_unsigned_int_vector_type;
-typedef std::vector<short_unsigned_int_type> short_unsigned_int_vector_type;
+template<typename T>
+using vector_t = std::vector<T>;
 
-typedef std::vector<flt_type> flt_vector_type;
-typedef std::vector<long_flt_type> long_flt_vector_type;
+typedef vector_t<int_t> int_vector_t;
+typedef vector_t<long_int_t> long_int_vector_t;
+typedef vector_t<short_int_t> short_int_vector_t;
 
-typedef std::vector<complex_type> complex_vector_type;
-typedef std::vector<long_complex_type> long_complex_vector_type;
+typedef vector_t<unsigned_int_t> unsigned_int_vector_t;
+typedef vector_t<long_unsigned_int_t> long_unsigned_int_vector_t;
+typedef vector_t<short_unsigned_int_t> short_unsigned_int_vector_t;
+
+typedef vector_t<flt_t> flt_vector_t;
+typedef vector_t<long_flt_t> long_flt_vector_t;
+
+typedef vector_t<complex_t> complex_vector_t;
+typedef vector_t<long_complex_t> long_complex_vector_t;
 
 // Typedef for the signed version of size_t
 typedef std::make_signed<size_t>::type ssize_t;
-typedef ssize_t size_type;
+typedef ssize_t ssize_t;
 
-typedef std::string str_type;
+typedef std::string str_t;
+
+} // namespace IceBRG
 
 // Global compiler directives
 // Alter these by switching between #define and #undef
@@ -70,7 +77,7 @@ typedef std::string str_type;
 #ifndef _BRG_PI_DEFINED_
 #define _BRG_PI_DEFINED_
 // Defining pi to keep it short, but as a variable so it won't act unusually
-constexpr flt_type pi = M_PI;
+constexpr IceBRG::flt_t pi = M_PI;
 #endif
 
 #ifndef MIN_DIVISOR

@@ -36,21 +36,21 @@
 
 namespace IceBRG {
 
-constexpr flt_type mag_m_counting_min = 19;
-constexpr flt_type mag_m_counting_max = 24.7;
+constexpr flt_t mag_m_counting_min = 19;
+constexpr flt_t mag_m_counting_max = 24.7;
 
-constexpr flt_type mag_m_min = 20;
-constexpr flt_type mag_m_max = 24.7;
-constexpr flt_type mag_m_step = 0.1;
+constexpr flt_t mag_m_min = 20;
+constexpr flt_t mag_m_max = 24.7;
+constexpr flt_t mag_m_step = 0.1;
 
-constexpr flt_type mag_z_min = 0.2;
-constexpr flt_type mag_z_max = 4.0;
-constexpr flt_type mag_z_step = 0.01;
+constexpr flt_t mag_z_min = 0.2;
+constexpr flt_t mag_z_max = 4.0;
+constexpr flt_t mag_z_step = 0.01;
 
-constexpr flt_type mag_lens_T_min = 2.0;
-constexpr flt_type mag_lens_T_max = 4.0;
+constexpr flt_t mag_lens_T_min = 2.0;
+constexpr flt_t mag_lens_T_max = 4.0;
 
-constexpr flt_type mag_min_count = 0.1;
+constexpr flt_t mag_min_count = 0.1;
 
 } // namespace IceBRG
 

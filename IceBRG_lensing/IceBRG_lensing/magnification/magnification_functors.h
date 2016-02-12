@@ -38,13 +38,13 @@ class mag_expected_count_functor
 {
 private:
 
-	flt_type _z_mean_;
+	flt_t _z_mean_;
 
 public:
 
 	// Constructors and destructor
 #if(1)
-	mag_expected_count_functor(flt_type init_z=0)
+	mag_expected_count_functor(flt_t init_z=0)
 	: 	_z_mean_(init_z)
 	{
 	}
@@ -54,7 +54,7 @@ public:
 #endif
 
 	// Operator()
-	flt_type operator()(const long_flt_type & m=true) const;
+	flt_t operator()(const long_flt_t & m=true) const;
 
 }; // class expected_count_functor
 
@@ -62,13 +62,13 @@ class mu_signal_integration_functor
 {
 private:
 
-	flt_type _z_mean_;
+	flt_t _z_mean_;
 
 public:
 
 	// Constructors and destructor
 #if(1)
-	mu_signal_integration_functor(flt_type init_z=0)
+	mu_signal_integration_functor(flt_t init_z=0)
 	:	_z_mean_(init_z)
 	{
 	}
@@ -78,7 +78,7 @@ public:
 #endif
 
 	// Operator()
-	flt_type operator()(const long_flt_type & m=true) const;
+	flt_t operator()(const long_flt_t & m=true) const;
 
 }; // class mu_signal_integration_functor
 
@@ -86,13 +86,13 @@ class mu_weight_integration_functor
 {
 private:
 
-	flt_type _z_mean_;
+	flt_t _z_mean_;
 
 public:
 
 	// Constructors and destructor
 #if(1)
-	mu_weight_integration_functor(flt_type init_z=0)
+	mu_weight_integration_functor(flt_t init_z=0)
 	:	_z_mean_(init_z)
 	{
 	}
@@ -102,7 +102,7 @@ public:
 #endif
 
 	// Operator()
-	flt_type operator()(const long_flt_type & m=true) const;
+	flt_t operator()(const long_flt_t & m=true) const;
 
 }; // class mu_signal_integration_functor
 

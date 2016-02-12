@@ -35,7 +35,7 @@
 
 namespace IceBRG {
 
-flt_type magnification_alpha(const flt_type & m, const flt_type & z);
+flt_t magnification_alpha(const flt_t & m, const flt_t & z);
 
 } // namespace IceBRG
 

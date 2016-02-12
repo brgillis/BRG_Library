@@ -61,8 +61,8 @@ private:
 
 	distance_type _R_min_, _R_max_;
 	mass_type _m_min_, _m_max_;
-	flt_type _z_min_, _z_max_;
-	flt_type _mag_min_, _mag_max_;
+	flt_t _z_min_, _z_max_;
+	flt_t _mag_min_, _mag_max_;
 
 #endif // Bin limits
 
@@ -77,23 +77,23 @@ private:
 
 	mass_type _shear_lens_m_mean_;
 	mass_type _magf_lens_m_mean_;
-	flt_type _shear_lens_z_mean_;
-	flt_type _magf_lens_z_mean_;
-	flt_type _shear_lens_mag_mean_;
-	flt_type _magf_lens_mag_mean_;
+	flt_t _shear_lens_z_mean_;
+	flt_t _magf_lens_z_mean_;
+	flt_t _shear_lens_mag_mean_;
+	flt_t _magf_lens_mag_mean_;
 
-	flt_type _shear_source_z_mean_;
-	flt_type _magf_source_z_mean_;
+	flt_t _shear_source_z_mean_;
+	flt_t _magf_source_z_mean_;
 
-	flt_type _shear_sum_of_weights_;
-	flt_type _magf_sum_of_weights_;
-	flt_type _shear_sum_of_square_weights_;
-	flt_type _magf_sum_of_square_weights_;
+	flt_t _shear_sum_of_weights_;
+	flt_t _magf_sum_of_weights_;
+	flt_t _shear_sum_of_square_weights_;
+	flt_t _magf_sum_of_square_weights_;
 	surface_density_type _delta_Sigma_t_mean_, _delta_Sigma_x_mean_;
 	custom_unit_type<-4,0,2,0,0> _delta_Sigma_t_mean_square_, _delta_Sigma_x_mean_square_;
 
-	flt_type _mu_hat_;
-	flt_type _mu_square_hat_;
+	flt_t _mu_hat_;
+	flt_t _mu_square_hat_;
 	custom_unit_type<0,0,0,2,0> _area_;
 	ssize_t _magf_lens_count_;
 
@@ -103,7 +103,7 @@ private:
 #if(1)
 	friend class boost::serialization::access;
 	template<class Archive>
-	void serialize(Archive & ar, const int_type version)
+	void serialize(Archive & ar, const int_t version)
 	{
 		ar & _R_min_ & _R_max_;
 		ar & _m_min_ & _m_max_;
@@ -140,22 +140,22 @@ private:
 	}
 #endif
 
-	flt_type _magf_gamma_t_mean() const;
-	flt_type _magf_gamma_t_mean_square() const;
-	flt_type _magf_gamma_x_mean() const;
-	flt_type _magf_gamma_x_mean_square() const;
-	flt_type _magf_gamma_mean() const;
-	flt_type _magf_gamma_mean_square() const;
+	flt_t _magf_gamma_t_mean() const;
+	flt_t _magf_gamma_t_mean_square() const;
+	flt_t _magf_gamma_x_mean() const;
+	flt_t _magf_gamma_x_mean_square() const;
+	flt_t _magf_gamma_mean() const;
+	flt_t _magf_gamma_mean_square() const;
 
-	flt_type _magf_gamma_t_stderr() const;
-	flt_type _magf_gamma_t_square_stderr() const;
-	flt_type _magf_gamma_x_stderr() const;
-	flt_type _magf_gamma_x_square_stderr() const;
-	flt_type _magf_gamma_stderr() const;
-	flt_type _magf_gamma_square_stderr() const;
+	flt_t _magf_gamma_t_stderr() const;
+	flt_t _magf_gamma_t_square_stderr() const;
+	flt_t _magf_gamma_x_stderr() const;
+	flt_t _magf_gamma_x_square_stderr() const;
+	flt_t _magf_gamma_stderr() const;
+	flt_t _magf_gamma_square_stderr() const;
 
-	lensing_tNFW_profile _shear_model_profile(const flt_type & MLratio = 50.) const;
-	lensing_tNFW_profile _magf_model_profile(const flt_type & MLratio = 50.) const;
+	lensing_tNFW_profile _shear_model_profile(const flt_t & MLratio = 50.) const;
+	lensing_tNFW_profile _magf_model_profile(const flt_t & MLratio = 50.) const;
 
 protected:
 
@@ -169,8 +169,8 @@ public:
 #if(1)
 	pair_bin_summary( const distance_type & init_R_min=0, const distance_type & init_R_max=0,
 			const mass_type & init_m_min=0*kg, const mass_type & init_m_max=0*kg,
-			const flt_type & init_z_min=0, const flt_type & init_z_max=0,
-			const flt_type & init_mag_min=0, const flt_type & init_mag_max=0 );
+			const flt_t & init_z_min=0, const flt_t & init_z_max=0,
+			const flt_t & init_mag_min=0, const flt_t & init_mag_max=0 );
 	pair_bin_summary( const pair_bin & bin);
 	pair_bin_summary( std::istream & in );
 	pair_bin_summary( std::string & filename );
@@ -257,37 +257,37 @@ public:
 		return _magf_pair_count_;
 	}
 	// Effective count
-	virtual flt_type effective_pair_count() const
+	virtual flt_t effective_pair_count() const
 	{
 		return shear_effective_pair_count();
 	}
-	virtual flt_type shear_effective_pair_count() const
+	virtual flt_t shear_effective_pair_count() const
 	{
 		return square(shear_sum_of_weights())/shear_sum_of_square_weights();
 	}
 	// Sum of weights
-	virtual flt_type sum_of_weights() const
+	virtual flt_t sum_of_weights() const
 	{
 		return _shear_sum_of_weights_;
 	}
-	virtual flt_type shear_sum_of_weights() const
+	virtual flt_t shear_sum_of_weights() const
 	{
 		return _shear_sum_of_weights_;
 	}
-	virtual flt_type magf_sum_of_weights() const
+	virtual flt_t magf_sum_of_weights() const
 	{
 		return _magf_sum_of_weights_;
 	}
 	// Sum of square weights
-	virtual flt_type sum_of_square_weights() const
+	virtual flt_t sum_of_square_weights() const
 	{
 		return _shear_sum_of_square_weights_;
 	}
-	virtual flt_type shear_sum_of_square_weights() const
+	virtual flt_t shear_sum_of_square_weights() const
 	{
 		return _shear_sum_of_square_weights_;
 	}
-	virtual flt_type magf_sum_of_square_weights() const
+	virtual flt_t magf_sum_of_square_weights() const
 	{
 		return _magf_sum_of_square_weights_;
 	}
@@ -353,66 +353,66 @@ public:
 		return _magf_lens_m_mean_;
 	}
 
-	flt_type z_min() const
+	flt_t z_min() const
 	{
 		return _z_min_;
 	}
-	flt_type z_max() const
+	flt_t z_max() const
 	{
 		return _z_max_;
 	}
-	flt_type z_mid() const
+	flt_t z_mid() const
 	{
 		return (_z_max_+_z_min_)/2.;
 	}
-	virtual flt_type lens_z_mean() const
+	virtual flt_t lens_z_mean() const
 	{
 		return shear_lens_z_mean();
 	}
-	virtual flt_type shear_lens_z_mean() const
+	virtual flt_t shear_lens_z_mean() const
 	{
 		return _shear_lens_z_mean_;
 	}
-	virtual flt_type magf_lens_z_mean() const
+	virtual flt_t magf_lens_z_mean() const
 	{
 		return _magf_lens_z_mean_;
 	}
 
-	virtual flt_type source_z_mean() const
+	virtual flt_t source_z_mean() const
 	{
 		return shear_source_z_mean();
 	}
-	virtual flt_type shear_source_z_mean() const
+	virtual flt_t shear_source_z_mean() const
 	{
 		return _shear_source_z_mean_;
 	}
-	virtual flt_type magf_source_z_mean() const
+	virtual flt_t magf_source_z_mean() const
 	{
 		return _magf_source_z_mean_;
 	}
 
-	flt_type mag_min() const
+	flt_t mag_min() const
 	{
 		return _mag_min_;
 	}
-	flt_type mag_max() const
+	flt_t mag_max() const
 	{
 		return _mag_max_;
 	}
-	flt_type mag_mid() const
+	flt_t mag_mid() const
 	{
 		return (_mag_max_+_mag_min_)/2.;
 	}
 
-	virtual flt_type lens_mag_mean() const
+	virtual flt_t lens_mag_mean() const
 	{
 		return shear_lens_mag_mean();
 	}
-	virtual flt_type shear_lens_mag_mean() const
+	virtual flt_t shear_lens_mag_mean() const
 	{
 		return _shear_lens_mag_mean_;
 	}
-	virtual flt_type magf_lens_mag_mean() const
+	virtual flt_t magf_lens_mag_mean() const
 	{
 		return _magf_lens_mag_mean_;
 	}
@@ -451,31 +451,31 @@ public:
 	virtual surface_density_type delta_Sigma_t_stderr() const;
 	virtual surface_density_type delta_Sigma_x_stderr() const;
 
-	flt_type gamma_t_mean() const;
-	flt_type gamma_x_mean() const;
-	flt_type gamma_mean() const;
-	flt_type gamma_mean_square() const;
+	flt_t gamma_t_mean() const;
+	flt_t gamma_x_mean() const;
+	flt_t gamma_mean() const;
+	flt_t gamma_mean_square() const;
 
-	flt_type gamma_t_stderr() const;
-	flt_type gamma_x_stderr() const;
-	flt_type gamma_stderr() const;
-	flt_type gamma_square_stderr() const;
+	flt_t gamma_t_stderr() const;
+	flt_t gamma_x_stderr() const;
+	flt_t gamma_stderr() const;
+	flt_t gamma_square_stderr() const;
 
-	surface_density_type model_delta_Sigma_t(const flt_type & MLratio_1h = 50.,
+	surface_density_type model_delta_Sigma_t(const flt_t & MLratio_1h = 50.,
 			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
-	flt_type model_gamma_t(const flt_type & MLratio_1h = 50.,
+			const flt_t & sat_frac = 0.2) const;
+	flt_t model_gamma_t(const flt_t & MLratio_1h = 50.,
 			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
+			const flt_t & sat_frac = 0.2) const;
 
-	surface_density_type model_1h_delta_Sigma_t(const flt_type & MLratio_1h = 50.) const;
-	flt_type model_1h_gamma_t(const flt_type & MLratio_1h = 50.) const;
+	surface_density_type model_1h_delta_Sigma_t(const flt_t & MLratio_1h = 50.) const;
+	flt_t model_1h_gamma_t(const flt_t & MLratio_1h = 50.) const;
 
 	surface_density_type model_offset_delta_Sigma_t(
 			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
-	flt_type model_offset_gamma_t(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
+			const flt_t & sat_frac = 0.2) const;
+	flt_t model_offset_gamma_t(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_t & sat_frac = 0.2) const;
 
 #endif // Shear
 
@@ -491,7 +491,7 @@ public:
 	{
 		return _magf_lens_count_;
 	}
-	virtual flt_type magf_effective_num_lenses() const
+	virtual flt_t magf_effective_num_lenses() const
 	{
 		return square(magf_sum_of_weights())/magf_sum_of_square_weights();
 	}
@@ -499,46 +499,46 @@ public:
 	{
 		return _magf_lens_count_;
 	}
-	virtual flt_type mu_hat() const
+	virtual flt_t mu_hat() const
 	{
 		return _mu_hat_;
 	}
-	virtual flt_type mu_square_hat() const
+	virtual flt_t mu_square_hat() const
 	{
 		return _mu_square_hat_;
 	}
-	virtual flt_type mu_W() const
+	virtual flt_t mu_W() const
 	{
 		return magf_sum_of_weights();
 	}
-	flt_type mu_std() const;
-	flt_type mu_stderr() const;
-	flt_type kappa() const;
-	flt_type kappa_stderr() const;
+	flt_t mu_std() const;
+	flt_t mu_stderr() const;
+	flt_t kappa() const;
+	flt_t kappa_stderr() const;
 
 	surface_density_type Sigma() const;
 	surface_density_type Sigma_stderr() const;
 
-	flt_type model_mu(const flt_type & MLratio_1h = 50.,
+	flt_t model_mu(const flt_t & MLratio_1h = 50.,
 			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
-	flt_type model_kappa(const flt_type & MLratio_1h = 50.,
+			const flt_t & sat_frac = 0.2) const;
+	flt_t model_kappa(const flt_t & MLratio_1h = 50.,
 			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
-	surface_density_type model_Sigma(const flt_type & MLratio_1h = 50.,
+			const flt_t & sat_frac = 0.2) const;
+	surface_density_type model_Sigma(const flt_t & MLratio_1h = 50.,
 			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
+			const flt_t & sat_frac = 0.2) const;
 
-	flt_type model_1h_mu(const flt_type & MLratio_1h = 50.) const;
-	flt_type model_1h_kappa(const flt_type & MLratio_1h = 50.) const;
-	surface_density_type model_1h_Sigma(const flt_type & MLratio_1h = 50.) const;
+	flt_t model_1h_mu(const flt_t & MLratio_1h = 50.) const;
+	flt_t model_1h_kappa(const flt_t & MLratio_1h = 50.) const;
+	surface_density_type model_1h_Sigma(const flt_t & MLratio_1h = 50.) const;
 
-	flt_type model_offset_mu(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
-	flt_type model_offset_kappa(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
+	flt_t model_offset_mu(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_t & sat_frac = 0.2) const;
+	flt_t model_offset_kappa(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const flt_t & sat_frac = 0.2) const;
 	surface_density_type model_offset_Sigma(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
-			const flt_type & sat_frac = 0.2) const;
+			const flt_t & sat_frac = 0.2) const;
 
 #endif // Magnification
 

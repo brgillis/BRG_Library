@@ -38,7 +38,7 @@ namespace IceBRG
 /** Class definitions **/
 #if (1)
 
-template< typename f1, typename f2, typename T=flt_type >
+template< typename f1, typename f2, typename T=flt_t >
 class functor_product
 {
 	/*****************************************************

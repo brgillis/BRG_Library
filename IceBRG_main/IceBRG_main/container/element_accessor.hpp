@@ -51,7 +51,7 @@ public:
 	typedef typename ContainerType::reverse_iterator reverse_iterator;
 	typedef typename ContainerType::const_reverse_iterator const_reverse_iterator;
 	typedef typename ContainerType::difference_type difference_type;
-	typedef typename ContainerType::size_type size_type;
+	typedef typename ContainerType::size_type ssize_t;
 
 	/// Constructor. Requires a non-const reference to a container of the proper type.
 	element_accessor(ContainerType & reference)
@@ -139,19 +139,19 @@ public:
 #if(1)
 
 	/// size
-	size_type size() const noexcept
+	ssize_t size() const noexcept
 	{
 		return _reference_.size();
 	}
 
 	/// max_size
-	size_type max_size() const noexcept
+	ssize_t max_size() const noexcept
 	{
 		return _reference_.max_size();
 	}
 
 	/// capacity
-	size_type capacity() const noexcept
+	ssize_t capacity() const noexcept
 	{
 		return _reference_.capacity();
 	}
@@ -176,25 +176,25 @@ public:
 #if(1)
 
 	/// Element access
-	const_reference operator[] (const size_type & n) const
+	const_reference operator[] (const ssize_t & n) const
 	{
 		return _reference_[n];
 	}
 
 	/// Element access
-	reference operator[] (const size_type & n)
+	reference operator[] (const ssize_t & n)
 	{
 		return _reference_[n];
 	}
 
 	/// Range-checked element access
-	const_reference at( const size_type & n ) const
+	const_reference at( const ssize_t & n ) const
 	{
 		return _reference_.at(n);
 	}
 
 	/// Range-checked element access
-	reference at( const size_type & n )
+	reference at( const ssize_t & n )
 	{
 		return _reference_.at(n);
 	}

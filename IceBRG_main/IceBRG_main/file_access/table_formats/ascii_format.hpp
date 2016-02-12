@@ -44,7 +44,7 @@ public:
 	virtual ~ascii_format() noexcept {}
 
 	/// Name for this format (all in lower case)
-	static str_type name()
+	static str_t name()
 	{
 		return "ascii";
 	}

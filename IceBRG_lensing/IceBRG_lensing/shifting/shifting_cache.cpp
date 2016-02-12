@@ -42,10 +42,10 @@ DEFINE_BRG_CACHE_2D_STATIC_VARS( shifting_cache,
 
 // IceBRG::tNFW_sig_cache class methods
 #if (1)
-flt_type IceBRG::shifting_cache::_calculate( const flt_type & in_param_1, const flt_type & in_param_2) const
+IceBRG::flt_t IceBRG::shifting_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2) const
 {
-	const flt_type & t = std::exp(in_param_1);
-	const flt_type & z = std::fabs(in_param_2);
+	const flt_t & t = std::exp(in_param_1);
+	const flt_t & z = std::fabs(in_param_2);
 
 	if(t==0) return 0;
 

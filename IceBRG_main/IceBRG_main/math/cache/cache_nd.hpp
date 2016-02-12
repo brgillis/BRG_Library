@@ -54,32 +54,32 @@
 #define SPP(name) static_cast<name*>(this)
 
 #define DECLARE_BRG_CACHE_ND_STATIC_VARS()		       \
-	static IceBRG::multi_vector<flt_type> _mins_, _maxes_, _steps_;      \
+	static IceBRG::multi_vector<flt_t> _mins_, _maxes_, _steps_;      \
 	static IceBRG::multi_vector<ssize_t> _resolutions_;           \
-	static IceBRG::multi_vector<flt_type> _results_;                     \
+	static IceBRG::multi_vector<flt_t> _results_;                     \
 											                       \
 	static std::string _file_name_;                                \
-	static int_type _version_number_;                          \
+	static int_t _version_number_;                          \
 										                           \
 	static bool _loaded_, _initialised_;                           \
 											                       \
-	static int_type _num_dim_;
+	static int_t _num_dim_;
 
 // Be careful when using this not to use the default constructor for init_steps, which would result in
 // divide-by-zero errors
 #define DEFINE_BRG_CACHE_ND_STATIC_VARS(class_name,init_mins,init_maxes,init_steps,init_num_dim) \
-	IceBRG::vector<flt_type> IceBRG::class_name::_mins_ = init_mins;	                         \
-	IceBRG::vector<flt_type> IceBRG::class_name::_maxes_ = init_maxes;                         \
-	IceBRG::vector<flt_type> IceBRG::class_name::_steps_ = init_steps;                         \
+	IceBRG::vector<flt_t> IceBRG::class_name::_mins_ = init_mins;	                         \
+	IceBRG::vector<flt_t> IceBRG::class_name::_maxes_ = init_maxes;                         \
+	IceBRG::vector<flt_t> IceBRG::class_name::_steps_ = init_steps;                         \
 	bool IceBRG::class_name::_loaded_ = false;							                     \
 	bool IceBRG::class_name::_initialised_ = false;					                         \
 	IceBRG::vector<ssize_t> IceBRG::class_name::_resolutions_ =                         \
 		max( (((IceBRG::class_name::_maxes_-IceBRG::class_name::_mins_) /                    \
 				safe_d(IceBRG::class_name::_steps_))+1), 1);                                   \
 	std::string IceBRG::class_name::_file_name_ = "";					     	                 \
-	int_type IceBRG::class_name::_version_number_ = 1;		     		                 \
-	IceBRG::vector<flt_type> IceBRG::class_name::_results_;                                    \
-	int_type IceBRG::class_name::_num_dim_ = init_num_dim;
+	int_t IceBRG::class_name::_version_number_ = 1;		     		                 \
+	IceBRG::vector<flt_t> IceBRG::class_name::_results_;                                    \
+	int_t IceBRG::class_name::_num_dim_ = init_num_dim;
 
 namespace IceBRG
 {
@@ -120,7 +120,7 @@ private:
 		std::ifstream in_file;
 		std::string file_data;
 		bool need_to_calc = false;
-		int_type loop_counter = 0;
+		int_t loop_counter = 0;
 
 		if ( SPCP(name)->_loaded_ )
 			return;
@@ -149,7 +149,7 @@ private:
 			// Check that it has the right name and version
 
 			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			int_type file_version = std::numeric_limits<int_type>::max();
+			int_t file_version = std::numeric_limits<int_t>::max();
 
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
@@ -255,11 +255,11 @@ private:
 		SPCP(name)->_results_.reshape(SPCP(name)->_resolutions_.v() );
 
 		IceBRG::multi_vector<ssize_t> position(SPCP(name)->_num_dim_,0);
-		IceBRG::multi_vector<flt_type> x(SPCP(name)->_num_dim_,0);
+		IceBRG::multi_vector<flt_t> x(SPCP(name)->_num_dim_,0);
 		for ( ssize_t i = 0; i < size(SPCP(name)->_results_); i++ )
 		{
 			x = SPCP(name)->_mins_ + SPCP(name)->_steps_*position;
-			flt_type result = 0;
+			flt_t result = 0;
 			SPCP(name)->_results_(position) = SPCP(name)->_calculate(x);
 
 			for(ssize_t d=0; d<SPCP(name)->_num_dim_; d++)
@@ -293,7 +293,7 @@ private:
 		// Output name and version
 
 		std::string file_name = SPCP(name)->_name_base();
-		int_type file_version = SPCP(name)->_version_number_;
+		int_t file_version = SPCP(name)->_version_number_;
 
 		out_file.write(file_name.c_str(),BRG_CACHE_ND_NAME_SIZE);
 		out_file.write((char *)&file_version,sizeof(file_version));
@@ -342,7 +342,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Gets the result in the proper units
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<any_units_type>(v);
 	}
@@ -351,7 +351,7 @@ protected:
 
 	/// Long calculation function, which is used to generate the cache; must be overloaded by each
 	/// child.
-	flt_type _calculate(const IceBRG::multi_vector<flt_type> & x) const;
+	flt_t _calculate(const IceBRG::multi_vector<flt_t> & x) const;
 
 	/// The default name (without extension) for the cache file; should be unique for each cache.
 	std::string _name_base() const;
@@ -385,8 +385,8 @@ public:
 		}
 	} // void set_file_name()
 
-	void set_range( const IceBRG::multi_vector<flt_type> & new_mins, const IceBRG::multi_vector<flt_type> & new_maxes,
-			const IceBRG::multi_vector<flt_type> & new_steps,)
+	void set_range( const IceBRG::multi_vector<flt_t> & new_mins, const IceBRG::multi_vector<flt_t> & new_maxes,
+			const IceBRG::multi_vector<flt_t> & new_steps,)
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -425,12 +425,12 @@ public:
 	 * @param x The value for which you desired the cached result.
 	 * @return The cached result for the input value.
 	 */
-	const any_units_type get( const IceBRG::multi_vector<flt_type> & x,) const
+	const any_units_type get( const IceBRG::multi_vector<flt_t> & x,) const
 	{
 
-		IceBRG::multi_vector<flt_type> xlo, xhi;
+		IceBRG::multi_vector<flt_t> xlo, xhi;
 		IceBRG::multi_vector<ssize_t> x_i; // Lower nearby array points
-		flt_type result = 0;
+		flt_t result = 0;
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
 
@@ -467,16 +467,16 @@ public:
 		xhi = SPCP(name)->_mins_ + SPCP(name)->_steps_ * ( x_i + 1 );
 
 		ssize_t num_surrounding_points = 2;
-		for(int_type i=0; i<SPCP(name)->_num_dim_-1; ++i ) num_surrounding_points*=2;
+		for(int_t i=0; i<SPCP(name)->_num_dim_-1; ++i ) num_surrounding_points*=2;
 
 		result = 0;
-		flt_type total_weight = 0;
+		flt_t total_weight = 0;
 		IceBRG::multi_vector<ssize_t> position(SPCP(name)->_num_dim_,0);
 
 		for(ssize_t j=0; j < num_surrounding_points; j++)
 		{
-			flt_type weight = 1;
-			int_type divisor = 1;
+			flt_t weight = 1;
+			int_t divisor = 1;
 			for(ssize_t i=0; i < SPCP(name)->_num_dim_; i++)
 			{
 				if(divisible(j/divisor,2))

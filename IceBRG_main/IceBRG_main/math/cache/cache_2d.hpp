@@ -56,32 +56,32 @@
 #define SPP(name) static_cast<name*>(this)
 
 #define DECLARE_BRG_CACHE_2D_STATIC_VARS()		               \
-	static flt_type _min_1_, _max_1_, _step_1_;                  \
-	static size_t _resolution_1_;                        \
-	static flt_type _min_2_, _max_2_, _step_2_;                  \
-	static size_t _resolution_2_;                        \
-	static std::vector< std::vector< flt_type > > _results_;     \
+	static IceBRG::flt_t _min_1_, _max_1_, _step_1_;                  \
+	static IceBRG::ssize_t _resolution_1_;                        \
+	static IceBRG::flt_t _min_2_, _max_2_, _step_2_;                  \
+	static IceBRG::ssize_t _resolution_2_;                        \
+	static IceBRG::vector_t< IceBRG::flt_vector_t > _results_;     \
 											                   \
-	static std::string _file_name_;                            \
-	static int_type _version_number_;                      \
+	static IceBRG::str_t _file_name_;                            \
+	static IceBRG::int_t _version_number_;                      \
 											                   \
 	static bool _loaded_, _initialised_;
 
 #define DEFINE_BRG_CACHE_2D_STATIC_VARS(class_name,init_min_1,init_max_1,init_step_1, \
                                         init_min_2, init_max_2, init_step_2)\
-	flt_type IceBRG::class_name::_min_1_ = init_min_1;						\
-	flt_type IceBRG::class_name::_max_1_ = init_max_1; 						\
-	flt_type IceBRG::class_name::_step_1_ = init_step_1;					\
-	size_t IceBRG::class_name::_resolution_1_ = 0;					\
-	flt_type IceBRG::class_name::_min_2_ = init_min_2;						\
-	flt_type IceBRG::class_name::_max_2_ = init_max_2; 						\
-	flt_type IceBRG::class_name::_step_2_ = init_step_2;					\
-	size_t IceBRG::class_name::_resolution_2_ = 0;					\
+	IceBRG::flt_t IceBRG::class_name::_min_1_ = init_min_1;						\
+	IceBRG::flt_t IceBRG::class_name::_max_1_ = init_max_1; 						\
+	IceBRG::flt_t IceBRG::class_name::_step_1_ = init_step_1;					\
+	IceBRG::ssize_t IceBRG::class_name::_resolution_1_ = 0;					\
+	IceBRG::flt_t IceBRG::class_name::_min_2_ = init_min_2;						\
+	IceBRG::flt_t IceBRG::class_name::_max_2_ = init_max_2; 						\
+	IceBRG::flt_t IceBRG::class_name::_step_2_ = init_step_2;					\
+	IceBRG::ssize_t IceBRG::class_name::_resolution_2_ = 0;					\
 	bool IceBRG::class_name::_loaded_ = false;							\
 	bool IceBRG::class_name::_initialised_ = false;						\
-	std::string IceBRG::class_name::_file_name_ = "";						\
-	int_type IceBRG::class_name::_version_number_ = 2;		        \
-	std::vector< std::vector< flt_type > > IceBRG::class_name::_results_;
+	IceBRG::str_t IceBRG::class_name::_file_name_ = "";						\
+	IceBRG::int_t IceBRG::class_name::_version_number_ = 2;		        \
+	IceBRG::vector_t< IceBRG::flt_vector_t > IceBRG::class_name::_results_;
 
 namespace IceBRG
 {
@@ -112,8 +112,8 @@ private:
 		#endif
 		if(!SPCP(name)->_initialised_)
 		{
-			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (ssize_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
 			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
 			SPCP(name)->_version_number_ = 2; // This should be changed when there are changes to this code
 
@@ -125,7 +125,7 @@ private:
 		std::ifstream in_file;
 		std::string file_data;
 		bool need_to_calc = false;
-		int_type loop_counter = 0;
+		int_t loop_counter = 0;
 
 		if ( SPCP(name)->_loaded_ )
 			return;
@@ -158,7 +158,7 @@ private:
 			// Check that it has the right name and version
 
 			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			int_type file_version = std::numeric_limits<int_type>::max();
+			int_t file_version = std::numeric_limits<int_t>::max();
 
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
@@ -181,15 +181,15 @@ private:
 			in_file.read((char *)&(SPCP(name)->_step_2_),sizeof(SPCP(name)->_step_2_));
 
 			// Set up data
-			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (ssize_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
 			make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
 
 			// Read in data
 
 			// Initialise
 			const std::streamsize size = sizeof(SPCP(name)->_results_[0][0]); // Store the size for speed
-			size_t i_1=0, i_2=0;
+			ssize_t i_1=0, i_2=0;
 
 			while ( ( !in_file.eof() ) && ( i_2 < SPCP(name)->_resolution_2_ )
 					&& (in_file) )
@@ -240,8 +240,8 @@ private:
 		handle_notification("Generating " + SPCP(name)->_file_name_ + ". This may take some time.");
 
 		// Set up data
-		SPCP(name)->_resolution_1_ = (int_type)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
-		SPCP(name)->_resolution_2_ = (int_type)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
+		SPCP(name)->_resolution_1_ = (int_t)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
+		SPCP(name)->_resolution_2_ = (int_t)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
 		make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
 
 		// Calculate data
@@ -250,13 +250,13 @@ private:
 		#ifdef _OPENMP
 		#pragma omp parallel for schedule(dynamic)
 		#endif
-		for ( size_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
+		for ( ssize_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
 		{
-			flt_type x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
-			for( size_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
+			flt_t x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
+			for( ssize_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
 			{
-				flt_type x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
-				flt_type result = 0;
+				flt_t x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
+				flt_t result = 0;
 				try
 				{
 					result = SPCP(name)->_calculate(x_1, x_2);
@@ -291,7 +291,7 @@ private:
 		// Output name and version
 
 		std::string file_name = SPCP(name)->_name_base();
-		int_type file_version = SPCP(name)->_version_number_;
+		int_t file_version = SPCP(name)->_version_number_;
 
 		out_file.write(file_name.c_str(),BRG_CACHE_ND_NAME_SIZE);
 		out_file.write((char *)&file_version,sizeof(file_version));
@@ -308,7 +308,7 @@ private:
 
 		// Initialize
 		const std::streamsize size = sizeof(SPCP(name)->_results_[0][0]);
-		size_t i_1=0, i_2=0;
+		ssize_t i_1=0, i_2=0;
 
 		while ( i_2<SPCP(name)->_resolution_2_ )
 		{
@@ -336,7 +336,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Gets the result in the proper units
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return v;
 	}
@@ -345,7 +345,7 @@ protected:
 
 	/// Long calculation function, which is used to generate the cache; must be overloaded by each
 	/// child.
-	flt_type _calculate(const flt_type & x_1, const flt_type & x_2) const;
+	flt_t _calculate(const flt_t & x_1, const flt_t & x_2) const;
 
 	/// The default name (without extension) for the cache file; should be unique for each cache.
 	std::string _name_base() const;
@@ -378,7 +378,7 @@ public:
 			SPCP(name)->_unload();
 		}
 		return;
-	} // const int_type set_file_name()
+	} // const int_t set_file_name()
 
 	/**
 	 * Set the range of the independent parameter for wish you want values to be
@@ -391,8 +391,8 @@ public:
 	 * @param new_max_1 The new maximum value, dimension 2.
 	 * @param new_step_1 The number of points at which to cache the results, dimension 2.
 	 */
-	void set_range( const flt_type & new_min_1, const flt_type & new_max_1, const flt_type & new_step_1,
-			 	         const flt_type & new_min_2, const flt_type & new_max_2, const flt_type & new_step_2 )
+	void set_range( const flt_t & new_min_1, const flt_t & new_max_1, const flt_t & new_step_1,
+			 	         const flt_t & new_min_2, const flt_t & new_max_2, const flt_t & new_step_2 )
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -417,7 +417,7 @@ public:
 			SPCP(name)->_unload();
 			SPCP(name)->_calc();
 		}
-	} // const int_type set_range()
+	} // const int_t set_range()
 
 	/**
 	 * Print the cached input and output values to an output stream.
@@ -448,9 +448,9 @@ public:
 		// Fill up data
 		std::vector< std::vector<std::string> > data(4);
 		std::stringstream ss;
-		for(size_t i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
+		for(ssize_t i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
 		{
-			for(size_t i_2=0; i_2<SPCP(name)->_resolution_2_; ++i_2)
+			for(ssize_t i_2=0; i_2<SPCP(name)->_resolution_2_; ++i_2)
 			{
 				data[0].push_back("");
 				ss.str("");
@@ -480,15 +480,15 @@ public:
 	any_units_type get( const Tx1 & init_x_1, const Tx2 & init_x_2 ) const
 	{
 
-		flt_type x_1 = value_of(init_x_1);
-		flt_type x_2 = value_of(init_x_2);
+		flt_t x_1 = value_of(init_x_1);
+		flt_t x_2 = value_of(init_x_2);
 
-		flt_type xlo_1, xhi_1;
-		size_t xi_1; // Lower nearby array point
-		flt_type xlo_2, xhi_2;
-		size_t xi_2; // Lower nearby array point
-		flt_type result = 0;
-		flt_type total_weight = 0;
+		flt_t xlo_1, xhi_1;
+		ssize_t xi_1; // Lower nearby array point
+		flt_t xlo_2, xhi_2;
+		ssize_t xi_2; // Lower nearby array point
+		flt_t result = 0;
+		flt_t total_weight = 0;
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
 
@@ -518,10 +518,10 @@ public:
 			}
 		}
 
-		xi_1 = (size_t)bound(0,
+		xi_1 = (ssize_t)bound(0,
 				( ( x_1 - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ),
 				SPCP(name)->_resolution_1_ - 2 );
-		xi_2 = (size_t)bound(0,
+		xi_2 = (ssize_t)bound(0,
 				( ( x_2 - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ),
 				SPCP(name)->_resolution_2_ - 2 );
 

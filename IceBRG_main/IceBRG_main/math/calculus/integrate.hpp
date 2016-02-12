@@ -71,15 +71,15 @@ inline auto integrate_trapezoid( const f * func, const T & min_in_param, const T
 	T in_param( units_cast<T>(0.) );
 
 	bool first_step = true;
-	int_type num_steps;
+	int_t num_steps;
 
 	// Calculate number of steps for integration
-	num_steps = (int_type)( ( max_in_param - min_in_param )
+	num_steps = (int_t)( ( max_in_param - min_in_param )
 			/ safe_d( in_param_step ) ) + 1;
 
 	// Standard trapezoid rule integration routine now
 
-	for ( int_type i = 0; i < num_steps; i++ )
+	for ( int_t i = 0; i < num_steps; i++ )
 	{
 		in_param = min_in_param + in_param_step * i;
 
@@ -95,7 +95,7 @@ inline auto integrate_trapezoid( const f * func, const T & min_in_param, const T
 			out_param += ( last_out_param + temp_out_param )
 				* in_param_step / 2.;
 
-	} // for( int_type i = 0; i < num_steps[0]; i++ )
+	} // for( int_t i = 0; i < num_steps[0]; i++ )
 
 	return out_param;
 }
@@ -123,9 +123,9 @@ inline auto integrate_trapezoid( const f * func,
 	auto num_out_param = ssize((func)(in_param,true));
 
 	bool array_created = false; // So we can only create the out_param array once, after the first step
-	std::vector< int_type > num_steps;
-	int_type param_starting_index;
-	int_type new_num_in_param = 0, new_num_passed_param = 0, num_tot_param =
+	std::vector< int_t > num_steps;
+	int_t param_starting_index;
+	int_t new_num_in_param = 0, new_num_passed_param = 0, num_tot_param =
 			num_in_param + num_passed_in_param;
 
 	// Check that we have a sane number of input parameters
@@ -147,7 +147,7 @@ inline auto integrate_trapezoid( const f * func,
 	// Calculate number of steps for integration
 	for ( ssize_t i = 0; i < num_in_param; i++ )
 	{
-		num_steps[i] = (int_type)( ( max_in_param[i] - min_in_param[i] )
+		num_steps[i] = (int_t)( ( max_in_param[i] - min_in_param[i] )
 				/ safe_d( in_param_step[i] ) ) + 1;
 	}
 
@@ -158,7 +158,7 @@ inline auto integrate_trapezoid( const f * func,
 		for ( ssize_t j = 0; j < num_passed_in_param; j++ )
 		{
 			in_param[j] = passed_in_param[j];
-		} // for( int_type j = 0; j < num_passed_param; j++ )
+		} // for( int_t j = 0; j < num_passed_param; j++ )
 	} // if ( num_passed_param > 0 )
 
 	param_starting_index = num_passed_in_param; // Set index for parameter we'll be integrating over
@@ -168,7 +168,7 @@ inline auto integrate_trapezoid( const f * func,
 		// Standard trapezoid rule integration routine now
 
 		array_created = false;
-		for ( int_type i = 0; i < num_steps[0]; i++ )
+		for ( int_t i = 0; i < num_steps[0]; i++ )
 		{
 			in_param[param_starting_index] = min_in_param[0]
 					+ in_param_step[0] * i;
@@ -202,7 +202,7 @@ inline auto integrate_trapezoid( const f * func,
 
 			}
 
-		} // for( int_type i = 0; i < num_steps[0]; i++ )
+		} // for( int_t i = 0; i < num_steps[0]; i++ )
 
 	}
 	else if ( num_in_param > 1 )   // else if(num_in_param == 1)
@@ -225,10 +225,10 @@ inline auto integrate_trapezoid( const f * func,
 			new_min_in_param[i] = min_in_param[i + 1];
 			new_max_in_param[i] = max_in_param[i + 1];
 			new_in_param_step[i] = in_param_step[i + 1];
-		} // for( int_type i = 0; i < num_in_param-1; i++)
+		} // for( int_t i = 0; i < num_in_param-1; i++)
 
 		array_created = false;
-		for ( int_type i = 0; i < num_steps[param_starting_index]; i++ )
+		for ( int_t i = 0; i < num_steps[param_starting_index]; i++ )
 		{
 			// Determine input param and add it to passed parameters array
 			new_passed_in_param[new_num_passed_param - 1] =
@@ -266,7 +266,7 @@ inline auto integrate_trapezoid( const f * func,
 // Scalar-in, scalar-out version
 template< typename f, typename T >
 inline auto integrate_trapezoid( const f * func, const T & min_in_param, const T & max_in_param,
-		const int_type num_samples ) -> decltype(func(min_in_param)*min_in_param)
+		const int_t num_samples ) -> decltype(func(min_in_param)*min_in_param)
 {
 	T in_param_step( ( max_in_param - min_in_param )
 				/ safe_d( num_samples - 1 ));
@@ -278,7 +278,7 @@ inline auto integrate_trapezoid( const f * func, const T & min_in_param, const T
 template< typename f, typename T >
 inline auto integrate_trapezoid( const f * func,
 		const std::vector< T > & min_in_param,
-		const std::vector< T > & max_in_param, const int_type num_samples,
+		const std::vector< T > & max_in_param, const int_t num_samples,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(func(min_in_param))
 {
@@ -338,7 +338,7 @@ inline auto integrate_weighted_trapezoid( const f1 * func, const f2 * func_weigh
 template< typename f1, typename f2, typename T >
 inline auto integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
 		const T & min_in_param,
-		const T & max_in_param, const int_type num_samples ) ->
+		const T & max_in_param, const int_t num_samples ) ->
 			decltype(func(min_in_param))
 {
 	functor_product< f1, f2, T > fprod( func, func_weight );
@@ -355,7 +355,7 @@ inline auto integrate_weighted_trapezoid( const f1 * func, const f2 * func_weigh
 template< typename f1, typename f2, typename T >
 inline auto integrate_weighted_trapezoid( const f1 * func, const f2 * func_weight,
 		const std::vector< T > & min_in_param,
-		const std::vector< T > & max_in_param, const int_type num_samples,
+		const std::vector< T > & max_in_param, const int_t num_samples,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(func(min_in_param))
 {
@@ -379,7 +379,7 @@ inline auto integrate_weighted_trapezoid( const f1 * func, const f2 * func_weigh
 template< typename f, typename T >
 inline auto integrate_mc( const f * func,
 		const std::vector< T > & min_in_param,
-		const std::vector< T > & max_in_param, const int_type num_samples ) ->
+		const std::vector< T > & max_in_param, const int_t num_samples ) ->
 			decltype(multiply(func(min_in_param),min_in_param))
 {
 	bool first_sample = true;
@@ -418,7 +418,7 @@ inline auto integrate_mc( const f * func,
 // Scalar-in, scalar-out version.
 template< typename f, typename Tin >
 inline auto integrate_Romberg( const f & func,
-		const Tin & min_in_param, const Tin & max_in_param, flt_type precision = 0.00001,
+		const Tin & min_in_param, const Tin & max_in_param, flt_t precision = 0.00001,
 		bool tighten_precision = false ) -> decltype(func(min_in_param)*min_in_param)
 {
 	typedef decltype(func(min_in_param)) Tfout;
@@ -430,7 +430,7 @@ inline auto integrate_Romberg( const f & func,
 	Tin a0, b0;
 	Tfout fa( units_cast<Tfout>(0.) ), fb( units_cast<Tfout>(0.) );
 	Tfout ftot( units_cast<Tfout>(0.) );
-	flt_type d;
+	flt_t d;
 
 	// Rhomberg's rule integration routine
 
@@ -449,7 +449,7 @@ inline auto integrate_Romberg( const f & func,
 	R.push_back( Rn );
 	Rn.resize( 0 );
 
-	for ( int_type n = 1; n < ROMBERG_N_MAX; n++ )
+	for ( int_t n = 1; n < ROMBERG_N_MAX; n++ )
 	{
 		Rn.reserve(n+1);
 
@@ -457,20 +457,20 @@ inline auto integrate_Romberg( const f & func,
 
 		ftot = units_cast<Tfout>(0.);
 
-		for ( int_type k = 1; k <= runtime_ipow( 2, n - 1 ); k++ )
+		for ( int_t k = 1; k <= runtime_ipow( 2, n - 1 ); k++ )
 		{
-			in_param = a0 + (flt_type)( 2 * k - 1 ) * ( b0 - a0 ) / (flt_type)runtime_ipow( 2, n );
+			in_param = a0 + (flt_t)( 2 * k - 1 ) * ( b0 - a0 ) / (flt_t)runtime_ipow( 2, n );
 			ftot += ( func )( in_param );
 		}
 
-		Rnm = 0.5 * R[n - 1][0] + ( b0 - a0 ) / (flt_type)runtime_ipow( 2, n ) * ftot;
+		Rnm = 0.5 * R[n - 1][0] + ( b0 - a0 ) / (flt_t)runtime_ipow( 2, n ) * ftot;
 
 		Rn.push_back( Rnm );
 
-		for ( int_type m = 1; m <= n; m++ )
+		for ( int_t m = 1; m <= n; m++ )
 		{
-			Rnm = ( (flt_type)runtime_ipow( 4, m ) * Rn[m - 1] - R[n - 1][m - 1] )
-					/ (flt_type)( runtime_ipow( 4, m ) - 1 );
+			Rnm = ( (flt_t)runtime_ipow( 4, m ) * Rn[m - 1] - R[n - 1][m - 1] )
+					/ (flt_t)( runtime_ipow( 4, m ) - 1 );
 			Rn.push_back( Rnm );
 		}
 
@@ -485,7 +485,7 @@ inline auto integrate_Romberg( const f & func,
 			return R[n][n];
 		}
 
-	} // for(int_type n = 0; n < RHOMBERG_N_MAX; n++)
+	} // for(int_t n = 0; n < RHOMBERG_N_MAX; n++)
 
 	throw std::runtime_error("integrate_Romberg did not converge.");
 	return R.back().back();
@@ -496,7 +496,7 @@ template< typename f, typename T >
 inline auto integrate_Romberg( const f & func,
 		const std::vector< T > & min_in_param,
 		const std::vector< T > & max_in_param,
-		const flt_type & precision = 0.00001,
+		const flt_t & precision = 0.00001,
 		const bool tighten_precision = false,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(multiply(func(min_in_param),min_in_param))
@@ -540,7 +540,7 @@ inline auto integrate_Romberg( const f & func,
 		for ( ssize_t j = 0; j < num_passed_in_param; j++ )
 		{
 			in_param[j] = passed_in_param[j];
-		} // for( int_type j = 0; j < num_passed_param; j++ )
+		} // for( int_t j = 0; j < num_passed_param; j++ )
 	} // if ( num_passed_param > 0 )
 
 	param_starting_index = num_passed_in_param; // Set index for parameter we'll be integrating over
@@ -575,12 +575,12 @@ inline auto integrate_Romberg( const f & func,
 		R.push_back( Rn );
 		Rn.resize( 0 );
 
-		for ( int_type n = 1; n < ROMBERG_N_MAX; n++ )
+		for ( int_t n = 1; n < ROMBERG_N_MAX; n++ )
 		{
 			// Get R[n][0]
 
 			make_array( ftot, num_out_param );
-			for ( int_type k = 1; k <= runtime_ipow( 2, n - 1 ); k++ )
+			for ( int_t k = 1; k <= runtime_ipow( 2, n - 1 ); k++ )
 			{
 				in_param[param_starting_index] = a0
 						+ ( 2 * k - 1 ) * ( b0 - a0 ) / runtime_ipow( 2, n );
@@ -595,7 +595,7 @@ inline auto integrate_Romberg( const f & func,
 
 			Rn.push_back( Rnm );
 
-			for ( int_type m = 1; m <= n; m++ )
+			for ( int_t m = 1; m <= n; m++ )
 			{
 				for ( ssize_t i = 0; i < num_out_param; i++ )
 					Rnm[i] = ( runtime_ipow( 4, m ) * Rn[m - 1][i]
@@ -619,7 +619,7 @@ inline auto integrate_Romberg( const f & func,
 				break;
 			}
 
-		} // for(int_type n = 0; n < RHOMBERG_N_MAX; n++)
+		} // for(int_t n = 0; n < RHOMBERG_N_MAX; n++)
 
 	} // else if(num_in_param == 1)
 	else if ( num_in_param > 1 )
@@ -629,10 +629,10 @@ inline auto integrate_Romberg( const f & func,
 		// Set up new passed parameter array
 		new_num_passed_param = num_passed_in_param + 1;
 		new_num_in_param = num_in_param - 1;
-		flt_type new_precision;
+		flt_t new_precision;
 		if ( tighten_precision )
 			new_precision = std::pow( precision,
-					(flt_type)num_in_param / new_num_in_param );
+					(flt_t)num_in_param / new_num_in_param );
 		else
 			new_precision = precision;
 		make_array( new_passed_in_param,
@@ -647,7 +647,7 @@ inline auto integrate_Romberg( const f & func,
 		{
 			new_min_in_param[i] = min_in_param[i + 1];
 			new_max_in_param[i] = max_in_param[i + 1];
-		} // for( int_type i = 0; i < num_in_param-1; i++)
+		} // for( int_t i = 0; i < num_in_param-1; i++)
 
 		a0 = min_in_param[param_starting_index];
 		b0 = max_in_param[param_starting_index];
@@ -678,12 +678,12 @@ inline auto integrate_Romberg( const f & func,
 		R.push_back( Rn );
 		Rn.resize( 0 );
 
-		for ( int_type n = 1; n < ROMBERG_N_MAX; n++ )
+		for ( int_t n = 1; n < ROMBERG_N_MAX; n++ )
 		{
 			// Get R[n][0]
 
 			make_array( ftot, num_out_param );
-			for ( int_type k = 1; k <= runtime_ipow( 2, n - 1 ); k++ )
+			for ( int_t k = 1; k <= runtime_ipow( 2, n - 1 ); k++ )
 			{
 				new_passed_in_param[new_num_passed_param - 1] = a0
 						+ ( 2 * k - 1 ) * ( b0 - a0 ) / runtime_ipow( 2., n );
@@ -702,7 +702,7 @@ inline auto integrate_Romberg( const f & func,
 
 			Rn.push_back( Rnm );
 
-			for ( int_type m = 1; m <= n; m++ )
+			for ( int_t m = 1; m <= n; m++ )
 			{
 				for ( ssize_t i = 0; i < num_out_param; i++ )
 					Rnm[i] = ( runtime_ipow( 4, m ) * Rn[m - 1][i]
@@ -742,7 +742,7 @@ inline auto integrate_Romberg( const f & func,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_product_Romberg( const f_in_1 & func1,
 		const f_in_2 & func2, const T & min_in_param, const T & max_in_param,
-		const flt_type & precision = 0.00001, const bool tighten_precision = false ) ->
+		const flt_t & precision = 0.00001, const bool tighten_precision = false ) ->
 			decltype(func1(min_in_param)*func2(min_in_param)*min_in_param)
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func1, func2 );
@@ -755,7 +755,7 @@ inline auto integrate_product_Romberg( const f_in_1 & func1,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_product_Romberg( const f_in_1 & func1,
 		const f_in_2 & func2, const std::vector< T > & min_in_param,
-		const std::vector< T > & max_in_param, const flt_type & precision = 0.00001,
+		const std::vector< T > & max_in_param, const flt_t & precision = 0.00001,
 		const bool tighten_precision = false,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(multiply(multiply(func1(min_in_param),func2(min_in_param)),min_in_param))
@@ -770,7 +770,7 @@ inline auto integrate_product_Romberg( const f_in_1 & func1,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_weighted_Romberg( const f_in_1 & func,
 		const f_in_2 & func_weight, const T & min_in_param, const T & max_in_param,
-		const flt_type & precision = 0.00001, const bool tighten_precision = false ) ->
+		const flt_t & precision = 0.00001, const bool tighten_precision = false ) ->
 			decltype(func(min_in_param))
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func, func_weight );
@@ -788,7 +788,7 @@ inline auto integrate_weighted_Romberg( const f_in_1 & func,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_weighted_Romberg( const f_in_1 & func,
 		const f_in_2 & func_weight,	const std::vector< T > & min_in_param,
-		const std::vector< T > & max_in_param, const flt_type & precision = 0.00001,
+		const std::vector< T > & max_in_param, const flt_t & precision = 0.00001,
 		const bool tighten_precision = false,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(func(min_in_param))

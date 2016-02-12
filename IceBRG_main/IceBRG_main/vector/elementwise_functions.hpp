@@ -89,7 +89,7 @@ T1 apply( const f & func, const T1 & v1, const T2 &v2 )
 #if (1)
 
 template<typename T, typename f, typename Tout=T, BRG_F_IS_CONTAINER(Tout)>
-Tout rand_container_of_size(const f func, const int_type & size=1)
+Tout rand_container_of_size(const f func, const int_t & size=1)
 {
 	T result(size);
 
@@ -99,7 +99,7 @@ Tout rand_container_of_size(const f func, const int_type & size=1)
 }
 
 template<typename T, typename f, typename T1, typename Tout=T, BRG_F_IS_CONTAINER(Tout)>
-Tout rand_container_of_size(const f func, const T1 & v1, const int_type & size)
+Tout rand_container_of_size(const f func, const T1 & v1, const int_t & size)
 {
 	T1 result(size);
 
@@ -109,7 +109,7 @@ Tout rand_container_of_size(const f func, const T1 & v1, const int_type & size)
 }
 
 template<typename T, typename f, typename T1, typename T2, typename Tout=T, BRG_F_IS_CONTAINER(Tout)>
-Tout rand_container_of_size(const f func, const T1 & v1, const T2 & v2, const int_type & size)
+Tout rand_container_of_size(const f func, const T1 & v1, const T2 & v2, const int_t & size)
 {
 	T1 result(size);
 
@@ -546,7 +546,7 @@ T1 safe_pow( T1 v1, const T2 &v2 )
 {
 
 	assert(v1.size()==v2.size());
-	for(int_type i = 0; i < v1.size(); i++)
+	for(int_t i = 0; i < v1.size(); i++)
 	{
 		v1[i] = safe_pow(v1[i], v2[i]);
 	}

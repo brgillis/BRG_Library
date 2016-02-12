@@ -56,26 +56,26 @@ public:
 	// Public member variables
 
 	mass_type stellar_mass;
-	flt_type umag, umag_err;
-	flt_type gmag, gmag_err;
-	flt_type rmag, rmag_err;
-	flt_type imag, imag_err;
-	flt_type zmag, zmag_err;
+	flt_t umag, umag_err;
+	flt_t gmag, gmag_err;
+	flt_t rmag, rmag_err;
+	flt_t imag, imag_err;
+	flt_t zmag, zmag_err;
 
-	flt_type z_phot, z_phot_err;
-	flt_type odds;
-	flt_type phot_template;
+	flt_t z_phot, z_phot_err;
+	flt_t odds;
+	flt_t phot_template;
 
 	galaxy_group *host_group; // Pointer to group this galaxy resides within
-	int_type host_group_index;
+	int_t host_group_index;
 
 	// Public member functions
 
 	// Constructors
-	galaxy( const angle_type & init_ra = 0, const angle_type & init_dec = 0, flt_type init_z = 0,
-			const angle_type & init_ra_err = 0, const angle_type & init_dec_err = 0, flt_type init_z_err =
+	galaxy( const angle_type & init_ra = 0, const angle_type & init_dec = 0, flt_t init_z = 0,
+			const angle_type & init_ra_err = 0, const angle_type & init_dec_err = 0, flt_t init_z_err =
 			0, const mass_type & init_stellar_mass=0,
-			flt_type init_mag=0, flt_type init_mag_err=0 );
+			flt_t init_mag=0, flt_t init_mag_err=0 );
 
 	// Copy constructor
 	//galaxy(const galaxy other_galaxy); // Implicit is fine for us
@@ -91,7 +91,7 @@ public:
 	{
 		return stellar_mass;
 	}
-	flt_type mag() const
+	flt_t mag() const
 	{
 		return imag;
 	}

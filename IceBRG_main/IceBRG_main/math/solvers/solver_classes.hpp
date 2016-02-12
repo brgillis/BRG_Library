@@ -43,7 +43,7 @@
 
 namespace IceBRG {
 
-template< typename T_value_type, int_type T_num_params=Eigen::Dynamic >
+template< typename T_value_type, int_t T_num_params=Eigen::Dynamic >
 class MCMC_solver
 {
 public:
@@ -52,7 +52,7 @@ public:
 	typedef Eigen::Array<value_type,T_num_params,1> array_type;
 	typedef Eigen::Array<value_type,T_num_params,Eigen::Dynamic> array2d_type;
 	typedef Eigen::Matrix<value_type,T_num_params,T_num_params> matrix_type;
-	typedef decltype(array_type().size()) size_type;
+	typedef decltype(array_type().size()) ssize_t;
 
 private:
 	// Private result storage
@@ -78,10 +78,10 @@ public:
 			const array_type & init_min_in_params,
 			const array_type & init_max_in_params,
 			const array_type & init_in_param_step_sigmas,
-			const size_type & max_steps=1000000,
-			const size_type & annealing_period=100000,
-			const flt_type & annealing_factor=4,
-			const size_type & skip_factor=10)
+			const ssize_t & max_steps=1000000,
+			const ssize_t & annealing_period=100000,
+			const flt_t & annealing_factor=4,
+			const ssize_t & skip_factor=10)
 	{
 		static_assert(std::is_convertible<decltype(func(array_type())),value_type>::value,
 					  "Function passed to MCMC solver has incorrect return type.");
@@ -94,7 +94,7 @@ public:
 		assert(init_in_params.size()==init_in_param_step_sigmas.size());
 		assert((init_in_params.size()==T_num_params) or (T_num_params==Eigen::Dynamic));
 
-		size_type array_size = init_in_params.size();
+		ssize_t array_size = init_in_params.size();
 
 		clear();
 
@@ -119,13 +119,13 @@ public:
 		// Check if any of the params likely have max and min mixed up
 		if(bounds_check)
 		{
-			for(int_type i = 0; i < max_in_params.size(); i++)
+			for(int_t i = 0; i < max_in_params.size(); i++)
 			{
 				if(min_in_params(i)>max_in_params(i))
 				{
 					std::swap(min_in_params(i),max_in_params(i));
 				} // if(min_in_params.at(i)>max_in_params.at(i))
-			} // for(int_type i = 0; i < max_in_params.size(); i++)
+			} // for(int_t i = 0; i < max_in_params.size(); i++)
 		} // if(bounds_check)
 
 		// Check step sizes
@@ -135,7 +135,7 @@ public:
 		if(in_param_step_sigmas.size() < min_in_params.size())
 			in_param_step_sigmas.resize(min_in_params.size(),0);
 
-		for(int_type i = 0; i < in_param_step_sigmas.size(); i++)
+		for(int_t i = 0; i < in_param_step_sigmas.size(); i++)
 		{
 			if(in_param_step_sigmas(i) <= 0)
 			{
@@ -152,10 +152,10 @@ public:
 		}
 
 		// Initialise generally
-		flt_type annealing = 1.;
+		flt_t annealing = 1.;
 
 		bool last_cycle = false;
-		size_type last_cycle_count = 0;
+		ssize_t last_cycle_count = 0;
 
 		array_type current_in_params = init_in_params, test_in_params = init_in_params,
 				best_in_params = init_in_params;
@@ -165,7 +165,7 @@ public:
 		// Set up second cycle data
 		bool first_cycle = true;
 		bool second_cycle = false;
-		size_type second_cycle_points_to_record = annealing_period/skip_factor;
+		ssize_t second_cycle_points_to_record = annealing_period/skip_factor;
 		_test_run_points_ = array2d_type(array_size,second_cycle_points_to_record);
 
 		// Get value at initial point
@@ -179,11 +179,11 @@ public:
 			throw;
 		}
 		best_out_param = out_param;
-		flt_type last_log_likelihood = -annealing*out_param/2;
+		flt_t last_log_likelihood = -annealing*out_param/2;
 
 		auto new_Gaus_rand = [] (const value_type & dummy) {return Gaus_rand();};
 
-		for(int_type step = 0; step < max_steps; step++)
+		for(int_t step = 0; step < max_steps; step++)
 		{
 			// Get a new value
 			test_in_params = current_in_params + array_type::Zero(array_size).unaryExpr(new_Gaus_rand) *
@@ -205,7 +205,7 @@ public:
 			{
 				good_result = false;
 			}
-			flt_type new_log_likelihood = -annealing*out_param/2;
+			flt_t new_log_likelihood = -annealing*out_param/2;
 
 			// If it's usable, check if we should step to it
 			bool step_to_it = false;
@@ -239,9 +239,9 @@ public:
 			{
 				if(divisible(step,skip_factor))
 				{
-					size_type c_i = (step-annealing_period)/skip_factor-1;
+					ssize_t c_i = (step-annealing_period)/skip_factor-1;
 					auto col = _test_run_points_->col(c_i);
-					for(size_type p_i=0; p_i<array_size; ++p_i)
+					for(ssize_t p_i=0; p_i<array_size; ++p_i)
 					{
 						col(p_i) = current_in_params(p_i);
 					}
@@ -275,7 +275,7 @@ public:
 						last_cycle = true;
 				}
 			}
-		} // for(int_type step = 0; step < max_steps; step++)
+		} // for(int_t step = 0; step < max_steps; step++)
 
 		// Calculate mean now
 		mean_in_params = mean_in_params/safe_d(last_cycle_count);
@@ -311,12 +311,12 @@ public:
 		if(!_means_)
 		{
 			const auto & test_points = get_test_run_points();
-			size_type num_params = test_points.rows();
-			size_type num_test_points = test_points.cols();
+			ssize_t num_params = test_points.rows();
+			ssize_t num_test_points = test_points.cols();
 
 			_means_ = array_type(num_params);
 
-			for(size_type p_i=0; p_i<num_params; ++p_i)
+			for(ssize_t p_i=0; p_i<num_params; ++p_i)
 			{
 				_means_->operator()(p_i) = test_points.row(p_i).mean();
 			}
@@ -333,15 +333,15 @@ public:
 		if(!_covars_)
 		{
 			const auto & means = get_means();
-			size_type num_params = means.rows();
+			ssize_t num_params = means.rows();
 			const auto & test_points = get_test_run_points();
 			assert(num_params==test_points.rows());
 
 			_covars_ = matrix_type();
 
-			for(size_type p1_i=0; p1_i<num_params; ++p1_i)
+			for(ssize_t p1_i=0; p1_i<num_params; ++p1_i)
 			{
-				for(size_type p2_i=0; p2_i<num_params; ++p2_i)
+				for(ssize_t p2_i=0; p2_i<num_params; ++p2_i)
 				{
 					_covars_->operator()(p1_i,p2_i) = ((test_points.row(p1_i)-means(p1_i)) *
 							                           (test_points.row(p2_i)-means(p2_i))).mean();
@@ -357,12 +357,12 @@ public:
 		if(!_stddevs_)
 		{
 			const auto & covars = get_covars();
-			size_type num_params = covars.rows();
+			ssize_t num_params = covars.rows();
 			assert(covars.cols()==num_params);
 
 			_stddevs_ = array_type(num_params);
 
-			for(size_type p_i=0; p_i<num_params; ++p_i)
+			for(ssize_t p_i=0; p_i<num_params; ++p_i)
 			{
 				_stddevs_->operator()(p_i) = std::sqrt(covars(p_i,p_i));
 			}

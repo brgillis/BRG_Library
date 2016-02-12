@@ -118,20 +118,20 @@ using boost::any_cast;
 template<typename T,
 	typename std::enable_if<!std::is_same<T,any_units_type>::value &&
 		boost::units::is_quantity<T>::value,char>::type = 0>
-flt_type value_of( const T & x)
+flt_t value_of( const T & x)
 {
-	return static_cast<flt_type>(x.value());
+	return static_cast<flt_t>(x.value());
 }
 template<typename T,
 typename std::enable_if<!std::is_same<T,any_units_type>::value &&
 !boost::units::is_quantity<T>::value,char>::type = 0>
-flt_type value_of( const T & x)
+flt_t value_of( const T & x)
 {
-	return static_cast<flt_type>(x);
+	return static_cast<flt_t>(x);
 }
 template<typename Tstored, typename T,
 	typename std::enable_if<std::is_same<T,any_units_type>::value,char>::type = 0>
-flt_type value_of( const T & x)
+flt_t value_of( const T & x)
 {
 	return value_of(any_cast<Tstored>(x));
 }
@@ -191,7 +191,7 @@ auto sqrt( const T & x) -> decltype(std::sqrt(x))
 	return std::sqrt(x);
 }
 
-template< int_type e, typename T,
+template< int_t e, typename T,
 typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 auto ipow(const T & x) -> decltype(boost::units::pow<e>(x))
@@ -199,32 +199,32 @@ auto ipow(const T & x) -> decltype(boost::units::pow<e>(x))
 	return boost::units::pow<e>(x);
 }
 
-template< int_type en, int_type ed, typename T,
+template< int_t en, int_t ed, typename T,
 typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 auto ipow( const T & x) -> decltype(boost::units::pow<boost::units::static_rational<en,ed>>(x))
 {
 	return boost::units::pow<boost::units::static_rational<en,ed>>(x);
 }
-template< int_type en, int_type ed, typename T,
+template< int_t en, int_t ed, typename T,
 typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
 auto ipow( const T & x) -> decltype(boost::units::pow<boost::units::static_rational<en,ed>>(x))
 {
-	return std::pow(x,static_cast<flt_type>(en)/ed);
+	return std::pow(x,static_cast<flt_t>(en)/ed);
 }
 
 template<typename T,
 typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-flt_type sin( const T & x)
+flt_t sin( const T & x)
 {
 	return boost::units::sin(x);
 }
 template<typename T,
 typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-flt_type sin( const T & x)
+flt_t sin( const T & x)
 {
 	return std::sin(x);
 }
@@ -232,14 +232,14 @@ flt_type sin( const T & x)
 template<typename T,
 typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-flt_type cos( const T & x)
+flt_t cos( const T & x)
 {
 	return boost::units::cos(x);
 }
 template<typename T,
 typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-flt_type cos( const T & x)
+flt_t cos( const T & x)
 {
 	return std::cos(x);
 }
@@ -247,14 +247,14 @@ flt_type cos( const T & x)
 template<typename T,
 typename std::enable_if<boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-flt_type tan( const T & x)
+flt_t tan( const T & x)
 {
 	return boost::units::tan(x);
 }
 template<typename T,
 typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-flt_type tan( const T & x)
+flt_t tan( const T & x)
 {
 	return std::tan(x);
 }
@@ -299,7 +299,7 @@ angle_type atan( const T & y)
 template<typename T,
 typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-flt_type atan( const T & y)
+flt_t atan( const T & y)
 {
 	return std::atan(y);
 }
@@ -314,7 +314,7 @@ angle_type atan2( const T & y, const T & x=1.)
 template<typename T,
 typename std::enable_if<!boost::units::is_quantity<T>::value,char>::type = 0,
 typename std::enable_if<!is_boost_tuple<T>::value,char>::type = 0>
-flt_type atan2( const T & y, const T & x=1.)
+flt_t atan2( const T & y, const T & x=1.)
 {
 	return std::atan2(y,x);
 }
@@ -331,13 +331,13 @@ namespace serialization {
 template<class Archive, class T>
 void save(Archive & ar, const boost::units::quantity<T> & g, const unsigned int version)
 {
-	flt_type val = g.value();
+	flt_t val = g.value();
     ar & val;
 }
 template<class Archive, class T>
 void load(Archive & ar, boost::units::quantity<T> & g, const unsigned int version)
 {
-	flt_type val;
+	flt_t val;
 	ar & val;
     g = IceBRG::units_cast<boost::units::quantity<T>>(std::move(val));
 }
@@ -360,48 +360,48 @@ template< short int d_p,
 			short int m_p=0,
 			short int a_p=0,
 			short int T_p=0>
-using custom_unit_type = flt_type;
+using custom_unit_type = flt_t;
 
-typedef flt_type dimensionless_type;
+typedef flt_t dimensionless_type;
 
-typedef flt_type distance_type;
-typedef flt_type area_type;
-typedef flt_type inverse_distance_type;
+typedef flt_t distance_type;
+typedef flt_t area_type;
+typedef flt_t inverse_distance_type;
 
-typedef flt_type time_type;
-typedef flt_type inverse_time_type;
+typedef flt_t time_type;
+typedef flt_t inverse_time_type;
 
-typedef flt_type mass_type;
+typedef flt_t mass_type;
 
-typedef flt_type angle_type;
-typedef flt_type square_angle_type;
+typedef flt_t angle_type;
+typedef flt_t square_angle_type;
 
-typedef flt_type temperature_type;
+typedef flt_t temperature_type;
 
-typedef flt_type velocity_type;
-typedef flt_type acceleration_type;
+typedef flt_t velocity_type;
+typedef flt_t acceleration_type;
 
-typedef flt_type density_type;
-typedef flt_type surface_density_type;
+typedef flt_t density_type;
+typedef flt_t surface_density_type;
 
-typedef flt_type any_units_type;
+typedef flt_t any_units_type;
 
-constexpr flt_type meter(1.);
-constexpr flt_type second(1.);
-constexpr flt_type kilogram(1.);
-constexpr flt_type radian(1.);
-constexpr flt_type meter_per_second(1.);
+constexpr flt_t meter(1.);
+constexpr flt_t second(1.);
+constexpr flt_t kilogram(1.);
+constexpr flt_t radian(1.);
+constexpr flt_t meter_per_second(1.);
 
-constexpr flt_type m = meter;
-constexpr flt_type s = second;
-constexpr flt_type kg = kilogram;
-constexpr flt_type rad = radian;
-constexpr flt_type mps = meter_per_second;
+constexpr flt_t m = meter;
+constexpr flt_t s = second;
+constexpr flt_t kg = kilogram;
+constexpr flt_t rad = radian;
+constexpr flt_t mps = meter_per_second;
 
 template<typename T>
-inline flt_type value_of( const T & x)
+inline flt_t value_of( const T & x)
 {
-	return static_cast<flt_type>(x);
+	return static_cast<flt_t>(x);
 }
 
 template<typename Tout, typename Tin>
@@ -439,16 +439,16 @@ inline T sqrt( const T & x)
   return std::sqrt(x);
 }
 
-//template< int_type e>
-//flt_type ipow( const flt_type & x)
+//template< int_t e>
+//flt_t ipow( const flt_t & x)
 //{
 //	return ipow<e>(x);
 //}
 
-template< int_type en, int_type ed>
-inline flt_type ipow( const flt_type & x)
+template< int_t en, int_t ed>
+inline flt_t ipow( const flt_t & x)
 {
-	return std::pow(x,static_cast<flt_type>(en)/ed);
+	return std::pow(x,static_cast<flt_t>(en)/ed);
 }
 
 template<typename T,

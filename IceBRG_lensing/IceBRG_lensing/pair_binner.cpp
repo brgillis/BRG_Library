@@ -43,7 +43,7 @@
 
 namespace IceBRG {
 
-flt_type lens_id::unmasked_frac(const distance_type & R_proj) const
+flt_t lens_id::unmasked_frac(const distance_type & R_proj) const
 {
 	try
 	{
@@ -73,8 +73,8 @@ void pair_binner::_sort() const
 
 	// Check if the lens is within bounds first
 	const mass_type & m = _buffering_lens_id_->m;
-	const flt_type & z = _buffering_lens_id_->z;
-	const flt_type & mag = _buffering_lens_id_->mag;
+	const flt_t & z = _buffering_lens_id_->z;
+	const flt_t & mag = _buffering_lens_id_->mag;
 	if(m_limits().outside_limits(m) || z_limits().outside_limits(z) || mag_limits().outside_limits(mag))
 	{
 		// This lens can't be binned, and therefore no pairs currently buffered can be binned, so empty
@@ -115,7 +115,7 @@ void pair_binner::_sort() const
 		if(R_limits().outside_limits(R_proj)) continue;
 
 		// Check lens-source z separation against buffer
-		if(pair.z_diff()<_z_buffer_-std::numeric_limits<flt_type>::epsilon()) continue;
+		if(pair.z_diff()<_z_buffer_-std::numeric_limits<flt_t>::epsilon()) continue;
 
 		// Add the pair to the proper bin
 		_pair_bins_buffer_[R_limits().get_bin_index(R_proj)].add_pair(pair);
@@ -159,8 +159,8 @@ void pair_binner::add_pair( const lens_source_pair & new_pair)
 	_pairs_.push_back(new_pair);
 	_sorted_ = false;
 }
-void pair_binner::add_lens_id( const ssize_t & new_id, const mass_type & m, const flt_type & z,
-		const flt_type & mag, const flt_type & weight)
+void pair_binner::add_lens_id( const ssize_t & new_id, const mass_type & m, const flt_t & z,
+		const flt_t & mag, const flt_t & weight)
 {
 	// Check if we're already buffering a different lens
 	if(_buffering_lens_id_)
@@ -249,7 +249,7 @@ surface_density_type pair_binner::delta_Sigma_x_stderr_for_bin(ssize_t R_i, ssiz
 // Access by position
 #if(1)
 surface_density_type pair_binner::delta_Sigma_t_mean_for_bin(const distance_type & R, const mass_type & m,
-												  const flt_type & z, const flt_type & mag)
+												  const flt_t & z, const flt_t & mag)
 {
 	_sort();
 	ssize_t R_i = R_limits().get_bin_index(R);
@@ -259,7 +259,7 @@ surface_density_type pair_binner::delta_Sigma_t_mean_for_bin(const distance_type
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_mean();
 }
 surface_density_type pair_binner::delta_Sigma_x_mean_for_bin(const distance_type & R, const mass_type & m,
-												  const flt_type & z, const flt_type & mag)
+												  const flt_t & z, const flt_t & mag)
 {
 	_sort();
 	ssize_t R_i = R_limits().get_bin_index(R);
@@ -270,7 +270,7 @@ surface_density_type pair_binner::delta_Sigma_x_mean_for_bin(const distance_type
 }
 
 surface_density_type pair_binner::delta_Sigma_t_std_for_bin(const distance_type & R, const mass_type & m,
-												 const flt_type & z, const flt_type & mag)
+												 const flt_t & z, const flt_t & mag)
 {
 	_sort();
 	ssize_t R_i = R_limits().get_bin_index(R);
@@ -280,7 +280,7 @@ surface_density_type pair_binner::delta_Sigma_t_std_for_bin(const distance_type 
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_std();
 }
 surface_density_type pair_binner::delta_Sigma_x_std_for_bin(const distance_type & R, const mass_type & m,
-												 const flt_type & z, const flt_type & mag)
+												 const flt_t & z, const flt_t & mag)
 {
 	_sort();
 	ssize_t R_i = R_limits().get_bin_index(R);
@@ -291,7 +291,7 @@ surface_density_type pair_binner::delta_Sigma_x_std_for_bin(const distance_type 
 }
 
 surface_density_type pair_binner::delta_Sigma_t_stderr_for_bin(const distance_type & R, const mass_type & m,
-													const flt_type & z, const flt_type & mag)
+													const flt_t & z, const flt_t & mag)
 {
 	_sort();
 	ssize_t R_i = R_limits().get_bin_index(R);
@@ -301,7 +301,7 @@ surface_density_type pair_binner::delta_Sigma_t_stderr_for_bin(const distance_ty
 	return _pair_bin_summaries_.at(R_i).at(m_i).at(z_i).at(mag_i).delta_Sigma_t_stderr();
 }
 surface_density_type pair_binner::delta_Sigma_x_stderr_for_bin(const distance_type & R, const mass_type & m,
-													const flt_type & z, const flt_type & mag)
+													const flt_t & z, const flt_t & mag)
 {
 	_sort();
 	ssize_t R_i = R_limits().get_bin_index(R);

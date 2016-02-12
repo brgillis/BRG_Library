@@ -39,40 +39,40 @@ extern std::ranlux48 rng; // Initialised in random_functions.cpp
 /** Global function declarations **/
 #if (1)
 
-// Generates a random int_type between min and max, inclusive of min, exclusive of max
-template< typename T=int_type, typename T_in=int_type, typename T_gen=decltype(rng) >
+// Generates a random int_t between min and max, inclusive of min, exclusive of max
+template< typename T=int_t, typename T_in=int_t, typename T_gen=decltype(rng) >
 T irand( T_in && min, T_in && max, T_gen & gen=rng )
 {
 	return std::uniform_int_distribution<T>(std::forward<T_in>(min),std::forward<T_in>(max)-1)(gen);
-} // flt_type drand(flt_type min, flt_type max)
+} // flt_t drand(flt_t min, flt_t max)
 
-// Generates a random flt_type between min and max
-template< typename T=flt_type, typename T_gen=decltype(rng) >
+// Generates a random flt_t between min and max
+template< typename T=flt_t, typename T_gen=decltype(rng) >
 T drand( T_gen & gen=rng )
 {
 	return std::uniform_real_distribution<T>()(gen);
 }
-template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T drand( T_in && min, T_in && max, T_gen & gen=rng )
 {
 	return std::uniform_real_distribution<T>(std::forward<T_in>(min),std::forward<T_in>(max))(gen);
-} // flt_type drand(flt_type min, flt_type max)
+} // flt_t drand(flt_t min, flt_t max)
 
 // Returns a random variable from a Gaussian distribution
-template< typename T=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_gen=decltype(rng) >
 T Gaus_rand( T_gen & gen=rng )
 {
 	return std::normal_distribution<T>()(gen);
-} // flt_type Gaus_rand()
-template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+} // flt_t Gaus_rand()
+template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T Gaus_rand( T_in && mean, T_in && stddev = 1.0, T_gen & gen=rng )
 {
 	return std::normal_distribution<T>(std::forward<T_in>(mean),std::forward<T_in>(stddev))(gen);
 
-} // flt_type Gaus_rand(flt_type mean, flt_type stddev)
+} // flt_t Gaus_rand(flt_t mean, flt_t stddev)
 
 // Returns a random variable from a Gaussian distribution, truncated between min and max
-template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, T_gen & gen=rng )
 {
 	assert(max>min);
@@ -102,23 +102,23 @@ T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, T_gen
 // Returns a random variable from a Gaussian distribution in log space
 // Note that "mean" here is the desired mean, NOT the peak of the function (which differ in log space). If you want to use
 // the peak, simply use the standard Gaus_rand version instead.
-template< typename T=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_gen=decltype(rng) >
 T log10Gaus_rand( T_gen & gen=rng )
 {
-	const flt_type & fact = std::exp( -square( std::log( 10. ) ) / 2 );
+	const flt_t & fact = std::exp( -square( std::log( 10. ) ) / 2 );
 
 	return ( fact * std::pow(10., Gaus_rand<T>(gen) ) );
-} // flt_type log10Gaus_rand()
-template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+} // flt_t log10Gaus_rand()
+template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T log10Gaus_rand( T_in && mean, T_in && stddev = 1., T_gen & gen=rng )
 {
-	const flt_type & fact = std::exp( -square( stddev*std::log(10.) ) / 2 );
+	const flt_t & fact = std::exp( -square( stddev*std::log(10.) ) / 2 );
 
 	return ( fact * std::pow(10., Gaus_rand<T,T_in>(std::forward<T_in>(mean),std::forward<T_in>(stddev),gen) ) );
-} // flt_type log10Gaus_rand(flt_type mean, flt_type stddev)
+} // flt_t log10Gaus_rand(flt_t mean, flt_t stddev)
 
 // Returns a random variable from a log10_Gaussian distribution, truncated between min and max
-template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T trunc_log10Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, T_gen & gen=rng )
 {
 	assert(max>min);
@@ -149,14 +149,14 @@ T trunc_log10Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, 
 } // T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, gen_t & gen=rng )
 
 // Returns a random variable from a Rayleigh distribution
-template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T Rayleigh_rand( T_in && sigma=1., T_gen & gen=rng )
 {
 	return std::forward<T_in>(sigma)*std::sqrt(-2.*std::log(drand<T>(gen)));
 }
 
 // Returns a random variable from a Gaussian distribution, truncated between min and max
-template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T trunc_Rayleigh_rand( T_in && sigma, T_in && max, T_gen & gen=rng )
 {
 	assert(max>0.);
@@ -184,7 +184,7 @@ T trunc_Rayleigh_rand( T_in && sigma, T_in && max, T_gen & gen=rng )
 } // T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, gen_t & gen=rng )
 
 // Get a Rayleigh random variable, smoothly contracted to always be less than max
-template< typename T=flt_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T contracted_Rayleigh_rand( T_in && sigma, T_in && max, T_in && p, T_gen & gen=rng )
 {
 	// Generate an initial random Rayleigh variable
@@ -195,18 +195,18 @@ T contracted_Rayleigh_rand( T_in && sigma, T_in && max, T_in && p, T_gen & gen=r
 }
 
 // Returns a Poisson random variable.
-template< typename T=int_type, typename T_gen=decltype(rng) >
+template< typename T=int_t, typename T_gen=decltype(rng) >
 T Pois_rand( T_gen & gen=rng )
 {
 	return std::poisson_distribution<T>()(gen);
 } // T Pois_rand( T_gen & gen=rng )
-template< typename T=int_type, typename T_in=flt_type, typename T_gen=decltype(rng) >
+template< typename T=int_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
 T Pois_rand( T_in && lambda=1., T_gen & gen=rng )
 {
 	return std::poisson_distribution<T>(std::forward<T_in>(lambda))(gen);
 } // T Pois_rand( T_in && lambda=1., T_gen & gen=rng )
 
-template< typename T=flt_type, typename T_gen=decltype(rng) >
+template< typename T=flt_t, typename T_gen=decltype(rng) >
 T rand_from_cdf_arrays( array_type<T> const & xvals, array_type<T> cvals, T_gen & gen = rng )
 {
 	assert(xvals.size()>=2 and xvals.size()==cvals.size());
@@ -228,7 +228,7 @@ T rand_from_cdf_arrays( array_type<T> const & xvals, array_type<T> cvals, T_gen 
 
 	// Get the index on the cdf where this lies
 	array_type<T> diffs = (cvals-r).abs();
-	int_type i,j;
+	int_t i,j;
 	diffs.minCoeff(&i,&j);
 
 	// If the value at the index is below r, or the index is zero, move up one index
@@ -253,8 +253,8 @@ T rand_from_cdf_arrays( array_type<T> const & xvals, array_type<T> cvals, T_gen 
 
 }
 
-template< typename Tf, typename T=flt_type, typename T_gen=decltype(rng) >
-T rand_from_cdf( Tf const & f, int_type const & N_samples=1000,
+template< typename Tf, typename T=flt_t, typename T_gen=decltype(rng) >
+T rand_from_cdf( Tf const & f, int_t const & N_samples=1000,
 		T const & xlow=-5., T const & xhigh=5., T_gen & gen = rng )
 {
 	// Get an array of x points and cdf values at those points
@@ -266,8 +266,8 @@ T rand_from_cdf( Tf const & f, int_type const & N_samples=1000,
 	return res;
 }
 
-template< typename Tf, typename T=flt_type, typename T_gen=decltype(rng) >
-T rand_from_pdf( Tf const & f, int_type const & N_samples=1000,
+template< typename Tf, typename T=flt_t, typename T_gen=decltype(rng) >
+T rand_from_pdf( Tf const & f, int_t const & N_samples=1000,
 		T const & xlow=-5., T const & xhigh=5., T_gen & gen = rng )
 {
 	// Get an array of x points and pdf values at those points

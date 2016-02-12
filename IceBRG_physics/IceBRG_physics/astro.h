@@ -57,7 +57,7 @@
 #if (1)
 #ifndef _BRG_PI_DEFINED_
 #define _BRG_PI_DEFINED_
-const flt_type & pi = M_PI;
+const flt_t & pi = M_PI;
 #endif
 
 
@@ -70,7 +70,7 @@ namespace IceBRG
 #ifdef _BRG_USE_UNITS_
 const custom_unit_type<3,-2,-1,0,0> Gc(6.67384e-11 * cube(m) / square(s) / kg); // In m^3 s^-2 kg^-1
 #else
-constexpr flt_type Gc = 6.67384e-11; // In m^3 s^-2 kg^-1
+constexpr flt_t Gc = 6.67384e-11; // In m^3 s^-2 kg^-1
 #endif
 const velocity_type c(IceBRG::unitconv::ctomps * mps);
 
@@ -86,13 +86,13 @@ const velocity_type c(IceBRG::unitconv::ctomps * mps);
 const inverse_time_type H_0(
 		70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second); // So all results will implicitly be in h_70 units
 
-constexpr flt_type Omega_m = 0.288; // WMAP9 + priors
-constexpr flt_type Omega_r = 0.000086; // WMAP9 + priors
-constexpr flt_type Omega_k = 0; // Assuming flat space
-constexpr flt_type Omega_l = 1 - Omega_k - Omega_m - Omega_r;
-constexpr flt_type Omega_b = 0.0472; // WMAP9 + priors
-constexpr flt_type sigma_8 = 0.830; // WMAP9 + priors
-constexpr flt_type n_s = 0.971;     // WMAP9 + priors
+constexpr flt_t Omega_m = 0.288; // WMAP9 + priors
+constexpr flt_t Omega_r = 0.000086; // WMAP9 + priors
+constexpr flt_t Omega_k = 0; // Assuming flat space
+constexpr flt_t Omega_l = 1 - Omega_k - Omega_m - Omega_r;
+constexpr flt_t Omega_b = 0.0472; // WMAP9 + priors
+constexpr flt_t sigma_8 = 0.830; // WMAP9 + priors
+constexpr flt_t n_s = 0.971;     // WMAP9 + priors
 
 #endif
 
@@ -103,8 +103,8 @@ constexpr flt_type n_s = 0.971;     // WMAP9 + priors
 #ifndef _BRG_DEFAULT_ASTRO_VARS_DEFINED_
 #define _BRG_DEFAULT_ASTRO_VARS_DEFINED_
 
-constexpr flt_type default_c = 6.; // To help prevent crashes. Warning will be output
-constexpr flt_type default_tau_factor = 2.;
+constexpr flt_t default_c = 6.; // To help prevent crashes. Warning will be output
+constexpr flt_t default_tau_factor = 2.;
 
 #endif
 #endif
@@ -119,47 +119,47 @@ constexpr flt_type default_tau_factor = 2.;
 
  \**********************************************************************/
 
-inverse_time_type H( const flt_type & z );
+inverse_time_type H( const flt_t & z );
 
 // Functions to get transverse distance_type (in m) from angle_type (in rad) or vice-versa
-custom_unit_type<1,0,0,-1,0> dfa( const flt_type & z ); // Just gives conversion factor
-distance_type dfa( const angle_type & da, const flt_type & z ); // Performs conversion
+custom_unit_type<1,0,0,-1,0> dfa( const flt_t & z ); // Just gives conversion factor
+distance_type dfa( const angle_type & da, const flt_t & z ); // Performs conversion
 distance_type dfa( const angle_type & a1, const angle_type & a2,
-		const flt_type & z ); // Performs conversion of dist between two angles
+		const flt_t & z ); // Performs conversion of dist between two angles
 distance_type dfa( const angle_type & a1x, const angle_type & a1y,
-		const angle_type & a2x, const angle_type & a2y, const flt_type & z ); // Performs conversion of dist between two positions
+		const angle_type & a2x, const angle_type & a2y, const flt_t & z ); // Performs conversion of dist between two positions
 
-custom_unit_type<-1,0,0,1,0> afd( const flt_type & z );
-angle_type afd( const distance_type & dd, const flt_type & z );
+custom_unit_type<-1,0,0,1,0> afd( const flt_t & z );
+angle_type afd( const distance_type & dd, const flt_t & z );
 angle_type afd( const distance_type & d1, const distance_type & d2,
-		const flt_type & z );
+		const flt_t & z );
 angle_type afd( const distance_type & d1x, const distance_type & d1y,
-		const distance_type & d2x, const distance_type & d2y, const flt_type & z );
+		const distance_type & d2x, const distance_type & d2y, const flt_t & z );
 
 // Functions to work between redshift, scale factor, and time_type (in s, with zero = present day)
-flt_type zfa( const flt_type & a );
-flt_type afz( const flt_type & z );
+flt_t zfa( const flt_t & a );
+flt_t afz( const flt_t & z );
 
-time_type tfz( const flt_type & z );
-time_type tfa( const flt_type & z );
-flt_type zft( const time_type & t );
-flt_type aft( const time_type & t );
+time_type tfz( const flt_t & z );
+time_type tfa( const flt_t & z );
+flt_t zft( const time_type & t );
+flt_t aft( const time_type & t );
 
 // Functions to integrate out distances
-distance_type integrate_add( const flt_type & z1, const flt_type & z2 );
-distance_type integrate_cmd( const flt_type & z1, const flt_type & z2 );
-distance_type integrate_Ld( const flt_type & z1, const flt_type & z2 );
-distance_type integrate_ltd( const flt_type & z1, const flt_type & z2 );
-distance_type integrate_add( const flt_type & z );
-distance_type integrate_cmd( const flt_type & z );
-distance_type integrate_Ld( const flt_type & z );
-distance_type integrate_ltd( const flt_type & z );
-distance_type integrate_distance( const flt_type & z1, const flt_type & z2,
-		const int_type & mode, const int_type & resolution = 10000 );
+distance_type integrate_add( const flt_t & z1, const flt_t & z2 );
+distance_type integrate_cmd( const flt_t & z1, const flt_t & z2 );
+distance_type integrate_Ld( const flt_t & z1, const flt_t & z2 );
+distance_type integrate_ltd( const flt_t & z1, const flt_t & z2 );
+distance_type integrate_add( const flt_t & z );
+distance_type integrate_cmd( const flt_t & z );
+distance_type integrate_Ld( const flt_t & z );
+distance_type integrate_ltd( const flt_t & z );
+distance_type integrate_distance( const flt_t & z1, const flt_t & z2,
+		const int_t & mode, const int_t & resolution = 10000 );
 
 // Lensing functions
-distance_type ad_distance( flt_type z1, flt_type z2 = 0 );
-surface_density_type sigma_crit( const flt_type & z_lens, const flt_type & z_source );
+distance_type ad_distance( flt_t z1, flt_t z2 = 0 );
+surface_density_type sigma_crit( const flt_t & z_lens, const flt_t & z_source );
 
 // Like dist2d, but using corrections for spherical geometry
 template< typename Tr1, typename Td1, typename Tr2, typename Td2 >
@@ -192,13 +192,13 @@ class redshift_obj
 
 	 **********************************/
 private:
-	flt_type _z_, _z_err_;
+	flt_t _z_, _z_err_;
 	mutable inverse_time_type _H_cache_;
 	mutable bool _H_cached_;
 public:
 
 	// Constructor
-	redshift_obj( const flt_type & init_z = 0, const flt_type & init_z_err = 0 )
+	redshift_obj( const flt_t & init_z = 0, const flt_t & init_z_err = 0 )
 	: _z_(init_z),
 	  _z_err_(init_z_err),
 	  _H_cache_(0),
@@ -216,12 +216,12 @@ public:
 
 	// Set functions
 #if (1)
-	virtual void set_z( const flt_type & new_z ) // Sets z
+	virtual void set_z( const flt_t & new_z ) // Sets z
 	{
 		_z_ = new_z;
 		_H_cached_ = false;
 	}
-	virtual void set_z_err( const flt_type & new_z_err ) // Sets z error
+	virtual void set_z_err( const flt_t & new_z_err ) // Sets z error
 	{
 		_z_err_ = new_z_err;
 	}
@@ -229,15 +229,15 @@ public:
 
 	// Get functions
 #if (1)
-	flt_type z() const
+	flt_t z() const
 	{
 		return _z_;
 	}
-	flt_type z_err() const
+	flt_t z_err() const
 	{
 		return _z_err_;
 	}
-	int_type z_grid() const;
+	int_t z_grid() const;
 #endif
 
 	// Astro calculations

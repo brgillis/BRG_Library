@@ -45,7 +45,7 @@ std::vector<T,A> make_linear_limit_vector_base(const T & min, const T & max, con
 	if(( isinf(min) || isinf(max) ) && (num_bins>1))
 		throw std::logic_error("Cannot generate limit vector with and infinite limits and multiple bins.");
 
-	T step = (max-min)/(flt_type)num_bins;
+	T step = (max-min)/(flt_t)num_bins;
 
 	std::vector<T,A> result(1,min);
 
@@ -54,7 +54,7 @@ std::vector<T,A> make_linear_limit_vector_base(const T & min, const T & max, con
 		for(size_t limit_num=1; limit_num<num_bins; ++limit_num)
 		{
 			// Recalculate at each step to minimize round-off error
-			result.push_back( min + step*(flt_type)limit_num );
+			result.push_back( min + step*(flt_t)limit_num );
 		}
 	}
 	result.push_back(max);
@@ -76,7 +76,7 @@ std::vector<T,A> make_log_limit_vector_base(const T & min, const T & max, const 
 
 	std::vector<T,A> result(1,min);
 
-	flt_type log_step = std::pow(value_of(max/min),1./(num_bins));
+	flt_t log_step = std::pow(value_of(max/min),1./(num_bins));
 
 	if( isinf(max) )
 	{

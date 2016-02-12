@@ -54,23 +54,23 @@
 
 namespace IceBRG {
 
-constexpr flt_type pair_bin::_z_buffer_default_value_;
+constexpr flt_t pair_bin::_z_buffer_default_value_;
 
 void pair_bin::_uncache_values()
 {
-	_mu_hat_cached_value_ = std::numeric_limits<flt_type>::infinity();
-	_mu_W_cached_value_ = std::numeric_limits<flt_type>::infinity();
+	_mu_hat_cached_value_ = std::numeric_limits<flt_t>::infinity();
+	_mu_W_cached_value_ = std::numeric_limits<flt_t>::infinity();
 }
 
 pair_bin::pair_bin( const distance_type & init_R_min, const distance_type & init_R_max,
 		const mass_type & init_m_min, const mass_type & init_m_max,
-		const flt_type & init_z_min, const flt_type & init_z_max,
-		const flt_type & init_mag_min, const flt_type & init_mag_max,
-		const flt_type & init_z_buffer)
+		const flt_t & init_z_min, const flt_t & init_z_max,
+		const flt_t & init_mag_min, const flt_t & init_mag_max,
+		const flt_t & init_z_buffer)
 :	pair_bin_summary(init_R_min,init_R_max,init_m_min,init_m_max,
 		init_z_min,init_z_max,init_mag_min,init_mag_max),
-	_mu_hat_cached_value_(std::numeric_limits<flt_type>::infinity()),
-	_mu_W_cached_value_(std::numeric_limits<flt_type>::infinity()),
+	_mu_hat_cached_value_(std::numeric_limits<flt_t>::infinity()),
+	_mu_W_cached_value_(std::numeric_limits<flt_t>::infinity()),
 	_z_buffer_(init_z_buffer)
 {
 }
@@ -80,8 +80,8 @@ pair_bin::pair_bin( const distance_type & init_R_min, const distance_type & init
 
 void pair_bin::add_pair( const lens_source_pair & new_pair)
 {
-	const flt_type & shear_weight = new_pair.shear_weight();
-	const flt_type & mag_weight = new_pair.mag_weight();
+	const flt_t & shear_weight = new_pair.shear_weight();
+	const flt_t & mag_weight = new_pair.mag_weight();
 
 	// Shear first
 	if(shear_weight>0)
@@ -126,14 +126,14 @@ void pair_bin::add_lens( const lens_id & lens )
 		_magf_lens_mag_values_(lens.mag, boost::accumulators::weight = lens.weight);
 		_magf_lens_z_values_(lens.z, boost::accumulators::weight = lens.weight);
 
-		flt_type unmasked_frac = lens.unmasked_frac(R_amid());
+		flt_t unmasked_frac = lens.unmasked_frac(R_amid());
 		_magf_unmasked_fracs_(unmasked_frac, boost::accumulators::weight = lens.weight);
 
 		// Get the new weight from the lens's individual weight and its unmasked area
 		custom_unit_type<0,0,0,2,0> area = pi*(square(afd(R_max(),lens.z))-square(afd(R_min(),lens.z)));
 		custom_unit_type<0,0,0,2,0> unmasked_area = unmasked_frac*area;
 
-		flt_type mu_W = unmasked_area*any_cast<custom_unit_type<0,0,0,-2,0>>(
+		flt_t mu_W = unmasked_area*any_cast<custom_unit_type<0,0,0,-2,0>>(
 				mag_weight_integral_cache().get(lens.z+_z_buffer_));
 
 		IceBRG::fixbad(mu_W);
@@ -175,9 +175,9 @@ void pair_bin::clear()
 // Calculations on stored values
 #if (1)
 
-flt_type pair_bin::magf_sum_of_weights() const
+flt_t pair_bin::magf_sum_of_weights() const
 {
-	flt_type res = 0;
+	flt_t res = 0;
 	for(const auto & id : _distinct_lens_ids_)
 	{
 		res += _lens_weights_.at(id);
@@ -185,9 +185,9 @@ flt_type pair_bin::magf_sum_of_weights() const
 	return res;
 }
 
-flt_type pair_bin::magf_sum_of_square_weights() const
+flt_t pair_bin::magf_sum_of_square_weights() const
 {
-	flt_type res = 0;
+	flt_t res = 0;
 	for(const auto & id : _distinct_lens_ids_)
 	{
 		res += square(_lens_weights_.at(id));
@@ -197,7 +197,7 @@ flt_type pair_bin::magf_sum_of_square_weights() const
 
 custom_unit_type<0,0,0,2,0> pair_bin::area() const
 {
-	flt_type mean_frac = unmasked_frac();
+	flt_t mean_frac = unmasked_frac();
 	custom_unit_type<0,0,0,2,0> mean_area = pi*(square(afd(R_max(),magf_lens_z_mean()))-square(afd(R_min(),magf_lens_z_mean())));
 
 	custom_unit_type<0,0,0,2,0> result = mean_frac*magf_num_lenses()*mean_area;
@@ -246,9 +246,9 @@ surface_density_type pair_bin::delta_Sigma_x_stderr() const
 // Magnification calculations
 #if(1)
 
-flt_type pair_bin::mu_W() const
+flt_t pair_bin::mu_W() const
 {
-	if(_mu_W_cached_value_==std::numeric_limits<flt_type>::infinity())
+	if(_mu_W_cached_value_==std::numeric_limits<flt_t>::infinity())
 	{
 		_mu_W_cached_value_ = area()*
 			any_cast<custom_unit_type<0,0,0,-2,0>>(mag_weight_integral_cache().get(magf_lens_z_mean()+_z_buffer_));
@@ -256,15 +256,15 @@ flt_type pair_bin::mu_W() const
 	return _mu_W_cached_value_;
 }
 
-flt_type pair_bin::mu_hat() const
+flt_t pair_bin::mu_hat() const
 {
-	if(_mu_hat_cached_value_==std::numeric_limits<flt_type>::infinity())
+	if(_mu_hat_cached_value_==std::numeric_limits<flt_t>::infinity())
 	{
 		// Not cached, so calculate and cache it
 
-		const flt_type & mu_observed = extract_weighted_sum(_mu_obs_values_)/(extract_mean_weight(_mu_obs_values_)*mu_W());
+		const flt_t & mu_observed = extract_weighted_sum(_mu_obs_values_)/(extract_mean_weight(_mu_obs_values_)*mu_W());
 
-		const flt_type & mu_base = area()*
+		const flt_t & mu_base = area()*
 				any_cast<custom_unit_type<0,0,0,-2,0>>(mag_signal_integral_cache().get(magf_lens_z_mean()+_z_buffer_))
 				/mu_W();
 
@@ -280,7 +280,7 @@ flt_type pair_bin::mu_hat() const
 
 }
 
-flt_type pair_bin::mu_square_hat() const
+flt_t pair_bin::mu_square_hat() const
 {
 	return square(mu_hat());
 }

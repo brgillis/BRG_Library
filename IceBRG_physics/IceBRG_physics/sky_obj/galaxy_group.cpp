@@ -113,7 +113,7 @@ void IceBRG::galaxy_group::set_member_index( size_t member_index,
 }
 void IceBRG::galaxy_group::add_member( galaxy * new_member )
 {
-	int_type new_num_members = num_members + 1;
+	int_t new_num_members = num_members + 1;
 	resize( new_num_members );
 	members[new_num_members - 1] = new_member;
 	member_indices[new_num_members - 1] = new_member->index();

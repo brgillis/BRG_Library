@@ -38,7 +38,7 @@
 namespace IceBRG
 {
 
-typedef std::map<std::string,flt_type> unitconv_map;
+typedef std::map<std::string,flt_t> unitconv_map;
 
 } // namespace IceBRG
 

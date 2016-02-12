@@ -49,7 +49,7 @@ T_vec get_case_resampled(const T_vec & vec, T_gen & gen=rng)
 {
 	T_vec res(vec);
 
-	std::uniform_int_distribution<int_type> dist(0,vec.size()-1);
+	std::uniform_int_distribution<int_t> dist(0,vec.size()-1);
 
 	for( auto & v : res )
 	{
@@ -63,8 +63,8 @@ T_vec get_case_resampled(const T_vec & vec, T_gen & gen=rng)
 template< typename T_vec,
 	std::enable_if<IceBRG::is_eigen_container<T_vec>::value,char> = 0>
 T_vec get_jackknife_resampled(const T_vec & vec,
-		const int_type & sample_num = 0,
-		const int_type & num_samples = 2)
+		const int_t & sample_num = 0,
+		const int_t & num_samples = 2)
 {
 	assert(num_samples>=1);
 	assert(sample_num>=0);
@@ -75,15 +75,15 @@ T_vec get_jackknife_resampled(const T_vec & vec,
 	res.conservativeResize(std::partition(
 	  res.data(),
 	  res.data()+res.size(),
-	  [&vec](const int_type & i){return vec(i) % num_samples == sample_num;})-res.data());
+	  [&vec](const int_t & i){return vec(i) % num_samples == sample_num;})-res.data());
 
 	return res;
 }
 template< typename T_vec,
 	std::enable_if<!IceBRG::is_eigen_container<T_vec>::value,char> = 0>
 T_vec get_jackknife_resampled(const T_vec & vec,
-		const int_type & sample_num = 0,
-		const int_type & num_samples = 2)
+		const int_t & sample_num = 0,
+		const int_t & num_samples = 2)
 {
 	assert(num_samples>=1);
 	assert(sample_num>=0);
@@ -94,7 +94,7 @@ T_vec get_jackknife_resampled(const T_vec & vec,
 	res.resize(std::partition(
 	  res.data(),
 	  res.data()+res.size(),
-	  [&vec](const int_type & i){return vec(i) % num_samples == sample_num;})-res.data());
+	  [&vec](const int_t & i){return vec(i) % num_samples == sample_num;})-res.data());
 
 	return res;
 }
@@ -117,11 +117,11 @@ public:
 
 private:
 
-	constexpr int_type _default_num_resamples_ = 50;
+	constexpr int_t _default_num_resamples_ = 50;
 
 	const array_type * _data_;
 	const func_type * _callback_;
-	int_type _num_resamples_;
+	int_t _num_resamples_;
 	gen_type * _gen_;
 
 	mutable boost::optional<func_output_array_type> _results_;
@@ -143,7 +143,7 @@ private:
 
 		func_output_array_type new_results(get_num_resamples());
 
-		for(int_type i=0; i<new_results.size(); ++i)
+		for(int_t i=0; i<new_results.size(); ++i)
 		{
 			new_results[i] = _callback_(get_case_resampled(*_data_, *_gen_));
 		}
@@ -178,7 +178,7 @@ public:
 	// Normal constructor
 	bootstrap( const T_vec & data,
 				const T_func & callback = [] (const array_type & vec) {return vec.mean();},
-				const int_type & num_resamples = _default_num_resamples_,
+				const int_t & num_resamples = _default_num_resamples_,
 				gen_type & gen = rng)
 	: _data_(&data),
 	  _callback_(&callback),
@@ -229,12 +229,12 @@ public:
 		_gen_ = &gen;
 	}
 
-	const int_type & get_num_resamples() const noexcept
+	const int_t & get_num_resamples() const noexcept
 	{
 		return _num_resamples_;
 	}
 
-	void set_num_resamples(const int_type & num_resamples)
+	void set_num_resamples(const int_t & num_resamples)
 	{
 		_num_resamples_ = num_resamples;
 	}
@@ -271,11 +271,11 @@ public:
 
 private:
 
-	constexpr int_type _default_num_resamples_ = 50;
+	constexpr int_t _default_num_resamples_ = 50;
 
 	const array_type * _data_;
 	const func_type * _callback_;
-	int_type _num_resamples_;
+	int_t _num_resamples_;
 
 	mutable boost::optional<func_output_array_type> _results_;
 	mutable boost::optional<func_output_type> _mean_;
@@ -296,7 +296,7 @@ private:
 
 		func_output_array_type new_results(get_num_resamples());
 
-		for(int_type i=0; i<new_results.size(); ++i)
+		for(int_t i=0; i<new_results.size(); ++i)
 		{
 			new_results[i] = _callback_(get_jackknife_resampled(*_data_, i, _num_resamples_));
 		}
@@ -331,7 +331,7 @@ public:
 	// Normal constructor
 	jackknife( const T_vec & data,
 				const T_func & callback = [] (const array_type & vec) {return vec.mean();},
-				const int_type & num_resamples = _default_num_resamples_)
+				const int_t & num_resamples = _default_num_resamples_)
 	: _data_(&data),
 	  _callback_(&callback),
 	  _num_resamples_(num_resamples)
@@ -369,12 +369,12 @@ public:
 		_data_ = &data;
 	}
 
-	const int_type & get_num_resamples() const noexcept
+	const int_t & get_num_resamples() const noexcept
 	{
 		return _num_resamples_;
 	}
 
-	void set_num_resamples(const int_type & num_resamples)
+	void set_num_resamples(const int_t & num_resamples)
 	{
 		_num_resamples_ = num_resamples;
 	}

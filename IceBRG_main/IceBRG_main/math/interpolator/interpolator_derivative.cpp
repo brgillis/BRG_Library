@@ -31,9 +31,9 @@
 
 // interpolator_derivative static member initialisations
 #if (1)
-flt_type IceBRG::interpolator_derivative::_default_sample_scale_ = 0.02; // As a fraction of t_max-t_min
-flt_type IceBRG::interpolator_derivative::_default_sample_max_width_ = 0.05; // As a fraction of t_max-t_min
-flt_type IceBRG::interpolator_derivative::_default_sample_precision_ = 0.01;
+IceBRG::flt_t IceBRG::interpolator_derivative::_default_sample_scale_ = 0.02; // As a fraction of t_max-t_min
+IceBRG::flt_t IceBRG::interpolator_derivative::_default_sample_max_width_ = 0.05; // As a fraction of t_max-t_min
+IceBRG::flt_t IceBRG::interpolator_derivative::_default_sample_precision_ = 0.01;
 #endif
 
 // IceBRG::interpolator_derivative class method implementations
@@ -122,26 +122,26 @@ void IceBRG::interpolator_derivative::clear_spline_ptr()
 }
 
 void IceBRG::interpolator_derivative::set_default_sample_scale(
-		flt_type new_default_sample_scale )
+		flt_t new_default_sample_scale )
 {
 	_default_sample_scale_ = new_default_sample_scale;
 }
 
 void IceBRG::interpolator_derivative::set_default_sample_max_width(
-		flt_type new_default_sample_max_width )
+		flt_t new_default_sample_max_width )
 {
 	_default_sample_max_width_ = new_default_sample_max_width;
 }
 
 void IceBRG::interpolator_derivative::set_sample_scale(
-		flt_type new_sample_scale )
+		flt_t new_sample_scale )
 {
 	_sample_scale_ = new_sample_scale;
 	_calculated_ = false;
 }
 
 void IceBRG::interpolator_derivative::set_sample_max_width(
-		flt_type new_sample_max_width )
+		flt_t new_sample_max_width )
 {
 	_sample_max_width_ = new_sample_max_width;
 	_calculated_ = false;
@@ -179,8 +179,8 @@ void IceBRG::interpolator_derivative::clear_known_points()
 	_known_interpolator_.clear();
 	if(_unknown_t_list_.empty())
 	{
-		_t_max_ = ( -std::numeric_limits<flt_type>::max() );
-		_t_min_ = std::numeric_limits<flt_type>::max();
+		_t_max_ = ( -std::numeric_limits<flt_t>::max() );
+		_t_min_ = std::numeric_limits<flt_t>::max();
 	}
 	_calculated_ = false;
 }
@@ -190,8 +190,8 @@ void IceBRG::interpolator_derivative::clear_unknown_points()
 	_unknown_t_list_.clear();
 	if(_known_interpolator_.empty())
 	{
-		_t_max_ = ( -std::numeric_limits<flt_type>::max() );
-		_t_min_ = std::numeric_limits<flt_type>::max();
+		_t_max_ = ( -std::numeric_limits<flt_t>::max() );
+		_t_min_ = std::numeric_limits<flt_t>::max();
 	}
 	_calculated_ = false;
 }
@@ -216,21 +216,21 @@ void IceBRG::interpolator_derivative::clear()
 	_sample_precision_ = _default_sample_precision_;
 }
 
-void IceBRG::interpolator_derivative::add_point( const flt_type & t,
-		const flt_type & x )
+void IceBRG::interpolator_derivative::add_point( const flt_t & t,
+		const flt_t & x )
 {
 	_known_interpolator_.add_point( t, x );
 	_calculated_ = false;
 }
 
-void IceBRG::interpolator_derivative::add_unknown_point( const flt_type & t )
+void IceBRG::interpolator_derivative::add_unknown_point( const flt_t & t )
 {
 	_unknown_t_list_.push_back( t );
 	_calculated_ = false;
 }
 
 // Get functions
-flt_type IceBRG::interpolator_derivative::operator()( flt_type xval ) const
+IceBRG::flt_t IceBRG::interpolator_derivative::operator()( flt_t xval ) const
 {
 	if ( !_interpolator_ptr_set_up_ )
 	{
@@ -251,8 +251,8 @@ flt_type IceBRG::interpolator_derivative::operator()( flt_type xval ) const
 	else // We'll have to calculate
 	{
 		// Get t_min and t_max
-		_t_min_ = std::numeric_limits<flt_type>::max();
-		_t_max_ = ( -std::numeric_limits<flt_type>::max() );
+		_t_min_ = std::numeric_limits<flt_t>::max();
+		_t_max_ = ( -std::numeric_limits<flt_t>::max() );
 
 		for ( ssize_t i = 0; i < ssize(_known_interpolator_.sorted_data()); i++ )
 		{
@@ -275,19 +275,19 @@ flt_type IceBRG::interpolator_derivative::operator()( flt_type xval ) const
 		_estimated_interpolator_.set_interpolation_type(_interpolation_type_);
 		ssize_t num_points_to_calculate = ssize(_unknown_t_list_);
 
-		auto interpolator_functor = [&] (const flt_type & in_param)
+		auto interpolator_functor = [&] (const flt_t & in_param)
 		{
 			return (*_interpolator_ptr_)(in_param);
 		};
 
-		auto spline_derivative_functor_val = [&] (const flt_type & in_param)
+		auto spline_derivative_functor_val = [&] (const flt_t & in_param)
 		{
 			return differentiate( &interpolator_functor, in_param );
 		};
 
-		flt_type t;
+		flt_t t;
 
-		auto spline_derivative_weight_functor_val = [&] (const flt_type & in_param)
+		auto spline_derivative_weight_functor_val = [&] (const flt_t & in_param)
 		{
 
 			if ( std::fabs( in_param - t )
@@ -302,15 +302,15 @@ flt_type IceBRG::interpolator_derivative::operator()( flt_type xval ) const
 			}
 		};
 
-		flt_type delta_t = fabs( _t_max_ - _t_min_ ) * _sample_max_width_;
+		flt_t delta_t = fabs( _t_max_ - _t_min_ ) * _sample_max_width_;
 
 		for ( ssize_t i = 0; i < num_points_to_calculate; i++ ) // For each point we need to calculate
 		{
 			t = _unknown_t_list_[i];
-			flt_type min_in_params( t - delta_t );
-			flt_type max_in_params( t + delta_t );
-			flt_type out_params( 0 );
-			flt_type Jacobian( 0 );
+			flt_t min_in_params( t - delta_t );
+			flt_t max_in_params( t + delta_t );
+			flt_t out_params( 0 );
+			flt_t Jacobian( 0 );
 
 			if ( delta_t <= 0 )
 			{
@@ -337,6 +337,6 @@ flt_type IceBRG::interpolator_derivative::operator()( flt_type xval ) const
 	_calculated_ = true;
 
 	return _estimated_interpolator_( xval );
-} // const flt_type & operator()(flt_type xval)
+} // const flt_t & operator()(flt_t xval)
 
 #endif

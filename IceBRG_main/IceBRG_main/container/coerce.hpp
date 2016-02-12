@@ -45,7 +45,7 @@ namespace IceBRG {
  * assignment_coercer - a structure which performs coercion of one type to
  * another as a side-effect of its constructor.
  */
-template<int_type d, typename container>
+template<int_t d, typename container>
 struct assignment_coercer
 {
 	assignment_coercer() = delete;
@@ -110,7 +110,7 @@ struct assignment_coercer<0,container>
  * range_coercer - a structure which performs coercion of one type to
  * another as a side-effect of its constructor.
  */
-template<int_type d, typename container>
+template<int_t d, typename container>
 struct range_coercer
 {
 	range_coercer() = delete;
@@ -196,7 +196,7 @@ struct range_coercer<0,container>
  * @param old
  * @return
  */
-template<typename NewType, int_type d=1, typename OldType=NewType>
+template<typename NewType, int_t d=1, typename OldType=NewType>
 NewType coerce(const OldType & old)
 {
 	NewType result;
@@ -212,7 +212,7 @@ NewType coerce(const OldType & old)
  * @param old
  * @return
  */
-template<typename NewType, int_type d=1, typename OldType=NewType>
+template<typename NewType, int_t d=1, typename OldType=NewType>
 NewType range_coerce(const OldType & old)
 {
 	NewType result;

@@ -59,8 +59,8 @@ private:
 
 	IceBRG::limit_vector< distance_type > _R_bin_limits_;
 	IceBRG::limit_vector< mass_type > _m_bin_limits_;
-	IceBRG::limit_vector< flt_type > _z_bin_limits_;
-	IceBRG::limit_vector< flt_type > _mag_bin_limits_;
+	IceBRG::limit_vector< flt_t > _z_bin_limits_;
+	IceBRG::limit_vector< flt_t > _mag_bin_limits_;
 
 	bool _valid_limits_;
 
@@ -80,8 +80,8 @@ private:
 	// Set specific limits through a limits vector
 	void _set_R_limits(IceBRG::limit_vector< distance_type > R_bin_limits);
 	void _set_m_limits(IceBRG::limit_vector< mass_type > m_bin_limits);
-	void _set_z_limits(IceBRG::limit_vector< flt_type > z_bin_limits);
-	void _set_mag_limits(IceBRG::limit_vector< flt_type > mag_bin_limits);
+	void _set_z_limits(IceBRG::limit_vector< flt_t > z_bin_limits);
+	void _set_mag_limits(IceBRG::limit_vector< flt_t > mag_bin_limits);
 
 	// Set specific limits through a linear spacing
 	void _set_linear_R_limits(const distance_type & R_min,
@@ -90,11 +90,11 @@ private:
 	void _set_linear_m_limits(const mass_type & m_min,
 			const mass_type & m_max,
 			const ssize_t & m_bins);
-	void _set_linear_z_limits(const flt_type & z_min,
-			const flt_type & z_max,
+	void _set_linear_z_limits(const flt_t & z_min,
+			const flt_t & z_max,
 			const ssize_t & z_bins);
-	void _set_linear_mag_limits(const flt_type & mag_min,
-			const flt_type & mag_max,
+	void _set_linear_mag_limits(const flt_t & mag_min,
+			const flt_t & mag_max,
 			const ssize_t & maag_bins);
 
 	// Set specific limits through a log spacing
@@ -104,11 +104,11 @@ private:
 	void _set_log_m_limits(const mass_type & m_min,
 			const mass_type & m_max,
 			const ssize_t & m_num_bins=1);
-	void _set_log_z_limits(const flt_type & z_min,
-			const flt_type & z_max,
+	void _set_log_z_limits(const flt_t & z_min,
+			const flt_t & z_max,
 			const ssize_t & z_num_bins=1);
-	void _set_log_mag_limits(const flt_type & mag_min,
-			const flt_type & mag_max,
+	void _set_log_mag_limits(const flt_t & mag_min,
+			const flt_t & mag_max,
 			const ssize_t & mag_num_bins=1);
 
 	// Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
@@ -123,7 +123,7 @@ private:
 #if(1)
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const int_type version)
+    void serialize(Archive & ar, const int_t version)
     {
     	ar & _R_bin_limits_;
     	ar & _m_bin_limits_;
@@ -160,22 +160,22 @@ public:
 
 	// Set limits by vectors
 	pair_bins_summary(IceBRG::limit_vector< distance_type > R_bin_limits,
-			IceBRG::limit_vector< mass_type > m_bin_limits=std::vector<flt_type>(),
-			IceBRG::limit_vector< flt_type > z_bin_limits=std::vector<flt_type>(),
-			IceBRG::limit_vector< flt_type > mag_bin_limits=std::vector<flt_type>());
+			IceBRG::limit_vector< mass_type > m_bin_limits=std::vector<flt_t>(),
+			IceBRG::limit_vector< flt_t > z_bin_limits=std::vector<flt_t>(),
+			IceBRG::limit_vector< flt_t > mag_bin_limits=std::vector<flt_t>());
 
 	// Set limits by min, max, and step
 	pair_bins_summary(const distance_type & R_min,
 				const distance_type & R_max,
 				const ssize_t & R_bins=1,
-				const mass_type & m_min=-std::numeric_limits<flt_type>::infinity()*kg,
-				const mass_type & m_max=std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_min=-std::numeric_limits<flt_t>::infinity()*kg,
+				const mass_type & m_max=std::numeric_limits<flt_t>::infinity()*kg,
 				const ssize_t & m_bins=1,
-				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
-				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
+				const flt_t & z_min=-std::numeric_limits<flt_t>::infinity(),
+				const flt_t & z_max=std::numeric_limits<flt_t>::infinity(),
 				const ssize_t & z_bins=1,
-				const flt_type & mag_min=-std::numeric_limits<flt_type>::infinity(),
-				const flt_type & mag_max=std::numeric_limits<flt_type>::infinity(),
+				const flt_t & mag_min=-std::numeric_limits<flt_t>::infinity(),
+				const flt_t & mag_max=std::numeric_limits<flt_t>::infinity(),
 				const ssize_t & mag_bins=1);
 
 	// Load from archive
@@ -201,8 +201,8 @@ public:
 	// Set specific limits through a limits vector
 	void set_R_limits(IceBRG::limit_vector< distance_type > R_bin_limits);
 	void set_m_limits(IceBRG::limit_vector< mass_type > m_bin_limits);
-	void set_z_limits(IceBRG::limit_vector< flt_type > z_bin_limits);
-	void set_mag_limits(IceBRG::limit_vector< flt_type > mag_bin_limits);
+	void set_z_limits(IceBRG::limit_vector< flt_t > z_bin_limits);
+	void set_mag_limits(IceBRG::limit_vector< flt_t > mag_bin_limits);
 
 	// Set specific limits through a linear spacing
 	void set_linear_R_limits(const distance_type & R_min,
@@ -211,11 +211,11 @@ public:
 	void set_linear_m_limits(const mass_type & m_min,
 			const mass_type & m_max,
 			const ssize_t & m_bins);
-	void set_linear_z_limits(const flt_type & z_min,
-			const flt_type & z_max,
+	void set_linear_z_limits(const flt_t & z_min,
+			const flt_t & z_max,
 			const ssize_t & z_bins);
-	void set_linear_mag_limits(const flt_type & mag_min,
-			const flt_type & mag_max,
+	void set_linear_mag_limits(const flt_t & mag_min,
+			const flt_t & mag_max,
 			const ssize_t & mag_bins);
 
 	// Set specific limits through a log spacing
@@ -225,11 +225,11 @@ public:
 	void set_log_m_limits(const mass_type & m_min,
 			const mass_type & m_max,
 			const ssize_t & m_num_bins=1);
-	void set_log_z_limits(const flt_type & z_min,
-			const flt_type & z_max,
+	void set_log_z_limits(const flt_t & z_min,
+			const flt_t & z_max,
 			const ssize_t & z_num_bins=1);
-	void set_log_mag_limits(const flt_type & mag_min,
-			const flt_type & mag_max,
+	void set_log_mag_limits(const flt_t & mag_min,
+			const flt_t & mag_max,
 			const ssize_t & mag_num_bins=1);
 
 	// Clear limits. That is, make them unbound - one bin from neg infinity to pos infinity
@@ -239,34 +239,34 @@ public:
 	void clear_mag_limits();
 
 	void set_limits(IceBRG::limit_vector< distance_type > R_bin_limits,
-			IceBRG::limit_vector< mass_type > m_bin_limits=std::vector<flt_type>(),
-			IceBRG::limit_vector< flt_type > z_bin_limits=std::vector<flt_type>(),
-			IceBRG::limit_vector< flt_type > mag_bin_limits=std::vector<flt_type>());
+			IceBRG::limit_vector< mass_type > m_bin_limits=std::vector<flt_t>(),
+			IceBRG::limit_vector< flt_t > z_bin_limits=std::vector<flt_t>(),
+			IceBRG::limit_vector< flt_t > mag_bin_limits=std::vector<flt_t>());
 
 	void set_linear_limits(const distance_type & R_min,
 				const distance_type & R_max,
 				const ssize_t & R_num_bins=1,
-				const mass_type & m_min=-std::numeric_limits<flt_type>::infinity()*kg,
-				const mass_type & m_max=std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_min=-std::numeric_limits<flt_t>::infinity()*kg,
+				const mass_type & m_max=std::numeric_limits<flt_t>::infinity()*kg,
 				const ssize_t & m_num_bins=1,
-				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
-				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
+				const flt_t & z_min=-std::numeric_limits<flt_t>::infinity(),
+				const flt_t & z_max=std::numeric_limits<flt_t>::infinity(),
 				const ssize_t & z_num_bins=1,
-				const flt_type & mag_min=-std::numeric_limits<flt_type>::infinity(),
-				const flt_type & mag_max=std::numeric_limits<flt_type>::infinity(),
+				const flt_t & mag_min=-std::numeric_limits<flt_t>::infinity(),
+				const flt_t & mag_max=std::numeric_limits<flt_t>::infinity(),
 				const ssize_t & mag_num_bins=1);
 
 	void set_log_limits(const distance_type & R_min,
 				const distance_type & R_max,
 				const ssize_t & R_num_bins=1,
-				const mass_type & m_min=-std::numeric_limits<flt_type>::infinity()*kg,
-				const mass_type & m_max=std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_min=-std::numeric_limits<flt_t>::infinity()*kg,
+				const mass_type & m_max=std::numeric_limits<flt_t>::infinity()*kg,
 				const ssize_t & m_num_bins=1,
-				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
-				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
+				const flt_t & z_min=-std::numeric_limits<flt_t>::infinity(),
+				const flt_t & z_max=std::numeric_limits<flt_t>::infinity(),
 				const ssize_t & z_num_bins=1,
-				const flt_type & mag_min=-std::numeric_limits<flt_type>::infinity(),
-				const flt_type & mag_max=std::numeric_limits<flt_type>::infinity(),
+				const flt_t & mag_min=-std::numeric_limits<flt_t>::infinity(),
+				const flt_t & mag_max=std::numeric_limits<flt_t>::infinity(),
 				const ssize_t & mag_num_bins=1);
 
 #endif // Set/change limits
@@ -285,11 +285,11 @@ public:
 	{
 		return _m_bin_limits_;
 	}
-	const IceBRG::limit_vector< flt_type > & z_limits() const
+	const IceBRG::limit_vector< flt_t > & z_limits() const
 	{
 		return _z_bin_limits_;
 	}
-	const IceBRG::limit_vector< flt_type > & mag_limits() const
+	const IceBRG::limit_vector< flt_t > & mag_limits() const
 	{
 		return _mag_bin_limits_;
 	}
@@ -337,19 +337,19 @@ public:
 	// Access by position
 #if(1)
 	virtual surface_density_type delta_Sigma_t_mean_for_bin(const distance_type & R, const mass_type & m,
-			flt_type z, flt_type mag) const;
+			flt_t z, flt_t mag) const;
 	virtual surface_density_type delta_Sigma_x_mean_for_bin(const distance_type & R, const mass_type & m,
-			flt_type z, flt_type mag) const;
+			flt_t z, flt_t mag) const;
 
 	virtual surface_density_type delta_Sigma_t_std_for_bin(const distance_type & R, const mass_type & m,
-			flt_type z, flt_type mag) const;
+			flt_t z, flt_t mag) const;
 	virtual surface_density_type delta_Sigma_x_std_for_bin(const distance_type & R, const mass_type & m,
-			flt_type z, flt_type mag) const;
+			flt_t z, flt_t mag) const;
 
 	virtual surface_density_type delta_Sigma_t_stderr_for_bin(const distance_type & R, const mass_type & m,
-			flt_type z, flt_type mag) const;
+			flt_t z, flt_t mag) const;
 	virtual surface_density_type delta_Sigma_x_stderr_for_bin(const distance_type & R, const mass_type & m,
-			flt_type z, flt_type mag) const;
+			flt_t z, flt_t mag) const;
 #endif // Access by index
 
 #endif // Accessing summary data for bins

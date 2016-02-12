@@ -57,18 +57,18 @@
 #define SPP(name) static_cast<name*>(this)
 
 #define DECLARE_BRG_CACHE_4D_STATIC_VARS()		               \
-	static flt_type _min_1_, _max_1_, _step_1_;                  \
-	static size_t _resolution_1_;                        \
-	static flt_type _min_2_, _max_2_, _step_2_;                  \
-	static size_t _resolution_2_;                        \
-	static flt_type _min_3_, _max_3_, _step_3_;                  \
-	static size_t _resolution_3_;                        \
-	static flt_type _min_4_, _max_4_, _step_4_;                  \
-	static size_t _resolution_4_;                        \
-	static std::vector< std::vector< std::vector< std::vector< flt_type > > > > _results_;     \
+	static IceBRG::flt_t _min_1_, _max_1_, _step_1_;                  \
+	static IceBRG::sssize_t _resolution_1_;                        \
+	static IceBRG::flt_t _min_2_, _max_2_, _step_2_;                  \
+	static IceBRG::sssize_t _resolution_2_;                        \
+	static IceBRG::flt_t _min_3_, _max_3_, _step_3_;                  \
+	static IceBRG::sssize_t _resolution_3_;                        \
+	static IceBRG::flt_t _min_4_, _max_4_, _step_4_;                  \
+	static IceBRG::sssize_t _resolution_4_;                        \
+	static std::vector< std::vector< std::vector< std::vector< IceBRG::flt_t > > > > _results_;     \
 											                   \
-	static std::string _file_name_;                            \
-	static int_type _version_number_;                      \
+	static IceBRG::str_t _file_name_;                            \
+	static IceBRG::int_t _version_number_;                      \
 											                   \
 	static bool _loaded_, _initialised_;
 
@@ -76,27 +76,27 @@
                                         init_min_2, init_max_2, init_step_2,\
                                         init_min_3, init_max_3, init_step_3,\
                                         init_min_4, init_max_4, init_step_4)\
-	flt_type IceBRG::class_name::_min_1_ = init_min_1;						\
-	flt_type IceBRG::class_name::_max_1_ = init_max_1; 						\
-	flt_type IceBRG::class_name::_step_1_ = init_step_1;					\
-	size_t IceBRG::class_name::_resolution_1_ = 0;					\
-	flt_type IceBRG::class_name::_min_2_ = init_min_2;						\
-	flt_type IceBRG::class_name::_max_2_ = init_max_2; 						\
-	flt_type IceBRG::class_name::_step_2_ = init_step_2;					\
-	size_t IceBRG::class_name::_resolution_2_ = 0;					\
-	flt_type IceBRG::class_name::_min_3_ = init_min_3;						\
-	flt_type IceBRG::class_name::_max_3_ = init_max_3; 						\
-	flt_type IceBRG::class_name::_step_3_ = init_step_3;					\
-	size_t IceBRG::class_name::_resolution_3_ = 0;					\
-	flt_type IceBRG::class_name::_min_4_ = init_min_4;						\
-	flt_type IceBRG::class_name::_max_4_ = init_max_4; 						\
-	flt_type IceBRG::class_name::_step_4_ = init_step_4;					\
-	size_t IceBRG::class_name::_resolution_4_ = 0;					\
+	IceBRG::flt_t IceBRG::class_name::_min_1_ = init_min_1;						\
+	IceBRG::flt_t IceBRG::class_name::_max_1_ = init_max_1; 						\
+	IceBRG::flt_t IceBRG::class_name::_step_1_ = init_step_1;					\
+	IceBRG::sssize_t IceBRG::class_name::_resolution_1_ = 0;					\
+	IceBRG::flt_t IceBRG::class_name::_min_2_ = init_min_2;						\
+	IceBRG::flt_t IceBRG::class_name::_max_2_ = init_max_2; 						\
+	IceBRG::flt_t IceBRG::class_name::_step_2_ = init_step_2;					\
+	IceBRG::sssize_t IceBRG::class_name::_resolution_2_ = 0;					\
+	IceBRG::flt_t IceBRG::class_name::_min_3_ = init_min_3;						\
+	IceBRG::flt_t IceBRG::class_name::_max_3_ = init_max_3; 						\
+	IceBRG::flt_t IceBRG::class_name::_step_3_ = init_step_3;					\
+	IceBRG::sssize_t IceBRG::class_name::_resolution_3_ = 0;					\
+	IceBRG::flt_t IceBRG::class_name::_min_4_ = init_min_4;						\
+	IceBRG::flt_t IceBRG::class_name::_max_4_ = init_max_4; 						\
+	IceBRG::flt_t IceBRG::class_name::_step_4_ = init_step_4;					\
+	IceBRG::sssize_t IceBRG::class_name::_resolution_4_ = 0;					\
 	bool IceBRG::class_name::_loaded_ = false;							\
 	bool IceBRG::class_name::_initialised_ = false;						\
-	std::string IceBRG::class_name::_file_name_ = "";						\
-	int_type IceBRG::class_name::_version_number_ = 2;		        \
-	std::vector< std::vector< std::vector< std::vector< flt_type > > > > IceBRG::class_name::_results_;
+	IceBRG::str_t IceBRG::class_name::_file_name_ = "";						\
+	IceBRG::int_t IceBRG::class_name::_version_number_ = 2;		        \
+	std::vector< std::vector< std::vector< std::vector< IceBRG::flt_t > > > > IceBRG::class_name::_results_;
 
 namespace IceBRG
 {
@@ -127,10 +127,10 @@ private:
 		#endif
 		if(!SPCP(name)->_initialised_)
 		{
-			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-			SPCP(name)->_resolution_3_ = (size_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
-			SPCP(name)->_resolution_4_ = (size_t) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (ssize_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_3_ = (ssize_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
+			SPCP(name)->_resolution_4_ = (ssize_t) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
 			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
 			SPCP(name)->_version_number_ = 2; // This should be changed when there are changes to this code
 
@@ -142,7 +142,7 @@ private:
 		std::ifstream in_file;
 		std::string file_data;
 		bool need_to_calc = false;
-		int_type loop_counter = 0;
+		int_t loop_counter = 0;
 
 		if ( SPCP(name)->_loaded_ )
 			return;
@@ -174,7 +174,7 @@ private:
 			// Check that it has the right name and version
 
 			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			int_type file_version = std::numeric_limits<int_type>::max();
+			int_t file_version = std::numeric_limits<int_t>::max();
 
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
@@ -203,10 +203,10 @@ private:
 			in_file.read((char *)&(SPCP(name)->_step_4_),sizeof(SPCP(name)->_step_4_));
 
 			// Set up data
-			SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-			SPCP(name)->_resolution_3_ = (size_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
-			SPCP(name)->_resolution_4_ = (size_t) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
+			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (ssize_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_3_ = (ssize_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
+			SPCP(name)->_resolution_4_ = (ssize_t) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
 			make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 					SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ );
 
@@ -214,7 +214,7 @@ private:
 
 			// Initialise
 			const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0][0]); // Store the size
-			size_t i_1=0, i_2=0, i_3=0, i_4=0;
+			ssize_t i_1=0, i_2=0, i_3=0, i_4=0;
 
 			while ( ( !in_file.eof() ) && ( i_4 < SPCP(name)->_resolution_4_ )
 					&& (in_file) )
@@ -278,10 +278,10 @@ private:
 		handle_notification("Generating " + SPCP(name)->_file_name_ + ". This may take some time.");
 
 		// Set up data
-		SPCP(name)->_resolution_1_ = (size_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-		SPCP(name)->_resolution_2_ = (size_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-		SPCP(name)->_resolution_3_ = (size_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
-		SPCP(name)->_resolution_4_ = (size_t) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
+		SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+		SPCP(name)->_resolution_2_ = (ssize_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+		SPCP(name)->_resolution_3_ = (ssize_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
+		SPCP(name)->_resolution_4_ = (ssize_t) max( ( ( SPCP(name)->_max_4_ - SPCP(name)->_min_4_ ) / safe_d(SPCP(name)->_step_4_)) + 1, 2);
 		make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
 				SPCP(name)->_resolution_3_, SPCP(name)->_resolution_4_ );
 
@@ -291,19 +291,19 @@ private:
 		#ifdef _OPENMP
 		#pragma omp parallel for schedule(dynamic)
 		#endif
-		for ( size_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
+		for ( ssize_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
 		{
-			flt_type x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
-			for( size_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
+			flt_t x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
+			for( ssize_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
 			{
-				flt_type x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
-				for( size_t i_3 = 0; i_3 < SPCP(name)->_resolution_3_; ++i_3)
+				flt_t x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
+				for( ssize_t i_3 = 0; i_3 < SPCP(name)->_resolution_3_; ++i_3)
 				{
-					flt_type x_3 = SPCP(name)->_min_3_ + i_3*SPCP(name)->_step_3_;
-					for( size_t i_4 = 0; i_4 < SPCP(name)->_resolution_4_; ++i_4)
+					flt_t x_3 = SPCP(name)->_min_3_ + i_3*SPCP(name)->_step_3_;
+					for( ssize_t i_4 = 0; i_4 < SPCP(name)->_resolution_4_; ++i_4)
 					{
-						flt_type x_4 = SPCP(name)->_min_4_ + i_4*SPCP(name)->_step_4_;
-						flt_type result = 0;
+						flt_t x_4 = SPCP(name)->_min_4_ + i_4*SPCP(name)->_step_4_;
+						flt_t result = 0;
 						try
 						{
 							result = SPCP(name)->_calculate(x_1, x_2, x_3, x_4);
@@ -340,7 +340,7 @@ private:
 		// Output name and version
 
 		std::string file_name = SPCP(name)->_name_base();
-		int_type file_version = SPCP(name)->_version_number_;
+		int_t file_version = SPCP(name)->_version_number_;
 
 		out_file.write(file_name.c_str(),BRG_CACHE_ND_NAME_SIZE);
 		out_file.write((char *)&file_version,sizeof(file_version));
@@ -363,7 +363,7 @@ private:
 
 		// Initialize
 		const std::streamsize size = sizeof(SPCP(name)->_results_[0][0][0][0]);
-		size_t i_1=0, i_2=0, i_3=0, i_4=0;
+		ssize_t i_1=0, i_2=0, i_3=0, i_4=0;
 
 		while ( i_4<SPCP(name)->_resolution_4_ )
 		{
@@ -401,7 +401,7 @@ protected:
 #ifdef _BRG_USE_UNITS_
 
 	// Gets the result in the proper units
-	any_units_type _units( const flt_type & v ) const
+	any_units_type _units( const flt_t & v ) const
 	{
 		return any_units_cast<any_units_type>(v);
 	}
@@ -410,8 +410,8 @@ protected:
 
 	/// Long calculation function, which is used to generate the cache; must be overloaded by each
 	/// child.
-	flt_type _calculate(const flt_type & x_1, const flt_type & x_2, const flt_type & x_3,
-			const flt_type & x_4) const;
+	flt_t _calculate(const flt_t & x_1, const flt_t & x_2, const flt_t & x_3,
+			const flt_t & x_4) const;
 
 	/// The default name (without extension) for the cache file; should be unique for each cache.
 	const std::string _name_base() const;
@@ -462,10 +462,10 @@ public:
 	 * @param new_max_1 The new maximum value, dimension 4.
 	 * @param new_step_1 The number of points at which to cache the results, dimension 4.
 	 */
-	void set_range( const flt_type & new_min_1, const flt_type & new_max_1, const flt_type & new_step_1,
-	         const flt_type & new_min_2, const flt_type & new_max_2, const flt_type & new_step_2,
- 	         const flt_type & new_min_3, const flt_type & new_max_3, const flt_type & new_step_3,
- 	         const flt_type & new_min_4, const flt_type & new_max_4, const flt_type & new_step_4)
+	void set_range( const flt_t & new_min_1, const flt_t & new_max_1, const flt_t & new_step_1,
+	         const flt_t & new_min_2, const flt_t & new_max_2, const flt_t & new_step_2,
+ 	         const flt_t & new_min_3, const flt_t & new_max_3, const flt_t & new_step_3,
+ 	         const flt_t & new_min_4, const flt_t & new_max_4, const flt_t & new_step_4)
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 
@@ -534,13 +534,13 @@ public:
 		// Fill up data
 		std::vector< std::vector<std::string> > data(6);
 		std::stringstream ss;
-		for(size_t i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
+		for(ssize_t i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
 		{
-			for(size_t i_2=0; i_2<SPCP(name)->_resolution_2_; ++i_2)
+			for(ssize_t i_2=0; i_2<SPCP(name)->_resolution_2_; ++i_2)
 			{
-				for(size_t i_3=0; i_3<SPCP(name)->_resolution_3_; ++i_3)
+				for(ssize_t i_3=0; i_3<SPCP(name)->_resolution_3_; ++i_3)
 				{
-					for(size_t i_4=0; i_4<SPCP(name)->_resolution_4_; ++i_4)
+					for(ssize_t i_4=0; i_4<SPCP(name)->_resolution_4_; ++i_4)
 					{
 						data[0].push_back("");
 						ss.str("");
@@ -580,21 +580,21 @@ public:
 			const Tx3 & init_x_3, const Tx4 & init_x_4) const
 	{
 
-		flt_type x_1 = value_of(init_x_1);
-		flt_type x_2 = value_of(init_x_2);
-		flt_type x_3 = value_of(init_x_3);
-		flt_type x_4 = value_of(init_x_4);
+		flt_t x_1 = value_of(init_x_1);
+		flt_t x_2 = value_of(init_x_2);
+		flt_t x_3 = value_of(init_x_3);
+		flt_t x_4 = value_of(init_x_4);
 
-		flt_type xlo_1, xhi_1;
-		size_t xi_1; // Lower nearby array point
-		flt_type xlo_2, xhi_2;
-		size_t xi_2; // Lower nearby array point
-		flt_type xlo_3, xhi_3;
-		size_t xi_3; // Lower nearby array point
-		flt_type xlo_4, xhi_4;
-		size_t xi_4; // Lower nearby array point
-		flt_type result = 0;
-		flt_type total_weight = 0;
+		flt_t xlo_1, xhi_1;
+		ssize_t xi_1; // Lower nearby array point
+		flt_t xlo_2, xhi_2;
+		ssize_t xi_2; // Lower nearby array point
+		flt_t xlo_3, xhi_3;
+		ssize_t xi_3; // Lower nearby array point
+		flt_t xlo_4, xhi_4;
+		ssize_t xi_4; // Lower nearby array point
+		flt_t result = 0;
+		flt_t total_weight = 0;
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
 
@@ -624,16 +624,16 @@ public:
 			}
 		}
 
-		xi_1 = (size_t)bound(0,
+		xi_1 = (ssize_t)bound(0,
 				( ( x_1 - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ),
 				SPCP(name)->_resolution_1_ - 2 );
-		xi_2 = (size_t)bound(0,
+		xi_2 = (ssize_t)bound(0,
 				( ( x_2 - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ),
 				SPCP(name)->_resolution_2_ - 2 );
-		xi_3 = (size_t)bound(0,
+		xi_3 = (ssize_t)bound(0,
 				( ( x_3 - SPCP(name)->_min_3_ ) / SPCP(name)->_step_3_ ),
 				SPCP(name)->_resolution_3_ - 2 );
-		xi_4 = (size_t)bound(0,
+		xi_4 = (ssize_t)bound(0,
 				( ( x_4 - SPCP(name)->_min_4_ ) / SPCP(name)->_step_4_ ),
 				SPCP(name)->_resolution_4_ - 2 );
 

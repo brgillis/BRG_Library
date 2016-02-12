@@ -49,19 +49,19 @@ namespace IceBRG
 #if(1)
 
 template<typename T, BRG_F_IS_CONTAINER(T)>
-int_type ssize( const T & container)
+int_t ssize( const T & container)
 {
 	return container.size(); // The return type really does all the work here
 }
 
 template<typename T, BRG_F_IS_TUPLE(T)>
-constexpr int_type ssize( const T & tuple)
+constexpr int_t ssize( const T & tuple)
 {
 	return boost::tuples::length<T>::value;
 }
 
 template<typename T, BRG_F_NOT_CONTAINER(T)>
-int_type ssize( const T & container)
+int_t ssize( const T & container)
 {
 	return container.size(); // TODO: Fix so it'll give a result of 1 for those without a size() method
 }
@@ -72,23 +72,23 @@ int_type ssize( const T & container)
 #if (1)
 
 // Set_zero function - a way for other template functions to "clear" or initialize a value in various ways
-inline void set_zero( int_type & obj )
+inline void set_zero( int_t & obj )
 {
 	obj = 0;
 }
-inline void set_zero( short_int_type & obj )
+inline void set_zero( short_int_t & obj )
 {
 	obj = 0;
 }
-inline void set_zero( long_int_type & obj )
+inline void set_zero( long_int_t & obj )
 {
 	obj = 0;
 }
-inline void set_zero( flt_type & obj )
+inline void set_zero( flt_t & obj )
 {
 	obj = 0;
 }
-inline void set_zero( long_flt_type & obj )
+inline void set_zero( long_flt_t & obj )
 {
 	obj = 0;
 }

@@ -444,7 +444,7 @@ struct sqrt_typeof_helper<boost::tuples::null_type,void>
  * This is needed since the compiler won't fully recurse function decltypes, but it
  * will fully recurse a structure.
  */
-template< int_type p, class T1, class Enable1 = void, class Enable2 = void>
+template< int_t p, class T1, class Enable1 = void, class Enable2 = void>
 struct ipow_typeof_helper
 {
 };
@@ -454,7 +454,7 @@ struct ipow_typeof_helper
  * This is needed since the compiler won't fully recurse function decltypes, but it
  * will fully recurse a structure.
  */
-template< int_type p, class T1>
+template< int_t p, class T1>
 struct ipow_typeof_helper<p,T1,BRG_S_IS_TUPLE(T1)>
 {
 	typedef typename std::decay<T1>::type T1d;
@@ -466,7 +466,7 @@ struct ipow_typeof_helper<p,T1,BRG_S_IS_TUPLE(T1)>
 /**
  * Null type overload to end recursion.
  */
-template< int_type p >
+template< int_t p >
 struct ipow_typeof_helper<p,boost::tuples::null_type,void>
 {
 	typedef boost::tuples::null_type type;
@@ -1233,13 +1233,13 @@ inline T1 runtime_ipow( const T1 & t1,
 // ipow
 #if(1)
 
-template< int_type p >
+template< int_t p >
 inline boost::tuples::null_type ipow( const boost::tuples::null_type & t1)
 {
 	return boost::tuples::null_type();
 }
 
-template < int_type p, class T1,
+template < int_t p, class T1,
 BRG_F_IS_TUPLE(T1)>
 inline typename tuples::ipow_typeof_helper<p,T1>::type ipow( const T1 & t1 )
 {
@@ -1520,13 +1520,13 @@ typename tuples::binary_rand_typeof_helper<f,T1,T2>::type rand_container(const f
 
 template<typename T, typename f, typename Tout=typename std::decay<T>::type, BRG_F_IS_NULL(Tout) >
 boost::tuples::null_type rand_container_of_size(const f func,
-		const int_type &)
+		const int_t &)
 {
 	return boost::tuples::null_type();
 }
 template<typename T, typename f, typename Tout=typename std::decay<T>::type, BRG_F_IS_TUPLE(Tout) >
 Tout rand_container_of_size(const f func,
-		const int_type &)
+		const int_t &)
 {
 	Tout vo;
 
@@ -1541,7 +1541,7 @@ Tout rand_container_of_size(const f func,
 template<typename T, typename f, typename T1, typename Tout=typename std::decay<T>::type,
 		BRG_F_IS_NULL(Tout) >
 boost::tuples::null_type rand_container_of_size(const f func, const T1 & v1,
-		const int_type &)
+		const int_t &)
 {
 	return boost::tuples::null_type();
 }
@@ -1549,7 +1549,7 @@ template<typename T, typename f, typename T1, typename Tout=typename std::decay<
 		BRG_F_IS_TUPLE(Tout),
 		BRG_F_IS_TUPLE(T1) >
 Tout rand_container_of_size(const f func, const T1 & v1,
-		const int_type &)
+		const int_t &)
 {
 	Tout vo;
 
@@ -1566,7 +1566,7 @@ Tout rand_container_of_size(const f func, const T1 & v1,
 template<typename T, typename f, typename T1, typename T2, typename Tout=typename std::decay<T>::type,
 		BRG_F_IS_NULL(Tout) >
 boost::tuples::null_type rand_container_of_size(const f func, const T1 & v1, const T2 & v2,
-		const int_type &)
+		const int_t &)
 {
 	return boost::tuples::null_type();
 }
@@ -1574,7 +1574,7 @@ template<typename T, typename f, typename T1, typename T2, typename Tout=typenam
 		BRG_F_IS_TUPLE(Tout),
 		BRG_F_IS_TUPLE(T1), BRG_F_IS_TUPLE(T2) >
 Tout rand_container_of_size(const f func, const T1 & v1,
-		const T2 & v2, const int_type &)
+		const T2 & v2, const int_t &)
 {
 	assert(ssize(v1)==ssize(v2));
 
@@ -1594,7 +1594,7 @@ template<typename T, typename f, typename T1, typename T2, typename Tout=typenam
 		BRG_F_IS_TUPLE(Tout),
 		BRG_F_IS_TUPLE(T1), BRG_F_NOT_CONTAINER(T2) >
 Tout rand_container_of_size(const f func, const T1 & v1,
-		const T2 & v2, const int_type &)
+		const T2 & v2, const int_t &)
 {
 	Tout vo;
 
@@ -1612,7 +1612,7 @@ template<typename T, typename f, typename T1, typename T2, typename Tout=typenam
 		BRG_F_IS_TUPLE(Tout),
 		BRG_F_NOT_CONTAINER(T1), BRG_F_IS_TUPLE(T2) >
 Tout rand_container_of_size(const f func, const T1 & v1,
-		const T2 & v2, const int_type &)
+		const T2 & v2, const int_t &)
 {
 	Tout vo;
 
@@ -1630,7 +1630,7 @@ template<typename T, typename f, typename T1, typename T2, typename Tout=typenam
 		BRG_F_IS_TUPLE(Tout),
 		BRG_F_NOT_CONTAINER(T1), BRG_F_NOT_CONTAINER(T2) >
 Tout rand_container_of_size(const f func, const T1 & v1,
-		const T2 & v2, const int_type &)
+		const T2 & v2, const int_t &)
 {
 	Tout vo;
 

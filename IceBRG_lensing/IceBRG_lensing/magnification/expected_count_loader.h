@@ -42,29 +42,29 @@ namespace IceBRG {
  */
 class expected_count_loader {
 	static bool _loaded_;
-	static IceBRG::limit_vector<flt_type> _z_limits_;
-	static std::vector<IceBRG::limit_vector<flt_type>> _mag_limits_;
-	static std::vector<std::vector<flt_type>>_smoothed_count_, _smoothed_count_derivative_;
+	static IceBRG::limit_vector<flt_t> _z_limits_;
+	static std::vector<IceBRG::limit_vector<flt_t>> _mag_limits_;
+	static std::vector<std::vector<flt_t>>_smoothed_count_, _smoothed_count_derivative_;
 	static std::string _filename_base_, _filename_tail_;
 
 	static void _load();
-	static flt_type _get_interp(const flt_type & mag, const flt_type & z,
-			const std::vector<std::vector<flt_type>> & table,
-			const flt_type & def=0);
+	static flt_t _get_interp(const flt_t & mag, const flt_t & z,
+			const std::vector<std::vector<flt_t>> & table,
+			const flt_t & def=0);
 public:
 
 	// Setting parameters for where the data is stored
 #if(1)
-	static void set_z_limits(const std::vector<flt_type> & new_limits_vector);
-	static void set_z_limits(std::vector<flt_type> && new_limits_vector);
+	static void set_z_limits(const std::vector<flt_t> & new_limits_vector);
+	static void set_z_limits(std::vector<flt_t> && new_limits_vector);
 	static void set_filename_base(const std::string & new_filename_base);
 	static void set_filename_base(std::string && new_filename_base);
 	static void set_filename_tail(const std::string & new_filename_tail);
 	static void set_filename_tail(std::string && new_filename_tail);
 #endif
 
-	static flt_type get_count(const flt_type & mag, const flt_type & z);
-	static flt_type get_derivative(const flt_type & mag, const flt_type & z);
+	static flt_t get_count(const flt_t & mag, const flt_t & z);
+	static flt_t get_derivative(const flt_t & mag, const flt_t & z);
 
 	static void unload();
 };

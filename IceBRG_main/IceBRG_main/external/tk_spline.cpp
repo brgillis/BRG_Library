@@ -35,10 +35,10 @@
 // band_matrix implementation
 // -------------------------
 
-tk::band_matrix::band_matrix(int_type dim, int_type n_u, int_type n_l) {
+tk::band_matrix::band_matrix(::IceBRG::int_t dim, ::IceBRG::int_t n_u, ::IceBRG::int_t n_l) {
    resize(dim, n_u, n_l);
 }
-void tk::band_matrix::resize(int_type dim, int_type n_u, int_type n_l) {
+void tk::band_matrix::resize(::IceBRG::int_t dim, ::IceBRG::int_t n_u, ::IceBRG::int_t n_l) {
    assert(dim>0);
    assert(n_u>=0);
    assert(n_l>=0);
@@ -51,7 +51,7 @@ void tk::band_matrix::resize(int_type dim, int_type n_u, int_type n_l) {
       m_lower[i].resize(dim);
    }
 }
-int_type tk::band_matrix::dim() const {
+::IceBRG::int_t tk::band_matrix::dim() const {
    if(m_upper.size()>0) {
       return m_upper[0].size();
    } else {
@@ -62,16 +62,16 @@ int_type tk::band_matrix::dim() const {
 
 // defines the new operator (), so that we can access the elements
 // by A(i,j), index going from i=0,...,dim()-1
-flt_type & tk::band_matrix::operator () (int_type i, int_type j) {
-   int_type k=j-i;       // what band is the entry
+::IceBRG::flt_t & tk::band_matrix::operator () (::IceBRG::int_t i, ::IceBRG::int_t j) {
+   ::IceBRG::int_t k=j-i;       // what band is the entry
    assert( (i>=0) && (i<dim()) && (j>=0) && (j<dim()) );
    assert( (-num_lower()<=k) && (k<=num_upper()) );
    // k=0 -> diogonal, k<0 lower left part, k>0 upper right part
    if(k>=0)   return m_upper[k][i];
    else	    return m_lower[-k][i];
 }
-flt_type tk::band_matrix::operator () (int_type i, int_type j) const {
-   int_type k=j-i;       // what band is the entry
+::IceBRG::flt_t tk::band_matrix::operator () (::IceBRG::int_t i, ::IceBRG::int_t j) const {
+   ::IceBRG::int_t k=j-i;       // what band is the entry
    assert( (i>=0) && (i<dim()) && (j>=0) && (j<dim()) );
    assert( (-num_lower()<=k) && (k<=num_upper()) );
    // k=0 -> diogonal, k<0 lower left part, k>0 upper right part
@@ -79,43 +79,43 @@ flt_type tk::band_matrix::operator () (int_type i, int_type j) const {
    else	    return m_lower[-k][i];
 }
 // second diag (used in LU decomposition), saved in m_lower
-flt_type tk::band_matrix::saved_diag(int_type i) const {
+::IceBRG::flt_t tk::band_matrix::saved_diag(::IceBRG::int_t i) const {
    assert( (i>=0) && (i<dim()) );
    return m_lower[0][i];
 }
-flt_type & tk::band_matrix::saved_diag(int_type i) {
+::IceBRG::flt_t & tk::band_matrix::saved_diag(::IceBRG::int_t i) {
    assert( (i>=0) && (i<dim()) );
    return m_lower[0][i];
 }
 
 // LR-Decomposition of a band matrix
 void tk::band_matrix::lu_decompose() {
-   int_type  i_max,j_max;
-   int_type  j_min;
-   flt_type x;
+   ::IceBRG::int_t  i_max,j_max;
+   ::IceBRG::int_t  j_min;
+   ::IceBRG::flt_t x;
 
    // preconditioning
    // normalize column i so that a_ii=1
-   for(int_type i=0; i<this->dim(); i++) {
+   for(::IceBRG::int_t i=0; i<this->dim(); i++) {
       assert(this->operator()(i,i)!=0.0);
       this->saved_diag(i)=1.0/this->operator()(i,i);
       j_min=std::max(0,i-this->num_lower());
       j_max=std::min(this->dim()-1,i+this->num_upper());
-      for(int_type j=j_min; j<=j_max; j++) {
+      for(::IceBRG::int_t j=j_min; j<=j_max; j++) {
          this->operator()(i,j) *= this->saved_diag(i);
       }
       this->operator()(i,i)=1.0;          // prevents rounding errors
    }
 
    // Gauss LR-Decomposition
-   for(int_type k=0; k<this->dim(); k++) {
+   for(::IceBRG::int_t k=0; k<this->dim(); k++) {
       i_max=std::min(this->dim()-1,k+this->num_lower());  // num_lower not a mistake!
-      for(int_type i=k+1; i<=i_max; i++) {
+      for(::IceBRG::int_t i=k+1; i<=i_max; i++) {
          assert(this->operator()(k,k)!=0.0);
          x=-this->operator()(i,k)/this->operator()(k,k);
          this->operator()(i,k)=-x;                         // assembly part of L
          j_max=std::min(this->dim()-1,k+this->num_upper());
-         for(int_type j=k+1; j<=j_max; j++) {
+         for(::IceBRG::int_t j=k+1; j<=j_max; j++) {
             // assembly part of R
             this->operator()(i,j)=this->operator()(i,j)+x*this->operator()(k,j);
          }
@@ -123,38 +123,38 @@ void tk::band_matrix::lu_decompose() {
    }
 }
 // solves Ly=b
-std::vector<flt_type> tk::band_matrix::l_solve(const std::vector<flt_type>& b) const {
-   assert( this->dim()==(int_type)b.size() );
-   std::vector<flt_type> x(this->dim());
-   int_type j_start;
-   flt_type sum;
-   for(int_type i=0; i<this->dim(); i++) {
+::IceBRG::flt_vector_t tk::band_matrix::l_solve(const ::IceBRG::flt_vector_t& b) const {
+   assert( this->dim()==(::IceBRG::int_t)b.size() );
+   ::IceBRG::flt_vector_t x(this->dim());
+   ::IceBRG::int_t j_start;
+   ::IceBRG::flt_t sum;
+   for(::IceBRG::int_t i=0; i<this->dim(); i++) {
       sum=0;
       j_start=std::max(0,i-this->num_lower());
-      for(int_type j=j_start; j<i; j++) sum += this->operator()(i,j)*x[j];
+      for(::IceBRG::int_t j=j_start; j<i; j++) sum += this->operator()(i,j)*x[j];
       x[i]=(b[i]*this->saved_diag(i)) - sum;
    }
    return x;
 }
 // solves Rx=y
-std::vector<flt_type> tk::band_matrix::r_solve(const std::vector<flt_type>& b) const {
-   assert( this->dim()==(int_type)b.size() );
-   std::vector<flt_type> x(this->dim());
-   int_type j_stop;
-   flt_type sum;
-   for(int_type i=this->dim()-1; i>=0; i--) {
+::IceBRG::flt_vector_t tk::band_matrix::r_solve(const ::IceBRG::flt_vector_t& b) const {
+   assert( this->dim()==(::IceBRG::int_t)b.size() );
+   ::IceBRG::flt_vector_t x(this->dim());
+   ::IceBRG::int_t j_stop;
+   ::IceBRG::flt_t sum;
+   for(::IceBRG::int_t i=this->dim()-1; i>=0; i--) {
       sum=0;
       j_stop=std::min(this->dim()-1,i+this->num_upper());
-      for(int_type j=i+1; j<=j_stop; j++) sum += this->operator()(i,j)*x[j];
+      for(::IceBRG::int_t j=i+1; j<=j_stop; j++) sum += this->operator()(i,j)*x[j];
       x[i]=( b[i] - sum ) / this->operator()(i,i);
    }
    return x;
 }
 
-std::vector<flt_type> tk::band_matrix::lu_solve(const std::vector<flt_type>& b,
+::IceBRG::flt_vector_t tk::band_matrix::lu_solve(const ::IceBRG::flt_vector_t& b,
       bool is_lu_decomposed) {
-   assert( this->dim()==(int_type)b.size() );
-   std::vector<flt_type>  x,y;
+   assert( this->dim()==(::IceBRG::int_t)b.size() );
+   ::IceBRG::flt_vector_t  x,y;
    if(is_lu_decomposed==false) {
       this->lu_decompose();
    }
@@ -170,13 +170,13 @@ std::vector<flt_type> tk::band_matrix::lu_solve(const std::vector<flt_type>& b,
 // spline implementation
 // -----------------------
 
-void tk::spline::set_points(const std::vector<flt_type>& x,
-                          const std::vector<flt_type>& y, bool cubic_spline) {
+void tk::spline::set_points(const ::IceBRG::flt_vector_t& x,
+                          const ::IceBRG::flt_vector_t& y, bool cubic_spline) {
    assert(x.size()==y.size());
    m_x=x;
    m_y=y;
-   int_type   n=x.size();
-   for(int_type i=0; i<n-1; i++) {
+   ::IceBRG::int_t   n=x.size();
+   for(::IceBRG::int_t i=0; i<n-1; i++) {
       assert(m_x[i]<m_x[i+1]);
    }
 
@@ -184,8 +184,8 @@ void tk::spline::set_points(const std::vector<flt_type>& x,
       // setting up the matrix and right hand side of the equation system
       // for the parameters b[]
       band_matrix A(n,1,1);
-      std::vector<flt_type>  rhs(n);
-      for(int_type i=1; i<n-1; i++) {
+      ::IceBRG::flt_vector_t  rhs(n);
+      for(::IceBRG::int_t i=1; i<n-1; i++) {
          A(i,i-1)=1.0/3.0*(x[i]-x[i-1]);
          A(i,i)=2.0/3.0*(x[i+1]-x[i-1]);
          A(i,i+1)=1.0/3.0*(x[i+1]-x[i]);
@@ -205,7 +205,7 @@ void tk::spline::set_points(const std::vector<flt_type>& x,
       // calculate parameters a[] and c[] based on b[]
       m_a.resize(n);
       m_c.resize(n);
-      for(int_type i=0; i<n-1; i++) {
+      for(::IceBRG::int_t i=0; i<n-1; i++) {
          m_a[i]=1.0/3.0*(m_b[i+1]-m_b[i])/(x[i+1]-x[i]);
          m_c[i]=(y[i+1]-y[i])/(x[i+1]-x[i])
                 - 1.0/3.0*(2.0*m_b[i]+m_b[i+1])*(x[i+1]-x[i]);
@@ -214,7 +214,7 @@ void tk::spline::set_points(const std::vector<flt_type>& x,
       m_a.resize(n);
       m_b.resize(n);
       m_c.resize(n);
-      for(int_type i=0; i<n-1; i++) {
+      for(::IceBRG::int_t i=0; i<n-1; i++) {
          m_a[i]=0.0;
          m_b[i]=0.0;
          m_c[i]=(m_y[i+1]-m_y[i])/(m_x[i+1]-m_x[i]);
@@ -223,21 +223,21 @@ void tk::spline::set_points(const std::vector<flt_type>& x,
 
    // for the right boundary we define
    // f_{n-1}(x) = b*(x-x_{n-1})^2 + c*(x-x_{n-1}) + y_{n-1}
-   flt_type h=x[n-1]-x[n-2];
+   ::IceBRG::flt_t h=x[n-1]-x[n-2];
    // m_b[n-1] is determined by the boundary condition
    m_a[n-1]=0.0;
    m_c[n-1]=3.0*m_a[n-2]*h*h+2.0*m_b[n-2]*h+m_c[n-2];   // = f'_{n-2}(x_{n-1})
 }
 
-flt_type tk::spline::operator() (flt_type x) const {
+::IceBRG::flt_t tk::spline::operator() (::IceBRG::flt_t x) const {
    size_t n=m_x.size();
    // find the closest point m_x[idx] < x, idx=0 even if x<m_x[0]
-   std::vector<flt_type>::const_iterator it;
+   ::IceBRG::flt_vector_t::const_iterator it;
    it=std::lower_bound(m_x.begin(),m_x.end(),x);
-   int_type idx=std::max( int_type(it-m_x.begin())-1, 0);
+   ::IceBRG::int_t idx=std::max( ::IceBRG::int_t(it-m_x.begin())-1, 0);
 
-   flt_type h=x-m_x[idx];
-   flt_type interpol;
+   ::IceBRG::flt_t h=x-m_x[idx];
+   ::IceBRG::flt_t interpol;
    if(x<m_x[0]) {
       // extrapolation to the left
       interpol=((m_b[0])*h + m_c[0])*h + m_y[0];

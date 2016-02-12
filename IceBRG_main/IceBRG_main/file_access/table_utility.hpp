@@ -118,7 +118,7 @@ inline header_t convert_to_header( const std::string & line )
 	std::string word;
 
 	// Get rid of first word if it's the comment indicator
-	if ( line_data_stream.peek() == (int_type)( *"#" ) )
+	if ( line_data_stream.peek() == (int_t)( *"#" ) )
 	{
 		line_data_stream >> word;
 	}

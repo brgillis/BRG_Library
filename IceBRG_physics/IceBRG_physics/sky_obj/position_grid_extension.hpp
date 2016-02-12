@@ -55,10 +55,10 @@ template<typename name>
 class position_grid_extension {
 private:
 
-	mutable int_type _ra_grid_, _dec_grid_, _z_grid_;
+	mutable int_t _ra_grid_, _dec_grid_, _z_grid_;
 
 	mutable bool _ra_grid_cached_, _dec_grid_cached_, _z_grid_cached_;
-	mutable int_type _local_ra_grid_change_num_, _local_dec_grid_change_num_,
+	mutable int_t _local_ra_grid_change_num_, _local_dec_grid_change_num_,
 		_local_z_grid_change_num_;
 
 	// Functions to cache values
@@ -89,7 +89,7 @@ public:
 #if (1)
 
 	// Safe versions - will check, then recache if necessary
-	const int_type ra_grid() const
+	const int_t ra_grid() const
 	{
 		if ( _ra_grid_cached_ )
 		{
@@ -99,7 +99,7 @@ public:
 		cache_ra_grid();
 		return _ra_grid_;
 	}
-	const int_type dec_grid() const
+	const int_t dec_grid() const
 	{
 		if ( _dec_grid_cached_ )
 		{
@@ -109,7 +109,7 @@ public:
 		cache_dec_grid();
 		return _dec_grid_;
 	}
-	const int_type z_grid() const
+	const int_t z_grid() const
 	{
 		if ( _z_grid_cached_ )
 		{
@@ -121,19 +121,19 @@ public:
 	}
 
 	// Unsafe versions, won't check, won't cache (but will do assert check on debug builds)
-	const int_type quick_ra_grid() const
+	const int_t quick_ra_grid() const
 	{
 		assert(_ra_grid_cached_);
 		assert(_local_ra_grid_change_num_ == grid_cache::ra_grid_change_num());
 		return _ra_grid_;
 	}
-	const int_type quick_dec_grid() const
+	const int_t quick_dec_grid() const
 	{
 		assert(_dec_grid_cached_);
 		assert(_local_dec_grid_change_num_ == grid_cache::dec_grid_change_num());
 		return _dec_grid_;
 	}
-	const int_type quick_z_grid() const
+	const int_t quick_z_grid() const
 	{
 		assert(_z_grid_cached_);
 		assert(_local_z_grid_change_num_ == grid_cache::z_grid_change_num());

@@ -270,13 +270,13 @@ auto safe_extract_weighted_variance(Ti && acc) -> decltype(boost::accumulators::
 
 // moment
 #if(1)
-template<int_type n, typename Ti>
+template<int_t n, typename Ti>
 auto extract_moment(Ti && acc) -> decltype(boost::accumulators::moment<n>(std::forward<Ti>(acc)))
 {
 	return boost::accumulators::moment<n>(std::forward<Ti>(acc));
 }
 
-template<int_type n, typename Ti>
+template<int_t n, typename Ti>
 auto safe_extract_moment(Ti && acc) -> decltype(boost::accumulators::moment<n>(std::forward<Ti>(acc)))
 {
 	auto result = boost::accumulators::moment<n>(std::forward<Ti>(acc));
@@ -287,13 +287,13 @@ auto safe_extract_moment(Ti && acc) -> decltype(boost::accumulators::moment<n>(s
 
 // weighted moment
 #if(1)
-template<int_type n, typename Ti>
+template<int_t n, typename Ti>
 auto extract_weighted_moment(Ti && acc) -> decltype(boost::accumulators::weighted_moment<n>(std::forward<Ti>(acc)))
 {
 	return boost::accumulators::weighted_moment<n>(std::forward<Ti>(acc));
 }
 
-template<int_type n, typename Ti>
+template<int_t n, typename Ti>
 auto safe_extract_weighted_moment(Ti && acc) -> decltype(boost::accumulators::weighted_moment<n>(std::forward<Ti>(acc)))
 {
 	auto result = boost::accumulators::weighted_moment<n>(std::forward<Ti>(acc));

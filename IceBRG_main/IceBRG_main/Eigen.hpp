@@ -72,19 +72,19 @@ namespace IceBRG {
 template<typename T>
 using array_type = Eigen::Array<T,Eigen::Dynamic,1>;
 
-typedef array_type<flt_type> flt_array_type;
-typedef array_type<long_flt_type> long_flt_array_type;
+typedef array_type<flt_t> flt_array_type;
+typedef array_type<long_flt_t> long_flt_array_type;
 
-typedef array_type<int_type> int_array_type;
-typedef array_type<long_int_type> long_int_array_type;
-typedef array_type<short_int_type> short_int_array_type;
+typedef array_type<int_t> int_array_type;
+typedef array_type<long_int_t> long_int_array_type;
+typedef array_type<short_int_t> short_int_array_type;
 
-typedef array_type<unsigned_int_type> unsigned_int_array_type;
-typedef array_type<long_unsigned_int_type> long_unsigned_int_array_type;
-typedef array_type<short_unsigned_int_type> short_unsigned_int_array_type;
+typedef array_type<unsigned_int_t> unsigned_int_array_type;
+typedef array_type<long_unsigned_int_t> long_unsigned_int_array_type;
+typedef array_type<short_unsigned_int_t> short_unsigned_int_array_type;
 
-typedef array_type<complex_type> complex_array_type;
-typedef array_type<long_complex_type> long_complex_array_type;
+typedef array_type<complex_t> complex_array_type;
+typedef array_type<long_complex_t> long_complex_array_type;
 
 }
 #endif // Array typedefs
@@ -98,8 +98,8 @@ namespace serialization {
 template<typename Archive, typename T_value>
 void save(Archive & ar, const Eigen::Array<T_value,-1,-1,1,-1,-1> & v, const unsigned int version)
 {
-	int_type nrows(v.rows());
-	int_type ncols(v.cols());
+	::IceBRG::int_t nrows(v.rows());
+	::IceBRG::int_t ncols(v.cols());
 
 	ar << nrows << ncols;
 
@@ -111,8 +111,8 @@ void save(Archive & ar, const Eigen::Array<T_value,-1,-1,1,-1,-1> & v, const uns
 template<typename Archive, typename T_value>
 void load(Archive & ar, Eigen::Array<T_value,-1,-1,1,-1,-1> & v, const unsigned int version)
 {
-	int_type nrows;
-	int_type ncols;
+	IceBRG::int_t nrows;
+	IceBRG::int_t ncols;
 
 	ar >> nrows >> ncols;
 

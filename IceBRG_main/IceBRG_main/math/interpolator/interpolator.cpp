@@ -30,14 +30,14 @@
 #include "interpolator.h"
 
 // Global function implementations
-bool IceBRG::p1first_lt_p2first(std::pair<flt_type,flt_type> pair1, std::pair<flt_type,flt_type> pair2)
+bool IceBRG::p1first_lt_p2first(std::pair<flt_t,flt_t> pair1, std::pair<flt_t,flt_t> pair2)
 {
 	assert(pair1.first != pair2.first);
 	return (pair1.first < pair2.first);
 }
 
 // Global function implementations
-bool IceBRG::p1first_lt_v2(std::pair<flt_type,flt_type> pair1, flt_type v2)
+bool IceBRG::p1first_lt_v2(std::pair<flt_t,flt_t> pair1, flt_t v2)
 {
 	return (pair1.first < v2);
 }
@@ -106,7 +106,7 @@ void IceBRG::interpolator::set_interpolation_type(
 
 void IceBRG::interpolator::_set_spline_points() const
 {
-	std::vector<flt_type> x_points(0), y_points(0);
+	std::vector<flt_t> x_points(0), y_points(0);
 	sorted_data(); // Ensure it's cached
 	for(ssize_t i = 0; i < ssize(_sorted_data_); i++)
 	{
@@ -132,14 +132,14 @@ void IceBRG::interpolator::clear_points()
 	_sorted_data_cached_ = false;
 }
 
-void IceBRG::interpolator::add_point(const flt_type & x, const flt_type & y)
+void IceBRG::interpolator::add_point(const flt_t & x, const flt_t & y)
 {
 	_data_.push_back(std::make_pair(x,y));
 	_spline_cached_ = false;
 	_sorted_data_cached_ = false;
 }
 
-void IceBRG::interpolator::try_add_point(const flt_type & x, const flt_type & y)
+void IceBRG::interpolator::try_add_point(const flt_t & x, const flt_t & y)
 {
 	for (ssize_t i=0;i<ssize(_data_);i++)
 	{
@@ -150,7 +150,7 @@ void IceBRG::interpolator::try_add_point(const flt_type & x, const flt_type & y)
 	_sorted_data_cached_ = false;
 }
 
-std::vector< std::pair<flt_type,flt_type> > & IceBRG::interpolator::sorted_data() const
+std::vector< std::pair<IceBRG::flt_t,IceBRG::flt_t> > & IceBRG::interpolator::sorted_data() const
 {
 	if(_sorted_data_cached_)
 		return _sorted_data_;
@@ -162,7 +162,7 @@ std::vector< std::pair<flt_type,flt_type> > & IceBRG::interpolator::sorted_data(
 	return _sorted_data_;
 }
 
-flt_type IceBRG::interpolator::operator()(const flt_type & x) const
+IceBRG::flt_t IceBRG::interpolator::operator()(const flt_t & x) const
 {
 	if(_interpolation_type_==SPLINE)
 	{
@@ -179,7 +179,7 @@ flt_type IceBRG::interpolator::operator()(const flt_type & x) const
 		if(ssize(_data_) < 2)
 			throw std::logic_error("Interpolator called before at least 2 points were loaded.\n");
 
-		flt_type xlo, xhi, ylo, yhi;
+		flt_t xlo, xhi, ylo, yhi;
 		if(x<=sorted_data().front().first)
 		{
 			xlo = _sorted_data_[0].first;
@@ -196,7 +196,7 @@ flt_type IceBRG::interpolator::operator()(const flt_type & x) const
 		}
 		else
 		{
-			std::vector< std::pair<flt_type,flt_type> >::iterator it=_sorted_data_.end();
+			std::vector< std::pair<flt_t,flt_t> >::iterator it=_sorted_data_.end();
 
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
@@ -226,7 +226,7 @@ flt_type IceBRG::interpolator::operator()(const flt_type & x) const
 		}
 		else
 		{
-			std::vector< std::pair<flt_type,flt_type> >::iterator it=_sorted_data_.end();
+			std::vector< std::pair<flt_t,flt_t> >::iterator it=_sorted_data_.end();
 
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);
@@ -251,7 +251,7 @@ flt_type IceBRG::interpolator::operator()(const flt_type & x) const
 		}
 		else
 		{
-			std::vector< std::pair<flt_type,flt_type> >::iterator it=_sorted_data_.end();
+			std::vector< std::pair<flt_t,flt_t> >::iterator it=_sorted_data_.end();
 
 			it = std::lower_bound(_sorted_data_.begin(),_sorted_data_.end(),
 					x,p1first_lt_v2);

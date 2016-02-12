@@ -55,8 +55,8 @@ private:
 public:
 	// Public member variables
 
-	flt_type z_phot, z_phot_err;
-	flt_type odds;
+	flt_t z_phot, z_phot_err;
+	flt_t odds;
 
 	size_t BCG_index;
 
@@ -68,8 +68,8 @@ public:
 
 	// Constructor
 	galaxy_group( size_t init_num_members = 0 );
-	galaxy_group( flt_type init_mass, flt_type init_z, flt_type init_c = -1,
-			flt_type init_tau = -1 );
+	galaxy_group( flt_t init_mass, flt_t init_z, flt_t init_c = -1,
+			flt_t init_tau = -1 );
 
 	// Copy constructor
 	//group( const group &other ); // Implicit is fine
@@ -93,7 +93,7 @@ public:
 	{
 		return 0; // TODO: Should be combine magnitude of member galaxies
 	}
-	flt_type mag() const
+	flt_t mag() const
 	{
 		return 0; // TODO: Should be combine magnitude of member galaxies
 	}

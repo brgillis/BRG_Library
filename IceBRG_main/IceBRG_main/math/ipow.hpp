@@ -40,7 +40,7 @@ namespace IceBRG {
 // shouldn't be called directly
 template< typename T,
 typename std::enable_if<!IceBRG::is_stl_container<T>::value,T>::type* = nullptr >
-T _runtime_ipow( T v, int_type p )
+T _runtime_ipow( T v, int_t p )
 {
 	if(p==1) return v;
 	T tmp = _runtime_ipow(v,p/2);
@@ -51,7 +51,7 @@ T _runtime_ipow( T v, int_type p )
 
 template< typename T,
 typename std::enable_if<!IceBRG::is_stl_container<T>::value,T>::type* = nullptr >
-T runtime_ipow( T v, int_type p )
+T runtime_ipow( T v, int_t p )
 {
 	if(p<0) return 1/_runtime_ipow(v,-p);
 	if(p==0) return 1;
@@ -61,11 +61,11 @@ T runtime_ipow( T v, int_type p )
 	return v*tmp*tmp;
 }
 
-template< int_type p >
+template< int_t p >
 struct _ipow_s {
-	const flt_type & value;
+	const flt_t & value;
 
-	_ipow_s( const flt_type & v )
+	_ipow_s( const flt_t & v )
 	: value(v*_ipow_s<p-1>(v).value) // Using a lambda for a multi-line initializer
 	{
 	}
@@ -73,9 +73,9 @@ struct _ipow_s {
 
 template<>
 struct _ipow_s<1> {
-	const flt_type & value;
+	const flt_t & value;
 
-	_ipow_s( const flt_type & v )
+	_ipow_s( const flt_t & v )
 	: value(v)
 	{
 	}
@@ -83,16 +83,16 @@ struct _ipow_s<1> {
 
 template<>
 struct _ipow_s<0> {
-	const flt_type & value;
+	const flt_t & value;
 
-	_ipow_s( const flt_type & v )
+	_ipow_s( const flt_t & v )
 	: value(1.)
 	{
 	}
 };
 
-template< int_type p >
-flt_type ipow( const flt_type & v)
+template< int_t p >
+flt_t ipow( const flt_t & v)
 {
 	if(p>0)	return _ipow_s<abs(p)>(v).value;
 	if(p<0) return 1./_ipow_s<abs(p)>(v).value;

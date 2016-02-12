@@ -191,7 +191,7 @@ struct fftw_array_deleter
 typedef Eigen::Map<flt_array_type> flt_array_map_type;
 typedef Eigen::Map<complex_array_type> complex_array_map_type;
 
-typedef std::unique_ptr<flt_type,fftw_array_deleter<flt_type>> fftw_flt_ptr;
+typedef std::unique_ptr<flt_t,fftw_array_deleter<flt_t>> fftw_flt_ptr;
 typedef std::unique_ptr<fftw_complex,fftw_array_deleter<fftw_complex>> fftw_complex_ptr;
 
 #endif

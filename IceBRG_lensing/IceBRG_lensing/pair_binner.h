@@ -63,8 +63,8 @@ struct lens_id_lt
 class pair_binner: public pair_bins_summary {
 private:
 
-	flt_type _z_buffer_;
-	static constexpr flt_type _default_z_buffer_ = 0.1;
+	flt_t _z_buffer_;
+	static constexpr flt_t _default_z_buffer_ = 0.1;
 
 	// Data to be sorted into bins
 #if(1)
@@ -88,7 +88,7 @@ private:
 #if(1)
 
 	std::vector<distance_type> _unmasked_frac_bin_limits_;
-	std::vector<flt_type> _unmasked_fracs_;
+	std::vector<flt_t> _unmasked_fracs_;
 
 #endif
 
@@ -112,8 +112,8 @@ public:
 	// Set limits by vectors
 	pair_binner(IceBRG::limit_vector< distance_type > R_bin_limits,
 			IceBRG::limit_vector< mass_type > m_bin_limits=IceBRG::limit_vector<mass_type>(),
-			IceBRG::limit_vector< flt_type > z_bin_limits=IceBRG::limit_vector<flt_type>(),
-			IceBRG::limit_vector< flt_type > mag_bin_limits=IceBRG::limit_vector<flt_type>())
+			IceBRG::limit_vector< flt_t > z_bin_limits=IceBRG::limit_vector<flt_t>(),
+			IceBRG::limit_vector< flt_t > mag_bin_limits=IceBRG::limit_vector<flt_t>())
 	:	pair_bins_summary(R_bin_limits,m_bin_limits,z_bin_limits,mag_bin_limits),
 		_z_buffer_(_default_z_buffer_),
 	 	_sorted_(false)
@@ -124,14 +124,14 @@ public:
 	pair_binner(const distance_type & R_min,
 				const distance_type & R_max,
 				const ssize_t & R_bins,
-				const mass_type & m_min=-std::numeric_limits<flt_type>::infinity()*kg,
-				const mass_type & m_max=std::numeric_limits<flt_type>::infinity()*kg,
+				const mass_type & m_min=-std::numeric_limits<flt_t>::infinity()*kg,
+				const mass_type & m_max=std::numeric_limits<flt_t>::infinity()*kg,
 				const ssize_t  & m_bins=1,
-				const flt_type & z_min=-std::numeric_limits<flt_type>::infinity(),
-				const flt_type & z_max=std::numeric_limits<flt_type>::infinity(),
+				const flt_t & z_min=-std::numeric_limits<flt_t>::infinity(),
+				const flt_t & z_max=std::numeric_limits<flt_t>::infinity(),
 				const ssize_t  & z_bins=1,
-				const flt_type & mag_min=-std::numeric_limits<flt_type>::infinity(),
-				const flt_type & mag_max=std::numeric_limits<flt_type>::infinity(),
+				const flt_t & mag_min=-std::numeric_limits<flt_t>::infinity(),
+				const flt_t & mag_max=std::numeric_limits<flt_t>::infinity(),
 				const ssize_t  & mag_bins=1)
 	:	pair_bins_summary(
 			R_min,
@@ -158,11 +158,11 @@ public:
 
 	// Setting and accessing z_buffer
 #if(1)
-	void set_z_buffer(const flt_type & new_z_buffer)
+	void set_z_buffer(const flt_t & new_z_buffer)
 	{
 		_z_buffer_ = new_z_buffer;
 	}
-	flt_type z_buffer() const
+	flt_t z_buffer() const
 	{
 		return _z_buffer_;
 	}
@@ -173,8 +173,8 @@ public:
 
 	bool binnable( const galaxy & lens) const;
 	void add_pair( const lens_source_pair & new_pair);
-	void add_lens_id( const ssize_t & new_lens_id, const mass_type & m, const flt_type & z,
-			const flt_type & mag, const flt_type & weight=1);
+	void add_lens_id( const ssize_t & new_lens_id, const mass_type & m, const flt_t & z,
+			const flt_t & mag, const flt_t & weight=1);
 	void clear();
 	void empty();
 	void sort() const;
@@ -210,19 +210,19 @@ public:
 	// Access by position
 #if(1)
 	surface_density_type delta_Sigma_t_mean_for_bin(const distance_type & R, const mass_type & m,
-										   const flt_type & z, const flt_type & mag);
+										   const flt_t & z, const flt_t & mag);
 	surface_density_type delta_Sigma_x_mean_for_bin(const distance_type & R, const mass_type & m,
-										   const flt_type & z, const flt_type & mag);
+										   const flt_t & z, const flt_t & mag);
 
 	surface_density_type delta_Sigma_t_std_for_bin(const distance_type & R, const mass_type & m,
-										   const flt_type & z, const flt_type & mag);
+										   const flt_t & z, const flt_t & mag);
 	surface_density_type delta_Sigma_x_std_for_bin(const distance_type & R, const mass_type & m,
-										   const flt_type & z, const flt_type & mag);
+										   const flt_t & z, const flt_t & mag);
 
 	surface_density_type delta_Sigma_t_stderr_for_bin(const distance_type & R, const mass_type & m,
-										   const flt_type & z, const flt_type & mag);
+										   const flt_t & z, const flt_t & mag);
 	surface_density_type delta_Sigma_x_stderr_for_bin(const distance_type & R, const mass_type & m,
-										   const flt_type & z, const flt_type & mag);
+										   const flt_t & z, const flt_t & mag);
 #endif // Access by index
 
 #endif // Accessing summary data for bins

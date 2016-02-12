@@ -48,63 +48,63 @@ namespace IceBRG {
 // Private methods
 #if(1)
 
-flt_type pair_bin_summary::_magf_gamma_t_mean() const
+flt_t pair_bin_summary::_magf_gamma_t_mean() const
 {
 	return delta_Sigma_t_mean()/magf_sigma_crit();
 }
-flt_type pair_bin_summary::_magf_gamma_t_mean_square() const
+flt_t pair_bin_summary::_magf_gamma_t_mean_square() const
 {
 	return square(_magf_gamma_t_mean());
 }
-flt_type pair_bin_summary::_magf_gamma_x_mean() const
+flt_t pair_bin_summary::_magf_gamma_x_mean() const
 {
 	return delta_Sigma_x_mean()/magf_sigma_crit();
 }
-flt_type pair_bin_summary::_magf_gamma_x_mean_square() const
+flt_t pair_bin_summary::_magf_gamma_x_mean_square() const
 {
 	return square(_magf_gamma_x_mean());
 }
-flt_type pair_bin_summary::_magf_gamma_mean() const
+flt_t pair_bin_summary::_magf_gamma_mean() const
 {
 	return std::sqrt(gamma_mean_square());
 }
-flt_type pair_bin_summary::_magf_gamma_mean_square() const
+flt_t pair_bin_summary::_magf_gamma_mean_square() const
 {
 	return square(gamma_t_mean())+square(gamma_x_mean());
 
 }
 
-flt_type pair_bin_summary::_magf_gamma_t_stderr() const
+flt_t pair_bin_summary::_magf_gamma_t_stderr() const
 {
 	return delta_Sigma_t_stderr()/magf_sigma_crit();
 }
-flt_type pair_bin_summary::_magf_gamma_t_square_stderr() const
+flt_t pair_bin_summary::_magf_gamma_t_square_stderr() const
 {
 	return 2*_magf_gamma_t_mean()*_magf_gamma_t_stderr();
 }
-flt_type pair_bin_summary::_magf_gamma_x_stderr() const
+flt_t pair_bin_summary::_magf_gamma_x_stderr() const
 {
 	return delta_Sigma_x_stderr()/magf_sigma_crit();
 }
-flt_type pair_bin_summary::_magf_gamma_x_square_stderr() const
+flt_t pair_bin_summary::_magf_gamma_x_square_stderr() const
 {
 	return 2*_magf_gamma_x_mean()*_magf_gamma_x_stderr();
 }
-flt_type pair_bin_summary::_magf_gamma_stderr() const
+flt_t pair_bin_summary::_magf_gamma_stderr() const
 {
 	return quad_add_err(gamma_t_mean(),gamma_t_stderr(),gamma_x_mean(),gamma_x_stderr());
 }
-flt_type pair_bin_summary::_magf_gamma_square_stderr() const
+flt_t pair_bin_summary::_magf_gamma_square_stderr() const
 {
 	return 2*gamma_mean()*gamma_stderr();
 }
 
-lensing_tNFW_profile pair_bin_summary::_shear_model_profile(const flt_type & MLratio) const
+lensing_tNFW_profile pair_bin_summary::_shear_model_profile(const flt_t & MLratio) const
 {
 	return lensing_tNFW_profile(MLratio*shear_lens_m_mean(),shear_lens_z_mean());
 }
 
-lensing_tNFW_profile pair_bin_summary::_magf_model_profile(const flt_type & MLratio) const
+lensing_tNFW_profile pair_bin_summary::_magf_model_profile(const flt_t & MLratio) const
 {
 	return lensing_tNFW_profile(MLratio*magf_lens_m_mean(),magf_lens_z_mean());
 }
@@ -113,8 +113,8 @@ lensing_tNFW_profile pair_bin_summary::_magf_model_profile(const flt_type & MLra
 
 pair_bin_summary::pair_bin_summary( const distance_type & init_R_min, const distance_type & init_R_max,
 		const mass_type & init_m_min, const mass_type & init_m_max,
-		const flt_type & init_z_min, const flt_type & init_z_max,
-		const flt_type & init_mag_min, const flt_type & init_mag_max )
+		const flt_t & init_z_min, const flt_t & init_z_max,
+		const flt_t & init_mag_min, const flt_t & init_mag_max )
 :	_R_min_(init_R_min),
 	_R_max_(init_R_max),
 	_m_min_(init_m_min),
@@ -310,8 +310,8 @@ pair_bin_summary & pair_bin_summary::operator+=( const pair_bin_summary & other 
 
 			if(new_pair_count > 0)
 			{
-				_magf_R_mean_ = (magf_R_mean()*(flt_type)magf_pair_count() +
-						other.magf_R_mean()*(flt_type)other.magf_pair_count())/(flt_type)new_pair_count;
+				_magf_R_mean_ = (magf_R_mean()*(flt_t)magf_pair_count() +
+						other.magf_R_mean()*(flt_t)other.magf_pair_count())/(flt_t)new_pair_count;
 				_magf_source_z_mean_ = (magf_source_z_mean()*magf_pair_count() +
 						other.magf_source_z_mean()*other.magf_pair_count())/new_pair_count;
 			}
@@ -504,82 +504,82 @@ surface_density_type pair_bin_summary::delta_Sigma_x_std() const
 
 surface_density_type pair_bin_summary::delta_Sigma_t_stderr() const
 {
-	if(_shear_pair_count_<2) return units_cast<surface_density_type>(std::numeric_limits<flt_type>::max());
+	if(_shear_pair_count_<2) return units_cast<surface_density_type>(std::numeric_limits<flt_t>::max());
 	surface_density_type result = delta_Sigma_t_std()*std::sqrt(_shear_pair_count_/(shear_effective_pair_count()*(_shear_pair_count_-1)) );
 	if(isgood(result)) return result;
 	return 0;
 }
 surface_density_type pair_bin_summary::delta_Sigma_x_stderr() const
 {
-	if(_shear_pair_count_<2) return units_cast<surface_density_type>(std::numeric_limits<flt_type>::max());
+	if(_shear_pair_count_<2) return units_cast<surface_density_type>(std::numeric_limits<flt_t>::max());
 	surface_density_type result = delta_Sigma_x_std()*std::sqrt(_shear_pair_count_/(shear_effective_pair_count()*(_shear_pair_count_-1)) );
 	if(isgood(result)) return result;
 	return 0;
 }
 
-flt_type pair_bin_summary::gamma_t_mean() const
+flt_t pair_bin_summary::gamma_t_mean() const
 {
 	return delta_Sigma_t_mean()/shear_sigma_crit();
 }
-flt_type pair_bin_summary::gamma_x_mean() const
+flt_t pair_bin_summary::gamma_x_mean() const
 {
 	return delta_Sigma_x_mean()/shear_sigma_crit();
 }
-flt_type pair_bin_summary::gamma_mean() const
+flt_t pair_bin_summary::gamma_mean() const
 {
 	return std::sqrt(gamma_mean_square());
 }
-flt_type pair_bin_summary::gamma_mean_square() const
+flt_t pair_bin_summary::gamma_mean_square() const
 {
 	return square(gamma_t_mean())+square(gamma_x_mean());
 
 }
 
-flt_type pair_bin_summary::gamma_t_stderr() const
+flt_t pair_bin_summary::gamma_t_stderr() const
 {
 	return delta_Sigma_t_stderr()/shear_sigma_crit();
 }
-flt_type pair_bin_summary::gamma_x_stderr() const
+flt_t pair_bin_summary::gamma_x_stderr() const
 {
 	return delta_Sigma_x_stderr()/shear_sigma_crit();
 }
-flt_type pair_bin_summary::gamma_stderr() const
+flt_t pair_bin_summary::gamma_stderr() const
 {
 	return quad_add_err(gamma_t_mean(),gamma_t_stderr(),gamma_x_mean(),gamma_x_stderr());
 }
-flt_type pair_bin_summary::gamma_square_stderr() const
+flt_t pair_bin_summary::gamma_square_stderr() const
 {
 	return 2*gamma_mean()*gamma_stderr();
 }
 
-surface_density_type pair_bin_summary::model_delta_Sigma_t(const flt_type & MLratio_1h, const mass_type & mean_group_mass, const flt_type & sat_frac) const
+surface_density_type pair_bin_summary::model_delta_Sigma_t(const flt_t & MLratio_1h, const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
 	surface_density_type res = model_1h_delta_Sigma_t(MLratio_1h) + model_offset_delta_Sigma_t(mean_group_mass,sat_frac);
 	return res;
 }
-flt_type pair_bin_summary::model_gamma_t(const flt_type & MLratio_1h, const mass_type & mean_group_mass, const flt_type & sat_frac) const
+flt_t pair_bin_summary::model_gamma_t(const flt_t & MLratio_1h, const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
-	flt_type res = model_delta_Sigma_t(MLratio_1h,mean_group_mass,sat_frac)/shear_sigma_crit();
+	flt_t res = model_delta_Sigma_t(MLratio_1h,mean_group_mass,sat_frac)/shear_sigma_crit();
 	return res;
 }
-surface_density_type pair_bin_summary::model_1h_delta_Sigma_t(const flt_type & MLratio) const
+surface_density_type pair_bin_summary::model_1h_delta_Sigma_t(const flt_t & MLratio) const
 {
 	surface_density_type res = _shear_model_profile(MLratio).Delta_Sigma(shear_R_mean());
 	return res;
 }
-flt_type pair_bin_summary::model_1h_gamma_t(const flt_type & MLratio) const
+flt_t pair_bin_summary::model_1h_gamma_t(const flt_t & MLratio) const
 {
-	flt_type res = model_delta_Sigma_t(MLratio)/shear_sigma_crit();
+	flt_t res = model_delta_Sigma_t(MLratio)/shear_sigma_crit();
 	return res;
 }
-surface_density_type pair_bin_summary::model_offset_delta_Sigma_t(const mass_type & mean_group_mass, const flt_type & sat_frac) const
+surface_density_type pair_bin_summary::model_offset_delta_Sigma_t(const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
 	surface_density_type res = sat_frac*IceBRG::lensing_tNFW_profile(mean_group_mass,shear_lens_z_mean()).quick_group_Delta_Sigma(shear_R_mean());
 	return res;
 }
-flt_type pair_bin_summary::model_offset_gamma_t(const mass_type & mean_group_mass, const flt_type & sat_frac) const
+flt_t pair_bin_summary::model_offset_gamma_t(const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
-	flt_type res = model_offset_delta_Sigma_t(mean_group_mass,sat_frac)/shear_sigma_crit();
+	flt_t res = model_offset_delta_Sigma_t(mean_group_mass,sat_frac)/shear_sigma_crit();
 	return res;
 }
 
@@ -590,32 +590,32 @@ flt_type pair_bin_summary::model_offset_gamma_t(const mass_type & mean_group_mas
 
 custom_unit_type<0,0,0,2,0> pair_bin_summary::area_per_lens() const
 {
-	return area()/(flt_type)magf_num_lenses();
+	return area()/(flt_t)magf_num_lenses();
 }
-flt_type pair_bin_summary::mu_std() const
+flt_t pair_bin_summary::mu_std() const
 {
-	flt_type std_uncorrected = std::sqrt(mu_square_hat()-square(mu_hat()));
-	flt_type correction = magf_sum_of_weights()/std::sqrt( square(magf_sum_of_weights()) - magf_sum_of_square_weights() );
+	flt_t std_uncorrected = std::sqrt(mu_square_hat()-square(mu_hat()));
+	flt_t correction = magf_sum_of_weights()/std::sqrt( square(magf_sum_of_weights()) - magf_sum_of_square_weights() );
 
 	return correction * std_uncorrected;
 }
-flt_type pair_bin_summary::mu_stderr() const
+flt_t pair_bin_summary::mu_stderr() const
 {
-	if(magf_num_lenses()<2) return std::numeric_limits<flt_type>::max();
-	flt_type result = mu_std()/std::sqrt(magf_num_lenses()-1);
+	if(magf_num_lenses()<2) return std::numeric_limits<flt_t>::max();
+	flt_t result = mu_std()/std::sqrt(magf_num_lenses()-1);
 	if(isgood(result)) return result;
 	return 0;
 }
-flt_type pair_bin_summary::kappa() const
+flt_t pair_bin_summary::kappa() const
 {
-	flt_type gms = _magf_gamma_t_mean_square();
+	flt_t gms = _magf_gamma_t_mean_square();
 	IceBRG::fixbad(gms);
 	return 1.-std::sqrt(1/mu_hat()+gms);
 }
-flt_type pair_bin_summary::kappa_stderr() const
+flt_t pair_bin_summary::kappa_stderr() const
 {
-	flt_type gms = _magf_gamma_t_mean_square();
-	flt_type gserr = _magf_gamma_t_square_stderr();
+	flt_t gms = _magf_gamma_t_mean_square();
+	flt_t gserr = _magf_gamma_t_square_stderr();
 	IceBRG::fixbad(gms);
 	IceBRG::fixbad(gserr);
 	return sqrt_err(1/mu_hat()+gms,quad_add(mu_stderr(),gserr));
@@ -632,48 +632,48 @@ surface_density_type pair_bin_summary::Sigma_stderr() const
 	return res;
 }
 
-flt_type pair_bin_summary::model_mu(const flt_type & MLratio_1h, const mass_type & mean_group_mass, const flt_type & sat_frac) const
+flt_t pair_bin_summary::model_mu(const flt_t & MLratio_1h, const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
-	flt_type res = 1./(square(1-model_kappa(MLratio_1h,mean_group_mass,sat_frac))+square(model_gamma_t(MLratio_1h,mean_group_mass,sat_frac)));
+	flt_t res = 1./(square(1-model_kappa(MLratio_1h,mean_group_mass,sat_frac))+square(model_gamma_t(MLratio_1h,mean_group_mass,sat_frac)));
 	return res;
 }
-flt_type pair_bin_summary::model_kappa(const flt_type & MLratio_1h, const mass_type & mean_group_mass, const flt_type & sat_frac) const
+flt_t pair_bin_summary::model_kappa(const flt_t & MLratio_1h, const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
-	flt_type res = model_1h_kappa(MLratio_1h) + model_offset_kappa(mean_group_mass,sat_frac);
+	flt_t res = model_1h_kappa(MLratio_1h) + model_offset_kappa(mean_group_mass,sat_frac);
 	return res;
 }
-surface_density_type pair_bin_summary::model_Sigma(const flt_type & MLratio_1h, const mass_type & mean_group_mass, const flt_type & sat_frac) const
+surface_density_type pair_bin_summary::model_Sigma(const flt_t & MLratio_1h, const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
 	surface_density_type res = model_1h_Sigma(MLratio_1h) + model_offset_Sigma(mean_group_mass,sat_frac);
 	return res;
 }
 
-flt_type pair_bin_summary::model_1h_mu(const flt_type & MLratio_1h) const
+flt_t pair_bin_summary::model_1h_mu(const flt_t & MLratio_1h) const
 {
-	flt_type res = 1./(square(1-model_1h_kappa(MLratio_1h))+square(model_1h_gamma_t(MLratio_1h)));
+	flt_t res = 1./(square(1-model_1h_kappa(MLratio_1h))+square(model_1h_gamma_t(MLratio_1h)));
 	return res;
 }
-flt_type pair_bin_summary::model_1h_kappa(const flt_type & MLratio) const
+flt_t pair_bin_summary::model_1h_kappa(const flt_t & MLratio) const
 {
-	flt_type res = model_1h_Sigma(MLratio)/magf_sigma_crit();
+	flt_t res = model_1h_Sigma(MLratio)/magf_sigma_crit();
 	return res;
 }
-surface_density_type pair_bin_summary::model_1h_Sigma(const flt_type & MLratio) const
+surface_density_type pair_bin_summary::model_1h_Sigma(const flt_t & MLratio) const
 {
 	surface_density_type res = _magf_model_profile(MLratio).proj_dens(magf_R_mean());
 	return res;
 }
-flt_type pair_bin_summary::model_offset_mu(const mass_type & mean_group_mass, const flt_type & sat_frac) const
+flt_t pair_bin_summary::model_offset_mu(const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
-	flt_type res = 1./(square(1-model_offset_kappa(mean_group_mass,sat_frac))+square(model_offset_gamma_t(mean_group_mass,sat_frac)));
+	flt_t res = 1./(square(1-model_offset_kappa(mean_group_mass,sat_frac))+square(model_offset_gamma_t(mean_group_mass,sat_frac)));
 	return res;
 }
-flt_type pair_bin_summary::model_offset_kappa(const mass_type & mean_group_mass, const flt_type & sat_frac) const
+flt_t pair_bin_summary::model_offset_kappa(const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
-	flt_type res = model_offset_Sigma(mean_group_mass,sat_frac)/magf_sigma_crit();
+	flt_t res = model_offset_Sigma(mean_group_mass,sat_frac)/magf_sigma_crit();
 	return res;
 }
-surface_density_type pair_bin_summary::model_offset_Sigma(const mass_type & mean_group_mass, const flt_type & sat_frac) const
+surface_density_type pair_bin_summary::model_offset_Sigma(const mass_type & mean_group_mass, const flt_t & sat_frac) const
 {
 	surface_density_type res = sat_frac*IceBRG::lensing_tNFW_profile(mean_group_mass,magf_lens_z_mean()).quick_group_Sigma(magf_R_mean());
 	return res;

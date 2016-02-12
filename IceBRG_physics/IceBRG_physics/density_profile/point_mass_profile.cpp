@@ -43,7 +43,7 @@ IceBRG::point_mass_profile::point_mass_profile()
 }
 
 IceBRG::point_mass_profile::point_mass_profile( const mass_type init_mass,
-		const flt_type & init_z )
+		const flt_t & init_z )
 {
 	set_mvir( init_mass );
 	set_z( init_z );
@@ -67,7 +67,7 @@ void IceBRG::point_mass_profile::set_parameters( const std::vector< any_units_ty
 {
 	assert(parameters.size()==2);
 	set_mvir( any_cast<mass_type>(parameters.at( 0 )) );
-	set_z( any_cast<flt_type>(parameters.at( 1 )) );
+	set_z( any_cast<flt_t>(parameters.at( 1 )) );
 }
 
 #endif // end set functions
@@ -106,7 +106,7 @@ IceBRG::distance_type IceBRG::point_mass_profile::rt() const
 IceBRG::density_type IceBRG::point_mass_profile::dens(
 		const distance_type & r ) const
 {
-	density_type result = units_cast<density_type>(( value_of(r) == 0 ? std::numeric_limits<flt_type>::max() : 0 ));
+	density_type result = units_cast<density_type>(( value_of(r) == 0 ? std::numeric_limits<flt_t>::max() : 0 ));
 
 	return result;
 }
@@ -140,7 +140,7 @@ std::vector< std::string > IceBRG::point_mass_profile::get_parameter_names() con
 	return parameter_names;
 }
 
-void IceBRG::point_mass_profile::truncate_to_fraction( const flt_type & f)
+void IceBRG::point_mass_profile::truncate_to_fraction( const flt_t & f)
 {
 	if ( ( f <= 0 ) || ( isbad( f ) ) )
 	{

@@ -28,9 +28,9 @@
 // Initialisation for IceBRG::grid_cache
 #if (1)
 
-int_type IceBRG::grid_cache::_ra_grid_change_num_ = 0;
-int_type IceBRG::grid_cache::_dec_grid_change_num_ = 0;
-int_type IceBRG::grid_cache::_z_grid_change_num_ = 0;
+IceBRG::int_t IceBRG::grid_cache::_ra_grid_change_num_ = 0;
+IceBRG::int_t IceBRG::grid_cache::_dec_grid_change_num_ = 0;
+IceBRG::int_t IceBRG::grid_cache::_z_grid_change_num_ = 0;
 
 #ifdef _BRG_USE_UNITS_
 IceBRG::angle_type IceBRG::grid_cache::_ra_grid_min_(-pi*boost::units::si::radians);
@@ -48,9 +48,9 @@ IceBRG::angle_type IceBRG::grid_cache::_dec_grid_max_ = pi / 2;
 IceBRG::angle_type IceBRG::grid_cache::_dec_grid_step_ = pi / 8;
 #endif
 
-flt_type IceBRG::grid_cache::_z_grid_min_ = 0;
-flt_type IceBRG::grid_cache::_z_grid_max_ = 2;
-flt_type IceBRG::grid_cache::_z_grid_step_ = 0.1;
+IceBRG::flt_t IceBRG::grid_cache::_z_grid_min_ = 0;
+IceBRG::flt_t IceBRG::grid_cache::_z_grid_max_ = 2;
+IceBRG::flt_t IceBRG::grid_cache::_z_grid_step_ = 0.1;
 
 #endif // End initialisation for IceBRG::grid_cache
 

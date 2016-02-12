@@ -64,7 +64,7 @@ public:
 	typedef typename base_type::reverse_iterator reverse_iterator;
 	typedef typename base_type::const_reverse_iterator const_reverse_iterator;
 	typedef typename base_type::difference_type difference_type;
-	typedef typename std::make_signed<typename base_type::size_type>::type size_type;
+	typedef typename std::make_signed<typename base_type::size_type>::type ssize_t;
 
 	// Enum to describe type of limit vector this is
 	enum class type {GENERAL, LINEAR, LOG, DISJOINT};
@@ -80,10 +80,10 @@ private:
 	T _step_;
 
 	/// Stored log step size (to improve speed at the cost of a bit of memory)
-	flt_type _lstep_;
+	flt_t _lstep_;
 
 	/// Stored log of minimum value (to improve speed at the cost of a bit of memory)
-	flt_type _lmin_;
+	flt_t _lmin_;
 
 	// Private functions
 #if(1)
@@ -144,7 +144,7 @@ public:
 	}
 
 	/// Construct as linear format
-	limit_vector(const T & min, const T & max, const size_type & num_bins,
+	limit_vector(const T & min, const T & max, const ssize_t & num_bins,
 			const allocator_type& alloc = allocator_type())
 	: _base_(alloc)
 	{
@@ -152,7 +152,7 @@ public:
 	}
 
 	/// Construct as linear or log format
-	limit_vector(const type & init_type, const T & min, const T & max, const size_type & num_bins,
+	limit_vector(const type & init_type, const T & min, const T & max, const ssize_t & num_bins,
 			const allocator_type& alloc = allocator_type())
 	: _base_(alloc)
 	{
@@ -319,7 +319,7 @@ public:
 #if(1)
 	/// Reconstruct as linear or log format
 	void reconstruct(const type & init_type, const T & min, const T & max,
-			const size_type & num_bins)
+			const ssize_t & num_bins)
 	{
 		if(num_bins<1)
 			throw std::logic_error("Limit vector cannot be constructed with zero bins.\n");
@@ -341,7 +341,7 @@ public:
 			_type_ = type::LINEAR;
 			_base_ = make_linear_limit_vector_base<T,A>(min,max,num_bins);
 
-			_step_ = (max-min)/(flt_type)num_bins;
+			_step_ = (max-min)/(flt_t)num_bins;
 			_lmin_ = 0;
 		}
 		_base_.shrink_to_fit();
@@ -534,13 +534,13 @@ public:
 #if(1)
 
 	/// Get size of the base vector
-	size_type size() const noexcept
+	ssize_t size() const noexcept
 	{
 		return _base_.size();
 	}
 
 	/// Get number of bins
-	size_type num_bins() const
+	ssize_t num_bins() const
 	{
 		if(_type_==type::DISJOINT)
 			return _base_.size()/2;
@@ -549,13 +549,13 @@ public:
 	}
 
 	/// Get max size of the base vector
-	size_type max_size() const noexcept
+	ssize_t max_size() const noexcept
 	{
 		return _base_.max_size();
 	}
 
 	/// Get capacity of the base vector
-	size_type capacity() const noexcept
+	ssize_t capacity() const noexcept
 	{
 		return _base_.capacity();
 	}
@@ -567,7 +567,7 @@ public:
 	}
 
 	/// Request a change in capacity of the base vector
-	void reserve(const size_type & n)
+	void reserve(const ssize_t & n)
 	{
 		_base_.reserve(n);
 	}
@@ -584,13 +584,13 @@ public:
 #if(1)
 
 	/// Element access (const only)
-	const_reference operator[] (const size_type & n) const
+	const_reference operator[] (const ssize_t & n) const
 	{
 		return _base_[n];
 	}
 
 	/// Range-checked element access (const only)
-	const_reference at( const size_type & n ) const
+	const_reference at( const ssize_t & n ) const
 	{
 		return _base_.at(n);
 	}
@@ -644,7 +644,7 @@ public:
 	}
 
 	/// Multiply the whole vector by a constant
-	void multiply(const flt_type & val)
+	void multiply(const flt_t & val)
 	{
 		assert(val>0);
 
@@ -732,7 +732,7 @@ public:
 	}
 
 	/// Divide the whole vector by a constant
-	void divide(const flt_type & val)
+	void divide(const flt_t & val)
 	{
 		assert(val>0);
 
@@ -835,7 +835,7 @@ public:
 	}
 
 	/// Get lower limit of specific bin
-	const_reference lower_limit( const size_type & i ) const noexcept
+	const_reference lower_limit( const ssize_t & i ) const noexcept
 	{
 		if(_type_ != type::DISJOINT)
 		{
@@ -848,7 +848,7 @@ public:
 	}
 
 	/// Get upper limit of specific bin
-	const_reference upper_limit( const size_type & i ) const noexcept
+	const_reference upper_limit( const ssize_t & i ) const noexcept
 	{
 		if(_type_ != type::DISJOINT)
 		{
@@ -860,7 +860,7 @@ public:
 		}
 	}
 
-	value_type bin_mid( const size_type & i ) const
+	value_type bin_mid( const ssize_t & i ) const
 	{
 		return (lower_limit(i)+upper_limit(i))/2.;
 	}
@@ -888,7 +888,7 @@ public:
 		// We'll check which "general" bin it falls in. If it's in a gap, it's outside the limits,
 		// otherwise it's inside
 
-		for(size_type i=1, my_size=size(); i<my_size; ++i)
+		for(ssize_t i=1, my_size=size(); i<my_size; ++i)
 		{
 			if(_base_[i]>=val)
 			{
@@ -909,7 +909,7 @@ public:
 
 	/// Gets the bin number val falls within. 0 implies lowest valid bin, num_bins()-1 implies
 	/// highest valid bin, num_bins() implies below limits, num_bins()+1 implies above limits.
-	size_type get_bin_index(const T & val) const
+	ssize_t get_bin_index(const T & val) const
 	{
 		if(under_limits(val)) return num_bins();
 		if(above_limits(val)) return num_bins()+1;
@@ -921,13 +921,13 @@ public:
 			{
 				if(std::is_integral<T>::value)
 				{
-					return static_cast<size_type>(value_of((val-min())/_step_));
+					return static_cast<ssize_t>(value_of((val-min())/_step_));
 				}
 				else
 				{
 					// For floating-point types, we add an epsilon at this step to prevent values at the exact bin boundaries
 					// from being assigned the wrong bin
-					size_type res = static_cast<size_type>(value_of((val-min()+std::numeric_limits<T>::epsilon())/_step_));
+					ssize_t res = static_cast<ssize_t>(value_of((val-min()+std::numeric_limits<T>::epsilon())/_step_));
 					if(res>=num_bins()) res=num_bins()-1; // This may on rare occasions happen due to the above epsilon-adding
 					return res;
 				}
@@ -939,8 +939,8 @@ public:
 
 			{
 				using std::log;
-				flt_type lval = log(value_of(val));
-				return static_cast<size_type>(value_of((lval-_lmin_+std::numeric_limits<flt_type>::epsilon())/_lstep_));
+				flt_t lval = log(value_of(val));
+				return static_cast<ssize_t>(value_of((lval-_lmin_+std::numeric_limits<flt_t>::epsilon())/_lstep_));
 
 			}
 
@@ -948,7 +948,7 @@ public:
 
 		case type::DISJOINT:
 
-			for(size_type i=1, my_size=size(); i<my_size; ++i)
+			for(ssize_t i=1, my_size=size(); i<my_size; ++i)
 			{
 				if(_base_[i]>=val)
 				{
@@ -963,7 +963,7 @@ public:
 
 		default: // limit_type::GENERAL
 
-			for(size_type i=1, my_size=size(); i<my_size; ++i)
+			for(ssize_t i=1, my_size=size(); i<my_size; ++i)
 			{
 				if(_base_[i]>=val) return i-1;
 			}
@@ -979,7 +979,7 @@ public:
 	template<typename Tv, typename To>
 	auto interpolate_bins(const Tv & val, const To & val_vec) const -> typename std::decay<decltype(val_vec[0])>::type
 	{
-		if(static_cast<size_type>(val_vec.size())!=num_bins())
+		if(static_cast<ssize_t>(val_vec.size())!=num_bins())
 			throw std::logic_error("Value vector's size must equal num_bins() in interpolate_bins.\n");
 
 		if(num_bins()==1)
@@ -987,11 +987,11 @@ public:
 			return val_vec[0];
 		}
 
-		size_type bin_i=size()-3;
+		ssize_t bin_i=size()-3;
 
 		const char step_length = _type_==type::DISJOINT ? 2 : 1;
 
-		for(size_type i=0; i<size()-2; i += step_length)
+		for(ssize_t i=0; i<size()-2; i += step_length)
 		{
 			if((_base_[i]+_base_[i+1])/2.>=val)
 			{
@@ -1016,7 +1016,7 @@ public:
 		if(_type_!=type::DISJOINT)
 		{
 			std::vector<T,A> result(_base_);
-			for(size_type i=0; i<num_bins(); ++i)
+			for(ssize_t i=0; i<num_bins(); ++i)
 			{
 				result[i] += (result[i+1]-result[i])/2;
 			}
@@ -1027,7 +1027,7 @@ public:
 		else
 		{
 			std::vector<T,A> result(num_bins());
-			for(size_type i=0; i<size(); i+=2)
+			for(ssize_t i=0; i<size(); i+=2)
 			{
 				result.push_back((_base_[i]+_base_[i+1])/2);
 			}
@@ -1049,7 +1049,7 @@ public:
 			const auto nbins = num_bins();
 			res.reserve(nbins);
 
-			for(size_type i=0; i<nbins; ++i)
+			for(ssize_t i=0; i<nbins; ++i)
 			{
 				res.push_back(_base_[2*i]);
 			}
@@ -1066,7 +1066,7 @@ public:
 			const auto nbins = num_bins();
 			res.reserve(nbins);
 
-			for(size_type i=0; i<nbins; ++i)
+			for(ssize_t i=0; i<nbins; ++i)
 			{
 				res.push_back(_base_[i+1]);
 			}
@@ -1079,7 +1079,7 @@ public:
 			const auto nbins = num_bins();
 			res.reserve(nbins);
 
-			for(size_type i=0; i<nbins; ++i)
+			for(ssize_t i=0; i<nbins; ++i)
 			{
 				res.push_back(_base_[2*i+1]);
 			}
@@ -1134,7 +1134,7 @@ public:
 #if(1)
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const int_type version)
+    void serialize(Archive & ar, const int_t version)
     {
     	ar & _base_;
     	ar & _type_;

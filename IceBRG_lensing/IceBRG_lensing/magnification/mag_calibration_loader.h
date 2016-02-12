@@ -40,8 +40,8 @@ namespace IceBRG {
  */
 class mag_calibration_loader {
 	static bool _loaded_;
-	static std::vector<flt_type> _z_mins_;
-	static std::vector<flt_type> _calibration_values_;
+	static std::vector<flt_t> _z_mins_;
+	static std::vector<flt_t> _calibration_values_;
 	static std::string _filename_;
 
 	static void _load();
@@ -49,13 +49,13 @@ public:
 
 	// Setting parameters for where the data is stored
 #if(1)
-	static void set_z_mins(const std::vector<flt_type> & new_limits_vector);
-	static void set_z_mins(std::vector<flt_type> && new_limits_vector);
+	static void set_z_mins(const std::vector<flt_t> & new_limits_vector);
+	static void set_z_mins(std::vector<flt_t> && new_limits_vector);
 	static void set_filename(const std::string & new_filename);
 	static void set_filename(std::string && new_filename);
 #endif
 
-	static flt_type get(const flt_type & z);
+	static flt_t get(const flt_t & z);
 
 	static void unload();
 };

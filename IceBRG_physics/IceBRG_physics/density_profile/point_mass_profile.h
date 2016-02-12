@@ -65,7 +65,7 @@ public:
 #if (1) // Constructors
 	point_mass_profile();
 
-	point_mass_profile( const mass_type init_mass, const flt_type & init_z );
+	point_mass_profile( const mass_type init_mass, const flt_t & init_z );
 
 #endif // End constructors
 
@@ -106,7 +106,7 @@ public:
 
 #if (1) // Other operations
 
-	void truncate_to_fraction( const flt_type & fraction);
+	void truncate_to_fraction( const flt_t & fraction);
 	virtual redshift_obj *redshift_obj_clone() const
 	{
 		return new point_mass_profile( *this );
