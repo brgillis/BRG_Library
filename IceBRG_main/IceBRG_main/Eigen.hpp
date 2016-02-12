@@ -69,19 +69,22 @@ auto end(Eigen::Array<Derived,Nrow,Ncol,Options,Maxrow,Maxcol> & vec) -> decltyp
 
 namespace IceBRG {
 
-typedef Eigen::Array<flt_type,Eigen::Dynamic,1> flt_array_type;
-typedef Eigen::Array<long_flt_type,Eigen::Dynamic,1> long_flt_array_type;
+template<typename T>
+using array_type = Eigen::Array<T,Eigen::Dynamic,1>;
 
-typedef Eigen::Array<int_type,Eigen::Dynamic,1> int_array_type;
-typedef Eigen::Array<long_int_type,Eigen::Dynamic,1> long_int_array_type;
-typedef Eigen::Array<short_int_type,Eigen::Dynamic,1> short_int_array_type;
+typedef array_type<flt_type> flt_array_type;
+typedef array_type<long_flt_type> long_flt_array_type;
 
-typedef Eigen::Array<unsigned_int_type,Eigen::Dynamic,1> unsigned_int_array_type;
-typedef Eigen::Array<long_unsigned_int_type,Eigen::Dynamic,1> long_unsigned_int_array_type;
-typedef Eigen::Array<short_unsigned_int_type,Eigen::Dynamic,1> short_unsigned_int_array_type;
+typedef array_type<int_type> int_array_type;
+typedef array_type<long_int_type> long_int_array_type;
+typedef array_type<short_int_type> short_int_array_type;
 
-typedef Eigen::Array<complex_type,Eigen::Dynamic,1> complex_array_type;
-typedef Eigen::Array<long_complex_type,Eigen::Dynamic,1> long_complex_array_type;
+typedef array_type<unsigned_int_type> unsigned_int_array_type;
+typedef array_type<long_unsigned_int_type> long_unsigned_int_array_type;
+typedef array_type<short_unsigned_int_type> short_unsigned_int_array_type;
+
+typedef array_type<complex_type> complex_array_type;
+typedef array_type<long_complex_type> long_complex_array_type;
 
 }
 #endif // Array typedefs
