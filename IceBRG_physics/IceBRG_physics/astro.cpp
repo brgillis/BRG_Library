@@ -87,7 +87,7 @@ IceBRG::inverse_time_type IceBRG::H( const flt_t & test_z )
 
 IceBRG::custom_unit_type<1,0,0,-1,0> IceBRG::dfa( const flt_t & z )
 {
-	return any_cast<custom_unit_type<1,0,0,-1,0>>(dfa_cache().get( z ));
+	return dfa_cache().get( z );
 }
 IceBRG::distance_type IceBRG::dfa( const angle_type & da, const flt_t & z )
 {
@@ -138,7 +138,7 @@ IceBRG::time_type IceBRG::tfz( const flt_t & z )
 }
 IceBRG::time_type IceBRG::tfa( const flt_t & a )
 {
-	return any_cast<time_type>(tfa_cache().get( a ));
+	return tfa_cache().get( a );
 }
 IceBRG::flt_t IceBRG::zft( const time_type & t )
 {
@@ -147,7 +147,7 @@ IceBRG::flt_t IceBRG::zft( const time_type & t )
 IceBRG::flt_t IceBRG::aft( const time_type & t )
 {
 	IceBRG::tfa_cache cache;
-	return any_cast<flt_t>(cache.inverse_get( value_of(t) ));
+	return cache.inverse_get( t );
 }
 
 #endif
@@ -298,7 +298,7 @@ IceBRG::distance_type IceBRG::ad_distance( flt_t z1, flt_t z2 )
 {
 	if ( z2 < z1 )
 		std::swap( z1, z2 );
-	return any_cast<distance_type>(add_cache().get( z1, z2 ));
+	return add_cache().get( z1, z2 );
 }
 
 IceBRG::surface_density_type IceBRG::sigma_crit( const flt_t & z_lens,

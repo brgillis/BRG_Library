@@ -54,7 +54,7 @@ public:
 #endif
 
 	// Operator()
-	flt_t operator()(const long_flt_t & m=true) const;
+	IceBRG::custom_unit_type<0,0,0,-2,0> operator()(const flt_t & m=true) const;
 
 }; // class expected_count_functor
 
@@ -78,7 +78,7 @@ public:
 #endif
 
 	// Operator()
-	flt_t operator()(const long_flt_t & m=true) const;
+	IceBRG::custom_unit_type<0,0,0,-2,0> operator()(const flt_t & m=true) const;
 
 }; // class mu_signal_integration_functor
 
@@ -102,7 +102,7 @@ public:
 #endif
 
 	// Operator()
-	flt_t operator()(const long_flt_t & m=true) const;
+	IceBRG::custom_unit_type<0,0,0,-2,0> operator()(const flt_t & m=true) const;
 
 }; // class mu_signal_integration_functor
 

@@ -32,22 +32,20 @@
 
 #include "expected_count_derivative_cache.h"
 
+namespace IceBRG {
+
 // Initialise the cache
-DEFINE_BRG_CACHE_2D_STATIC_VARS( expected_count_derivative_cache,
-		IceBRG::mag_m_min,IceBRG::mag_m_max,0.01,
-		IceBRG::mag_z_min,IceBRG::mag_z_max-0.01,0.01);
+DEFINE_BRG_CACHE_2D( expected_count_derivative_cache,
+		flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()),
+		mag_m_min,mag_m_max,0.01,
+		mag_z_min,mag_z_max-0.01,0.01,
 
-// IceBRG::expected_count_derivative_cache class methods
-#if (1)
-IceBRG::flt_t IceBRG::expected_count_derivative_cache::_calculate( const flt_t & in_param_1, const flt_t & in_param_2) const
-{
-	const flt_t & m = std::fabs(in_param_1);
-	const long_flt_t z_min = std::fabs(in_param_2);
+			const flt_t & m = std::fabs(in_param_1);
+			const long_flt_t z_min = std::fabs(in_param_2);
 
-	return expected_count_loader::get_derivative(m,z_min);
-}
-void IceBRG::expected_count_derivative_cache::_load_cache_dependencies() const
-{
-	expected_count_loader::get_derivative(0,0);
-}
-#endif
+			return expected_count_loader::get_derivative(m,z_min);
+		,
+			expected_count_loader::get_derivative(0,0);
+);
+
+} // namespace IceBRG

@@ -35,7 +35,7 @@
 
 // Enable dimensional analysis unless the NDEBUG flag is defined
 #ifndef NDEBUG
-//#define _BRG_USE_UNITS_
+#define _BRG_USE_UNITS_
 #endif // #ifndef NDEBUG
 
 #ifdef _BRG_USE_UNITS_
@@ -331,13 +331,13 @@ namespace serialization {
 template<class Archive, class T>
 void save(Archive & ar, const boost::units::quantity<T> & g, const unsigned int version)
 {
-	flt_t val = g.value();
+	IceBRG::flt_t val = g.value();
     ar & val;
 }
 template<class Archive, class T>
 void load(Archive & ar, boost::units::quantity<T> & g, const unsigned int version)
 {
-	flt_t val;
+	IceBRG::flt_t val;
 	ar & val;
     g = IceBRG::units_cast<boost::units::quantity<T>>(std::move(val));
 }

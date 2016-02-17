@@ -46,23 +46,23 @@ namespace IceBRG
 #if(1)
 
 template<typename container>
-void make_vector_default( container & vec, const typename container::size_type & d1)
+void make_vector_default( container & vec, const ssize_t & d1)
 {
-	static_assert(std::is_default_constructible<typename container::value_type>::value,
+	static_assert(std::is_default_constructible<typename std::decay<decltype(vec[0])>::type>::value,
 			"make_default_vector requires that object type is default-constructible.");
-	for(auto it=vec.begin(); it!=vec.end(); ++it)
+	for(auto it=begin(vec); it!=end(vec); ++it)
 	{
-		*it = typename container::value_type();
+		*it = typename std::decay<decltype(vec[0])>::type();
 	}
 	vec.resize(d1);
 }
 
 template<typename container, typename... Args>
-void make_vector_default( container & vec, const typename container::size_type & d1, const typename container::size_type & d2, Args... remaining_dims)
+void make_vector_default( container & vec, const ssize_t & d1, const ssize_t & d2, Args... remaining_dims)
 {
-	vec.clear();
+	set_zero(vec);
 	vec.resize(d1);
-	for(auto it=vec.begin(); it!=vec.end(); ++it)
+	for(auto it=begin(vec); it!=end(vec); ++it)
 	{
 		make_vector_default(*it, d2, remaining_dims...);
 	}
@@ -78,9 +78,9 @@ struct vector_defaulter
 	vector_defaulter(container & vec, const other_container & other_vec)
 	{
 		vec.resize(other_vec.size());
-		auto o_it = other_vec.begin();
+		auto o_it = begin(other_vec);
 
-		for(auto it=vec.begin(); it!=vec.end(); ++it)
+		for(auto it=begin(vec); it!=end(vec); ++it)
 		{
 			vector_defaulter<d-1,decltype(*it),decltype(*o_it)>(*it,*o_it);
 		}
@@ -90,12 +90,12 @@ struct vector_defaulter
 template<typename container, typename other_container>
 struct vector_defaulter<1,container,other_container>
 {
-	static_assert(std::is_default_constructible<typename container::value_type>::value,
+	static_assert(std::is_default_constructible<decltype(container()[0])>::value,
 			"make_default_vector requires that object type is default-constructible.");
 	vector_defaulter(container & vec, const other_container & other_vec)
 	{
-		vec.clear();
-		vec.resize(other_vec);
+		set_zero(vec);
+		vec.resize(other_vec.size());
 	}
 };
 
@@ -127,21 +127,21 @@ void make_vector_default( container & vec, const value_type & val, const other_c
 #if(1)
 
 template<typename container>
-void make_vector_zeroes( container & vec, const typename container::size_type & d1)
+void make_vector_zeroes( container & vec, const ssize_t & d1)
 {
 	vec.resize(d1);
-	for(auto it=vec.begin(); it!=vec.end(); ++it)
+	for(auto it=begin(vec); it!=end(vec); ++it)
 	{
 		set_zero(*it);
 	}
 }
 
 template<typename container, typename... Args>
-void make_vector_zeroes( container & vec, const typename container::size_type & d1, const typename container::size_type & d2, Args... remaining_dims)
+void make_vector_zeroes( container & vec, const ssize_t & d1, const ssize_t & d2, Args... remaining_dims)
 {
-	vec.clear();
+	set_zero(vec);
 	vec.resize(d1);
-	for(auto it=vec.begin(); it!=vec.end(); ++it)
+	for(auto it=begin(vec); it!=end(vec); ++it)
 	{
 		make_vector_zeroes(*it, d2, remaining_dims...);
 	}
@@ -157,9 +157,9 @@ struct vector_zeroer
 	vector_zeroer(container & vec, const other_container & other_vec)
 	{
 		vec.resize(other_vec.size());
-		auto o_it = other_vec.begin();
+		auto o_it = other_begin(vec);
 
-		for(auto it=vec.begin(); it!=vec.end(); ++it)
+		for(auto it=begin(vec); it!=end(vec); ++it)
 		{
 			vector_zeroer<d-1,decltype(*it),decltype(*o_it)>(*it,*o_it);
 		}
@@ -210,18 +210,18 @@ void make_vector_zeroes( container & vec, const value_type & val, const other_co
 #if(1)
 
 template<typename container, typename val_type>
-void make_vector_value( container & vec, const val_type & val, const typename container::size_type & d1)
+void make_vector_value( container & vec, const val_type & val, const ssize_t & d1)
 {
-	vec.clear();
+	set_zero(vec);
 	vec.resize(d1,val);
 }
 
 template<typename container, typename val_type, typename... Args>
-void make_vector_value( container & vec, const val_type & val, const typename container::size_type & d1, const typename container::size_type & d2, Args... remaining_dims)
+void make_vector_value( container & vec, const val_type & val, const ssize_t & d1, const ssize_t & d2, Args... remaining_dims)
 {
-	vec.clear();
+	set_zero(vec);
 	vec.resize(d1);
-	for(auto it=vec.begin(); it!=vec.end(); ++it)
+	for(auto it=begin(vec); it!=end(vec); ++it)
 	{
 		make_vector_value(*it, val, d2, remaining_dims...);
 	}
@@ -237,9 +237,9 @@ struct vector_valuer
 	vector_valuer(container & vec, const value_type & val, const other_container & other_vec)
 	{
 		vec.resize(other_vec.size());
-		auto o_it = other_vec.begin();
+		auto o_it = other_begin(vec);
 
-		for(auto it=vec.begin(); it!=vec.end(); ++it)
+		for(auto it=begin(vec); it!=end(vec); ++it)
 		{
 			vector_valuer<d-1,decltype(*it),value_type,decltype(*o_it)>(*it,val,*o_it);
 		}
@@ -281,12 +281,12 @@ void make_vector_value( container & vec, const value_type & val, const other_con
 #if(1)
 
 template<typename container, typename func_type>
-void make_vector_function( container & vec, const func_type & func, const typename container::size_type & d1)
+void make_vector_function( container & vec, const func_type & func, const ssize_t & d1)
 {
-	vec.clear();
+	set_zero(vec);
 	vec.reserve(d1);
 
-	typename container::size_type i(0);
+	ssize_t i(0);
 
 	for(i=0; i<d1; ++i)
 	{
@@ -295,19 +295,19 @@ void make_vector_function( container & vec, const func_type & func, const typena
 }
 
 template<typename container, typename func_type, typename... Args>
-void make_vector_function( container & vec, const func_type & func, const typename container::size_type & d1, const typename container::size_type & d2, Args... remaining_dims)
+void make_vector_function( container & vec, const func_type & func, const ssize_t & d1, const ssize_t & d2, Args... remaining_dims)
 {
-	vec.clear();
+	set_zero(vec);
 	vec.resize(d1);
 
-	typename container::size_type i(0);
+	ssize_t i(0);
 
-	auto new_func = [&] (const typename container::size_type & i2, Args... remaining_is)
+	auto new_func = [&] (const ssize_t & i2, Args... remaining_is)
 		{
 			return func(i,i2,remaining_is...);
 		};
 
-	for(auto it=vec.begin(); it!=vec.end(); ++it)
+	for(auto it=begin(vec); it!=end(vec); ++it)
 	{
 		make_vector_function(*it, new_func, d2, remaining_dims...);
 		++i;
@@ -324,13 +324,13 @@ struct vector_functioner
 	template<typename... Args>
 	vector_functioner(container & vec, const func_type & func, const other_container & other_vec)
 	{
-		const typename container::size_type i;
+		ssize_t i;
 		auto new_func = [&] (Args... args)
 		{
 			return func(i,args...);
 		};
 
-		vec.clear();
+		set_zero(vec);
 		vec.reserve(other_vec.size());
 		for(i=0; i<other_vec.size(); ++i)
 		{

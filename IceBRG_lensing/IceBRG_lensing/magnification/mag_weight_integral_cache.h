@@ -38,43 +38,8 @@
 
 namespace IceBRG {
 
-/**
- *
- */
-class mag_weight_integral_cache: public brg_cache<mag_weight_integral_cache> {
-	DECLARE_BRG_CACHE_STATIC_VARS();
-
-	friend class brg_cache<mag_weight_integral_cache>;
-
-protected:
-
-	std::string _name_base() const
-	{
-		return "mag_weight_integral";
-	}
-
-#ifdef _BRG_USE_UNITS_
-
-	// Tells what units the result should have. Only the units matter in the return, not the value
-	any_units_type _units( const flt_t & v ) const
-	{
-		return units_cast<custom_unit_type<0,0,0,-2,0>>(v);
-	}
-
-#endif // _BRG_USE_UNITS_
-
-	// Long-form calculation function.
-	flt_t _calculate( const flt_t & in_param_1 ) const;
-	void _load_cache_dependencies() const;
-
-public:
-	mag_weight_integral_cache()
-	{
-	}
-	~mag_weight_integral_cache()
-	{
-	}
-};
+DECLARE_BRG_CACHE(mag_weight_integral_cache,"mag_weight_integral",
+		flt_t,decltype(custom_unit_type<0,0,0,-2,0>()));
 
 } // end namespace IceBRG
 

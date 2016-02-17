@@ -74,19 +74,6 @@ void IceBRG::shifting_loader::_load()
 			assert(_data_.num_cols()==_zvals_size_+1);
 			assert(_data_.num_rows()>=2);
 
-//			// Add a row to the bottom with theta==0, and the rest the same as the row above it,
-//			// so we have proper behavior in the theta->0 limit
-//
-//			flt_array_type new_row(_zvals_size_+1);
-//
-//			new_row[0] = 0.;
-//			for(int i=1; i<=_zvals_size_; ++i)
-//			{
-//				new_row[i] = _data_.rows().back()[i];
-//			}
-//
-//			_data_.insert_row(std::move(new_row));
-
 			_data_.reverse_vertical();
 
 			// Change to SI units
@@ -103,7 +90,7 @@ void IceBRG::shifting_loader::_load()
 	}
 
 }
-ssize_t IceBRG::shifting_loader::_lower_theta_index(const flt_t & theta)
+ssize_t IceBRG::shifting_loader::_lower_theta_index(const angle_type & theta)
 {
 	if(!_loaded_) _load();
 
@@ -111,7 +98,7 @@ ssize_t IceBRG::shifting_loader::_lower_theta_index(const flt_t & theta)
 
 	for(ssize_t i=1; i<size; ++i)
 	{
-		if(theta<_data_.col(0).row(i))
+		if(theta<units_cast<angle_type>(_data_.col(0).row(i)))
 			return i-1;
 	}
 	return size-2;
@@ -128,28 +115,30 @@ ssize_t IceBRG::shifting_loader::_lower_z_index(const flt_t & z)
 	return _zvals_size_-2;
 }
 
-IceBRG::flt_t IceBRG::shifting_loader::get(const flt_t & t, const flt_t & z)
+IceBRG::square_angle_type IceBRG::shifting_loader::get(const angle_type & t, const flt_t & z)
 {
 	if(!_loaded_) _load();
 
 	const ssize_t ti = _lower_theta_index(t);
 	const ssize_t zi = _lower_z_index(z);
 
-	const flt_t & tlo = _data_.col(0).row(ti);
-	const flt_t & thi = _data_.col(0).row(ti+1);
+	const angle_type & tlo = units_cast<angle_type>(_data_.col(0).row(ti));
+	const angle_type & thi = units_cast<angle_type>(_data_.col(0).row(ti+1));
 	const flt_t & zlo = _zvals_[zi];
 	const flt_t & zhi = _zvals_[zi+1];
 
-	const flt_t & weight = (thi-tlo)*(zhi-zlo);
+	const angle_type weight = (thi-tlo)*(zhi-zlo);
 
-	flt_t result = 0;
+	square_angle_type result;
 
-	result += _data_.col(zi+1).row(ti)*(zhi-z)*(thi-t);
-	result += _data_.col(zi+1).row(ti+1)*(zhi-z)*(t-tlo);
-	result += _data_.col(zi+2).row(ti)*(z-zlo)*(thi-t);
-	result += _data_.col(zi+2).row(ti+1)*(z-zlo)*(t-tlo);
+	decltype(weight*result) weighted_result;
 
-	result /= weight;
+	weighted_result = units_cast<square_angle_type>(_data_.col(zi+1).row(ti))*(zhi-z)*(thi-t);
+	weighted_result += units_cast<square_angle_type>(_data_.col(zi+1).row(ti+1))*(zhi-z)*(t-tlo);
+	weighted_result += units_cast<square_angle_type>(_data_.col(zi+2).row(ti))*(z-zlo)*(thi-t);
+	weighted_result += units_cast<square_angle_type>(_data_.col(zi+2).row(ti+1))*(z-zlo)*(t-tlo);
+
+	result = weighted_result/weight;
 
 	return result;
 }

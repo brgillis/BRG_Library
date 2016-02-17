@@ -35,16 +35,13 @@
 
 #include "mag_calibration_cache.h"
 
-// Initialise the cache
-DEFINE_BRG_CACHE_STATIC_VARS( mag_calibration_cache,
-							  IceBRG::mag_z_min,IceBRG::mag_z_max,IceBRG::mag_z_step);
+namespace IceBRG {
 
-// IceBRG::mag_calibration_cache class methods
-#if (1)
-IceBRG::flt_t IceBRG::mag_calibration_cache::_calculate( const flt_t & in_param_1 ) const
-{
-	return mag_calibration_loader::get(in_param_1);
-}
-#endif
+// Initialise the cache
+DEFINE_BRG_CACHE( mag_calibration_cache,IceBRG::flt_t,IceBRG::flt_t,
+				  IceBRG::mag_z_min,IceBRG::mag_z_max,IceBRG::mag_z_step,
+				  return mag_calibration_loader::get(in_param);,);
+
+} // namespace IceBRG
 
 

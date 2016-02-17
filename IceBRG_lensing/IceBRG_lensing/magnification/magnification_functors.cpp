@@ -35,26 +35,24 @@
 
 namespace IceBRG {
 
-constexpr flt_t test_fudge_factor = 1.;
-
-flt_t mag_expected_count_functor::operator() (const long_flt_t & m) const
+IceBRG::custom_unit_type<0,0,0,-2,0> mag_expected_count_functor::operator() (const flt_t & m) const
 {
-	flt_t res = any_cast<flt_t>(expected_count_cache().get(m,_z_mean_));
+	IceBRG::custom_unit_type<0,0,0,-2,0> res = expected_count_cache().get(m,_z_mean_);
 
 	return res;
 }
 
-flt_t mu_signal_integration_functor::operator() (const long_flt_t & m) const
+IceBRG::custom_unit_type<0,0,0,-2,0> mu_signal_integration_functor::operator() (const flt_t & m) const
 {
-	long_flt_t alpha = magnification_alpha(m,_z_mean_);
-	long_flt_t count = test_fudge_factor*any_cast<flt_t>(expected_count_cache().get(m,_z_mean_));
+	flt_t alpha = magnification_alpha(m,_z_mean_);
+	IceBRG::custom_unit_type<0,0,0,-2,0> count = expected_count_cache().get(m,_z_mean_);
 	return count*(alpha-1);
 }
 
-flt_t mu_weight_integration_functor::operator() (const long_flt_t & m) const
+IceBRG::custom_unit_type<0,0,0,-2,0> mu_weight_integration_functor::operator() (const flt_t & m) const
 {
-	long_flt_t alpha = magnification_alpha(m,_z_mean_);
-	long_flt_t count = test_fudge_factor*any_cast<flt_t>(expected_count_cache().get(m,_z_mean_));
+	flt_t alpha = magnification_alpha(m,_z_mean_);
+	IceBRG::custom_unit_type<0,0,0,-2,0> count = expected_count_cache().get(m,_z_mean_);
 	return count*square(alpha-1);
 }
 

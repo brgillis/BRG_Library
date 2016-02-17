@@ -45,7 +45,7 @@ namespace IceBRG {
 // if the argument is invalid (eg. taking square-root of a negative
 // number).
 template< class T >
-const T safe_sqrt( const T & a )
+auto safe_sqrt( const T & a ) -> decltype(sqrt(a))
 {
 
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_
@@ -54,7 +54,7 @@ const T safe_sqrt( const T & a )
 		handle_error_message("safe_sqrt() prevented error from negative input.");
 	}
 #endif
-	return std::sqrt( std::fabs( a ) );
+	return sqrt( fabs( a ) );
 }
 inline flt_t safe_sqrt( const int_t a ) // Special case for integers due to -INT_MIN > INT_MAX
 {

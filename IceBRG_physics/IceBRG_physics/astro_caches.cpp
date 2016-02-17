@@ -37,60 +37,25 @@
 /** Static Class Initialisation **/
 #if (1)
 
+namespace IceBRG {
+
 // Initialisation for IceBRG::dfa_cache
-DEFINE_BRG_CACHE_STATIC_VARS( dfa_cache, IceBRG::angle_type, IceBRG::distance_type, 0, 5, 0.001 );
+DEFINE_BRG_CACHE( dfa_cache, flt_t,
+		decltype(custom_unit_type<1, 0, 0, -1, 0>()), 0, 5, 0.001,
+		return integrate_add( 0, in_param )/radian;,
+);
 
 // Initialisation for IceBRG::add_cache
-DEFINE_BRG_CACHE_2D_STATIC_VARS( add_cache, 0, 5, 0.01,
-		                                    0, 5, 0.01);
+DEFINE_BRG_CACHE_2D( add_cache, flt_t, flt_t, distance_type,
+		0, 5, 0.01, 0, 5, 0.01,
+		return IceBRG::integrate_add(in_param_1,in_param_2);,
+		);
 
 // Initialisation for IceBRG::tfa_cache
-DEFINE_BRG_CACHE_STATIC_VARS( tfa_cache, IceBRG::flt_t, IceBRG::time_type, 0.001, 1.02, 0.001 );
+DEFINE_BRG_CACHE( tfa_cache, flt_t, time_type, 0.001, 1.02, 0.001,
+		return -integrate_ltd( 0, zfa( in_param ) ) / c;,
+);
+
+}
 
 #endif // end Static Class Initialisation
-
-/** Class Method Definitions **/
-#if (1)
-
-// IceBRG::dfa_cache class methods
-#if (1)
-
-IceBRG::distance_type IceBRG::dfa_cache::_calculate( const angle_type & in_param ) const
-{
-	return value_of(IceBRG::integrate_add( 0, in_param ));
-}
-
-#endif // end IceBRG::dfa_cache functions
-
-// IceBRG::add_cache class methods
-#if(1)
-
-IceBRG::flt_t IceBRG::add_cache::_calculate( const flt_t & in_param_1,
-		const flt_t & in_param_2) const
-{
-	return value_of(IceBRG::integrate_add(in_param_1,in_param_2));
-}
-
-#ifdef _BRG_USE_UNITS_
-
-// Gets the result in the proper units
-IceBRG::any_units_type IceBRG::add_cache::_units( const flt_t & v ) const
-{
-	return units_cast<distance_type>(v);
-}
-
-#endif
-
-#endif // IceBRG::add_cache class methods
-
-// IceBRG::tfa_cache class methods
-#if(1)
-
-IceBRG::time_type IceBRG::tfa_cache::_calculate( const flt_t & in_param ) const
-{
-	return value_of(-IceBRG::integrate_ltd( 0, IceBRG::zfa( in_param ) ) / c);
-}
-
-#endif // IceBRG::tfa_cache class methods
-
-#endif // end class methods

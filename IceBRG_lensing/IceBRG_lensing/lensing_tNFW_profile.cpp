@@ -36,62 +36,62 @@ const flt_t & min_x = 0.000001;
 
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_Delta_Sigma( const distance_type & r ) const
 {
-	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_sig_cache().get(
-			std::log(value_of(mvir0())), z(), std::log(value_of(r)) ));
+	surface_density_type result = IceBRG::tNFW_sig_cache().get(
+			std::log(value_of(mvir0())), z(), std::log(value_of(r)) );
 	return result;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_offset_Delta_Sigma(
 		const distance_type & r, const distance_type & offset_r ) const
 {
 	if(value_of(offset_r)<=0) return Delta_Sigma(r);
-	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_offset_sig_cache().get(
+	surface_density_type result = IceBRG::tNFW_offset_sig_cache().get(
 			std::log(value_of(mvir0())), z(), std::log(value_of(r)),
-			std::log(value_of(offset_r)) ));
+			std::log(value_of(offset_r)) );
 	return result;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_group_Delta_Sigma(
 		const distance_type & r, const flt_t & group_c ) const
 {
-	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_group_sig_cache().get(
+	surface_density_type result = IceBRG::tNFW_group_sig_cache().get(
 			std::log(value_of(mvir0())), z(), std::log(value_of(r)),
-			group_c ));
+			group_c );
 	return result;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_shifted_Delta_Sigma(
 		const distance_type & R ) const
 {
-	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_shifted_sig_cache().get(
-			std::log(value_of(mvir0())), z(), std::log(value_of(R))));
+	surface_density_type result = IceBRG::tNFW_shifted_sig_cache().get(
+			std::log(value_of(mvir0())), z(), std::log(value_of(R)));
 	return result;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_shifted_no_enh_Delta_Sigma(
 		const distance_type & R ) const
 {
-	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_shifted_no_enh_sig_cache().get(
-			std::log(value_of(mvir0())), z(), std::log(value_of(R))));
+	surface_density_type result = IceBRG::tNFW_shifted_no_enh_sig_cache().get(
+			std::log(value_of(mvir0())), z(), std::log(value_of(R)));
 	return result;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_Sigma( const distance_type & r ) const
 {
-	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_Sigma_cache().get(
-			std::log(value_of(mvir0())), z(), std::log(value_of(r))));
+	surface_density_type result = IceBRG::tNFW_Sigma_cache().get(
+			std::log(value_of(mvir0())), z(), std::log(value_of(r)));
 	return result;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_offset_Sigma(
 		const distance_type & r, const distance_type & offset_r ) const
 {
 	if(value_of(offset_r)<=0) return Delta_Sigma(r);
-	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_offset_Sigma_cache().get(
+	surface_density_type result = IceBRG::tNFW_offset_Sigma_cache().get(
 			std::log(value_of(mvir0())), z(), std::log(value_of(r)),
-			std::log(value_of(offset_r))));
+			std::log(value_of(offset_r)));
 	return result;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_quick_group_Sigma(
 		const distance_type & r, const flt_t & group_c ) const
 {
-	surface_density_type result = any_cast<surface_density_type>(IceBRG::tNFW_group_Sigma_cache().get(
+	surface_density_type result = IceBRG::tNFW_group_Sigma_cache().get(
 			std::log(value_of(mvir0())), z(), std::log(value_of(r)),
-			group_c));
+			group_c);
 	return result;
 }
 surface_density_type IceBRG::lensing_tNFW_profile::_proj_dens( const distance_type & r ) const

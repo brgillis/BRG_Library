@@ -33,6 +33,7 @@
 
 #include "IceBRG_main/common.h"
 
+#include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/vector/limit_vector.hpp"
 
 namespace IceBRG {
@@ -44,13 +45,13 @@ class expected_count_loader {
 	static bool _loaded_;
 	static IceBRG::limit_vector<flt_t> _z_limits_;
 	static std::vector<IceBRG::limit_vector<flt_t>> _mag_limits_;
-	static std::vector<std::vector<flt_t>>_smoothed_count_, _smoothed_count_derivative_;
+	static std::vector<std::vector<custom_unit_type<0,0,0,-2,0>>>_smoothed_count_, _smoothed_count_derivative_;
 	static std::string _filename_base_, _filename_tail_;
 
 	static void _load();
-	static flt_t _get_interp(const flt_t & mag, const flt_t & z,
-			const std::vector<std::vector<flt_t>> & table,
-			const flt_t & def=0);
+	static custom_unit_type<0,0,0,-2,0> _get_interp(const flt_t & mag, const flt_t & z,
+			const std::vector<std::vector<custom_unit_type<0,0,0,-2,0>>> & table,
+			const custom_unit_type<0,0,0,-2,0> & def=units_cast<custom_unit_type<0,0,0,-2,0>>(0));
 public:
 
 	// Setting parameters for where the data is stored
@@ -63,8 +64,8 @@ public:
 	static void set_filename_tail(std::string && new_filename_tail);
 #endif
 
-	static flt_t get_count(const flt_t & mag, const flt_t & z);
-	static flt_t get_derivative(const flt_t & mag, const flt_t & z);
+	static custom_unit_type<0,0,0,-2,0> get_count(const flt_t & mag, const flt_t & z);
+	static custom_unit_type<0,0,0,-2,0> get_derivative(const flt_t & mag, const flt_t & z);
 
 	static void unload();
 };

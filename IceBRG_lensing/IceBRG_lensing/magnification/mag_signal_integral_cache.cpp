@@ -35,21 +35,19 @@
 
 #include "mag_signal_integral_cache.h"
 
+namespace IceBRG {
+
 // Initialise the cache
-DEFINE_BRG_CACHE_STATIC_VARS( mag_signal_integral_cache,
-		0.2,IceBRG::mag_z_max-0.01,0.01);
+DEFINE_BRG_CACHE( mag_signal_integral_cache,
+		flt_t,decltype(custom_unit_type<0,0,0,-2,0>()),
+		0.2,mag_z_max-0.01,0.01
+		,
+			mu_signal_integration_functor func(in_param);
 
-// IceBRG::mag_signal_integral_cache class methods
-#if (1)
-IceBRG::flt_t IceBRG::mag_signal_integral_cache::_calculate( const flt_t & in_param_1 ) const
-{
-	mu_signal_integration_functor func(in_param_1);
+			return integrate_Romberg(func,mag_m_min,mag_m_max,
+				0.000001);
+		,
+			expected_count_cache().load();
+		);
 
-	return integrate_Romberg<decltype(func),long_flt_t>(func,IceBRG::mag_m_min,IceBRG::mag_m_max,
-		0.000001);
-}
-void IceBRG::mag_signal_integral_cache::_load_cache_dependencies() const
-{
-	expected_count_cache().get(0,0);
-}
-#endif
+} // namespace IceBRG

@@ -44,8 +44,6 @@
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/vector/make_vector.hpp"
 
-#include "../../units/units.hpp"
-
 // Macro definitions
 
 // SPCP: "Static Polymorphic Const Pointer"
@@ -55,38 +53,73 @@
 // SPP: "Static Polymorphic Pointer"
 #define SPP(name) static_cast<name*>(this)
 
-#define DECLARE_BRG_CACHE_2D_STATIC_VARS()		               \
-	static IceBRG::flt_t _min_1_, _max_1_, _step_1_;                  \
-	static IceBRG::ssize_t _resolution_1_;                        \
-	static IceBRG::flt_t _min_2_, _max_2_, _step_2_;                  \
-	static IceBRG::ssize_t _resolution_2_;                        \
-	static IceBRG::vector_t< IceBRG::flt_vector_t > _results_;     \
-											                   \
-	static IceBRG::str_t _file_name_;                            \
-	static IceBRG::int_t _version_number_;                      \
-											                   \
-	static bool _loaded_, _initialised_;
+#define DECLARE_BRG_CACHE_2D(class_name,name_base,Tin1,Tin2,Tout) \
+class class_name : public IceBRG::brg_cache_2d<class_name,Tin1,Tin2,Tout> \
+{ \
+private: \
+ \
+    static Tin1 _min_1_, _max_1_, _step_1_; \
+	static IceBRG::ssize_t _resolution_1_; \
+    static Tin2 _min_2_, _max_2_, _step_2_; \
+	static IceBRG::ssize_t _resolution_2_; \
+	static IceBRG::array_t<IceBRG::array_t<Tout>> _results_; \
+ \
+	static IceBRG::str_t _file_name_; \
+	static IceBRG::int_t _version_number_; \
+ \
+	static bool _loaded_, _initialised_; \
+ \
+	friend class IceBRG::brg_cache_2d<class_name,Tin1,Tin2,Tout>; \
+ \
+protected: \
+ \
+	IceBRG::str_t _name_base() const \
+	{ \
+		char c_str_name_base[BRG_CACHE_ND_NAME_SIZE] = #name_base; \
+		return c_str_name_base; \
+	} \
+ \
+	Tout _calculate( Tin1 const & in_param_1, Tin2 const & in_param_2 ) const; \
+ \
+	void _load_cache_dependencies() const; \
+}; \
 
-#define DEFINE_BRG_CACHE_2D_STATIC_VARS(class_name,init_min_1,init_max_1,init_step_1, \
-                                        init_min_2, init_max_2, init_step_2)\
-	IceBRG::flt_t IceBRG::class_name::_min_1_ = init_min_1;						\
-	IceBRG::flt_t IceBRG::class_name::_max_1_ = init_max_1; 						\
-	IceBRG::flt_t IceBRG::class_name::_step_1_ = init_step_1;					\
-	IceBRG::ssize_t IceBRG::class_name::_resolution_1_ = 0;					\
-	IceBRG::flt_t IceBRG::class_name::_min_2_ = init_min_2;						\
-	IceBRG::flt_t IceBRG::class_name::_max_2_ = init_max_2; 						\
-	IceBRG::flt_t IceBRG::class_name::_step_2_ = init_step_2;					\
-	IceBRG::ssize_t IceBRG::class_name::_resolution_2_ = 0;					\
-	bool IceBRG::class_name::_loaded_ = false;							\
-	bool IceBRG::class_name::_initialised_ = false;						\
-	IceBRG::str_t IceBRG::class_name::_file_name_ = "";						\
-	IceBRG::int_t IceBRG::class_name::_version_number_ = 2;		        \
-	IceBRG::vector_t< IceBRG::flt_vector_t > IceBRG::class_name::_results_;
+#define DEFINE_BRG_CACHE_2D(class_name,Tin1,Tin2,Tout, \
+						    init_min_1,init_max_1,init_step_1, \
+						    init_min_2,init_max_2,init_step_2, \
+						    calc_method, \
+                            dependency_loading) \
+	Tin1 class_name::_min_1_ = init_min_1; \
+	Tin1 class_name::_max_1_ = init_max_1; \
+	Tin1 class_name::_step_1_ = init_step_1; \
+	IceBRG::ssize_t class_name::_resolution_1_ = 0; \
+	 \
+	Tin2 class_name::_min_2_ = init_min_2; \
+	Tin2 class_name::_max_2_ = init_max_2; \
+	Tin2 class_name::_step_2_ = init_step_2; \
+	IceBRG::ssize_t class_name::_resolution_2_ = 0; \
+	 \
+	bool class_name::_loaded_ = false; \
+	bool class_name::_initialised_ = false; \
+	 \
+	IceBRG::str_t class_name::_file_name_ = ""; \
+	IceBRG::int_t IceBRG::class_name::_version_number_ = 2; \
+	 \
+	IceBRG::array_t<array_t<Tout>> class_name::_results_; \
+	 \
+	Tout class_name::_calculate( Tin1 const & in_param_1, Tin2 const & in_param_2 ) const \
+	{ \
+		calc_method \
+	} \
+	void class_name::_load_cache_dependencies() const \
+	{ \
+		dependency_loading \
+	}
 
 namespace IceBRG
 {
 
-template<typename name>
+template<typename name, typename Tin1=flt_t, typename Tin2=flt_t, typename Tout=flt_t>
 class brg_cache_2d
 {
 private:
@@ -94,7 +127,16 @@ private:
 	// Private variables
 #if (1)
 
-	DECLARE_BRG_CACHE_2D_STATIC_VARS();
+    static Tin1 _min_1_, _max_1_, _step_1_;
+	static IceBRG::ssize_t _resolution_1_;
+    static Tin2 _min_2_, _max_2_, _step_2_;
+	static IceBRG::ssize_t _resolution_2_;
+	static IceBRG::array_t<IceBRG::array_t<Tout>> _results_;
+
+	static IceBRG::str_t _file_name_;
+	static IceBRG::int_t _version_number_;
+
+	static bool _loaded_, _initialised_;
 
 #endif // Private variables
 
@@ -120,10 +162,29 @@ private:
 			SPCP(name)->_initialised_ = true;
 		}
 	}
+	bool _critical_load() const
+	{
+		bool bad_result=false;
+		#ifdef _OPENMP
+		#pragma omp critical(load_brg_cache_2d)
+		#endif
+		{
+			try
+			{
+				SPCP(name)->_load();
+			}
+			catch(const std::exception &e)
+			{
+				handle_error_message(e.what());
+				bad_result=true;
+			}
+		}
+		return bad_result;
+	}
 	void _load() const
 	{
 		std::ifstream in_file;
-		std::string file_data;
+		str_t file_data;
 		bool need_to_calc = false;
 		int_t loop_counter = 0;
 
@@ -163,7 +224,7 @@ private:
 			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
 			in_file.read((char *)&file_version,sizeof(file_version));
 
-			if( (!in_file) || (((std::string)file_name) != SPCP(name)->_name_base()) ||
+			if( (!in_file) || (((str_t)file_name) != SPCP(name)->_name_base()) ||
 					(file_version != SPCP(name)->_version_number_) )
 			{
 				need_to_calc = true;
@@ -224,7 +285,7 @@ private:
 	void _unload() const
 	{
 		SPCP(name)->_loaded_ = false;
-		SPCP(name)->_results_.clear();
+		set_zero(SPCP(name)->_results_);
 	}
 	void _calc() const
 	{
@@ -240,8 +301,8 @@ private:
 		handle_notification("Generating " + SPCP(name)->_file_name_ + ". This may take some time.");
 
 		// Set up data
-		SPCP(name)->_resolution_1_ = (int_t)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
-		SPCP(name)->_resolution_2_ = (int_t)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
+		SPCP(name)->_resolution_1_ = (ssize_t)( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ) + 1;
+		SPCP(name)->_resolution_2_ = (ssize_t)( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / SPCP(name)->_step_2_ ) + 1;
 		make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_ );
 
 		// Calculate data
@@ -252,11 +313,11 @@ private:
 		#endif
 		for ( ssize_t i_1 = 0; i_1 < SPCP(name)->_resolution_1_; ++i_1 )
 		{
-			flt_t x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
+			Tin1 x_1 = SPCP(name)->_min_1_ + i_1*SPCP(name)->_step_1_;
 			for( ssize_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
 			{
-				flt_t x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
-				flt_t result = 0;
+				Tin2 x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
+				Tout result;
 				try
 				{
 					result = SPCP(name)->_calculate(x_1, x_2);
@@ -279,7 +340,7 @@ private:
 	{
 
 		std::ofstream out_file;
-		std::string file_data;
+		str_t file_data;
 
 		if ( !SPCP(name)->_loaded_ )
 		{
@@ -290,7 +351,7 @@ private:
 
 		// Output name and version
 
-		std::string file_name = SPCP(name)->_name_base();
+		str_t file_name = SPCP(name)->_name_base();
 		int_t file_version = SPCP(name)->_version_number_;
 
 		out_file.write(file_name.c_str(),BRG_CACHE_ND_NAME_SIZE);
@@ -333,22 +394,12 @@ protected:
 	// These are made protected instead of private so base classes can overload them
 #if (1)
 
-#ifdef _BRG_USE_UNITS_
-
-	// Gets the result in the proper units
-	any_units_type _units( const flt_t & v ) const
-	{
-		return v;
-	}
-
-#endif // _BRG_USE_UNITS_
-
 	/// Long calculation function, which is used to generate the cache; must be overloaded by each
 	/// child.
-	flt_t _calculate(const flt_t & x_1, const flt_t & x_2) const;
+	Tout _calculate(Tin1 const & x_1, Tin2 const & x_2) const;
 
 	/// The default name (without extension) for the cache file; should be unique for each cache.
-	std::string _name_base() const;
+	str_t _name_base() const;
 
 	/// This function should be overloaded to call each cache of the same dimensionality as
 	/// this cache, which this depends upon in calculation. This is necessary in order to avoid critical
@@ -369,16 +420,16 @@ public:
 	 *
 	 * @param new_name The name of the cache file to use
 	 */
-	void set_file_name( const std::string new_name )
+	void set_file_name( str_t new_name )
 	{
 		if(!SPCP(name)->_initialised_) SPP(name)->_init();
-		SPP(name)->_file_name_ = new_name;
+		SPP(name)->_file_name_ = std::move(new_name);
 		if ( SPCP(name)->_loaded_ )
 		{
 			SPCP(name)->_unload();
 		}
 		return;
-	} // const int_t set_file_name()
+	} // void set_file_name()
 
 	/**
 	 * Set the range of the independent parameter for wish you want values to be
@@ -387,9 +438,9 @@ public:
 	 * @param new_min_1 The new minimum value, dimension 1.
 	 * @param new_max_1 The new maximum value, dimension 1.
 	 * @param new_step_1 The number of points at which to cache the results, dimension 1.
-	 * @param new_min_1 The new minimum value, dimension 2.
-	 * @param new_max_1 The new maximum value, dimension 2.
-	 * @param new_step_1 The number of points at which to cache the results, dimension 2.
+	 * @param new_min_2 The new minimum value, dimension 2.
+	 * @param new_max_2 The new maximum value, dimension 2.
+	 * @param new_step_2 The number of points at which to cache the results, dimension 2.
 	 */
 	void set_range( const flt_t & new_min_1, const flt_t & new_max_1, const flt_t & new_step_1,
 			 	         const flt_t & new_min_2, const flt_t & new_max_2, const flt_t & new_step_2 )
@@ -399,7 +450,7 @@ public:
 		// First we try to load, so we can see if there are any changes from
 		// the existing cache
 		if ( !SPCP(name)->_loaded_ )
-			SPCP(name)->_load( true );
+			SPCP(name)->_critical_load();
 
 		// Go through variables, check if any are actually changed. If so, recalculate cache
 		if ( ( SPCP(name)->_min_1_ != new_min_1 ) || ( SPCP(name)->_max_1_ != new_max_1 )
@@ -433,20 +484,18 @@ public:
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
-			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
-			// so we don't get collisions from loading within two different critical sections at once)
-			SPCP(name)->get(SPCP(name)->_min_1_,SPCP(name)->_min_2_);
+			SPCP(name)->_critical_load();
 		}
 
 		// Fill up header
-		std::vector< std::string > header(4);
+		std::vector< str_t > header(4);
 		header[0] = "#";
 		header[1] = "x_1";
 		header[2] = "x_2";
 		header[3] = "y";
 
 		// Fill up data
-		std::vector< std::vector<std::string> > data(4);
+		std::vector< std::vector<str_t> > data(4);
 		std::stringstream ss;
 		for(ssize_t i_1=0; i_1<SPCP(name)->_resolution_1_; ++i_1)
 		{
@@ -468,7 +517,6 @@ public:
 		print_table(out,data,header);
 	}
 
-
 	/**
 	 * Get the result of the cached function for a given value.
 	 *
@@ -476,19 +524,16 @@ public:
 	 * @param init_x_2 The value for which you desired the cached result, dimension 2.
 	 * @return The cached result for the input value.
 	 */
-	template< typename Tx1, typename Tx2 >
-	any_units_type get( const Tx1 & init_x_1, const Tx2 & init_x_2 ) const
+	Tout get( Tin1 const & x_1, Tin2 const & x_2 ) const
 	{
 
-		flt_t x_1 = value_of(init_x_1);
-		flt_t x_2 = value_of(init_x_2);
-
-		flt_t xlo_1, xhi_1;
+		Tin1 xlo_1, xhi_1;
 		ssize_t xi_1; // Lower nearby array point
-		flt_t xlo_2, xhi_2;
+		Tin2 xlo_2, xhi_2;
 		ssize_t xi_2; // Lower nearby array point
-		flt_t result = 0;
-		flt_t total_weight = 0;
+		Tout result;
+		decltype(x_1*x_2) total_weight;
+		decltype(result*total_weight) weighted_result;
 
 		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
 
@@ -498,21 +543,7 @@ public:
 			// Load any caches we depend upon before the critical section
 			SPCP(name)->_load_cache_dependencies();
 
-			// Critical section here, since we can't load multiple times simultaneously
-			#ifdef _OPENMP
-			#pragma omp critical(load_brg_cache_2d)
-			#endif
-			{
-				try
-				{
-					SPCP(name)->_load();
-				}
-				catch(const std::exception &e)
-				{
-					result = -1;
-				}
-			}
-			if ( result == -1 )
+			if ( SPCP(name)->_critical_load() )
 			{
 				throw std::runtime_error("ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache_2d::get()\n");
 			}
@@ -532,20 +563,15 @@ public:
 
 		total_weight = (xhi_1-xlo_1)*(xhi_2-xlo_2);
 
-		result += SPCP(name)->_results_[xi_1][xi_2] * (xhi_1-x_1)*(xhi_2-x_2);
-		result += SPCP(name)->_results_[xi_1+1][xi_2] * (x_1-xlo_1)*(xhi_2-x_2);
+		weighted_result = SPCP(name)->_results_[xi_1][xi_2] * (xhi_1-x_1)*(xhi_2-x_2);
+		weighted_result += SPCP(name)->_results_[xi_1+1][xi_2] * (x_1-xlo_1)*(xhi_2-x_2);
 
-		result += SPCP(name)->_results_[xi_1][xi_2+1] * (xhi_1-x_1)*(x_2-xlo_2);
-		result += SPCP(name)->_results_[xi_1+1][xi_2+1] * (x_1-xlo_1)*(x_2-xlo_2);
+		weighted_result += SPCP(name)->_results_[xi_1][xi_2+1] * (xhi_1-x_1)*(x_2-xlo_2);
+		weighted_result += SPCP(name)->_results_[xi_1+1][xi_2+1] * (x_1-xlo_1)*(x_2-xlo_2);
 
-		result /= safe_d(total_weight);
+		result = weighted_result / safe_d(total_weight);
 
-		// ensure the result has the proper units
-#ifdef _BRG_USE_UNITS_
-		return SPCP(name)->_units(result);
-#else
 		return result;
-#endif
 
 	} // get()
 
@@ -569,8 +595,6 @@ public:
 		SPCP(name)->_unload();
 		SPCP(name)->_calc();
 		SPCP(name)->_output();
-		SPCP(name)->_unload();
-		SPCP(name)->_load();
 	}
 
 	// Constructor

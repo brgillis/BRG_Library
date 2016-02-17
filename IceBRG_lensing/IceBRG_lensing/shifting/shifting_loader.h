@@ -54,11 +54,11 @@ class shifting_loader {
 	const char * _corr_alpha_name_;
 
 	void _load();
-	ssize_t _lower_theta_index(const flt_t & theta);
+	ssize_t _lower_theta_index(const angle_type & theta);
 	ssize_t _lower_z_index(const flt_t & z);
 public:
 
-	flt_t get(const flt_t & theta, const flt_t & z);
+	square_angle_type get(const angle_type & theta, const flt_t & z);
 	void unload();
 
 	shifting_loader()

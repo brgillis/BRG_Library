@@ -37,44 +37,8 @@
 
 namespace IceBRG {
 
-/**
- *
- */
-class expected_count_cache: public brg_cache_2d<expected_count_cache> {
-	DECLARE_BRG_CACHE_2D_STATIC_VARS();
-
-	friend class brg_cache_2d<expected_count_cache>;
-
-protected:
-
-	std::string _name_base() const
-	{
-		char name_base[BRG_CACHE_ND_NAME_SIZE] = "magexcnt";
-		return name_base;
-	}
-
-#ifdef _BRG_USE_UNITS_
-
-	// Tells what units the result should have
-	any_units_type _units( const flt_t & v ) const
-	{
-		return v;
-	}
-
-#endif // _BRG_USE_UNITS_
-
-	// Long-form calculation function.
-	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2 ) const;
-	void _load_cache_dependencies() const;
-
-public:
-	expected_count_cache()
-	{
-	}
-	~expected_count_cache()
-	{
-	}
-};
+DECLARE_BRG_CACHE_2D(expected_count_cache,magexcnt,
+		flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()));
 
 } // end namespace IceBRG
 

@@ -50,8 +50,8 @@ bool expected_count_loader::_loaded_(false);
 
 IceBRG::limit_vector<flt_t> expected_count_loader::_z_limits_;
 std::vector<IceBRG::limit_vector<flt_t>> expected_count_loader::_mag_limits_;
-std::vector<std::vector<flt_t>> expected_count_loader::_smoothed_count_;
-std::vector<std::vector<flt_t>> expected_count_loader::_smoothed_count_derivative_;
+std::vector<std::vector<custom_unit_type<0,0,0,-2,0>>> expected_count_loader::_smoothed_count_;
+std::vector<std::vector<custom_unit_type<0,0,0,-2,0>>> expected_count_loader::_smoothed_count_derivative_;
 
 std::string expected_count_loader::_filename_base_("/disk2/brg/git/CFHTLenS_cat/Data/magnitude_hist_gz");
 std::string expected_count_loader::_filename_tail_(".dat");
@@ -96,13 +96,26 @@ void expected_count_loader::_load()
 			{
 				auto table_map = IceBRG::load_table_map<flt_t>(filename);
 				std::vector<flt_t> temp_mag_limits = table_map.at("mag_bin_lower");
-				_smoothed_count_[z_i] = table_map.at(COUNT_COLUMN);
-				_smoothed_count_derivative_[z_i] = table_map.at("smoothed_alpha");
-
 				// Add a final value to the _mag_limits_ vector
 				temp_mag_limits.push_back(2*temp_mag_limits.back()-
 						temp_mag_limits.at(ssize(temp_mag_limits)-2));
-				_mag_limits_[z_i] = temp_mag_limits;
+				_mag_limits_[z_i] = std::move(temp_mag_limits);
+
+				ssize_t size = _mag_limits_.size()-1;
+
+				_smoothed_count_[z_i].resize(size);
+				_smoothed_count_derivative_[z_i].resize(size);
+
+				auto const & count_col = table_map.at(COUNT_COLUMN);
+				auto const & deriv_col = table_map.at("smoothed_alpha");
+
+				for(int mag_i=0; mag_i<size; ++mag_i)
+				{
+					_smoothed_count_[z_i][mag_i] =
+							units_cast<custom_unit_type<0,0,0,-2,0>>(count_col[mag_i]);
+					_smoothed_count_derivative_[z_i][mag_i] =
+							units_cast<custom_unit_type<0,0,0,-2,0>>(deriv_col[mag_i]);
+				}
 			}
 			catch(const std::runtime_error &e)
 			{
@@ -126,8 +139,8 @@ void expected_count_loader::_load()
 } // void expected_count_loader::_load()
 
 
-flt_t expected_count_loader::_get_interp(const flt_t & mag, const flt_t & z,
-		const std::vector<std::vector<flt_t>> & table, const flt_t & default_result)
+custom_unit_type<0,0,0,-2,0> expected_count_loader::_get_interp(const flt_t & mag, const flt_t & z,
+		const std::vector<std::vector<custom_unit_type<0,0,0,-2,0>>> & table, const custom_unit_type<0,0,0,-2,0> & default_result)
 {
 	// Load if necessary
 	_load();
@@ -139,25 +152,23 @@ flt_t expected_count_loader::_get_interp(const flt_t & mag, const flt_t & z,
 	const flt_t & z_hi = _z_limits_.upper_limit(z_i);
 
 	flt_t tot_weight;
-	flt_t temp_result;
+	custom_unit_type<0,0,0,-2,0> temp_result;
 
 	// Get the interpolated value at both the lower redshift and the higher
 
 	// At the lower redshift first
-	flt_t lo_result;
+	custom_unit_type<0,0,0,-2,0> lo_result;
 	lo_result = _mag_limits_[z_i].interpolate_bins(mag,table[z_i]);
 
 	// At the higher redshift now
-	flt_t hi_result;
+	custom_unit_type<0,0,0,-2,0> hi_result;
 	hi_result = _mag_limits_[z_i+1].interpolate_bins(mag,table[z_i+1]);
 
 	// And now interpolate between these results
 
 	tot_weight = z_hi-z_lo;
 
-	temp_result = 0;
-	temp_result += lo_result * (z_hi-z);
-	temp_result += hi_result * (z-z_lo);
+	temp_result = lo_result * (z_hi-z) + hi_result * (z-z_lo);
 	return temp_result / tot_weight;
 
 } // flt_t expected_count_loader::_get_interp(...)
@@ -201,13 +212,13 @@ void expected_count_loader::set_filename_tail(std::string && new_filename_tail)
 // Access data
 #if(1)
 
-flt_t expected_count_loader::get_count(const flt_t & mag, const flt_t & z)
+custom_unit_type<0,0,0,-2,0> expected_count_loader::get_count(const flt_t & mag, const flt_t & z)
 {
-	return _get_interp(mag,z,_smoothed_count_,0.);
+	return _get_interp(mag,z,_smoothed_count_);
 }
-flt_t expected_count_loader::get_derivative(const flt_t & mag, const flt_t & z)
+custom_unit_type<0,0,0,-2,0> expected_count_loader::get_derivative(const flt_t & mag, const flt_t & z)
 {
-	return _get_interp(mag,z,_smoothed_count_derivative_,1.);
+	return _get_interp(mag,z,_smoothed_count_derivative_,units_cast<custom_unit_type<0,0,0,-2,0>>(1.));
 }
 
 #endif // Access data

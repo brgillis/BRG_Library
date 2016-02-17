@@ -50,31 +50,65 @@
 // SPP: "Static Polymorphic Pointer"
 #define SPP(name) static_cast<name*>(this)
 
-#define DECLARE_BRG_CACHE_STATIC_VARS(Tin,Tout)		\
-	static Tin _min_1_, _max_1_, _step_1_; \
-	static IceBRG::ssize_t _resolution_1_;      		\
+#define DECLARE_BRG_CACHE(class_name,name_base,Tin,Tout) \
+class class_name : public IceBRG::brg_cache<class_name,Tin,Tout> \
+{ \
+private: \
+ \
+    static Tin _min_1_, _max_1_, _step_1_; \
+	static IceBRG::ssize_t _resolution_1_; \
 	static IceBRG::array_t<Tout> _results_; \
-											\
-	static IceBRG::str_t _file_name_;         \
-	static IceBRG::str_t _header_string_;     \
-											\
-	static bool _loaded_, _initialised_;    \
-	static IceBRG::short_int_t _is_monotonic_;		\
-											\
-	static int_t _sig_digits_;
+ \
+	static IceBRG::str_t _file_name_; \
+	static IceBRG::str_t _header_string_; \
+ \
+	static bool _loaded_, _initialised_; \
+	static IceBRG::short_int_t _is_monotonic_; \
+ \
+	static int_t _sig_digits_; \
+ \
+	friend class IceBRG::brg_cache<class_name,Tin,Tout>; \
+ \
+protected: \
+ \
+	IceBRG::str_t _name_base() const \
+	{ \
+		return #name_base; \
+	} \
+ \
+	Tout _calculate( Tin const & in_param ) const; \
+ \
+	void _load_cache_dependencies() const; \
+}; \
 
-#define DEFINE_BRG_CACHE_STATIC_VARS(class_name,Tin,Tout,init_min,init_max,init_step) \
-	Tin IceBRG::class_name::_min_1_ = init_min;						\
-	Tin IceBRG::class_name::_max_1_ = init_max; 						\
-	Tin IceBRG::class_name::_step_1_ = init_step; 						\
-	bool IceBRG::class_name::_loaded_ = false;							\
-	bool IceBRG::class_name::_initialised_ = false;						\
-	IceBRG::short_int_t IceBRG::class_name::_is_monotonic_ = 0;						\
-	IceBRG::int_t IceBRG::class_name::_sig_digits_ = 8;					\
-	IceBRG::ssize_t IceBRG::class_name::_resolution_1_ = 0;						\
-	IceBRG::str_t IceBRG::class_name::_file_name_ = "";						\
-	IceBRG::str_t IceBRG::class_name::_header_string_ = "";					\
-	IceBRG::array_t<Tout> IceBRG::class_name::_results_;
+#define DEFINE_BRG_CACHE(class_name,Tin,Tout, \
+		init_min,init_max,init_step, \
+		calc_method, \
+		dependency_loading) \
+	 \
+	Tin class_name::_min_1_ = init_min; \
+	Tin class_name::_max_1_ = init_max; \
+	Tin class_name::_step_1_ = init_step; \
+	IceBRG::ssize_t class_name::_resolution_1_ = 0; \
+	 \
+	bool class_name::_loaded_ = false; \
+	bool class_name::_initialised_ = false; \
+	 \
+	IceBRG::short_int_t class_name::_is_monotonic_ = 0; \
+	IceBRG::int_t class_name::_sig_digits_ = 8; \
+	IceBRG::str_t class_name::_file_name_ = ""; \
+	IceBRG::str_t class_name::_header_string_ = ""; \
+	 \
+	IceBRG::array_t<Tout> class_name::_results_; \
+	 \
+	Tout class_name::_calculate( Tin const & in_param ) const \
+	{ \
+		calc_method \
+	} \
+	void class_name::_load_cache_dependencies() const \
+	{ \
+		dependency_loading \
+	}
 
 namespace IceBRG
 {
@@ -87,7 +121,17 @@ private:
 	// Private variables
 #if (1)
 
-	DECLARE_BRG_CACHE_STATIC_VARS(Tin,Tout);
+    static Tin _min_1_, _max_1_, _step_1_;
+	static IceBRG::ssize_t _resolution_1_;
+	static IceBRG::array_t<Tout> _results_;
+
+	static IceBRG::str_t _file_name_;
+	static IceBRG::str_t _header_string_;
+
+	static bool _loaded_, _initialised_;
+	static IceBRG::short_int_t _is_monotonic_;
+
+	static int_t _sig_digits_;
 
 #endif // Private variables
 
@@ -111,6 +155,25 @@ private:
 
 			SPCP(name)->_initialised_ = true;
 		}
+	}
+	bool _critical_load() const
+	{
+		bool bad_result = false;
+		#ifdef _OPENMP
+		#pragma omp critical(load_brg_cache)
+		#endif
+		{
+			try
+			{
+				SPCP(name)->_load();
+			}
+			catch(const std::exception &e)
+			{
+				handle_error_message(e.what());
+				bad_result = true;
+			}
+		}
+		return bad_result;
 	}
 	void _load() const
 	{
@@ -387,7 +450,7 @@ public:
 		// First we try to load, so we can see if there are any changes from
 		// the existing cache
 		if ( !SPCP(name)->_loaded_ )
-			SPCP(name)->_load( true );
+			SPCP(name)->_critical_load();
 
 		// Go through variables, check if any are actually changed. If so, recalculate cache
 		if ( ( SPCP(name)->_min_1_ != new_min ) || ( SPCP(name)->_max_1_ != new_max )
@@ -430,9 +493,7 @@ public:
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
-			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
-			// so we don't get collisions from loading within two different critical sections at once)
-			SPCP(name)->get(SPCP(name)->_min_1_);
+			SPCP(name)->_critical_load(SPCP(name)->_min_1_);
 		}
 
 		// Fill up header
@@ -468,7 +529,7 @@ public:
 	{
 		Tin xlo, xhi;
 		ssize_t x_i; // Lower nearby array point
-		Tout result = 0;
+		Tout result;
 
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
@@ -476,22 +537,7 @@ public:
 			// Load any caches we depend upon before the critical section
 			SPCP(name)->_load_cache_dependencies();
 
-			// Critical section here, since we can't load multiple times simultaneously
-			#ifdef _OPENMP
-			#pragma omp critical(load_brg_cache)
-			#endif
-			{
-				try
-				{
-					SPCP(name)->_load();
-				}
-				catch(const std::exception &e)
-				{
-					handle_error_message(e.what());
-					result = -1;
-				}
-			}
-			if ( result == -1 )
+			if ( SPCP(name)->_critical_load() )
 			{
 				throw std::runtime_error("ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache::get()\n");
 			}
@@ -507,11 +553,7 @@ public:
 		result = ( ( x - xlo ) * SPCP(name)->_results_[x_i + 1] + ( xhi - x ) * SPCP(name)->_results_[x_i] )
 				/ SPCP(name)->_step_1_;
 
-#ifdef _BRG_USE_UNITS_
-		return SPCP(name)->_units(result);
-#else
 		return result;
-#endif
 
 	} // get()
 
@@ -540,9 +582,7 @@ public:
 
 		if ( !SPCP(name)->_loaded_ )
 		{
-			// Do a test get to make sure it's loaded (and take advantage of the critical section there,
-			// so we don't get collisions from loading within two different critical sections at once)
-			SPCP(name)->get(SPCP(name)->_min_1_);
+			SPCP(name)->_critical_load();
 		}
 		if ( result == -1 )
 		{
@@ -613,14 +653,12 @@ public:
 		SPCP(name)->_unload();
 		SPCP(name)->_calc();
 		SPCP(name)->_output();
-		SPCP(name)->_unload();
-		SPCP(name)->_load();
 	}
 
 	// Constructor
 	brg_cache()
 	{
-		if(!SPCP(name)->_initialised_) SPP(name)->_init();
+		SPP(name)->_init();
 	}
 
 	// Deconstructor

@@ -37,45 +37,8 @@
 
 namespace IceBRG {
 
-/**
- *
- */
-class shifting_cache: public brg_cache_2d<shifting_cache> {
-private:
-
-	DECLARE_BRG_CACHE_2D_STATIC_VARS();
-
-	friend class brg_cache_2d<shifting_cache>;
-
-protected:
-
-	std::string _name_base() const
-	{
-		char name_base[BRG_CACHE_ND_NAME_SIZE] = "lensshft";
-		return name_base;
-	}
-
-#ifdef _BRG_USE_UNITS_
-
-	// Tells what units the result should have
-	any_units_type _units( const flt_t & v ) const
-	{
-		return units_cast<angle_type>(v);
-	}
-
-#endif // _BRG_USE_UNITS_
-
-	// Long-form calculation function.
-	flt_t _calculate( const flt_t & in_param_1, const flt_t & in_param_2 ) const;
-
-public:
-	shifting_cache()
-	{
-	}
-	~shifting_cache()
-	{
-	}
-};
+DECLARE_BRG_CACHE_2D(shifting_cache,lensshft,
+		flt_t,flt_t,angle_type)
 
 } // end namespace IceBRG
 
