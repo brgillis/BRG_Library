@@ -27,12 +27,14 @@
 #define BRG_CACHE_ND_NAME_SIZE 9 // Needs an end character, so will only actually allow 8 chars
 #endif
 
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include <string>
 #include <sstream>
+
 #include "IceBRG_main/common.h"
 
 #include "IceBRG_main/Eigen.hpp"
@@ -576,43 +578,41 @@ public:
 			throw std::runtime_error(err);
 		}
 
-		if(SPCP(name)->_is_monotonic_==1)
+		auto res_begin = begin(SPCP(name)->_results_);
+		auto res_end = begin(SPCP(name)->_results_);
+
+		array_t<Tout> opp_results;
+
+		short_int_t res_sign = 1;
+
+		if(SPCP(name)->_is_monotonic_==-1)
 		{
+			// Use the opposite instead
+			res_sign = -1;
 
-			for ( ssize_t x_i = 0; x_i < SPCP(name)->_resolution_1_ - 1; x_i++ )
-			{
-				// Loop through till we find the proper y or reach the end
-				yhi = SPCP(name)->_results_[x_i];
-				if ( ( yhi > y ) || (x_i >= SPCP(name)->_resolution_1_ - 2) )
-				{
-					ylo = SPCP(name)->_results_[x_i + 1];
+			opp_results = -SPCP(name)->_results_;
 
-					xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
-					xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
-					result = xlo + ( xhi - xlo ) * ( y - ylo ) / safe_d( yhi - ylo );
-					break;
-				}
-			}
-		} // if(_is_monotonic_==1)
-		else
-		{
-
-			for ( ssize_t x_i = 0; x_i < SPCP(name)->_resolution_1_ - 1; x_i++ )
-			{
-				// Loop through till we find the proper y or reach the end
-				ylo = SPCP(name)->_results_[x_i];
-				if ( ( ylo < y ) || (x_i >= SPCP(name)->_resolution_1_ - 2) )
-				{
-					yhi = SPCP(name)->_results_[x_i + 1];
-
-					xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
-					xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
-					result = xlo + ( xhi - xlo ) * ( y - ylo ) / safe_d( yhi - ylo );
-					break;
-				}
-			}
-
+			res_begin = begin(opp_results);
+			res_end = begin(opp_results);
 		} // _is_monotonic == -1
+
+		auto p_yhi = std::lower_bound(begin(SPCP(name)->_results_),end(SPCP(name)->_results_),y);
+
+		if(p_yhi==end(SPCP(name)->_results_))
+			--p_yhi;
+		if(p_yhi==begin(SPCP(name)->_results_))
+			++p_yhi;
+		auto p_ylo = p_yhi - 1;
+
+		ylo = *p_ylo;
+		yhi = *p_yhi;
+
+		ssize_t x_i = p_yhi - begin(SPCP(name)->_results_);
+
+		xlo = SPCP(name)->_results_[x_i-1];
+		xhi = SPCP(name)->_results_[x_i];
+
+		result = res_sign * (xlo + ( xhi - xlo ) * ( y - ylo ) / safe_d( yhi - ylo ));
 
 		return result;
 
