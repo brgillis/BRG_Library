@@ -596,12 +596,12 @@ public:
 			res_end = begin(opp_results);
 		} // _is_monotonic == -1
 
-		auto p_yhi = std::lower_bound(begin(SPCP(name)->_results_),end(SPCP(name)->_results_),y);
+		auto p_yhi = std::lower_bound(res_begin,res_end,y);
 
-		if(p_yhi==end(SPCP(name)->_results_))
-			--p_yhi;
-		if(p_yhi==begin(SPCP(name)->_results_))
+		if(p_yhi==res_begin)
 			++p_yhi;
+		if(p_yhi==res_end)
+			--p_yhi;
 		auto p_ylo = p_yhi - 1;
 
 		ylo = *p_ylo;
@@ -609,8 +609,8 @@ public:
 
 		ssize_t x_i = p_yhi - begin(SPCP(name)->_results_);
 
-		xlo = SPCP(name)->_results_[x_i-1];
-		xhi = SPCP(name)->_results_[x_i];
+		xlo = SPCP(name)->_min_1_ + (x_i-1)*SPCP(name)->_step_1_;
+		xhi = SPCP(name)->_min_1_ + x_i*SPCP(name)->_step_1_;
 
 		result = res_sign * (xlo + ( xhi - xlo ) * ( y - ylo ) / safe_d( yhi - ylo ));
 
