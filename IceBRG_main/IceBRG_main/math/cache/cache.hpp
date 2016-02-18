@@ -23,6 +23,10 @@
 #ifndef _BRG_CACHE_HPP_INCLUDED_
 #define _BRG_CACHE_HPP_INCLUDED_
 
+#ifndef BRG_CACHE_ND_NAME_SIZE
+#define BRG_CACHE_ND_NAME_SIZE 9 // Needs an end character, so will only actually allow 8 chars
+#endif
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -59,13 +63,12 @@ private: \
 	static IceBRG::ssize_t _resolution_1_; \
 	static IceBRG::array_t<Tout> _results_; \
  \
-	static IceBRG::str_t _file_name_; \
-	static IceBRG::str_t _header_string_; \
- \
-	static bool _loaded_, _initialised_; \
 	static IceBRG::short_int_t _is_monotonic_; \
  \
-	static int_t _sig_digits_; \
+	static IceBRG::str_t _file_name_; \
+	static IceBRG::int_t _version_number_; \
+ \
+	static bool _loaded_, _initialised_; \
  \
 	friend class IceBRG::brg_cache<class_name,Tin,Tout>; \
  \
@@ -73,7 +76,8 @@ protected: \
  \
 	IceBRG::str_t _name_base() const \
 	{ \
-		return #name_base; \
+		char c_str_name_base[BRG_CACHE_ND_NAME_SIZE] = #name_base; \
+		return c_str_name_base; \
 	} \
  \
 	Tout _calculate( Tin const & in_param ) const; \
@@ -91,13 +95,13 @@ protected: \
 	Tin class_name::_step_1_ = init_step; \
 	IceBRG::ssize_t class_name::_resolution_1_ = 0; \
 	 \
+	IceBRG::short_int_t class_name::_is_monotonic_ = 0; \
+	 \
 	bool class_name::_loaded_ = false; \
 	bool class_name::_initialised_ = false; \
 	 \
-	IceBRG::short_int_t class_name::_is_monotonic_ = 0; \
-	IceBRG::int_t class_name::_sig_digits_ = 8; \
 	IceBRG::str_t class_name::_file_name_ = ""; \
-	IceBRG::str_t class_name::_header_string_ = ""; \
+	IceBRG::int_t IceBRG::class_name::_version_number_ = 2; \
 	 \
 	IceBRG::array_t<Tout> class_name::_results_; \
 	 \
@@ -125,13 +129,12 @@ private:
 	static IceBRG::ssize_t _resolution_1_;
 	static IceBRG::array_t<Tout> _results_;
 
-	static IceBRG::str_t _file_name_;
-	static IceBRG::str_t _header_string_;
-
-	static bool _loaded_, _initialised_;
 	static IceBRG::short_int_t _is_monotonic_;
 
-	static int_t _sig_digits_;
+	static IceBRG::str_t _file_name_;
+	static IceBRG::int_t _version_number_;
+
+	static bool _loaded_, _initialised_;
 
 #endif // Private variables
 
@@ -150,8 +153,8 @@ private:
 		if(!SPCP(name)->_initialised_)
 		{
 			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.dat";
-			SPCP(name)->_header_string_ = "# " + SPCP(name)->_name_base() + "_cache v1.0";
+			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
+			SPCP(name)->_version_number_ = 2; // This should be changed when there are changes to this code
 
 			SPCP(name)->_initialised_ = true;
 		}
@@ -177,20 +180,19 @@ private:
 	}
 	void _load() const
 	{
-		if ( SPCP(name)->_loaded_ ) return;
-
 		std::ifstream in_file;
-		std::string file_data;
+		str_t file_data;
 		bool need_to_calc = false;
-		ssize_t i;
 		int_t loop_counter = 0;
+
+		if ( SPCP(name)->_loaded_ )
+			return;
 
 		do
 		{
 			if ( loop_counter >= 2 )
 			{
-				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_
-						+ " in IceBRG::brg_cache.\n");
+				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in IceBRG::brg_cache_2.\n");
 			}
 			else
 			{
@@ -200,7 +202,7 @@ private:
 
 			try
 			{
-				open_file_input( in_file, SPCP(name)->_file_name_ );
+				open_bin_file_input( in_file, SPCP(name)->_file_name_ );
 			}
 			catch(const std::exception &e)
 			{
@@ -211,9 +213,16 @@ private:
 				continue;
 			}
 
-			// Check that it has the right header
-			getline( in_file, file_data );
-			if ( file_data.compare( SPCP(name)->_header_string_ ) )
+			// Check that it has the right name and version
+
+			char file_name[BRG_CACHE_ND_NAME_SIZE];
+			int_t file_version = std::numeric_limits<int_t>::max();
+
+			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
+			in_file.read((char *)&file_version,sizeof(file_version));
+
+			if( (!in_file) || (((str_t)file_name) != SPCP(name)->_name_base()) ||
+					(file_version != SPCP(name)->_version_number_) )
 			{
 				need_to_calc = true;
 				SPCP(name)->_calc();
@@ -221,83 +230,32 @@ private:
 				SPCP(name)->_unload();
 				continue;
 			}
-
-			// Trim out any other commented lines
-			trim_comments_all_at_top( in_file );
-
 			// Load range parameters;
-			flt_t v_min, v_max, v_step;
-			if ( !( in_file >> v_min >> v_max >> v_step ) )
-			{
-				need_to_calc = true;
-				SPCP(name)->_calc();
-				SPCP(name)->_output();
-				SPCP(name)->_unload();
-				continue;
-			}
-			SPCP(name)->_min_1_ = units_cast<Tin>(v_min);
-			SPCP(name)->_max_1_ = units_cast<Tin>(v_max);
-			SPCP(name)->_step_1_ = units_cast<Tin>(v_step);
+			in_file.read((char *)&(SPCP(name)->_min_1_),sizeof(SPCP(name)->_min_1_));
+			in_file.read((char *)&(SPCP(name)->_max_1_),sizeof(SPCP(name)->_max_1_));
+			in_file.read((char *)&(SPCP(name)->_step_1_),sizeof(SPCP(name)->_step_1_));
 
 			// Set up data
-			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) /
-					safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_results_.resize(SPCP(name)->_resolution_1_ );
+			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_ );
 
 			// Read in data
 
-			flt_t temp_data;
-			flt_t last_data=0;
+			// Initialise
+			const std::streamsize size = sizeof(SPCP(name)->_results_[0]); // Store the size for speed
+			ssize_t i_1=0;
 
-			i = 0;
-			SPCP(name)->_is_monotonic_ = 0;
-			while ( ( !in_file.eof() ) && ( i < SPCP(name)->_resolution_1_ ) )
+			while ( ( !in_file.eof() ) && (in_file) )
 			{
-				in_file >> temp_data;
-				SPCP(name)->_results_[i] = units_cast<Tout>(temp_data);
-				if(i==1)
-				{
-					// First monotonic check, so we don't compare to its past values
-					if(temp_data > last_data)
-					{
-						SPCP(name)->_is_monotonic_ = 1;
-					}
-					else if(temp_data < last_data)
-					{
-						SPCP(name)->_is_monotonic_ = -1;
-					}
-					else
-					{
-						SPCP(name)->_is_monotonic_ = 0;
-					}
-				}
-				else if(i>1)
-				{
-					// Check for monotonic increase/decrease
-					if(temp_data > last_data)
-					{
-						if(SPCP(name)->_is_monotonic_ != 1)
-							SPCP(name)->_is_monotonic_ = 0;
-					}
-					else if(temp_data < last_data)
-					{
-						if(SPCP(name)->_is_monotonic_ != -1)
-							SPCP(name)->_is_monotonic_ = 0;
-					}
-					else
-					{
-						SPCP(name)->_is_monotonic_ = 0;
-					}
-				}
-				last_data = temp_data;
-				i++;
+				in_file.read((char *)&(SPCP(name)->_results_[i_1]),size);
 			}
 
 			// Check that it was all read properly
-			if ( i < SPCP(name)->_resolution_1_ )
+			if ( (i_1 != SPCP(name)->_resolution_1_) || (!in_file) )
 			{
 				need_to_calc = true;
 				SPCP(name)->_calc();
+				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
 			}
@@ -363,31 +321,40 @@ private:
 	}
 	void _output() const
 	{
-
 		std::ofstream out_file;
-		std::string file_data;
+		str_t file_data;
 
 		if ( !SPCP(name)->_loaded_ )
 		{
 			SPCP(name)->_calc();
 		}
 
-		open_file_output( out_file, SPCP(name)->_file_name_ );
+		open_bin_file_output( out_file, SPCP(name)->_file_name_ );
 
-		// Output header
-		out_file << SPCP(name)->_header_string_ << "\n#\n";
+		// Output name and version
 
-		// Set number of significant digits
-		out_file.precision(SPCP(name)->_sig_digits_);
+		str_t file_name = SPCP(name)->_name_base();
+		int_t file_version = SPCP(name)->_version_number_;
 
-		// Output range
-		out_file << value_of(SPCP(name)->_min_1_) << "\t" << value_of(SPCP(name)->_max_1_) << "\t"
-				<< value_of(SPCP(name)->_step_1_) << "\n";
+		out_file.write(file_name.c_str(),BRG_CACHE_ND_NAME_SIZE);
+		out_file.write((char *)&file_version,sizeof(file_version));
+
+		// Output range parameters
+		out_file.write((char *)&(SPCP(name)->_min_1_),sizeof(SPCP(name)->_min_1_));
+		out_file.write((char *)&(SPCP(name)->_max_1_),sizeof(SPCP(name)->_max_1_));
+		out_file.write((char *)&(SPCP(name)->_step_1_),sizeof(SPCP(name)->_step_1_));
 
 		// Output data
-		for ( ssize_t i = 0; i < SPCP(name)->_resolution_1_; i++ )
+
+		// Initialize
+		const std::streamsize size = sizeof(SPCP(name)->_results_[0]);
+		ssize_t i_1=0;
+
+		while ( i_1 < SPCP(name)->_resolution_1_ )
 		{
-			out_file << value_of(SPCP(name)->_results_[i]) << "\n";
+			out_file.write((char *)&(SPCP(name)->_results_[i_1]),size);
+
+			++i_1;
 		}
 
 		out_file.close();
@@ -644,6 +611,12 @@ public:
 	{
 		_unload();
 		_load();
+	}
+
+	/// Unload the cache
+	void unload() const
+	{
+		SPCP(name)->_unload();
 	}
 
 	/// Recalculate function. Call if you want to overwrite a cache when something's changed in the code

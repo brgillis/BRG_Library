@@ -236,7 +236,6 @@ private:
 				need_to_calc = true;
 				SPCP(name)->_calc();
 				SPCP(name)->_output();
-				SPCP(name)->_unload();
 				continue;
 			}
 
@@ -254,7 +253,6 @@ private:
 				need_to_calc = true;
 				SPCP(name)->_calc();
 				SPCP(name)->_output();
-				SPCP(name)->_unload();
 				continue;
 			}
 			// Load range parameters;
@@ -315,7 +313,6 @@ private:
 				need_to_calc = true;
 				SPCP(name)->_calc();
 				SPCP(name)->_output();
-				SPCP(name)->_unload();
 				continue;
 			}
 
@@ -747,6 +744,12 @@ public:
 	{
 		SPCP(name)->_unload();
 		SPCP(name)->_load();
+	}
+
+	/// Unload the cache
+	void unload() const
+	{
+		SPCP(name)->_unload();
 	}
 
 	/// Recalculate function. Call if you want to overwrite a cache when something's changed in the code
