@@ -54,7 +54,7 @@ private:
 		vsize_t p = 0;
 		vsize_t m = 1;
 
-		for(ssize_t i=0; i<position.size(); i++ )
+		for(ssize_t i=0; i<ssize(position); i++ )
 		{
 			p += m * position[i];
 			m *= _shape_[i];
@@ -67,7 +67,7 @@ private:
 		vsize_t p = 0;
 		vsize_t m = 1;
 
-		for(ssize_t i=0; i<position.size(); i++ )
+		for(ssize_t i=0; i<ssize(position); i++ )
 		{
 			p += m * position[i];
 			m *= _shape_[i];
@@ -483,7 +483,7 @@ public:
 	// Safe element-access by position vector
 	T & at(const shape_t & position)
 	{
-		if(position.size() != _num_dim_)
+		if(ssize(position) != _num_dim_)
 			throw std::out_of_range("Attempt to access vector with invalid position vector size.");
 		if(not_all_true(position<_shape_))
 			throw std::out_of_range("Attempt to access vector with position outside bounds.");
@@ -492,7 +492,7 @@ public:
 	}
 	const T & at(const shape_t & position) const
 	{
-		if(position.size() != _num_dim_)
+		if(ssize(position) != _num_dim_)
 			throw std::out_of_range("Attempt to access vector with invalid position vector size.");
 		if(not_all_true(position<_shape_))
 			throw std::out_of_range("Attempt to access vector with position outside bounds.");
@@ -501,7 +501,7 @@ public:
 	}
 	T & at(const multi_vector<int_t> & position)
 	{
-		if(position.size() != _num_dim_)
+		if(ssize(position) != _num_dim_)
 			throw std::out_of_range("Attempt to access vector with invalid position vector size.");
 		if(not_all_true(position.v()<_shape_))
 			throw std::out_of_range("Attempt to access vector with position outside bounds.");
@@ -510,7 +510,7 @@ public:
 	}
 	const T & at(const multi_vector<int_t> &position) const
 	{
-		if(position.size() != _num_dim_)
+		if(ssize(position) != _num_dim_)
 			throw std::out_of_range("Attempt to access vector with invalid position vector size.");
 		if(not_all_true(position.v()<_shape_))
 			throw std::out_of_range("Attempt to access vector with position outside bounds.");
@@ -525,7 +525,7 @@ public:
 		// Check if no reshaping is necessary
 		if(_shape_==new_shape) return;
 
-		if(new_shape.size() > std::numeric_limits<dsize_t>::max())
+		if(ssize(new_shape) > std::numeric_limits<dsize_t>::max())
 			throw std::out_of_range("Cannot reshape vector: Dimensions array too large.");
 
 		vsize_t new_size = 1;

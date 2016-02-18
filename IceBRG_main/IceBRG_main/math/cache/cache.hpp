@@ -231,9 +231,16 @@ private:
 				continue;
 			}
 			// Load range parameters;
-			in_file.read((char *)&(SPCP(name)->_min_1_),sizeof(SPCP(name)->_min_1_));
-			in_file.read((char *)&(SPCP(name)->_max_1_),sizeof(SPCP(name)->_max_1_));
-			in_file.read((char *)&(SPCP(name)->_step_1_),sizeof(SPCP(name)->_step_1_));
+
+			decltype(value_of(SPCP(name)->_min_1_)) temp_in_1;
+			const std::streamsize in1_size = sizeof(temp_in_1);
+
+			in_file.read((char *)&temp_in_1,in1_size);
+			SPCP(name)->_min_1_ = units_cast<Tin>(temp_in_1);
+			in_file.read((char *)&temp_in_1,in1_size);
+			SPCP(name)->_max_1_ = units_cast<Tin>(temp_in_1);
+			in_file.read((char *)&temp_in_1,in1_size);
+			SPCP(name)->_step_1_ = units_cast<Tin>(temp_in_1);
 
 			// Set up data
 			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
@@ -242,12 +249,14 @@ private:
 			// Read in data
 
 			// Initialise
-			const std::streamsize size = sizeof(SPCP(name)->_results_[0]); // Store the size for speed
+			decltype(value_of(SPCP(name)->_results_[0])) temp_out;
+			const std::streamsize out_size = sizeof(temp_out);
 			ssize_t i_1=0;
 
 			while ( ( !in_file.eof() ) && (in_file) )
 			{
-				in_file.read((char *)&(SPCP(name)->_results_[i_1]),size);
+				in_file.read((char *)&temp_out,out_size);
+				SPCP(name)->_results_[i_1] = units_cast<Tout>(temp_out);
 			}
 
 			// Check that it was all read properly
@@ -340,19 +349,28 @@ private:
 		out_file.write((char *)&file_version,sizeof(file_version));
 
 		// Output range parameters
-		out_file.write((char *)&(SPCP(name)->_min_1_),sizeof(SPCP(name)->_min_1_));
-		out_file.write((char *)&(SPCP(name)->_max_1_),sizeof(SPCP(name)->_max_1_));
-		out_file.write((char *)&(SPCP(name)->_step_1_),sizeof(SPCP(name)->_step_1_));
+
+		decltype(value_of(SPCP(name)->_min_1_)) temp_in_1;
+		const std::streamsize in1_size = sizeof(temp_in_1);
+
+		temp_in_1 = value_of(SPCP(name)->_min_1_);
+		out_file.write((char *)&temp_in_1,in1_size);
+		temp_in_1 = value_of(SPCP(name)->_max_1_);
+		out_file.write((char *)&temp_in_1,in1_size);
+		temp_in_1 = value_of(SPCP(name)->_step_1_);
+		out_file.write((char *)&temp_in_1,in1_size);
 
 		// Output data
 
-		// Initialize
-		const std::streamsize size = sizeof(SPCP(name)->_results_[0]);
+		decltype(value_of(SPCP(name)->_results_[0])) temp_out;
+		const std::streamsize out_size = sizeof(temp_out);
+
 		ssize_t i_1=0;
 
 		while ( i_1 < SPCP(name)->_resolution_1_ )
 		{
-			out_file.write((char *)&(SPCP(name)->_results_[i_1]),size);
+			temp_out = value_of(SPCP(name)->_results_[i_1]);
+			out_file.write((char *)&temp_out,out_size);
 
 			++i_1;
 		}
