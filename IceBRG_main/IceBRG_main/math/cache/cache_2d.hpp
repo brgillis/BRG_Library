@@ -473,29 +473,18 @@ public:
 	void set_range( const flt_t & new_min_1, const flt_t & new_max_1, const flt_t & new_step_1,
 			 	         const flt_t & new_min_2, const flt_t & new_max_2, const flt_t & new_step_2 )
 	{
-		if(!SPCP(name)->_initialised_) SPP(name)->_init();
+		SPP(name)->_init();
 
-		// First we try to load, so we can see if there are any changes from
-		// the existing cache
-		if ( !SPCP(name)->_loaded_ )
-			SPCP(name)->_critical_load();
+		SPP(name)->_min_1_ = new_min_1;
+		SPP(name)->_max_1_ = new_max_1;
+		SPP(name)->_step_1_ = new_step_1;
+		SPP(name)->_min_2_ = new_min_2;
+		SPP(name)->_max_2_ = new_max_2;
+		SPP(name)->_step_2_ = new_step_2;
 
-		// Go through variables, check if any are actually changed. If so, recalculate cache
-		if ( ( SPCP(name)->_min_1_ != new_min_1 ) || ( SPCP(name)->_max_1_ != new_max_1 )
-				|| ( SPCP(name)->_step_1_ != new_step_1 ) ||
-			 ( SPCP(name)->_min_2_ != new_min_2 ) || ( SPCP(name)->_max_2_ != new_max_2 )
-				|| ( SPCP(name)->_step_2_ != new_step_2 ) )
-		{
-			SPP(name)->_min_1_ = new_min_1;
-			SPP(name)->_max_1_ = new_max_1;
-			SPP(name)->_step_1_ = new_step_1;
-			SPP(name)->_min_2_ = new_min_2;
-			SPP(name)->_max_2_ = new_max_2;
-			SPP(name)->_step_2_ = new_step_2;
+		SPCP(name)->_unload();
+		SPCP(name)->_calc();
 
-			SPCP(name)->_unload();
-			SPCP(name)->_calc();
-		}
 	} // const int_t set_range()
 
 	/**

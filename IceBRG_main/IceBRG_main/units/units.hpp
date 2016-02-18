@@ -35,7 +35,7 @@
 
 // Enable dimensional analysis unless the NDEBUG flag is defined
 #ifndef NDEBUG
-#define _BRG_USE_UNITS_
+//#define _BRG_USE_UNITS_
 #endif // #ifndef NDEBUG
 
 #ifdef _BRG_USE_UNITS_

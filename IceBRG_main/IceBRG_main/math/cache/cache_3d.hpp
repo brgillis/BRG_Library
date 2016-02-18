@@ -532,34 +532,20 @@ public:
 	         const flt_t & new_min_2, const flt_t & new_max_2, const flt_t & new_step_2,
  	         const flt_t & new_min_3, const flt_t & new_max_3, const flt_t & new_step_3)
 	{
-		if(!SPCP(name)->_initialised_) SPP(name)->_init();
+		SPP(name)->_init();
 
-		// First we try to load, so we can see if there are any changes from
-		// the existing cache
-		if ( !SPCP(name)->_loaded_ )
-			SPCP(name)->_critical_load();
+		SPP(name)->_min_1_ = new_min_1;
+		SPP(name)->_max_1_ = new_max_1;
+		SPP(name)->_step_1_ = new_step_1;
+		SPP(name)->_min_2_ = new_min_2;
+		SPP(name)->_max_2_ = new_max_2;
+		SPP(name)->_step_2_ = new_step_2;
+		SPP(name)->_min_3_ = new_min_3;
+		SPP(name)->_max_3_ = new_max_3;
+		SPP(name)->_step_3_ = new_step_3;
 
-		// Go through variables, check if any are actually changed. If so, recalculate cache
-		if ( ( SPCP(name)->_min_1_ != new_min_1 ) || ( SPCP(name)->_max_1_ != new_max_1 )
-				|| ( SPCP(name)->_step_1_ != new_step_1 ) ||
-			 ( SPCP(name)->_min_2_ != new_min_2 ) || ( SPCP(name)->_max_2_ != new_max_2 )
-				|| ( SPCP(name)->_step_2_ != new_step_2 ) ||
-			 ( SPCP(name)->_min_3_ != new_min_3 ) || ( SPCP(name)->_max_3_ != new_max_3 )
-				|| ( SPCP(name)->_step_3_ != new_step_3 ))
-		{
-			SPP(name)->_min_1_ = new_min_1;
-			SPP(name)->_max_1_ = new_max_1;
-			SPP(name)->_step_1_ = new_step_1;
-			SPP(name)->_min_2_ = new_min_2;
-			SPP(name)->_max_2_ = new_max_2;
-			SPP(name)->_step_2_ = new_step_2;
-			SPP(name)->_min_3_ = new_min_3;
-			SPP(name)->_max_3_ = new_max_3;
-			SPP(name)->_step_3_ = new_step_3;
-
-			SPCP(name)->_unload();
-			SPCP(name)->_calc();
-		}
+		SPCP(name)->_unload();
+		SPCP(name)->_calc();
 	} // void set_range()
 
 	/**
@@ -681,6 +667,7 @@ public:
 		weighted_result += SPCP(name)->_results_[xi_1+1][xi_2+1][xi_3] * (x_1-xlo_1)*(x_2-xlo_2)*(xhi_3-x_3);
 
 
+		SPCP(name)->_calc();
 		weighted_result += SPCP(name)->_results_[xi_1][xi_2][xi_3+1] * (xhi_1-x_1)*(xhi_2-x_2)*(x_3-xlo_3);
 		weighted_result += SPCP(name)->_results_[xi_1+1][xi_2][xi_3+1] * (x_1-xlo_1)*(xhi_2-x_2)*(x_3-xlo_3);
 

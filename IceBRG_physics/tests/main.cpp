@@ -28,5 +28,5 @@
 #endif
 
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE IceBRG_main_test
+#define BOOST_TEST_MODULE IceBRG_physics_test
 #include <boost/test/unit_test.hpp>

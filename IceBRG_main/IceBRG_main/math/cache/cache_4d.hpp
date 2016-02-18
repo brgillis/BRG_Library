@@ -585,39 +585,24 @@ public:
  	         const Tin3 & new_min_3, const Tin3 & new_max_3, const Tin3 & new_step_3,
  	         const Tin4 & new_min_4, const Tin4 & new_max_4, const Tin4 & new_step_4)
 	{
-		if(!SPCP(name)->_initialised_) SPP(name)->_init();
+		SPP(name)->_init();
 
-		// First we try to load, so we can see if there are any changes from
-		// the existing cache
-		if ( !SPCP(name)->_loaded_ )
-			SPCP(name)->_load( true );
+		SPP(name)->_min_1_ = new_min_1;
+		SPP(name)->_max_1_ = new_max_1;
+		SPP(name)->_step_1_ = new_step_1;
+		SPP(name)->_min_2_ = new_min_2;
+		SPP(name)->_max_2_ = new_max_2;
+		SPP(name)->_step_2_ = new_step_2;
+		SPP(name)->_min_3_ = new_min_3;
+		SPP(name)->_max_3_ = new_max_3;
+		SPP(name)->_step_3_ = new_step_3;
+		SPP(name)->_min_4_ = new_min_4;
+		SPP(name)->_max_4_ = new_max_4;
+		SPP(name)->_step_4_ = new_step_4;
 
-		// Go through variables, check if any are actually changed. If so, recalculate cache
-		if ( ( SPCP(name)->_min_1_ != new_min_1 ) || ( SPCP(name)->_max_1_ != new_max_1 )
-				|| ( SPCP(name)->_step_1_ != new_step_1 ) ||
-			 ( SPCP(name)->_min_2_ != new_min_2 ) || ( SPCP(name)->_max_2_ != new_max_2 )
-				|| ( SPCP(name)->_step_2_ != new_step_2 ) ||
-			 ( SPCP(name)->_min_3_ != new_min_3 ) || ( SPCP(name)->_max_3_ != new_max_3 )
-				|| ( SPCP(name)->_step_3_ != new_step_3 ) ||
-			 ( SPCP(name)->_min_3_ != new_min_4 ) || ( SPCP(name)->_max_4_ != new_max_4 )
-				|| ( SPCP(name)->_step_4_ != new_step_4 ))
-		{
-			SPP(name)->_min_1_ = new_min_1;
-			SPP(name)->_max_1_ = new_max_1;
-			SPP(name)->_step_1_ = new_step_1;
-			SPP(name)->_min_2_ = new_min_2;
-			SPP(name)->_max_2_ = new_max_2;
-			SPP(name)->_step_2_ = new_step_2;
-			SPP(name)->_min_3_ = new_min_3;
-			SPP(name)->_max_3_ = new_max_3;
-			SPP(name)->_step_3_ = new_step_3;
-			SPP(name)->_min_4_ = new_min_4;
-			SPP(name)->_max_4_ = new_max_4;
-			SPP(name)->_step_4_ = new_step_4;
+		SPCP(name)->_unload();
+		SPCP(name)->_calc();
 
-			SPCP(name)->_unload();
-			SPCP(name)->_calc();
-		}
 	} // void set_range()
 
 	/**

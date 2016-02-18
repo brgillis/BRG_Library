@@ -276,6 +276,15 @@ private:
 		// Finish up
 		in_file.close();
 		in_file.clear();
+
+		// Check if it's monotonic
+		if(std::is_sorted(begin(SPCP(name)->_results_),end(SPCP(name)->_results_),std::less<Tout>()))
+			SPCP(name)->_is_monotonic_ = 1;
+		else if(std::is_sorted(begin(SPCP(name)->_results_),end(SPCP(name)->_results_),std::greater<Tout>()))
+			SPCP(name)->_is_monotonic_ = -1;
+		else
+			SPCP(name)->_is_monotonic_ = 0;
+
 		SPCP(name)->_loaded_ = true;
 	}
 	void _unload() const
@@ -325,6 +334,16 @@ private:
 
 		if(bad_result) throw std::runtime_error("One or more calculations failed in generating cache " +
 				SPCP(name)->_name_base());
+
+		// Check if it's monotonic increasing or decreasing
+
+		if(std::is_sorted(begin(SPCP(name)->_results_),end(SPCP(name)->_results_),std::less<Tout>()))
+			SPCP(name)->_is_monotonic_ = 1;
+		else if(std::is_sorted(begin(SPCP(name)->_results_),end(SPCP(name)->_results_),std::greater<Tout>()))
+			SPCP(name)->_is_monotonic_ = -1;
+		else
+			SPCP(name)->_is_monotonic_ = 0;
+
 		SPCP(name)->_loaded_ = true;
 
 		// Print a message that we've finished generating the cache
@@ -434,40 +453,15 @@ public:
 	void set_range( Tin const & new_min, Tin const & new_max,
 			Tin const & new_step)
 	{
-		// First we try to load, so we can see if there are any changes from
-		// the existing cache
-		if ( !SPCP(name)->_loaded_ )
-			SPCP(name)->_critical_load();
+		SPP(name)->_init();
 
-		// Go through variables, check if any are actually changed. If so, recalculate cache
-		if ( ( SPCP(name)->_min_1_ != new_min ) || ( SPCP(name)->_max_1_ != new_max )
-				|| ( SPCP(name)->_step_1_ != new_step ) )
-		{
-			SPP(name)->_min_1_ = new_min;
-			SPP(name)->_max_1_ = new_max;
-			SPP(name)->_step_1_ = new_step;
+		SPP(name)->_min_1_ = new_min;
+		SPP(name)->_max_1_ = new_max;
+		SPP(name)->_step_1_ = new_step;
 
-			SPCP(name)->_unload();
-			SPCP(name)->_calc();
-		}
+		SPCP(name)->_unload();
+		SPCP(name)->_calc();
 	} // void set_range()
-
-	/**
-	 * Set the precision you wish the values stored in the cache to have.
-	 *
-	 * @param new_precision The desired precision
-	 */
-	void set_precision( ssize_t const & new_precision)
-	{
-		if ( new_precision > 0 )
-		{
-			SPP(name)->_sig_digits_ = min( new_precision, DBL_MAX_PRECISION );
-		}
-		else
-		{
-			throw std::runtime_error("Precision for dfa_cache must be > 0.\n");
-		}
-	} // void set_precision()
 
 	/**
 	 * Print the cached input and output values to an output stream.
@@ -553,6 +547,11 @@ public:
 	 */
 	Tin inverse_get( Tout const & y ) const
 	{
+		if ( !SPCP(name)->_loaded_ )
+		{
+			SPCP(name)->_critical_load();
+		}
+
 		// Check if it's possible to do an inverse get
 		if((SPCP(name)->_is_monotonic_!=1)&&((SPCP(name)->_is_monotonic_!=-1)))
 		{
@@ -562,41 +561,28 @@ public:
 			throw std::runtime_error(err);
 		}
 
-
-		Tin xlo, xhi;
-		Tout ylo, yhi;
-		Tin result = 0;
-
-		if ( !SPCP(name)->_loaded_ )
-		{
-			SPCP(name)->_critical_load();
-		}
-		if ( result == -1 )
-		{
-			str_t err = "ERROR: Could neither load " + SPCP(name)->_file_name_ +
-					" nor calculate in brg_cache::inverse_get()\n";
-			throw std::runtime_error(err);
-		}
-
 		auto res_begin = begin(SPCP(name)->_results_);
-		auto res_end = begin(SPCP(name)->_results_);
+		auto res_end = end(SPCP(name)->_results_);
 
 		array_t<Tout> opp_results;
 
-		short_int_t res_sign = 1;
+		flt_t res_sign;
 
-		if(SPCP(name)->_is_monotonic_==-1)
+		if(SPCP(name)->_is_monotonic_==1)
 		{
-			// Use the opposite instead
-			res_sign = -1;
-
+			res_sign = 1;
+		}
+		else
+		{
+			// Use the opposite for lower_bound
 			opp_results = -SPCP(name)->_results_;
 
 			res_begin = begin(opp_results);
-			res_end = begin(opp_results);
+			res_end = end(opp_results);
+			res_sign = -1;
 		} // _is_monotonic == -1
 
-		auto p_yhi = std::lower_bound(res_begin,res_end,y);
+		auto p_yhi = std::lower_bound(res_begin,res_end,res_sign*y,std::less<Tout>());
 
 		if(p_yhi==res_begin)
 			++p_yhi;
@@ -604,17 +590,17 @@ public:
 			--p_yhi;
 		auto p_ylo = p_yhi - 1;
 
-		ylo = *p_ylo;
-		yhi = *p_yhi;
+		Tout ylo = *p_ylo;
+		Tout yhi = *p_yhi;
 
-		ssize_t x_i = p_yhi - begin(SPCP(name)->_results_);
+		ssize_t x_i = p_yhi - res_begin;
 
-		xlo = SPCP(name)->_min_1_ + (x_i-1)*SPCP(name)->_step_1_;
-		xhi = SPCP(name)->_min_1_ + x_i*SPCP(name)->_step_1_;
+		Tin xlo = SPCP(name)->_min_1_ + (x_i-1)*SPCP(name)->_step_1_;
+		Tin xhi = SPCP(name)->_min_1_ + x_i*SPCP(name)->_step_1_;
 
-		result = res_sign * (xlo + ( xhi - xlo ) * ( y - ylo ) / safe_d( yhi - ylo ));
+		Tin res = (xlo + ( xhi - xlo ) * ( res_sign*y - ylo ) / safe_d( yhi - ylo ));
 
-		return result;
+		return res;
 
 	}
 
