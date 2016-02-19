@@ -198,6 +198,8 @@ mass_type min_cluster_mass( flt_t const & z,
 		flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
 		flt_t const & faint_app_mag_lim = faint_app_mag_max );
 
+flt_t visible_clusters( square_angle_type const & area, flt_t const & z1 = 0.2, flt_t const & z2 = 1.3 );
+
 #endif // end function declarations
 
 /** Class Definitions **/

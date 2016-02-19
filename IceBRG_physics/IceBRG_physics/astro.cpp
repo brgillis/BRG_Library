@@ -452,6 +452,15 @@ mass_type min_cluster_mass( flt_t const & z, flt_t const & bright_abs_mag_lim,
 	return res;
 }
 
+flt_t visible_clusters( square_angle_type const & area, flt_t const & z1, flt_t const & z2 )
+{
+	custom_unit_type<0,0,0,-2,0> area_density = visible_clusters_cache().get(z1,z2);
+
+	flt_t res = area*area_density;
+
+	return res;
+}
+
 #endif // end Mass-related functions
 
 #endif // end Global function definitions

@@ -60,6 +60,8 @@ typedef boost::units::quantity<boost::units::si::length> distance_type;
 typedef boost::units::quantity<boost::units::si::area> area_type;
 typedef boost::units::quantity<boost::units::si::volume> volume_type;
 typedef boost::units::quantity<boost::units::si::wavenumber> inverse_distance_type;
+typedef decltype(1./area_type()) inverse_area_type;
+typedef decltype(1./volume_type()) inverse_volume_type;
 
 typedef boost::units::quantity<boost::units::si::time> time_type;
 typedef boost::units::quantity<boost::units::si::frequency> inverse_time_type;
@@ -371,6 +373,8 @@ typedef flt_t distance_type;
 typedef flt_t area_type;
 typedef flt_t volume_type;
 typedef flt_t inverse_distance_type;
+typedef flt_t inverse_area_type;
+typedef flt_t inverse_volume_type;
 
 typedef flt_t time_type;
 typedef flt_t inverse_time_type;

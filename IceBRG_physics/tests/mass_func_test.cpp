@@ -59,10 +59,10 @@ BOOST_AUTO_TEST_CASE( mass_func_test )
 	flt_t n4 = log10_mass_function(log10msun_m4,z)*Gpc_cubed;
 	flt_t n5 = log10_mass_function(log10msun_m5,z)*Gpc_cubed;
 
-	BOOST_CHECK_LE(value_of(n2),value_of(n1));
-	BOOST_CHECK_LE(value_of(n3),value_of(n2));
-	BOOST_CHECK_LE(value_of(n4),value_of(n3));
-	BOOST_CHECK_LE(value_of(n5),value_of(n4));
+	BOOST_CHECK_LT(value_of(n2),value_of(n1));
+	BOOST_CHECK_LT(value_of(n3),value_of(n2));
+	BOOST_CHECK_LT(value_of(n4),value_of(n3));
+	BOOST_CHECK_LT(value_of(n5),value_of(n4));
 
 	auto density_at_scale_0 = [&] (flt_t const & log10_mass)
 	{
@@ -85,10 +85,10 @@ BOOST_AUTO_TEST_CASE( mass_func_test )
 	n4 = log10_mass_function(log10msun_m4,z)*Gpc_cubed;
 	n5 = log10_mass_function(log10msun_m5,z)*Gpc_cubed;
 
-	BOOST_CHECK_LE(value_of(n2),value_of(n1));
-	BOOST_CHECK_LE(value_of(n3),value_of(n2));
-	BOOST_CHECK_LE(value_of(n4),value_of(n3));
-	BOOST_CHECK_LE(value_of(n5),value_of(n4));
+	BOOST_CHECK_LT(value_of(n2),value_of(n1));
+	BOOST_CHECK_LT(value_of(n3),value_of(n2));
+	BOOST_CHECK_LT(value_of(n4),value_of(n3));
+	BOOST_CHECK_LT(value_of(n5),value_of(n4));
 
 	auto density_at_scale_0_9 = [&] (flt_t const & log10_mass)
 	{
@@ -100,6 +100,18 @@ BOOST_AUTO_TEST_CASE( mass_func_test )
 	matter_dens = rho_bar(z);
 
 	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),10);
+}
+
+
+
+BOOST_AUTO_TEST_CASE( vis_clusters_test )
+{
+	square_angle_type area = 1.*square(unitconv::amintorad*rad);
+
+	flt_t n = visible_clusters(area);
+
+	BOOST_CHECK_GT(n,1);
+	BOOST_CHECK_LT(n,10);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

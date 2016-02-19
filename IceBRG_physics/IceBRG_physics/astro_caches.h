@@ -46,6 +46,10 @@ DECLARE_BRG_CACHE_2D(lum_func_integral_cache,lum_int,flt_t,flt_t,decltype(custom
 
 DECLARE_BRG_CACHE(sigma_r_cache,sigma_r,distance_type,flt_t);
 
+DECLARE_BRG_CACHE(visible_cluster_density_cache,viscdens,flt_t,inverse_volume_type);
+
+DECLARE_BRG_CACHE_2D(visible_clusters_cache,vis_clus,flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()));
+
 } // end namespace IceBRG
 
 #endif // __BRG_ASTRO_CACHES_H_INCLUDED__
