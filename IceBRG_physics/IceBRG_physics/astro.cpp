@@ -378,22 +378,22 @@ flt_t delta_c()
 }
 density_type rho_bar( flt_t const & z)
 {
-	density_type rho_crit_0 = 3*square(H_0)/(8*pi*Gc);
+	density_type rho_crit_0 = 3.*square(H_0)/(8.*pi*Gc);
 	density_type rho_bar_0 = Omega_m * rho_crit_0;
 
-	density_type res = rho_bar_0*cube(1+z);
+	density_type res = rho_bar_0*cube(1.+z);
 
 	return res;
 }
 distance_type r_of_m( mass_type const & mass, flt_t const & z )
 {
-	distance_type r = ipow<1,3>(3*mass/(4*pi*rho_bar(z)));
+	distance_type r = ipow<1,3>(3.*mass/(4*pi*rho_bar(z)));
 
 	return r;
 }
 flt_t sigma_of_r( distance_type const & r)
 {
-	return 0.8*sigma_r_cache().get(r)/sigma_r_cache().get(8*unitconv::Mpctom*m);
+	return 0.8*sigma_r_cache().get(r)/sigma_r_cache().get(8.*unitconv::Mpctom*m);
 }
 flt_t sigma_of_m( mass_type const & mass, flt_t const & z )
 {
@@ -403,26 +403,26 @@ flt_t nu_of_m( mass_type const & mass, flt_t const & z )
 {
 	return delta_c()/sigma_of_m(mass,z);
 }
-flt_t mass_function( mass_type const & mass, flt_t const & z )
+custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const & z )
 {
 	flt_t nu = nu_of_m(mass,z);
 
-	flt_t fps_of_nu = sqrt(2/pi)*nu*exp(-square(nu)/2);
+	flt_t fps_of_nu = sqrt(2./pi)*nu*exp(-square(nu)/2.);
 
 	auto ln_nu_of_m = [&z] (mass_type const & mass)
-		{
-			return log(nu_of_m(mass,z));
-		};
+	{
+		return log(nu_of_m(mass,z));
+	};
 
-	flt_t d_ln_nu_d_m = differentiate(&ln_nu_of_m,mass);
+	custom_unit_type<0,0,-1,0,0> d_ln_nu_d_m = differentiate(&ln_nu_of_m,mass);
 
-	flt_t res = rho_bar(z)/mass * fps_of_nu * d_ln_nu_d_m;
+	custom_unit_type<-3,0,-1,0,0> res = rho_bar(z)/mass * fps_of_nu * d_ln_nu_d_m;
 
 	return res;
 }
 
 // Cluster richness
-constexpr mass_type richness_mstar = 4.07e12*unitconv::Msuntokg*kg;
+const mass_type richness_mstar = 4.07e12*unitconv::Msuntokg*kg;
 constexpr flt_t richness_beta = 1.4;
 
 flt_t cluster_richness( mass_type const & mass, flt_t const & z,

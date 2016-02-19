@@ -298,7 +298,7 @@ private:
 	{
 
 		// Test that range is sane
-		if ( ( SPCP(name)->_max_1_ <= SPCP(name)->_min_1_ ) || ( SPCP(name)->_step_1_ <= 0 ) )
+		if ( ( SPCP(name)->_max_1_ <= SPCP(name)->_min_1_ ) || ( value_of(SPCP(name)->_step_1_) <= 0 ) )
 		{
 			throw std::runtime_error("ERROR: Bad range passed to brg_cache::_calc() for " +
 					SPCP(name)->_name_base() + "\n");
@@ -321,7 +321,7 @@ private:
 		for ( ssize_t i = 0; i < SPCP(name)->_resolution_1_; i++ )
 		{
 			Tout result = 0;
-			Tin x = SPCP(name)->_min_1_ + i*SPCP(name)->_step_1_;
+			Tin x = SPCP(name)->_min_1_ + static_cast<flt_t>(i)*SPCP(name)->_step_1_;
 			try
 			{
 				result = SPCP(name)->_calculate(x);
@@ -530,8 +530,8 @@ public:
 				( ( x - SPCP(name)->_min_1_ ) / SPCP(name)->_step_1_ ),
 				SPCP(name)->_resolution_1_ - 2 );
 
-		xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * x_i;
-		xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * ( x_i + 1 );
+		xlo = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * static_cast<flt_t>(x_i);
+		xhi = SPCP(name)->_min_1_ + SPCP(name)->_step_1_ * static_cast<flt_t>( x_i + 1 );
 
 		result = ( ( x - xlo ) * SPCP(name)->_results_[x_i + 1] + ( xhi - x ) * SPCP(name)->_results_[x_i] )
 				/ SPCP(name)->_step_1_;

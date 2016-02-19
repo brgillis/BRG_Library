@@ -160,7 +160,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}_test" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="Unit testing" id="cdt.managedbuild.config.gnu.lib.debug.990868816.1958409372" name="Test" parent="cdt.managedbuild.config.gnu.lib.debug">
+				<configuration artifactName="${ProjName}_test" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.lib.debug.990868816.1958409372" name="Test" parent="cdt.managedbuild.config.gnu.lib.debug">
 					<folderInfo id="cdt.managedbuild.config.gnu.lib.debug.990868816.1958409372." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.lib.debug.587547383" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.lib.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.lib.debug.1553273307" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.lib.debug"/>
@@ -260,7 +260,7 @@
 									<listOptionValue builtIn="false" value="NDEBUG"/>
 									<listOptionValue builtIn="false" value="EIGEN_DONT_PARALLELIZE"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.1307691396" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -fopenmp" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1307691396" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -fopenmp" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1921433376" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.lib.debug.479426024" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.debug">
@@ -282,7 +282,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="/disk2/brg/lib"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.1292948927" superClass="gnu.cpp.link.option.flags" value="-fopenmp" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.1292948927" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-fopenmp" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.545973417" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -315,6 +315,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Test"/>
+		<configuration configurationName="Opt_Test"/>
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/IceBRG_physics"/>
 		</configuration>

@@ -54,63 +54,39 @@ namespace IceBRG {
 
 // Scalar-in, scalar-out version
 template< typename f, typename T >
-inline T differentiate( const f * func, const T & in_param,
-		const int_t order = 1, const flt_t & power = 1,
-		const T & factor=SMALL_FACTOR )
+inline auto differentiate( const f * func, const T & in_param,
+		const flt_t & factor=SMALL_FACTOR ) -> decltype((*func)(in_param)/in_param)
 {
+	typedef decltype((*func)(in_param)) Tout;
+	typedef decltype(Tout()/in_param) Tderiv;
 
 	T d_in_param( 0 );
 	T low_in_param( 0 );
 	T high_in_param( 0 );
-	T low_out_param( 0 );
-	T high_out_param( 0 );
-	T small_factor_with_units(factor);
+	Tout low_out_param( 0 );
+	Tout high_out_param( 0 );
 
-	bool power_flag = false;
 	bool zero_in_flag = false;
 
-	int_t order_to_use = max( order, 1 );
-
-	if ( ( order_to_use > 1 ) )
-	{
-		throw std::logic_error("IceBRG::differentiate with order > 1 is not currently supported.\n");
-	}
-
-	if ( power != 1 )
-		power_flag = true;
-	else
-		power_flag = false;
-
 	// Check if any in_params are zero. If so, estimate small factor from other in_params
-	if ( in_param == 0 )
+	if ( value_of(in_param) == 0 )
 	{
 		zero_in_flag = true;
 	}
 	else     // if(in_params==0)
 	{
-		small_factor_with_units = in_param * factor;
-		d_in_param = small_factor_with_units;
+		d_in_param = in_param * value_of(factor);
 	} // else
 
 	if ( zero_in_flag )
 	{
-		if ( small_factor_with_units == 0 )
-		{
-			d_in_param = factor;
-		}
-		else
-		{
-			if ( in_param == 0 )
-			{
-				d_in_param = small_factor_with_units;
-			} // if(in_params[i]==0)
-		}
+		d_in_param = units_cast<T>(factor);
 	}
 
 	bool bad_function_result = false;
 	int_t counter = 0;
 
-	T Jacobian=0;
+	Tderiv Jacobian=0;
 
 	do {
 		counter++;
@@ -133,13 +109,11 @@ inline T differentiate( const f * func, const T & in_param,
 		}
 
 		// Record this derivative
-		Jacobian = ( high_out_param - low_out_param ) / (2*d_in_param);
-		if ( power_flag )
-			Jacobian *= power * safe_pow( ( high_out_param + low_out_param )/2, power - 1 );
+		Jacobian = ( high_out_param - low_out_param ) / (2.*d_in_param);
 		if(isbad(Jacobian))
 		{
 			bad_function_result = true;
-			d_in_param /= 10; // Try again with smaller step
+			d_in_param /= 10.; // Try again with smaller step
 			continue;
 		}
 	} while ((bad_function_result) && (counter<3));

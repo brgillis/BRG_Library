@@ -70,7 +70,7 @@ DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, decltype(custom_unit
 		-25, -11, 0.2,
 		-25, -11, 0.2
 		,
-			flt_t res = integrate_Romberg(differential_luminosity_function,in_param_1,in_param_2);
+			decltype(custom_unit_type<-3,0,0,0,0>()) res = integrate_Romberg(differential_luminosity_function,in_param_1,in_param_2);
 			return res;
 		,
 
@@ -78,25 +78,32 @@ DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, decltype(custom_unit
 
 // Initialisation for IceBRG::tfa_cache
 DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
-		0.1*unitconv::Mpctom*m, 100*unitconv::Mpctom*m, 0.1*unitconv::Mpctom*m
+		0.1*unitconv::Mpctom*m, 100.*unitconv::Mpctom*m, 0.1*unitconv::Mpctom*m
 		,
 			constexpr flt_t nsp = 0.958;
-			constexpr distance_type Mpc = unitconv::Mpctom * m;
-			constexpr flt_t xi = Omega_m * H_0 / (100 * (unitconv::kmtom*m)/s/(Mpc));
+			const distance_type Mpc = unitconv::Mpctom * m;
+			const flt_t h = H_0 / (100. * (unitconv::kmtom*m)/s/Mpc);
+			const distance_type Mpc_o_h = Mpc/h;
+			const flt_t xi = Omega_m * h;
 
-			distance_type aR = in_param;
+			distance_type aR = in_param/h;
 
 			auto power_spectrum = [&] (inverse_distance_type const & k)
 			{
 				using std::log;
+				using std::sin;
+				using std::cos;
 
-				return pow(k,2 + nsp) * square(log(1 + 2.34*Mpc * k / xi) / (2.34*Mpc * k / xi) /
-						pow(1 + 3.89*Mpc * k / xi + square(16.2*Mpc * k / xi) + cube(5.47*Mpc * k / xi) +
-								quart(6.71*Mpc * k / xi),0.25)) *
-								square(3 * (sin(k * aR) - k * aR * cos(k * aR)) / cube(k * aR));
+				flt_t res = pow(k*Mpc_o_h,2. + nsp) * square(log(1. + 2.34*Mpc_o_h * k / xi) /
+						(2.34*Mpc_o_h * k / xi) /
+						pow(1. + 3.89*Mpc_o_h * k / xi + square(16.2*Mpc_o_h * k / xi) + cube(5.47*Mpc_o_h * k / xi) +
+								quart(6.71*Mpc_o_h * k / xi),0.25)) *
+								square(3. * (sin(k * aR) - k * aR * cos(k * aR)) / cube(k * aR));
+
+				return res;
 			};
 
-			flt_t res = integrate_Romberg(power_spectrum,0.01/Mpc,100/Mpc)/(2*square(pi));
+			flt_t res = Mpc_o_h*integrate_Romberg(power_spectrum,0.01/Mpc_o_h,100./Mpc_o_h)/(2.*square(pi));
 			return res;
 		,
 

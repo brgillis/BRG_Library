@@ -35,7 +35,7 @@
 
 // Enable dimensional analysis unless the NDEBUG flag is defined
 #ifndef NDEBUG
-//#define _BRG_USE_UNITS_
+#define _BRG_USE_UNITS_
 #endif // #ifndef NDEBUG
 
 #ifdef _BRG_USE_UNITS_
@@ -74,7 +74,9 @@ typedef boost::units::quantity<boost::units::si::velocity> velocity_type;
 typedef boost::units::quantity<boost::units::si::acceleration> acceleration_type;
 
 typedef boost::units::quantity<boost::units::si::mass_density> density_type;
+typedef decltype(1./density_type()) inverse_density_type;
 typedef boost::units::quantity<boost::units::si::surface_density> surface_density_type;
+typedef decltype(1./surface_density_type()) inverse_surface_density_type;
 
 // Gotta be a bit hacky here to handle zeros - When defining a dimension, passing 0 as the exponent
 // isn't treated the same as not passing it at all. We can get around that with decltype of a division
@@ -382,7 +384,9 @@ typedef flt_t velocity_type;
 typedef flt_t acceleration_type;
 
 typedef flt_t density_type;
+typedef flt_t inverse_density_type;
 typedef flt_t surface_density_type;
+typedef flt_t inverse_surface_density_type;
 
 typedef flt_t any_units_type;
 
