@@ -420,6 +420,14 @@ custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const
 
 	return res;
 }
+custom_unit_type<-3,0,0,0,0> log10_mass_function( flt_t const & log10msun_mass, flt_t const & z )
+{
+	mass_type mass = unitconv::Msuntokg*kg*std::pow(10.,log10msun_mass);
+
+	custom_unit_type<-3,0,0,0,0> res = mass_function(mass,z)*mass*std::log(10.);
+
+	return res;
+}
 
 // Cluster richness
 const mass_type richness_mstar = 4.07e12*unitconv::Msuntokg*kg;

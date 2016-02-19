@@ -30,6 +30,7 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
+#include "IceBRG_main/math/calculus/integrate.hpp"
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/units/unit_conversions.hpp"
 #include "IceBRG_physics/astro.h"
@@ -40,20 +41,65 @@ BOOST_AUTO_TEST_SUITE (Mass_Func_Test)
 
 BOOST_AUTO_TEST_CASE( mass_func_test )
 {
-	mass_type m1 = 1e10*unitconv::Msuntokg*kg;
-	mass_type m2 = 1e12*unitconv::Msuntokg*kg;
-	mass_type m3 = 1e14*unitconv::Msuntokg*kg;
-	mass_type m4 = 1e16*unitconv::Msuntokg*kg;
+	flt_t z = 0;
 
-	flt_t n1 = mass_function(m1);
-	flt_t n2 = mass_function(m2);
-	flt_t n3 = mass_function(m3);
-	flt_t n4 = mass_function(m4);
+	volume_type Gpc_cubed = cube(1e9*unitconv::pctom*m);
 
-	BOOST_CHECK_LE(n2,n1);
-	BOOST_CHECK_LE(n3,n2);
-	BOOST_CHECK_LE(n4,n3);
+	flt_t log10msun_m1 = 8;
+	flt_t log10msun_m2 = 10;
+	flt_t log10msun_m3 = 12;
+	flt_t log10msun_m4 = 14;
+	flt_t log10msun_m5 = 16;
 
+	// Try for z=0
+
+	flt_t n1 = log10_mass_function(log10msun_m1,z)*Gpc_cubed;
+	flt_t n2 = log10_mass_function(log10msun_m2,z)*Gpc_cubed;
+	flt_t n3 = log10_mass_function(log10msun_m3,z)*Gpc_cubed;
+	flt_t n4 = log10_mass_function(log10msun_m4,z)*Gpc_cubed;
+	flt_t n5 = log10_mass_function(log10msun_m5,z)*Gpc_cubed;
+
+	BOOST_CHECK_LE(value_of(n2),value_of(n1));
+	BOOST_CHECK_LE(value_of(n3),value_of(n2));
+	BOOST_CHECK_LE(value_of(n4),value_of(n3));
+	BOOST_CHECK_LE(value_of(n5),value_of(n4));
+
+	auto density_at_scale_0 = [&] (flt_t const & log10_mass)
+	{
+		return log10_mass_function(log10_mass,z)*std::pow(10.,log10_mass)*unitconv::Msuntokg*kg;
+	};
+
+	density_type dens = integrate_Romberg(density_at_scale_0,0.,16.);
+
+	density_type matter_dens = rho_bar(z);
+
+	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),10);
+
+	// Try for z=0.9
+
+	z = 0.9;
+
+	n1 = log10_mass_function(log10msun_m1,z)*Gpc_cubed;
+	n2 = log10_mass_function(log10msun_m2,z)*Gpc_cubed;
+	n3 = log10_mass_function(log10msun_m3,z)*Gpc_cubed;
+	n4 = log10_mass_function(log10msun_m4,z)*Gpc_cubed;
+	n5 = log10_mass_function(log10msun_m5,z)*Gpc_cubed;
+
+	BOOST_CHECK_LE(value_of(n2),value_of(n1));
+	BOOST_CHECK_LE(value_of(n3),value_of(n2));
+	BOOST_CHECK_LE(value_of(n4),value_of(n3));
+	BOOST_CHECK_LE(value_of(n5),value_of(n4));
+
+	auto density_at_scale_0_9 = [&] (flt_t const & log10_mass)
+	{
+		return log10_mass_function(log10_mass,z)*std::pow(10.,log10_mass)*unitconv::Msuntokg*kg;
+	};
+
+	dens = integrate_Romberg(density_at_scale_0_9,0.,16.);
+
+	matter_dens = rho_bar(z);
+
+	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),10);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

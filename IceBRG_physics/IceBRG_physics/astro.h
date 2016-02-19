@@ -189,6 +189,7 @@ flt_t sigma_of_r( distance_type const & r);
 flt_t sigma_of_m( mass_type const & mass, flt_t const & z = 0. );
 flt_t nu_of_m( mass_type const & mass, flt_t const & z = 0. );
 custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const & z = 0. );
+custom_unit_type<-3,0,0,0,0> log10_mass_function( flt_t const & log10msun_mass, flt_t const & z = 0. );
 
 flt_t cluster_richness( mass_type const & mass, flt_t const & z,
 		flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
