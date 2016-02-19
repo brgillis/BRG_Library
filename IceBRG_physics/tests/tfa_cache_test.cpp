@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( tfa_cache_test )
 {
     tfa_cache cache;
 
-    cache.set_range(0.5,1,0.1);
+    cache.set_range(0.8,1,0.1);
 
     auto time_1 = cache.get(0.95);
     auto time_2 = cache.get(0.85);

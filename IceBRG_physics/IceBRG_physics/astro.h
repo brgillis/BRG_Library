@@ -169,6 +169,14 @@ inline const Tr1 skydist2d( const Tr1 & ra1, const Td1 & dec1,
 	return quad_add( ( ra2 - ra1 ) * cos( ( dec2 + dec1 ) / 2. ), dec2 - dec1 );
 }
 
+// Luminosity functions
+distance_type get_lum_distance( flt_t const & z );
+flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z );
+custom_unit_type<-3,0,0,0,0> differential_luminosity_function( flt_t const & mag );
+custom_unit_type<-3,0,0,0,0> integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi );
+flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim = -19.5,
+		flt_t const & faint_app_mag_lim = 27);
+
 #endif // end function declarations
 
 /** Class Definitions **/

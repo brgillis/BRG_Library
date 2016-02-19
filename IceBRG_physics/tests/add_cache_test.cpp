@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( add_cache_test )
 {
     add_cache cache;
 
-    cache.set_range(0,1,0.2,0,1,0.2);
+    cache.set_range(0,0.4,0.2,0,0.8,0.2);
 
     auto add_00 = cache.get(0,0);
     auto add_03 = cache.get(0,0.3);

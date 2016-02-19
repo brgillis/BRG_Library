@@ -36,10 +36,12 @@
 
 #include "IceBRG_physics/sky_obj/position_grid_cache.h"
 
-// IceBRG::redshift_obj class methods
+namespace IceBRG {
+
+// redshift_obj class methods
 #if (1)
 
-IceBRG::inverse_time_type IceBRG::redshift_obj::H() const
+inverse_time_type redshift_obj::H() const
 {
 	// If not cached, calculate and cache it
 	if(!_H_cached_)
@@ -57,17 +59,17 @@ IceBRG::inverse_time_type IceBRG::redshift_obj::H() const
 	return _H_cache_;
 }
 
-IceBRG::density_type IceBRG::redshift_obj::rho_crit() const
+density_type redshift_obj::rho_crit() const
 {
 	return 3.*square(H())/(8.*pi*Gc);
 }
 
-#endif // IceBRG::redshift_obj class methods
+#endif // redshift_obj class methods
 
 /** Global Function Definitions **/
 #if (1)
 
-IceBRG::inverse_time_type IceBRG::H( const flt_t & test_z )
+inverse_time_type H( const flt_t & test_z )
 {
 	// Friedmann equation, assuming omega = -1
 	if(test_z==0) return H_0;
@@ -85,68 +87,68 @@ IceBRG::inverse_time_type IceBRG::H( const flt_t & test_z )
 // dfa and afd functions
 #if (1)
 
-IceBRG::custom_unit_type<1,0,0,-1,0> IceBRG::dfa( const flt_t & z )
+custom_unit_type<1,0,0,-1,0> dfa( const flt_t & z )
 {
 	return dfa_cache().get( z );
 }
-IceBRG::distance_type IceBRG::dfa( const angle_type & da, const flt_t & z )
+distance_type dfa( const angle_type & da, const flt_t & z )
 {
 	return da * dfa(z);
 }
-IceBRG::distance_type IceBRG::dfa( const angle_type & a1, const angle_type & a2,
+distance_type dfa( const angle_type & a1, const angle_type & a2,
 		const flt_t & z )
 {
-	return IceBRG::dfa( a2 - a1, z );
+	return dfa( a2 - a1, z );
 }
-IceBRG::distance_type IceBRG::dfa( const angle_type & a1x, const angle_type & a1y,
+distance_type dfa( const angle_type & a1x, const angle_type & a1y,
 		const angle_type & a2x, const angle_type & a2y, const flt_t & z )
 {
-	return IceBRG::dfa( skydist2d( a1x, a1y, a2x, a2y ), z );
+	return dfa( skydist2d( a1x, a1y, a2x, a2y ), z );
 }
-IceBRG::custom_unit_type<-1,0,0,1,0> IceBRG::afd( const flt_t & z )
+custom_unit_type<-1,0,0,1,0> afd( const flt_t & z )
 {
 	return 1./dfa(z);
 }
-IceBRG::angle_type IceBRG::afd( const distance_type & dd, const flt_t & z )
+angle_type afd( const distance_type & dd, const flt_t & z )
 {
 	return dd / dfa(z);
 }
-IceBRG::angle_type IceBRG::afd( const distance_type & d1, const distance_type & d2,
+angle_type afd( const distance_type & d1, const distance_type & d2,
 		const flt_t & z )
 {
-	return IceBRG::afd( abs( d2 - d1 ), z );
+	return afd( abs( d2 - d1 ), z );
 }
-IceBRG::angle_type IceBRG::afd( const distance_type & d1x,
+angle_type afd( const distance_type & d1x,
 		const distance_type & d1y, const distance_type & d2x,
 		const distance_type & d2y, const flt_t & z )
 {
-	return IceBRG::afd( dist2d( d1x, d1y, d2x, d2y ), z );
+	return afd( dist2d( d1x, d1y, d2x, d2y ), z );
 }
 
-IceBRG::flt_t IceBRG::zfa( const flt_t & a )
+flt_t zfa( const flt_t & a )
 {
 	return 1. / safe_d( a ) - 1.;
 }
-IceBRG::flt_t IceBRG::afz( const flt_t & z )
+flt_t afz( const flt_t & z )
 {
 	return 1. / safe_d( 1 + z );
 }
 
-IceBRG::time_type IceBRG::tfz( const flt_t & z )
+time_type tfz( const flt_t & z )
 {
-	return IceBRG::tfa( afz( z ) );
+	return tfa( afz( z ) );
 }
-IceBRG::time_type IceBRG::tfa( const flt_t & a )
+time_type tfa( const flt_t & a )
 {
 	return tfa_cache().get( a );
 }
-IceBRG::flt_t IceBRG::zft( const time_type & t )
+flt_t zft( const time_type & t )
 {
-	return IceBRG::zfa( IceBRG::aft( t ) );
+	return zfa( aft( t ) );
 }
-IceBRG::flt_t IceBRG::aft( const time_type & t )
+flt_t aft( const time_type & t )
 {
-	IceBRG::tfa_cache cache;
+	tfa_cache cache;
 	return cache.inverse_get( t );
 }
 
@@ -154,39 +156,39 @@ IceBRG::flt_t IceBRG::aft( const time_type & t )
 
 // Functions to integrate out distances
 #if (1)
-IceBRG::distance_type IceBRG::integrate_add( const flt_t & z1, const flt_t & z2 )
+distance_type integrate_add( const flt_t & z1, const flt_t & z2 )
 {
 	return integrate_distance( z1, z2, 0, 100000 );
 }
-IceBRG::distance_type IceBRG::integrate_cmd( const flt_t & z1, const flt_t & z2 )
+distance_type integrate_cmd( const flt_t & z1, const flt_t & z2 )
 {
 	return integrate_distance( z1, z2, 1, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_Ld( const flt_t & z1, const flt_t & z2 )
+distance_type integrate_Ld( const flt_t & z1, const flt_t & z2 )
 {
 	return integrate_distance( z1, z2, 2, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_ltd( const flt_t & z1, const flt_t & z2 )
+distance_type integrate_ltd( const flt_t & z1, const flt_t & z2 )
 {
 	return integrate_distance( z1, z2, 3, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_add( const flt_t & z )
+distance_type integrate_add( const flt_t & z )
 {
 	return integrate_distance( 0, z, 0, 100000 );
 }
-IceBRG::distance_type IceBRG::integrate_cmd( const flt_t & z )
+distance_type integrate_cmd( const flt_t & z )
 {
 	return integrate_distance( 0, z, 1, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_Ld( const flt_t & z )
+distance_type integrate_Ld( const flt_t & z )
 {
 	return integrate_distance( 0, z, 2, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_ltd( const flt_t & z )
+distance_type integrate_ltd( const flt_t & z )
 {
 	return integrate_distance( 0, z, 3, 10000000 );
 }
-IceBRG::distance_type IceBRG::integrate_distance( const flt_t & z1_init,
+distance_type integrate_distance( const flt_t & z1_init,
 		const flt_t & z2_init, const int_t & mode, const int_t & n )
 {
 	// Function that will help calculate cosmic distances, thanks to Richard Powell - http://www.atlasoftheuniverse.com/
@@ -291,17 +293,17 @@ IceBRG::distance_type IceBRG::integrate_distance( const flt_t & z1_init,
 }
 #endif
 
-// Other functions
+// Lensing functions
 #if (1)
 
-IceBRG::distance_type IceBRG::ad_distance( flt_t z1, flt_t z2 )
+distance_type ad_distance( flt_t z1, flt_t z2 )
 {
 	if ( z2 < z1 )
 		std::swap( z1, z2 );
 	return add_cache().get( z1, z2 );
 }
 
-IceBRG::surface_density_type IceBRG::sigma_crit( const flt_t & z_lens,
+surface_density_type sigma_crit( const flt_t & z_lens,
 		const flt_t & z_source )
 {
 	return square( c ) / ( 4. * pi * Gc )
@@ -310,6 +312,61 @@ IceBRG::surface_density_type IceBRG::sigma_crit( const flt_t & z_lens,
 					* ad_distance( z_lens, z_source ) );
 
 }
-#endif // end other functions
+#endif // end lensing functions
+
+// Luminosity-related functions
+#if (1)
+
+distance_type get_lum_distance( flt_t const & z )
+{
+	distance_type ad_distance = dfa( 1*rad, z );
+	distance_type lum_distance = ad_distance*square(1+z);
+
+	return lum_distance;
+}
+
+flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z )
+{
+	distance_type lum_distance_at_z = get_lum_distance(z);
+
+	flt_t res = app_mag - 5*((std::log10(lum_distance_at_z/(1*unitconv::pctom*m)))-1);
+
+	return res;
+}
+
+// Using results from Willmer et al. 2005 for the "All" sample with minimal weighting at
+// z = 0.7 for the luminosity function
+
+const custom_unit_type<-3,0,0,0,0> phi_star = 24.43 / cube( unitconv::Mpctom * m);
+constexpr flt_t mag_star = -21.53;
+constexpr flt_t alpha = -1.3;
+constexpr flt_t abs_mag_min = -25;
+
+custom_unit_type<-3,0,0,0,0> differential_luminosity_function( flt_t const & mag )
+{
+	custom_unit_type<-3,0,0,0,0> res = 0.4 * log(10.) * phi_star *
+			pow(10.,0.4*(mag_star-mag)*(alpha+1))*exp(-pow(10,0.4*(mag_star-mag)));
+
+	return res;
+}
+custom_unit_type<-3,0,0,0,0> integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi )
+{
+	return lum_func_integral_cache().get(mag_lo,mag_hi);
+}
+
+flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim,
+		flt_t const & faint_app_mag_lim)
+{
+	flt_t faint_abs_mag_lim = get_abs_mag_from_app_mag( faint_app_mag_lim, z );
+
+	flt_t res = integrated_luminosity_function( abs_mag_min, faint_abs_mag_lim ) /
+			integrated_luminosity_function( abs_mag_min, bright_abs_mag_lim );
+
+	return res;
+}
+
+#endif // end Luminosity-related functions
 
 #endif // end Global function definitions
+
+} // namespace IceBRG

@@ -29,6 +29,7 @@
 
 #include "IceBRG_main/math/cache/cache.hpp"
 #include "IceBRG_main/math/cache/cache_2d.hpp"
+#include "IceBRG_main/math/calculus/integrate.hpp"
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_physics/astro.h"
@@ -41,19 +42,38 @@ namespace IceBRG {
 
 // Initialisation for IceBRG::dfa_cache
 DEFINE_BRG_CACHE( dfa_cache, flt_t,
-		decltype(custom_unit_type<1, 0, 0, -1, 0>()), 0, 5, 0.001,
-		return integrate_add( 0, in_param )/radian;,
+		decltype(custom_unit_type<1, 0, 0, -1, 0>()), 0, 5, 0.001
+		,
+			return integrate_add( 0, in_param )/radian;
+		,
+
 );
 
 // Initialisation for IceBRG::add_cache
 DEFINE_BRG_CACHE_2D( add_cache, flt_t, flt_t, distance_type,
 		0, 5, 0.01, 0, 5, 0.01,
-		return IceBRG::integrate_add(in_param_1,in_param_2);,
-		);
+			return IceBRG::integrate_add(in_param_1,in_param_2);
+		,
+
+);
 
 // Initialisation for IceBRG::tfa_cache
-DEFINE_BRG_CACHE( tfa_cache, flt_t, time_type, 0.001, 1.02, 0.001,
-		return -integrate_ltd( 0, zfa( in_param ) ) / c;,
+DEFINE_BRG_CACHE( tfa_cache, flt_t, time_type, 0.001, 1.02, 0.001
+		,
+			return -integrate_ltd( 0, zfa( in_param ) ) / c;
+		,
+
+);
+
+// Initialisation for IceBRG::lum_func_integral_cache
+DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, decltype(custom_unit_type<-3,0,0,0,0>()),
+		-25, -19, 0.1,
+		-25, -19, 0.1
+		,
+			flt_t res = integrate_Romberg(differential_luminosity_function,in_param_1,in_param_2);
+			return res;
+		,
+
 );
 
 }
