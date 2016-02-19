@@ -351,7 +351,8 @@ custom_unit_type<-3,0,0,0,0> differential_luminosity_function( flt_t const & mag
 }
 custom_unit_type<-3,0,0,0,0> integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi )
 {
-	return lum_func_integral_cache().get(mag_lo,mag_hi);
+	custom_unit_type<-3,0,0,0,0> res = lum_func_integral_cache().get(mag_lo,mag_hi);
+	return res;
 }
 
 flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim,
@@ -366,6 +367,33 @@ flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim,
 }
 
 #endif // end Luminosity-related functions
+
+// Mass-related functions
+#if(1)
+
+constexpr mass_type richness_mstar = 4.07e12*unitconv::Msuntokg*kg;
+constexpr flt_t richness_beta = 1.4;
+
+flt_t cluster_richness( mass_type const & mass, flt_t const & z,
+		flt_t const & bright_abs_mag_lim, flt_t const & faint_app_mag_lim )
+{
+	flt_t fb_ratio = faint_bright_ratio(z,bright_abs_mag_lim,faint_app_mag_lim);
+
+	flt_t res = fb_ratio * log(mass/richness_mstar)/log(richness_beta);
+
+	return res;
+}
+mass_type min_cluster_mass( flt_t const & z, flt_t const & bright_abs_mag_lim,
+		flt_t const & faint_app_mag_lim )
+{
+	flt_t fb_ratio = faint_bright_ratio(z,bright_abs_mag_lim,faint_app_mag_lim);
+
+	mass_type res = richness_mstar * pow(2/fb_ratio,richness_beta);
+
+	return res;
+}
+
+#endif // end Mass-related functions
 
 #endif // end Global function definitions
 

@@ -67,8 +67,8 @@ DEFINE_BRG_CACHE( tfa_cache, flt_t, time_type, 0.001, 1.02, 0.001
 
 // Initialisation for IceBRG::lum_func_integral_cache
 DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, decltype(custom_unit_type<-3,0,0,0,0>()),
-		-25, -19, 0.1,
-		-25, -19, 0.1
+		-25, -11, 0.2,
+		-25, -11, 0.2
 		,
 			flt_t res = integrate_Romberg(differential_luminosity_function,in_param_1,in_param_2);
 			return res;
