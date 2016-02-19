@@ -76,6 +76,32 @@ DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, decltype(custom_unit
 
 );
 
-}
+// Initialisation for IceBRG::tfa_cache
+DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
+		0.1*unitconv::Mpctom*m, 100*unitconv::Mpctom*m, 0.1*unitconv::Mpctom*m
+		,
+			constexpr flt_t nsp = 0.958;
+			constexpr distance_type Mpc = unitconv::Mpctom * m;
+			constexpr flt_t xi = Omega_m * H_0 / (100 * (unitconv::kmtom*m)/s/(Mpc));
+
+			distance_type aR = in_param;
+
+			auto power_spectrum = [&] (inverse_distance_type const & k)
+			{
+				using std::log;
+
+				return pow(k,2 + nsp) * square(log(1 + 2.34*Mpc * k / xi) / (2.34*Mpc * k / xi) /
+						pow(1 + 3.89*Mpc * k / xi + square(16.2*Mpc * k / xi) + cube(5.47*Mpc * k / xi) +
+								quart(6.71*Mpc * k / xi),0.25)) *
+								square(3 * (sin(k * aR) - k * aR * cos(k * aR)) / cube(k * aR));
+			};
+
+			flt_t res = integrate_Romberg(power_spectrum,0.01/Mpc,100/Mpc)/(2*square(pi));
+			return res;
+		,
+
+);
+
+} // namespace IceBRG
 
 #endif // end Static Class Initialisation

@@ -255,10 +255,12 @@ private:
 			const std::streamsize out_size = sizeof(temp_out);
 			ssize_t i_1=0;
 
-			while ( ( !in_file.eof() ) && (in_file) )
+			while ( ( !in_file.eof() ) && (in_file) && (i_1<SPCP(name)->_resolution_1_) )
 			{
 				in_file.read((char *)&temp_out,out_size);
 				SPCP(name)->_results_[i_1] = units_cast<Tout>(temp_out);
+
+				++i_1;
 			}
 
 			// Check that it was all read properly

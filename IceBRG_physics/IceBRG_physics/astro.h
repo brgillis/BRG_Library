@@ -182,6 +182,14 @@ flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim = br
 		flt_t const & faint_app_mag_lim = faint_app_mag_max);
 
 // Mass functions
+flt_t delta_c();
+density_type rho_bar( flt_t const & z = 0.);
+distance_type r_of_m( mass_type const & mass, flt_t const & z );
+flt_t sigma_of_r( distance_type const & r);
+flt_t sigma_of_m( mass_type const & mass, flt_t const & z = 0. );
+flt_t nu_of_m( mass_type const & mass, flt_t const & z = 0. );
+flt_t mass_function( mass_type const & mass, flt_t const & z = 0. );
+
 flt_t cluster_richness( mass_type const & mass, flt_t const & z,
 		flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
 		flt_t const & faint_app_mag_lim = faint_app_mag_max );

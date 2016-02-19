@@ -1,9 +1,12 @@
 /**********************************************************************\
-  @file astro_caches.h
+ @file mass_func_test.cpp
+ ------------------
+
+ TODO <Insert file description here>
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2016 brg
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -20,33 +23,39 @@
 
 \**********************************************************************/
 
-// body file: astro_caches.cpp
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#ifndef _BRG_ASTRO_CACHES_H_INCLUDED_
-#define _BRG_ASTRO_CACHES_H_INCLUDED_
+#define BOOST_TEST_DYN_LINK
+#include <boost/test/unit_test.hpp>
 
-#include <string>
-
-#include "IceBRG_main/common.h"
-
-#include "IceBRG_main/math/cache/cache.hpp"
-#include "IceBRG_main/math/cache/cache_2d.hpp"
 #include "IceBRG_main/units/units.hpp"
+#include "IceBRG_main/units/unit_conversions.hpp"
+#include "IceBRG_physics/astro.h"
 
-namespace IceBRG
+using namespace IceBRG;
+
+BOOST_AUTO_TEST_SUITE (Mass_Func_Test)
+
+BOOST_AUTO_TEST_CASE( mass_func_test )
 {
+	mass_type m1 = 1e10*unitconv::Msuntokg*kg;
+	mass_type m2 = 1e12*unitconv::Msuntokg*kg;
+	mass_type m3 = 1e14*unitconv::Msuntokg*kg;
+	mass_type m4 = 1e16*unitconv::Msuntokg*kg;
 
-DECLARE_BRG_CACHE(dfa_cache,dfa,flt_t,decltype(IceBRG::custom_unit_type<1, 0, 0, -1, 0>()));
+	flt_t n1 = mass_function(m1);
+	flt_t n2 = mass_function(m2);
+	flt_t n3 = mass_function(m3);
+	flt_t n4 = mass_function(m4);
 
-DECLARE_BRG_CACHE_2D(add_cache,ang_di_d,flt_t,flt_t,distance_type);
+	BOOST_CHECK_LE(n2,n1);
+	BOOST_CHECK_LE(n3,n2);
+	BOOST_CHECK_LE(n4,n3);
 
-DECLARE_BRG_CACHE(tfa_cache,tfa,flt_t,time_type);
+}
 
-DECLARE_BRG_CACHE_2D(lum_func_integral_cache,lum_int,flt_t,flt_t,decltype(custom_unit_type<-3,0,0,0,0>()));
+BOOST_AUTO_TEST_SUITE_END()
 
-DECLARE_BRG_CACHE(sigma_r_cache,sigma_r,distance_type,flt_t);
-
-} // end namespace IceBRG
-
-#endif // __BRG_ASTRO_CACHES_H_INCLUDED__
 

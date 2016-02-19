@@ -329,7 +329,7 @@ private:
 			for( ssize_t i_2 = 0; i_2 < SPCP(name)->_resolution_2_; ++i_2)
 			{
 				Tin2 x_2 = SPCP(name)->_min_2_ + i_2*SPCP(name)->_step_2_;
-				Tout result;
+				Tout result(0);
 				try
 				{
 					result = SPCP(name)->_calculate(x_1, x_2);
