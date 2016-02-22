@@ -134,6 +134,7 @@ DEFINE_BRG_CACHE( visible_cluster_density_cache, flt_t, inverse_volume_type,
 
 			return res;
 		,
+			dfa_cache().load();
 			sigma_r_cache().load();
 			l10_mass_function_cache().load();
 );
@@ -149,6 +150,7 @@ DEFINE_BRG_CACHE_2D( visible_clusters_cache, flt_t, flt_t, decltype(custom_unit_
 
 			return res;
 		,
+			dfa_cache().load();
 			sigma_r_cache().load();
 			l10_mass_function_cache().load();
 			visible_cluster_density_cache().load();

@@ -157,8 +157,12 @@ distance_type integrate_ltd( const flt_t & z );
 distance_type integrate_distance( const flt_t & z1, const flt_t & z2,
 		const int_t & mode, const int_t & resolution = 10000 );
 
-// Lensing functions
 distance_type ad_distance( flt_t z1, flt_t z2 = 0 );
+distance_type comoving_distance( flt_t z );
+distance_type light_travel_distance( flt_t z );
+distance_type luminosity_distance( flt_t z );
+
+// Lensing functions
 surface_density_type sigma_crit( const flt_t & z_lens, const flt_t & z_source );
 
 // Like dist2d, but using corrections for spherical geometry

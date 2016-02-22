@@ -29,6 +29,7 @@
 #include "IceBRG_main/math/cache/cache.hpp"
 #include "IceBRG_main/math/cache/cache_2d.hpp"
 #include "IceBRG_main/math/calculus/differentiate.hpp"
+#include "IceBRG_main/math/interpolator/interpolator.h"
 
 #include "IceBRG_physics/astro_caches.h"
 #include "IceBRG_physics/astro.h"
@@ -291,10 +292,6 @@ distance_type integrate_distance( const flt_t & z1_init,
 
 	return units_cast<distance_type>(res);
 }
-#endif
-
-// Lensing functions
-#if (1)
 
 distance_type ad_distance( flt_t z1, flt_t z2 )
 {
@@ -302,6 +299,19 @@ distance_type ad_distance( flt_t z1, flt_t z2 )
 		std::swap( z1, z2 );
 	return add_cache().get( z1, z2 );
 }
+distance_type comoving_distance( flt_t z )
+{
+	return dfa_cache().get(z)*(1+z)*rad;
+}
+distance_type luminosity_distance( flt_t z )
+{
+	return dfa_cache().get(z)*square(1+z)*rad;
+}
+
+#endif
+
+// Lensing functions
+#if (1)
 
 surface_density_type sigma_crit( const flt_t & z_lens,
 		const flt_t & z_source )
@@ -467,7 +477,7 @@ custom_unit_type<0,0,0,-2,0> cluster_angular_density_at_z(flt_t const & z)
 {
 	inverse_volume_type cluster_volume_density = visible_cluster_density_cache().get(z);
 
-	custom_unit_type<3,0,0,-2,0> vol_per_area = square(ad_distance(z)/rad)*c/H(z)/(1.+z);
+	custom_unit_type<3,0,0,-2,0> vol_per_area = square(comoving_distance(z)/rad)*c/H(z);
 
 	custom_unit_type<0,0,0,-2,0> density_per_area = cluster_volume_density*vol_per_area;
 
@@ -484,6 +494,23 @@ flt_t visible_clusters( square_angle_type const & area, flt_t const & z1, flt_t 
 }
 
 #endif // end Mass-related functions
+
+// Functions connecting mass and luminosity through abundance matching
+#if(1)
+
+interpolator lum_cdf_interpolator;
+interpolator lum_cdf_inv_interpolator;
+
+void set_up_lum_interpolators()
+{
+	// Clear in case they need it
+	lum_cdf_interpolator.clear();
+	lum_cdf_inv_interpolator.clear();
+
+	return;
+}
+
+#endif // end abundance matching functions
 
 #endif // end Global function definitions
 
