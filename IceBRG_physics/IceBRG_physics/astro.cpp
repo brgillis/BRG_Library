@@ -26,9 +26,12 @@
 
 #include "IceBRG_main/common.h"
 
+#include "IceBRG_main/Eigen.hpp"
+
 #include "IceBRG_main/math/cache/cache.hpp"
 #include "IceBRG_main/math/cache/cache_2d.hpp"
 #include "IceBRG_main/math/calculus/differentiate.hpp"
+#include "IceBRG_main/math/calculus/integrate.hpp"
 #include "IceBRG_main/math/interpolator/interpolator.h"
 
 #include "IceBRG_physics/astro_caches.h"
@@ -344,6 +347,15 @@ flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z )
 	return res;
 }
 
+flt_t get_app_mag_from_abs_mag( flt_t const & abs_mag, flt_t const & z )
+{
+	distance_type lum_distance_at_z = get_lum_distance(z);
+
+	flt_t res = abs_mag + 5*((std::log10(lum_distance_at_z/(1*unitconv::pctom*m)))-1);
+
+	return res;
+}
+
 // Using results from Willmer et al. 2005 for the "All" sample with minimal weighting at
 // z = 0.7 for the luminosity function
 
@@ -354,8 +366,8 @@ constexpr flt_t abs_mag_min = -25;
 
 custom_unit_type<-3,0,0,0,0> differential_luminosity_function( flt_t const & mag )
 {
-	custom_unit_type<-3,0,0,0,0> res = 0.4 * log(10.) * phi_star *
-			pow(10.,0.4*(mag_star-mag)*(alpha+1))*exp(-pow(10,0.4*(mag_star-mag)));
+	custom_unit_type<-3,0,0,0,0> res = 0.4 * std::log(10.) * phi_star *
+			std::pow(10.,0.4*(mag_star-mag)*(alpha+1))*std::exp(-std::pow(10,0.4*(mag_star-mag)));
 
 	return res;
 }
@@ -415,7 +427,7 @@ flt_t nu_of_m( mass_type const & mass, flt_t const & z )
 }
 flt_t fps_of_nu(flt_t const & nu)
 {
-	return sqrt(2./pi)*nu*exp(-square(nu)/2.);
+	return sqrt(2./pi)*nu*std::exp(-square(nu)/2.);
 }
 flt_t fec_of_nu(flt_t const & nu)
 {
@@ -432,7 +444,7 @@ custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const
 
 	auto ln_nu_of_m = [&z] (mass_type const & mass)
 	{
-		return log(nu_of_m(mass,z));
+		return std::log(nu_of_m(mass,z));
 	};
 
 	custom_unit_type<0,0,-1,0,0> d_ln_nu_d_m = differentiate(&ln_nu_of_m,mass);
@@ -450,7 +462,11 @@ inverse_volume_type log10_mass_function( flt_t const & log10msun_mass, flt_t con
 	return res;
 }
 
-// Cluster richness
+#endif // end Mass-related functions
+
+// Cluster visibility functions
+#if(1)
+
 const mass_type richness_mstar = 4.07e12*unitconv::Msuntokg*kg;
 constexpr flt_t richness_beta = 1.4;
 
@@ -459,7 +475,7 @@ flt_t cluster_richness( mass_type const & mass, flt_t const & z,
 {
 	flt_t fb_ratio = faint_bright_ratio(z,bright_abs_mag_lim,faint_app_mag_lim);
 
-	flt_t res = fb_ratio * log(mass/richness_mstar)/log(richness_beta);
+	flt_t res = fb_ratio * std::log(mass/richness_mstar)/std::log(richness_beta);
 
 	return res;
 }
@@ -493,7 +509,7 @@ flt_t visible_clusters( square_angle_type const & area, flt_t const & z1, flt_t 
 	return res;
 }
 
-#endif // end Mass-related functions
+#endif // end cluster visibility functions
 
 // Functions connecting mass and luminosity through abundance matching
 #if(1)
@@ -507,10 +523,132 @@ void set_up_lum_interpolators()
 	lum_cdf_interpolator.clear();
 	lum_cdf_inv_interpolator.clear();
 
+	int_t num_points = 150;
+
+	flt_array_t lums = flt_array_t::LinSpaced(lum_func_min_abs_mag,lum_func_min_abs_mag,num_points);
+	flt_array_t lum_cdfs(num_points);
+
+	for( int_t i=0; i<num_points; ++i )
+	{
+		lum_cdfs[i] = value_of(integrated_luminosity_function(lum_func_min_abs_mag,lums[i]));
+	}
+
+	// Normalize the cdfs
+	lum_cdfs /= lum_cdfs[num_points-1];
+
+	for( int_t i=0; i<num_points; ++i )
+	{
+		lum_cdf_interpolator.add_point(lum_cdfs[i],lums[i]);
+		lum_cdf_inv_interpolator.add_point(lums[i],lum_cdfs[i]);
+	}
+
 	return;
 }
 
+std::tuple<interpolator,interpolator> get_mass_interpolators(flt_t const & z)
+{
+	interpolator mass_interpolator;
+	interpolator mass_inv_interpolator;
+
+	int_t num_points = 150;
+
+	flt_array_t masses = flt_array_t::LinSpaced(mass_func_l10_min,mass_func_l10_max,num_points);
+	flt_array_t mass_cdfs(num_points);
+
+	auto mass_function_integrand = [&z] (flt_t const & l10_m)
+	{
+		return l10_mass_function_cache().get(l10_m,z);
+	};
+
+	for( int_t i=0; i<num_points; ++i )
+	{
+		mass_cdfs[i] = value_of(integrate_Romberg(mass_function_integrand,mass_func_l10_min,masses[i]));
+	}
+
+	// Normalize the cdfs
+	mass_cdfs /= mass_cdfs[num_points-1];
+
+	for( int_t i=0; i<num_points; ++i )
+	{
+		mass_interpolator.add_point(mass_cdfs[i],masses[i]);
+		mass_inv_interpolator.add_point(masses[i],mass_cdfs[i]);
+	}
+
+	return std::make_tuple(mass_interpolator,mass_inv_interpolator);
+}
+
+flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z )
+{
+	interpolator mass_cdf_inv_interpolator = std::get<1>(get_mass_interpolators(z));
+	if(lum_cdf_interpolator.empty()) set_up_lum_interpolators();
+
+	flt_t l10_m = std::log10(m/(unitconv::Msuntokg*kg));
+
+	flt_t abs_mag = lum_cdf_interpolator(mass_cdf_inv_interpolator(l10_m));
+
+	return abs_mag;
+}
+
+mass_type get_mass_from_abs_mag( flt_t const & abs_mag, flt_t const & z )
+{
+	interpolator mass_cdf_interpolator = std::get<0>(get_mass_interpolators(z));
+	if(lum_cdf_inv_interpolator.empty()) set_up_lum_interpolators();
+
+	flt_t l10_m = mass_cdf_interpolator(lum_cdf_inv_interpolator(abs_mag));
+
+	return std::pow(10.,l10_m)*unitconv::Msuntokg*kg;
+}
+
+flt_t get_app_mag_from_mass( mass_type const & m, flt_t const & z )
+{
+	flt_t abs_mag = get_abs_mag_from_mass(m,z);
+	flt_t app_mag = get_app_mag_from_abs_mag(abs_mag,z);
+
+	return app_mag;
+}
+
+mass_type get_mass_from_app_mag( flt_t const & m, flt_t const & z )
+{
+	flt_t abs_mag = get_abs_mag_from_app_mag(abs_mag,z);
+	mass_type mass = get_mass_from_abs_mag(abs_mag,z);
+
+	return mass;
+}
+
 #endif // end abundance matching functions
+
+
+// Galaxy visibility functions
+#if(1)
+
+mass_type min_galaxy_mass( flt_t const & z, flt_t const & faint_app_mag_lim )
+{
+	mass_type res = get_mass_from_app_mag(faint_app_mag_lim);
+
+	return res;
+}
+
+custom_unit_type<0,0,0,-2,0> galaxy_angular_density_at_z(flt_t const & z)
+{
+	inverse_volume_type galaxy_volume_density = visible_galaxy_density_cache().get(z);
+
+	custom_unit_type<3,0,0,-2,0> vol_per_area = square(comoving_distance(z)/rad)*c/H(z);
+
+	custom_unit_type<0,0,0,-2,0> density_per_area = galaxy_volume_density*vol_per_area;
+
+	return density_per_area;
+};
+
+flt_t visible_galaxies( square_angle_type const & area, flt_t const & z1, flt_t const & z2 )
+{
+	custom_unit_type<0,0,0,-2,0> area_density = visible_galaxies_cache().get(z1,z2);
+
+	flt_t res = area*area_density;
+
+	return res;
+}
+
+#endif // end galaxy visibility functions
 
 #endif // end Global function definitions
 

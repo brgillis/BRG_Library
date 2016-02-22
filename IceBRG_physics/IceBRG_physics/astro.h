@@ -174,18 +174,30 @@ inline const Tr1 skydist2d( const Tr1 & ra1, const Td1 & dec1,
 }
 
 // Luminosity functions
+#if(1)
 
 constexpr flt_t bright_abs_mag_max = -19.5;
 constexpr flt_t faint_app_mag_max = 27;
 
+constexpr flt_t lum_func_min_abs_mag = -25;
+constexpr flt_t lum_func_max_abs_mag = -11;
+
 distance_type get_lum_distance( flt_t const & z );
 flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z );
+flt_t get_app_mag_from_abs_mag( flt_t const & abs_mag, flt_t const & z );
 custom_unit_type<-3,0,0,0,0> differential_luminosity_function( flt_t const & mag );
 custom_unit_type<-3,0,0,0,0> integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi );
 flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
 		flt_t const & faint_app_mag_lim = faint_app_mag_max);
 
+#endif // end luminosity functions
+
 // Mass functions
+#if(1)
+
+constexpr flt_t mass_func_l10_min = 8;
+constexpr flt_t mass_func_l10_max = 16;
+
 flt_t delta_c();
 density_type rho_bar( flt_t const & z = 0.);
 distance_type r_of_m( mass_type const & mass, flt_t const & z );
@@ -194,6 +206,11 @@ flt_t sigma_of_m( mass_type const & mass, flt_t const & z = 0. );
 flt_t nu_of_m( mass_type const & mass, flt_t const & z = 0. );
 custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const & z = 0. );
 custom_unit_type<-3,0,0,0,0> log10_mass_function( flt_t const & log10msun_mass, flt_t const & z = 0. );
+
+#endif // end mass functions
+
+// Cluster visibility functions
+#if(1)
 
 flt_t cluster_richness( mass_type const & mass, flt_t const & z,
 		flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
@@ -210,8 +227,37 @@ mass_type min_cluster_mass( flt_t const & z,
  * @return
  */
 custom_unit_type<0,0,0,-2,0> cluster_angular_density_at_z(flt_t const & z);
+flt_t visible_clusters( square_angle_type const & area, flt_t const & z1 = 0.1, flt_t const & z2 = 1.3 );
 
-flt_t visible_clusters( square_angle_type const & area, flt_t const & z1 = 0.2, flt_t const & z2 = 1.3 );
+#endif // Cluster visibility functions
+
+// Abundance matching functions
+#if(1)
+
+flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z=0. );
+mass_type get_mass_from_abs_mag( flt_t const & abs_mag, flt_t const & z=0. );
+flt_t get_app_mag_from_mass( mass_type const & m, flt_t const & z=0. );
+mass_type get_mass_from_app_mag( flt_t const & app_mag, flt_t const & z=0. );
+
+#endif // end abundance matching functions
+
+// Galaxy visibility functions
+#if(1)
+
+mass_type min_galaxy_mass( flt_t const & z,
+		flt_t const & faint_app_mag_lim = faint_app_mag_max );
+
+/**
+ * Get the number density of galaxies at a given redshift in units of
+ * number per square radian per unit redshift.
+ *
+ * @param z
+ * @return
+ */
+custom_unit_type<0,0,0,-2,0> galaxy_angular_density_at_z(flt_t const & z);
+flt_t visible_galaxies( square_angle_type const & area, flt_t const & z1 = 0.1, flt_t const & z2 = 2.0 );
+
+#endif // end galaxy visibility functions
 
 #endif // end function declarations
 
