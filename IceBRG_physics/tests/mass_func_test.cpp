@@ -73,7 +73,8 @@ BOOST_AUTO_TEST_CASE( mass_func_test )
 
 	density_type matter_dens = rho_bar(z);
 
-	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),10);
+	BOOST_CHECK_LE(value_of(dens),value_of(matter_dens));
+	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),25);
 
 	// Try for z=0.9
 
@@ -99,7 +100,8 @@ BOOST_AUTO_TEST_CASE( mass_func_test )
 
 	matter_dens = rho_bar(z);
 
-	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),10);
+	BOOST_CHECK_LE(value_of(dens),value_of(matter_dens));
+	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),25);
 }
 
 

@@ -188,6 +188,8 @@ private:
 		bool need_to_calc = false;
 		int_t loop_counter = 0;
 
+		_init();
+
 		if ( SPCP(name)->_loaded_ )
 			return;
 

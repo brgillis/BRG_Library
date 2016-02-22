@@ -403,11 +403,22 @@ flt_t nu_of_m( mass_type const & mass, flt_t const & z )
 {
 	return delta_c()/sigma_of_m(mass,z);
 }
+flt_t fps_of_nu(flt_t const & nu)
+{
+	return sqrt(2./pi)*nu*exp(-square(nu)/2.);
+}
+flt_t fec_of_nu(flt_t const & nu)
+{
+	flt_t nu_tilde = 0.84*nu;
+	return 0.322*(1+std::pow(nu_tilde,-0.6))*fps_of_nu(nu_tilde);
+}
 custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const & z )
 {
+	// Using Sheth, Mo, and Tormen (2001) formalism
+
 	flt_t nu = nu_of_m(mass,z);
 
-	flt_t fps_of_nu = sqrt(2./pi)*nu*exp(-square(nu)/2.);
+	flt_t f_of_nu = fec_of_nu(nu);
 
 	auto ln_nu_of_m = [&z] (mass_type const & mass)
 	{
@@ -416,15 +427,15 @@ custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const
 
 	custom_unit_type<0,0,-1,0,0> d_ln_nu_d_m = differentiate(&ln_nu_of_m,mass);
 
-	custom_unit_type<-3,0,-1,0,0> res = rho_bar(z)/mass * fps_of_nu * d_ln_nu_d_m;
+	custom_unit_type<-3,0,-1,0,0> res = rho_bar(z)/mass * f_of_nu * d_ln_nu_d_m;
 
 	return res;
 }
-custom_unit_type<-3,0,0,0,0> log10_mass_function( flt_t const & log10msun_mass, flt_t const & z )
+inverse_volume_type log10_mass_function( flt_t const & log10msun_mass, flt_t const & z )
 {
 	mass_type mass = unitconv::Msuntokg*kg*std::pow(10.,log10msun_mass);
 
-	custom_unit_type<-3,0,0,0,0> res = mass_function(mass,z)*mass*std::log(10.);
+	inverse_volume_type res = mass_function(mass,z)*mass*std::log(10.);
 
 	return res;
 }
@@ -451,6 +462,17 @@ mass_type min_cluster_mass( flt_t const & z, flt_t const & bright_abs_mag_lim,
 
 	return res;
 }
+
+custom_unit_type<0,0,0,-2,0> cluster_angular_density_at_z(flt_t const & z)
+{
+	inverse_volume_type cluster_volume_density = visible_cluster_density_cache().get(z);
+
+	custom_unit_type<3,0,0,-2,0> vol_per_area = square(ad_distance(z)/rad)*c/H(z)/(1.+z);
+
+	custom_unit_type<0,0,0,-2,0> density_per_area = cluster_volume_density*vol_per_area;
+
+	return density_per_area;
+};
 
 flt_t visible_clusters( square_angle_type const & area, flt_t const & z1, flt_t const & z2 )
 {

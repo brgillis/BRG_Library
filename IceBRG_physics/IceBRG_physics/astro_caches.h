@@ -42,9 +42,11 @@ DECLARE_BRG_CACHE_2D(add_cache,ang_di_d,flt_t,flt_t,distance_type);
 
 DECLARE_BRG_CACHE(tfa_cache,tfa,flt_t,time_type);
 
-DECLARE_BRG_CACHE_2D(lum_func_integral_cache,lum_int,flt_t,flt_t,decltype(custom_unit_type<-3,0,0,0,0>()));
+DECLARE_BRG_CACHE_2D(lum_func_integral_cache,lum_int,flt_t,flt_t,inverse_volume_type);
 
 DECLARE_BRG_CACHE(sigma_r_cache,sigma_r,distance_type,flt_t);
+
+DECLARE_BRG_CACHE_2D(l10_mass_function_cache,massfunc,flt_t,flt_t,inverse_volume_type);
 
 DECLARE_BRG_CACHE(visible_cluster_density_cache,viscdens,flt_t,inverse_volume_type);
 

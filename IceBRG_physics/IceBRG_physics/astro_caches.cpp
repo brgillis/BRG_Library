@@ -66,11 +66,11 @@ DEFINE_BRG_CACHE( tfa_cache, flt_t, time_type, 0.001, 1.02, 0.001
 );
 
 // Initialisation for IceBRG::lum_func_integral_cache
-DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, decltype(custom_unit_type<-3,0,0,0,0>()),
+DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, inverse_volume_type,
 		-25, -11, 0.2,
 		-25, -11, 0.2
 		,
-			decltype(custom_unit_type<-3,0,0,0,0>()) res = integrate_Romberg(differential_luminosity_function,in_param_1,in_param_2);
+			inverse_volume_type res = integrate_Romberg(differential_luminosity_function,in_param_1,in_param_2);
 			return res;
 		,
 
@@ -109,42 +109,48 @@ DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
 
 );
 
-// Initialisation for IceBRG::tfa_cache
+// Initialisation for IceBRG::visible_clusters_cache
+DEFINE_BRG_CACHE_2D( l10_mass_function_cache, flt_t, flt_t, inverse_volume_type,
+		8, 16, 0.01,
+		0.1, 1.3, 0.01
+		,
+			return log10_mass_function( in_param_1, in_param_2 );
+		,
+			sigma_r_cache().load();
+);
+
+// Initialisation for IceBRG::visible_cluster_density_cache
 DEFINE_BRG_CACHE( visible_cluster_density_cache, flt_t, inverse_volume_type,
 		0.1, 1.3, 0.01
 		,
 			mass_type min_mass = min_cluster_mass(in_param);
 			flt_t l10_min_mass = std::log10(min_mass/(unitconv::Msuntokg*kg));
 
-			auto l10_mass_function_at_z = [&] (flt_t const & l10_m) {return log10_mass_function(l10_m,in_param);};
+			l10_mass_function_cache l10_mf_cache;
+
+			auto l10_mass_function_at_z = [&] (flt_t const & l10_m) {return l10_mf_cache.get(l10_m,in_param);};
 
 			inverse_volume_type res = integrate_Romberg(l10_mass_function_at_z,l10_min_mass,16.);
 
 			return res;
 		,
 			sigma_r_cache().load();
+			l10_mass_function_cache().load();
 );
 
-// Initialisation for IceBRG::tfa_cache
+// Initialisation for IceBRG::visible_clusters_cache
 DEFINE_BRG_CACHE_2D( visible_clusters_cache, flt_t, flt_t, decltype(custom_unit_type<0,0,0,-2,0>()),
 		0.1, 1.3, 0.01,
 		0.1, 1.3, 0.01
 		,
-			auto count_at_z = [&] (flt_t const & z)
-			{
-				inverse_volume_type cluster_density = visible_cluster_density_cache().get(z);
-				decltype(custom_unit_type<3,0,0,-2,0>()) vol = square(ad_distance(z)/rad)*c/H(z)/(1.+z);
 
-				decltype(custom_unit_type<0,0,0,-2,0>()) count = cluster_density*vol;
-
-				return count;
-			};
-
-			decltype(custom_unit_type<0,0,0,-2,0>()) res = integrate_Romberg(count_at_z,in_param_1,in_param_2);
+			decltype(custom_unit_type<0,0,0,-2,0>()) res = integrate_Romberg(cluster_angular_density_at_z,
+					in_param_1,in_param_2);
 
 			return res;
 		,
 			sigma_r_cache().load();
+			l10_mass_function_cache().load();
 			visible_cluster_density_cache().load();
 );
 

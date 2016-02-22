@@ -198,6 +198,15 @@ mass_type min_cluster_mass( flt_t const & z,
 		flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
 		flt_t const & faint_app_mag_lim = faint_app_mag_max );
 
+/**
+ * Get the number density of clusters at a given redshift in units of
+ * number per square radian per unit redshift.
+ *
+ * @param z
+ * @return
+ */
+custom_unit_type<0,0,0,-2,0> cluster_angular_density_at_z(flt_t const & z);
+
 flt_t visible_clusters( square_angle_type const & area, flt_t const & z1 = 0.2, flt_t const & z2 = 1.3 );
 
 #endif // end function declarations
