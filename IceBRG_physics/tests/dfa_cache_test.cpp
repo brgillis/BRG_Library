@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( dfa_cache_test )
 {
     dfa_cache cache;
 
-    cache.set_range(0,1,0.1);
+    cache.set_range(0,2,0.1);
 
     auto dfa_1 = cache.get(0.05);
     auto dfa_2 = cache.get(0.15);
@@ -52,12 +52,6 @@ BOOST_AUTO_TEST_CASE( dfa_cache_test )
     // Allow 10% closeness here, due to coarseness of cache in this test
     BOOST_CHECK_CLOSE(value_of(dfa_1),value_of(201.7*unitconv::Mpctom*m),10);
     BOOST_CHECK_CLOSE(value_of(dfa_2),value_of(540.0*unitconv::Mpctom*m),10);
-
-    auto inv_dfa_1 = cache.inverse_get(dfa_1);
-    auto inv_dfa_2 = cache.inverse_get(dfa_2);
-
-    BOOST_CHECK_CLOSE(value_of(inv_dfa_1),0.05,0.1);
-    BOOST_CHECK_CLOSE(value_of(inv_dfa_2),0.15,0.1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

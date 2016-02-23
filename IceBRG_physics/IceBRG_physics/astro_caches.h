@@ -48,13 +48,15 @@ DECLARE_BRG_CACHE(sigma_r_cache,sigma_r,distance_type,flt_t);
 
 DECLARE_BRG_CACHE_2D(l10_mass_function_cache,massfunc,flt_t,flt_t,inverse_volume_type);
 
+DECLARE_BRG_CACHE_2D(l10_mass_function_integral_cache,mass_int,flt_t,flt_t,inverse_volume_type);
+
 DECLARE_BRG_CACHE(visible_cluster_density_cache,viscdens,flt_t,inverse_volume_type);
 
-DECLARE_BRG_CACHE_2D(visible_clusters_cache,vis_clus,flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()));
+DECLARE_BRG_CACHE_2D(visible_clusters_cache,vis_clus,flt_t,flt_t,inverse_square_angle_type);
 
 DECLARE_BRG_CACHE(visible_galaxy_density_cache,visgdens,flt_t,inverse_volume_type);
 
-DECLARE_BRG_CACHE_2D(visible_galaxies_cache,vis_gal,flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()));
+DECLARE_BRG_CACHE_2D(visible_galaxies_cache,vis_gal,flt_t,flt_t,inverse_square_angle_type);
 
 } // end namespace IceBRG
 

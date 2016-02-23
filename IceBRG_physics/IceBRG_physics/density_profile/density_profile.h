@@ -34,6 +34,7 @@
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/math/safe_math.hpp"
 #include "IceBRG_physics/astro.h"
+#include "IceBRG_physics/redshift_obj.hpp"
 
 namespace IceBRG {
 

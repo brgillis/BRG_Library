@@ -100,11 +100,10 @@ BOOST_AUTO_TEST_CASE( mass_func_test )
 
 	matter_dens = rho_bar(z);
 
+	// Between half and 100% of matter should be in collapsed haloes
+	BOOST_CHECK_GE(value_of(dens),0.5*value_of(matter_dens));
 	BOOST_CHECK_LE(value_of(dens),value_of(matter_dens));
-	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),25);
 }
-
-
 
 BOOST_AUTO_TEST_CASE( vis_clusters_test )
 {
@@ -112,8 +111,18 @@ BOOST_AUTO_TEST_CASE( vis_clusters_test )
 
 	flt_t n = visible_clusters(area);
 
-	BOOST_CHECK_GT(n,1);
-	BOOST_CHECK_LT(n,10);
+	BOOST_CHECK_GT(n,5);
+	BOOST_CHECK_LT(n,50);
+}
+
+BOOST_AUTO_TEST_CASE( vis_galaxies_test )
+{
+	square_angle_type area = 1.*square(unitconv::amintorad*rad);
+
+	flt_t n = visible_galaxies(area);
+
+	BOOST_CHECK_GT(n,50);
+	BOOST_CHECK_LT(n,500);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

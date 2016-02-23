@@ -68,11 +68,11 @@ namespace IceBRG
 #define _PHYS_VARS_DEFINED_
 
 #ifdef _BRG_USE_UNITS_
-const custom_unit_type<3,-2,-1,0,0> Gc(6.67384e-11 * cube(m) / square(s) / kg); // In m^3 s^-2 kg^-1
+const custom_unit_type<3,-2,-1,0,0> Gc = 6.67384e-11 * cube(m) / square(s) / kg; // In m^3 s^-2 kg^-1
 #else
 constexpr flt_t Gc = 6.67384e-11; // In m^3 s^-2 kg^-1
 #endif
-const velocity_type c(IceBRG::unitconv::ctomps * mps);
+const velocity_type c = IceBRG::unitconv::ctomps * mps;
 
 #endif
 
@@ -83,8 +83,7 @@ const velocity_type c(IceBRG::unitconv::ctomps * mps);
 #ifndef _COSMO_VARS_DEFINED_
 #define _COSMO_VARS_DEFINED_
 
-const inverse_time_type H_0(
-		70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second); // So all results will implicitly be in h_70 units
+const inverse_time_type H_0 = 70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second; // So all results will implicitly be in h_70 units
 
 constexpr flt_t Omega_m = 0.288; // WMAP9 + priors
 constexpr flt_t Omega_r = 0.000086; // WMAP9 + priors
@@ -93,6 +92,7 @@ constexpr flt_t Omega_l = 1 - Omega_k - Omega_m - Omega_r;
 constexpr flt_t Omega_b = 0.0472; // WMAP9 + priors
 constexpr flt_t sigma_8 = 0.830; // WMAP9 + priors
 constexpr flt_t n_s = 0.971;     // WMAP9 + priors
+const time_type t_present_day = 13.616*unitconv::Gyrtos*s;     // WMAP9 + priors
 
 #endif
 
@@ -145,6 +145,8 @@ time_type tfa( const flt_t & z );
 flt_t zft( const time_type & t );
 flt_t aft( const time_type & t );
 
+time_type universe_age( const flt_t & z );
+
 // Functions to integrate out distances
 distance_type integrate_add( const flt_t & z1, const flt_t & z2 );
 distance_type integrate_cmd( const flt_t & z1, const flt_t & z2 );
@@ -159,8 +161,9 @@ distance_type integrate_distance( const flt_t & z1, const flt_t & z2,
 
 distance_type ad_distance( flt_t z1, flt_t z2 = 0 );
 distance_type comoving_distance( flt_t z );
-distance_type light_travel_distance( flt_t z );
 distance_type luminosity_distance( flt_t z );
+
+volume_type comoving_volume_element( flt_t z );
 
 // Lensing functions
 surface_density_type sigma_crit( const flt_t & z_lens, const flt_t & z_source );
@@ -182,11 +185,10 @@ constexpr flt_t faint_app_mag_max = 27;
 constexpr flt_t lum_func_min_abs_mag = -25;
 constexpr flt_t lum_func_max_abs_mag = -11;
 
-distance_type get_lum_distance( flt_t const & z );
 flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z );
 flt_t get_app_mag_from_abs_mag( flt_t const & abs_mag, flt_t const & z );
-custom_unit_type<-3,0,0,0,0> differential_luminosity_function( flt_t const & mag );
-custom_unit_type<-3,0,0,0,0> integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi );
+inverse_volume_type differential_luminosity_function( flt_t const & mag );
+inverse_volume_type integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi );
 flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
 		flt_t const & faint_app_mag_lim = faint_app_mag_max);
 
@@ -198,14 +200,16 @@ flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim = br
 constexpr flt_t mass_func_l10_min = 8;
 constexpr flt_t mass_func_l10_max = 16;
 
-flt_t delta_c();
-density_type rho_bar( flt_t const & z = 0.);
-distance_type r_of_m( mass_type const & mass, flt_t const & z );
+flt_t delta_c( flt_t const & z = 0. );
+density_type rho_bar( flt_t const & z = 0. );
+distance_type r_of_m( mass_type const & mass, flt_t const & z = 0. );
 flt_t sigma_of_r( distance_type const & r);
-flt_t sigma_of_m( mass_type const & mass, flt_t const & z = 0. );
+flt_t sigma_of_m( mass_type const & mass );
 flt_t nu_of_m( mass_type const & mass, flt_t const & z = 0. );
-custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const & z = 0. );
-custom_unit_type<-3,0,0,0,0> log10_mass_function( flt_t const & log10msun_mass, flt_t const & z = 0. );
+inverse_volume_inverse_mass_type mass_function( mass_type const & mass, flt_t const & z = 0. );
+inverse_volume_type log10_mass_function( flt_t const & log10msun_mass, flt_t const & z = 0. );
+inverse_volume_type integrated_log10_mass_function( flt_t const & l10_m_lo, flt_t const & l10_m_hi,
+		flt_t const & z = 0. );
 
 #endif // end mass functions
 
@@ -226,7 +230,7 @@ mass_type min_cluster_mass( flt_t const & z,
  * @param z
  * @return
  */
-custom_unit_type<0,0,0,-2,0> cluster_angular_density_at_z(flt_t const & z);
+inverse_square_angle_type cluster_angular_density_at_z(flt_t const & z);
 flt_t visible_clusters( square_angle_type const & area, flt_t const & z1 = 0.1, flt_t const & z2 = 1.3 );
 
 #endif // Cluster visibility functions
@@ -234,17 +238,17 @@ flt_t visible_clusters( square_angle_type const & area, flt_t const & z1 = 0.1, 
 // Abundance matching functions
 #if(1)
 
-flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z=0. );
-mass_type get_mass_from_abs_mag( flt_t const & abs_mag, flt_t const & z=0. );
-flt_t get_app_mag_from_mass( mass_type const & m, flt_t const & z=0. );
-mass_type get_mass_from_app_mag( flt_t const & app_mag, flt_t const & z=0. );
+flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z );
+mass_type get_mass_from_abs_mag( flt_t const & abs_mag, flt_t const & z );
+flt_t get_app_mag_from_mass( mass_type const & m, flt_t const & z );
+mass_type get_mass_from_app_mag( flt_t const & app_mag, flt_t const & z );
 
 #endif // end abundance matching functions
 
 // Galaxy visibility functions
 #if(1)
 
-mass_type min_galaxy_mass( flt_t const & z,
+flt_t max_galaxy_abs_mag( flt_t const & z,
 		flt_t const & faint_app_mag_lim = faint_app_mag_max );
 
 /**
@@ -254,101 +258,12 @@ mass_type min_galaxy_mass( flt_t const & z,
  * @param z
  * @return
  */
-custom_unit_type<0,0,0,-2,0> galaxy_angular_density_at_z(flt_t const & z);
+inverse_square_angle_type galaxy_angular_density_at_z(flt_t const & z);
 flt_t visible_galaxies( square_angle_type const & area, flt_t const & z1 = 0.1, flt_t const & z2 = 2.0 );
 
 #endif // end galaxy visibility functions
 
 #endif // end function declarations
-
-/** Class Definitions **/
-#if (1)
-class redshift_obj
-{
-	/**********************************
-	 redshift_obj class
-	 ------------------
-
-	 A base class for anything with a redshift.
-
-	 Derived classes:
-
-	 sky_obj
-	 galaxy
-	 group
-	 density_profile
-	 tNFW_profile
-	 point_mass_profile
-
-	 **********************************/
-private:
-	flt_t _z_, _z_err_;
-	mutable inverse_time_type _H_cache_;
-	mutable bool _H_cached_;
-public:
-
-	// Constructor
-	redshift_obj( const flt_t & init_z = 0, const flt_t & init_z_err = 0 )
-	: _z_(init_z),
-	  _z_err_(init_z_err),
-	  _H_cache_(0),
-	  _H_cached_(false)
-	{
-	}
-
-	// Copy constructor
-	// (implicit is fine for us)
-
-	// Virtual destructor
-	virtual ~redshift_obj()
-	{
-	}
-
-	// Set functions
-#if (1)
-	virtual void set_z( const flt_t & new_z ) // Sets z
-	{
-		_z_ = new_z;
-		_H_cached_ = false;
-	}
-	virtual void set_z_err( const flt_t & new_z_err ) // Sets z error
-	{
-		_z_err_ = new_z_err;
-	}
-#endif
-
-	// Get functions
-#if (1)
-	flt_t z() const
-	{
-		return _z_;
-	}
-	flt_t z_err() const
-	{
-		return _z_err_;
-	}
-	int_t z_grid() const;
-#endif
-
-	// Astro calculations
-
-#if (1)
-	// H at the redshift of the object, given in units of m/s^2
-	inverse_time_type H() const;
-
-	// Critical density_type at this redshift
-	density_type rho_crit() const;
-
-#endif
-
-	// Clone function
-	virtual redshift_obj *redshift_obj_clone() const
-	{
-		return new redshift_obj(*this);
-	}
-};
-
-#endif // end Class Definitions
 
 } // end namespace IceBRG
 

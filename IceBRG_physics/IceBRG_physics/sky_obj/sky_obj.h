@@ -30,6 +30,7 @@
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_physics/astro.h"
+#include "IceBRG_physics/redshift_obj.hpp"
 #include "IceBRG_physics/sky_obj/position_grid_cache.h"
 
 namespace IceBRG {

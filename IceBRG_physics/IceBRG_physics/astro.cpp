@@ -43,34 +43,6 @@
 
 namespace IceBRG {
 
-// redshift_obj class methods
-#if (1)
-
-inverse_time_type redshift_obj::H() const
-{
-	// If not cached, calculate and cache it
-	if(!_H_cached_)
-	{
-		if(_z_==0)
-		{
-			_H_cache_ = H_0;
-		}
-		else
-		{
-			_H_cache_ = IceBRG::H(_z_);
-		}
-		_H_cached_ = true;
-	}
-	return _H_cache_;
-}
-
-density_type redshift_obj::rho_crit() const
-{
-	return 3.*square(H())/(8.*pi*Gc);
-}
-
-#endif // redshift_obj class methods
-
 /** Global Function Definitions **/
 #if (1)
 
@@ -155,6 +127,13 @@ flt_t aft( const time_type & t )
 {
 	tfa_cache cache;
 	return cache.inverse_get( t );
+}
+
+time_type universe_age( const flt_t & z )
+{
+	time_type t = t_present_day - tfz(z);
+
+	return t;
 }
 
 #endif
@@ -309,6 +288,11 @@ distance_type comoving_distance( flt_t z )
 distance_type luminosity_distance( flt_t z )
 {
 	return dfa_cache().get(z)*square(1+z)*rad;
+} //
+
+volume_type comoving_volume_element( flt_t z )
+{
+	return square(comoving_distance(z))*c/H(z);
 }
 
 #endif
@@ -330,17 +314,9 @@ surface_density_type sigma_crit( const flt_t & z_lens,
 // Luminosity-related functions
 #if (1)
 
-distance_type get_lum_distance( flt_t const & z )
-{
-	distance_type ad_distance = dfa( 1*rad, z );
-	distance_type lum_distance = ad_distance*square(1+z);
-
-	return lum_distance;
-}
-
 flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z )
 {
-	distance_type lum_distance_at_z = get_lum_distance(z);
+	distance_type lum_distance_at_z = luminosity_distance(z);
 
 	flt_t res = app_mag - 5*((std::log10(lum_distance_at_z/(1*unitconv::pctom*m)))-1);
 
@@ -349,31 +325,31 @@ flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z )
 
 flt_t get_app_mag_from_abs_mag( flt_t const & abs_mag, flt_t const & z )
 {
-	distance_type lum_distance_at_z = get_lum_distance(z);
+	distance_type lum_distance_at_z = luminosity_distance(z);
 
 	flt_t res = abs_mag + 5*((std::log10(lum_distance_at_z/(1*unitconv::pctom*m)))-1);
 
 	return res;
 }
 
-// Using results from Willmer et al. 2005 for the "All" sample with minimal weighting at
+// Using results from Willmer et al. 2006 for the "All" sample with minimal weighting at
 // z = 0.7 for the luminosity function
 
-const custom_unit_type<-3,0,0,0,0> phi_star = 24.43 / cube( unitconv::Mpctom * m);
+const inverse_volume_type phi_star = 24.43e-4 / cube( unitconv::Mpctom * m);
 constexpr flt_t mag_star = -21.53;
 constexpr flt_t alpha = -1.3;
 constexpr flt_t abs_mag_min = -25;
 
-custom_unit_type<-3,0,0,0,0> differential_luminosity_function( flt_t const & mag )
+inverse_volume_type differential_luminosity_function( flt_t const & mag )
 {
-	custom_unit_type<-3,0,0,0,0> res = 0.4 * std::log(10.) * phi_star *
+	inverse_volume_type res = 0.4 * std::log(10.) * phi_star *
 			std::pow(10.,0.4*(mag_star-mag)*(alpha+1))*std::exp(-std::pow(10,0.4*(mag_star-mag)));
 
 	return res;
 }
-custom_unit_type<-3,0,0,0,0> integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi )
+inverse_volume_type integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi )
 {
-	custom_unit_type<-3,0,0,0,0> res = lum_func_integral_cache().get(mag_lo,mag_hi);
+	inverse_volume_type res = lum_func_integral_cache().get(mag_lo,mag_hi);
 	return res;
 }
 
@@ -394,9 +370,10 @@ flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim,
 #if(1)
 
 // Press-Schechter formalism functions
-flt_t delta_c()
+flt_t delta_c( flt_t const & z )
 {
-	return 1.686;
+	flt_t res = 1.686 * universe_age(z)/universe_age(0.);
+	return res;
 }
 density_type rho_bar( flt_t const & z)
 {
@@ -417,13 +394,14 @@ flt_t sigma_of_r( distance_type const & r)
 {
 	return 0.8*sigma_r_cache().get(r)/sigma_r_cache().get(8.*unitconv::Mpctom*m);
 }
-flt_t sigma_of_m( mass_type const & mass, flt_t const & z )
+flt_t sigma_of_m( mass_type const & mass )
 {
-	return sigma_of_r(r_of_m(mass,z));
+	return sigma_of_r(r_of_m(mass));
 }
 flt_t nu_of_m( mass_type const & mass, flt_t const & z )
 {
-	return delta_c()/sigma_of_m(mass,z);
+	flt_t nu = delta_c(z)/sigma_of_m(mass);
+	return nu;
 }
 flt_t fps_of_nu(flt_t const & nu)
 {
@@ -434,7 +412,7 @@ flt_t fec_of_nu(flt_t const & nu)
 	flt_t nu_tilde = 0.84*nu;
 	return 0.322*(1+std::pow(nu_tilde,-0.6))*fps_of_nu(nu_tilde);
 }
-custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const & z )
+inverse_volume_inverse_mass_type mass_function( mass_type const & mass, flt_t const & z )
 {
 	// Using Sheth, Mo, and Tormen (2001) formalism
 
@@ -449,7 +427,7 @@ custom_unit_type<-3,0,-1,0,0> mass_function( mass_type const & mass, flt_t const
 
 	custom_unit_type<0,0,-1,0,0> d_ln_nu_d_m = differentiate(&ln_nu_of_m,mass);
 
-	custom_unit_type<-3,0,-1,0,0> res = rho_bar(z)/mass * f_of_nu * d_ln_nu_d_m;
+	inverse_volume_inverse_mass_type res = rho_bar(z)/mass * f_of_nu * d_ln_nu_d_m;
 
 	return res;
 }
@@ -459,6 +437,13 @@ inverse_volume_type log10_mass_function( flt_t const & log10msun_mass, flt_t con
 
 	inverse_volume_type res = mass_function(mass,z)*mass*std::log(10.);
 
+	return res;
+}
+inverse_volume_type integrated_log10_mass_function( flt_t const & l10_m_lo, flt_t const & l10_m_hi,
+		flt_t const & z )
+{
+	inverse_volume_type res = l10_mass_function_integral_cache().get(l10_m_lo,z) -
+			l10_mass_function_integral_cache().get(l10_m_hi,z);
 	return res;
 }
 
@@ -475,7 +460,7 @@ flt_t cluster_richness( mass_type const & mass, flt_t const & z,
 {
 	flt_t fb_ratio = faint_bright_ratio(z,bright_abs_mag_lim,faint_app_mag_lim);
 
-	flt_t res = fb_ratio * std::log(mass/richness_mstar)/std::log(richness_beta);
+	flt_t res = fb_ratio * std::pow(mass/richness_mstar,1./richness_beta);
 
 	return res;
 }
@@ -489,20 +474,20 @@ mass_type min_cluster_mass( flt_t const & z, flt_t const & bright_abs_mag_lim,
 	return res;
 }
 
-custom_unit_type<0,0,0,-2,0> cluster_angular_density_at_z(flt_t const & z)
+inverse_square_angle_type cluster_angular_density_at_z(flt_t const & z)
 {
 	inverse_volume_type cluster_volume_density = visible_cluster_density_cache().get(z);
 
 	custom_unit_type<3,0,0,-2,0> vol_per_area = square(comoving_distance(z)/rad)*c/H(z);
 
-	custom_unit_type<0,0,0,-2,0> density_per_area = cluster_volume_density*vol_per_area;
+	inverse_square_angle_type density_per_area = cluster_volume_density*vol_per_area;
 
 	return density_per_area;
 };
 
 flt_t visible_clusters( square_angle_type const & area, flt_t const & z1, flt_t const & z2 )
 {
-	custom_unit_type<0,0,0,-2,0> area_density = visible_clusters_cache().get(z1,z2);
+	inverse_square_angle_type area_density = visible_clusters_cache().get(z1,z2);
 
 	flt_t res = area*area_density;
 
@@ -525,7 +510,7 @@ void set_up_lum_interpolators()
 
 	int_t num_points = 150;
 
-	flt_array_t lums = flt_array_t::LinSpaced(lum_func_min_abs_mag,lum_func_min_abs_mag,num_points);
+	flt_array_t lums = flt_array_t::LinSpaced(num_points,lum_func_min_abs_mag,lum_func_max_abs_mag);
 	flt_array_t lum_cdfs(num_points);
 
 	for( int_t i=0; i<num_points; ++i )
@@ -534,7 +519,7 @@ void set_up_lum_interpolators()
 	}
 
 	// Normalize the cdfs
-	lum_cdfs /= lum_cdfs[num_points-1];
+	lum_cdfs -= lum_cdfs[0];
 
 	for( int_t i=0; i<num_points; ++i )
 	{
@@ -552,21 +537,16 @@ std::tuple<interpolator,interpolator> get_mass_interpolators(flt_t const & z)
 
 	int_t num_points = 150;
 
-	flt_array_t masses = flt_array_t::LinSpaced(mass_func_l10_min,mass_func_l10_max,num_points);
+	flt_array_t masses = flt_array_t::LinSpaced(num_points,mass_func_l10_min,mass_func_l10_max);
 	flt_array_t mass_cdfs(num_points);
-
-	auto mass_function_integrand = [&z] (flt_t const & l10_m)
-	{
-		return l10_mass_function_cache().get(l10_m,z);
-	};
 
 	for( int_t i=0; i<num_points; ++i )
 	{
-		mass_cdfs[i] = value_of(integrate_Romberg(mass_function_integrand,mass_func_l10_min,masses[i]));
+		mass_cdfs[i] = value_of(integrated_log10_mass_function(masses[i],mass_func_l10_max,z));
 	}
 
 	// Normalize the cdfs
-	mass_cdfs /= mass_cdfs[num_points-1];
+	mass_cdfs -= mass_cdfs[num_points-1];
 
 	for( int_t i=0; i<num_points; ++i )
 	{
@@ -584,7 +564,10 @@ flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z )
 
 	flt_t l10_m = std::log10(m/(unitconv::Msuntokg*kg));
 
-	flt_t abs_mag = lum_cdf_interpolator(mass_cdf_inv_interpolator(l10_m));
+	flt_t rank = mass_cdf_inv_interpolator(l10_m);
+
+	l10_mass_function_integral_cache().load();
+	flt_t abs_mag = lum_cdf_interpolator(rank);
 
 	return abs_mag;
 }
@@ -607,9 +590,9 @@ flt_t get_app_mag_from_mass( mass_type const & m, flt_t const & z )
 	return app_mag;
 }
 
-mass_type get_mass_from_app_mag( flt_t const & m, flt_t const & z )
+mass_type get_mass_from_app_mag( flt_t const & app_mag, flt_t const & z )
 {
-	flt_t abs_mag = get_abs_mag_from_app_mag(abs_mag,z);
+	flt_t abs_mag = get_abs_mag_from_app_mag(app_mag,z);
 	mass_type mass = get_mass_from_abs_mag(abs_mag,z);
 
 	return mass;
@@ -621,18 +604,18 @@ mass_type get_mass_from_app_mag( flt_t const & m, flt_t const & z )
 // Galaxy visibility functions
 #if(1)
 
-mass_type min_galaxy_mass( flt_t const & z, flt_t const & faint_app_mag_lim )
+flt_t max_galaxy_abs_mag( flt_t const & z, flt_t const & faint_app_mag_lim )
 {
-	mass_type res = get_mass_from_app_mag(faint_app_mag_lim);
+	flt_t res = get_abs_mag_from_app_mag(faint_app_mag_lim,z);
 
 	return res;
 }
 
-custom_unit_type<0,0,0,-2,0> galaxy_angular_density_at_z(flt_t const & z)
+inverse_square_angle_type galaxy_angular_density_at_z(flt_t const & z)
 {
 	inverse_volume_type galaxy_volume_density = visible_galaxy_density_cache().get(z);
 
-	custom_unit_type<3,0,0,-2,0> vol_per_area = square(comoving_distance(z)/rad)*c/H(z);
+	custom_unit_type<3,0,0,-2,0> vol_per_area = comoving_volume_element(z)/square(rad);
 
 	custom_unit_type<0,0,0,-2,0> density_per_area = galaxy_volume_density*vol_per_area;
 

@@ -70,6 +70,8 @@ typedef boost::units::quantity<boost::units::si::mass> mass_type;
 
 typedef boost::units::quantity<boost::units::si::plane_angle> angle_type;
 typedef decltype(angle_type()*angle_type()) square_angle_type;
+typedef decltype(1./angle_type()) inverse_angle_type;
+typedef decltype(1./square_angle_type()) inverse_square_angle_type;
 
 typedef boost::units::quantity<boost::units::si::temperature> temperature_type;
 
@@ -80,6 +82,8 @@ typedef boost::units::quantity<boost::units::si::mass_density> density_type;
 typedef decltype(1./density_type()) inverse_density_type;
 typedef boost::units::quantity<boost::units::si::surface_density> surface_density_type;
 typedef decltype(1./surface_density_type()) inverse_surface_density_type;
+
+typedef decltype(1./volume_type()/mass_type()) inverse_volume_inverse_mass_type;
 
 // Gotta be a bit hacky here to handle zeros - When defining a dimension, passing 0 as the exponent
 // isn't treated the same as not passing it at all. We can get around that with decltype of a division
@@ -383,6 +387,8 @@ typedef flt_t mass_type;
 
 typedef flt_t angle_type;
 typedef flt_t square_angle_type;
+typedef flt_t inverse_angle_type;
+typedef flt_t inverse_square_angle_type;
 
 typedef flt_t temperature_type;
 
@@ -393,6 +399,8 @@ typedef flt_t density_type;
 typedef flt_t inverse_density_type;
 typedef flt_t surface_density_type;
 typedef flt_t inverse_surface_density_type;
+
+typedef flt_t inverse_volume_inverse_mass_type;
 
 typedef flt_t any_units_type;
 
