@@ -495,6 +495,63 @@ flt_t visible_clusters( square_angle_type const & area, flt_t const & z1, flt_t 
 	return res;
 }
 
+flt_t integrate_mean_cluster_richness_at_redshift( flt_t const & z )
+{
+	auto typical_richness = [&] (flt_t const & l10_m)
+	{
+		mass_type m = std::pow(10.,l10_m)*unitconv::Msuntokg*kg;
+		return cluster_richness(m,z);
+	};
+	auto weight = [&] (flt_t const & l10_m)
+	{
+		return log10_mass_function(l10_m,z);
+	};
+	auto weighted_typical_richness = [&] (flt_t const & l10_m)
+	{
+		return typical_richness(l10_m)*weight(l10_m);
+	};
+
+	flt_t l10_min_mass = std::log10(min_cluster_mass(z)/(unitconv::Msuntokg*kg));
+
+	auto total_weighted_richness = integrate_Romberg(weighted_typical_richness,l10_min_mass,mass_func_l10_max);
+	auto total_weight = integrate_Romberg(weight,l10_min_mass,mass_func_l10_max);
+
+	flt_t mean_richness = total_weighted_richness/total_weight;
+
+	return mean_richness;
+}
+flt_t mean_cluster_richness_at_redshift( flt_t const & z )
+{
+	return cluster_richness_at_z_cache().get(z);
+}
+
+flt_t integrate_mean_cluster_richness( flt_t const & z_min, flt_t const & z_max )
+{
+	auto richness_at_z = [&] (flt_t const & z)
+	{
+		return mean_cluster_richness_at_redshift(z);
+	};
+	auto weight = [&] (flt_t const & z)
+	{
+		return cluster_angular_density_at_z(z);
+	};
+	auto weighted_richness_at_z = [&] (flt_t const & z)
+	{
+		return richness_at_z(z)*weight(z);
+	};
+
+	auto total_weighted_richness = integrate_Romberg(weighted_richness_at_z,z_min,z_max);
+	auto total_weight = integrate_Romberg(weight,z_min,z_max);
+
+	flt_t mean_richness = total_weighted_richness/total_weight;
+
+	return mean_richness;
+}
+flt_t mean_cluster_richness( flt_t const & z_min, flt_t const & z_max )
+{
+	return cluster_richness_cache().get(z_max)-cluster_richness_cache().get(z_min);
+}
+
 #endif // end cluster visibility functions
 
 // Functions connecting mass and luminosity through abundance matching

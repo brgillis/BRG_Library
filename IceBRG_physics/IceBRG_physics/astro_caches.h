@@ -58,6 +58,10 @@ DECLARE_BRG_CACHE(visible_galaxy_density_cache,visgdens,flt_t,inverse_volume_typ
 
 DECLARE_BRG_CACHE(visible_galaxies_cache,vis_gal,flt_t,inverse_square_angle_type);
 
+DECLARE_BRG_CACHE(cluster_richness_at_z_cache,crichz,flt_t,flt_t);
+
+DECLARE_BRG_CACHE(cluster_richness_cache,crich,flt_t,flt_t);
+
 } // end namespace IceBRG
 
 #endif // __BRG_ASTRO_CACHES_H_INCLUDED__

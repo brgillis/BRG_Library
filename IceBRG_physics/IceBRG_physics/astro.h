@@ -233,6 +233,11 @@ mass_type min_cluster_mass( flt_t const & z,
 inverse_square_angle_type cluster_angular_density_at_z(flt_t const & z);
 flt_t visible_clusters( square_angle_type const & area, flt_t const & z1 = 0.1, flt_t const & z2 = 1.3 );
 
+flt_t integrate_mean_cluster_richness_at_redshift( flt_t const & z );
+flt_t integrate_mean_cluster_richness( flt_t const & z_min, flt_t const & z_max );
+flt_t mean_cluster_richness_at_redshift( flt_t const & z );
+flt_t mean_cluster_richness( flt_t const & z_min, flt_t const & z_max );
+
 #endif // Cluster visibility functions
 
 // Abundance matching functions

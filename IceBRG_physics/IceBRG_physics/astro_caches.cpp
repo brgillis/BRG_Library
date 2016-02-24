@@ -86,7 +86,7 @@ DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, inverse_volume_type,
 
 // Initialisation for IceBRG::sigma_r_cache
 DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
-		0.1*unitconv::Mpctom*m, 100.*unitconv::Mpctom*m, 0.1*unitconv::Mpctom*m
+		0.01*unitconv::Mpctom*m, 100.*unitconv::Mpctom*m, 0.01*unitconv::Mpctom*m
 		,
 			constexpr flt_t nsp = 0.958;
 			const distance_type Mpc = unitconv::Mpctom * m;
@@ -224,6 +224,29 @@ DEFINE_BRG_CACHE( visible_galaxies_cache, flt_t, inverse_square_angle_type,
 		,
 			dfa_cache().load();
 			visible_galaxy_density_cache().load();
+		,
+
+);
+
+// Initialisation for IceBRG::visible_galaxy_density_cache
+DEFINE_BRG_CACHE( cluster_richness_at_z_cache, flt_t, flt_t,
+		0.1, 1.3, 0.02
+		,
+			return integrate_mean_cluster_richness_at_redshift(in_param);
+		,
+			lum_func_integral_cache().load();
+			l10_mass_function_cache().load();
+		,
+
+);
+
+// Initialisation for IceBRG::visible_galaxies_cache
+DEFINE_BRG_CACHE( cluster_richness_cache, flt_t, flt_t,
+		0.1, 1.3, 0.02
+		,
+			return integrate_mean_cluster_richness(0.1,in_param);
+		,
+			cluster_richness_at_z_cache().load();
 		,
 
 );
