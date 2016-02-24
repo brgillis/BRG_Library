@@ -234,6 +234,7 @@ DEFINE_BRG_CACHE( cluster_richness_at_z_cache, flt_t, flt_t,
 		,
 			return integrate_mean_cluster_richness_at_redshift(in_param);
 		,
+			dfa_cache().load();
 			lum_func_integral_cache().load();
 			l10_mass_function_cache().load();
 		,
@@ -241,12 +242,15 @@ DEFINE_BRG_CACHE( cluster_richness_at_z_cache, flt_t, flt_t,
 );
 
 // Initialisation for IceBRG::visible_galaxies_cache
-DEFINE_BRG_CACHE( cluster_richness_cache, flt_t, flt_t,
+DEFINE_BRG_CACHE_2D( cluster_richness_cache, flt_t, flt_t, flt_t,
+		0.1, 1.3, 0.02,
 		0.1, 1.3, 0.02
 		,
-			return integrate_mean_cluster_richness(0.1,in_param);
+			return integrate_mean_cluster_richness(in_param_1,in_param_2);
 		,
+			dfa_cache().load();
 			cluster_richness_at_z_cache().load();
+			visible_cluster_density_cache().load();
 		,
 
 );

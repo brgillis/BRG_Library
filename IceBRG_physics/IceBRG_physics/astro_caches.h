@@ -60,7 +60,7 @@ DECLARE_BRG_CACHE(visible_galaxies_cache,vis_gal,flt_t,inverse_square_angle_type
 
 DECLARE_BRG_CACHE(cluster_richness_at_z_cache,crichz,flt_t,flt_t);
 
-DECLARE_BRG_CACHE(cluster_richness_cache,crich,flt_t,flt_t);
+DECLARE_BRG_CACHE_2D(cluster_richness_cache,crich,flt_t,flt_t,flt_t);
 
 } // end namespace IceBRG
 

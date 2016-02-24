@@ -527,6 +527,10 @@ flt_t mean_cluster_richness_at_redshift( flt_t const & z )
 
 flt_t integrate_mean_cluster_richness( flt_t const & z_min, flt_t const & z_max )
 {
+	if(z_min==z_max)
+	{
+		return mean_cluster_richness_at_redshift(z_min);
+	}
 	auto richness_at_z = [&] (flt_t const & z)
 	{
 		return mean_cluster_richness_at_redshift(z);
@@ -549,7 +553,7 @@ flt_t integrate_mean_cluster_richness( flt_t const & z_min, flt_t const & z_max 
 }
 flt_t mean_cluster_richness( flt_t const & z_min, flt_t const & z_max )
 {
-	return cluster_richness_cache().get(z_max)-cluster_richness_cache().get(z_min);
+	return cluster_richness_cache().get(z_min,z_max);
 }
 
 #endif // end cluster visibility functions

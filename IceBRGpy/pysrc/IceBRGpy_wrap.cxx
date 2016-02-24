@@ -9178,6 +9178,124 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_integrate_mean_cluster_richness_at_redshift(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:integrate_mean_cluster_richness_at_redshift",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "integrate_mean_cluster_richness_at_redshift" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::integrate_mean_cluster_richness_at_redshift((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_integrate_mean_cluster_richness(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:integrate_mean_cluster_richness",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "integrate_mean_cluster_richness" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "integrate_mean_cluster_richness" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::integrate_mean_cluster_richness((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mean_cluster_richness_at_redshift(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mean_cluster_richness_at_redshift",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "mean_cluster_richness_at_redshift" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::mean_cluster_richness_at_redshift((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mean_cluster_richness(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mean_cluster_richness",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "mean_cluster_richness" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mean_cluster_richness" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::mean_cluster_richness((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_get_abs_mag_from_mass(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   mass_type *arg1 = 0 ;
@@ -9679,6 +9797,10 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"min_cluster_mass", _wrap_min_cluster_mass, METH_VARARGS, NULL},
 	 { (char *)"cluster_angular_density_at_z", _wrap_cluster_angular_density_at_z, METH_VARARGS, NULL},
 	 { (char *)"visible_clusters", _wrap_visible_clusters, METH_VARARGS, NULL},
+	 { (char *)"integrate_mean_cluster_richness_at_redshift", _wrap_integrate_mean_cluster_richness_at_redshift, METH_VARARGS, NULL},
+	 { (char *)"integrate_mean_cluster_richness", _wrap_integrate_mean_cluster_richness, METH_VARARGS, NULL},
+	 { (char *)"mean_cluster_richness_at_redshift", _wrap_mean_cluster_richness_at_redshift, METH_VARARGS, NULL},
+	 { (char *)"mean_cluster_richness", _wrap_mean_cluster_richness, METH_VARARGS, NULL},
 	 { (char *)"get_abs_mag_from_mass", _wrap_get_abs_mag_from_mass, METH_VARARGS, NULL},
 	 { (char *)"get_mass_from_abs_mag", _wrap_get_mass_from_abs_mag, METH_VARARGS, NULL},
 	 { (char *)"get_app_mag_from_mass", _wrap_get_app_mag_from_mass, METH_VARARGS, NULL},

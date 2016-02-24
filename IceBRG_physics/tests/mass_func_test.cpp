@@ -125,6 +125,16 @@ BOOST_AUTO_TEST_CASE( vis_galaxies_test )
 	BOOST_CHECK_LT(n,500);
 }
 
+BOOST_AUTO_TEST_CASE( cluster_richness_test )
+{
+	flt_t z1 = 0.2;
+	flt_t z2 = 0.23;
+
+	flt_t mean_richness = mean_cluster_richness(z1,z2);
+
+	BOOST_CHECK_GT(mean_richness,0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 
