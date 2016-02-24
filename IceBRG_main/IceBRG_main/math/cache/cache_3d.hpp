@@ -69,6 +69,8 @@ private: \
 	static IceBRG::str_t _file_name_; \
 	static IceBRG::int_t _version_number_; \
  \
+    static IceBRG::short_int_t _num_alive_; \
+ \
 	static bool _loaded_, _initialised_; \
  \
 	friend class IceBRG::brg_cache_3d<class_name,Tin1,Tin2,Tin3,Tout>; \
@@ -84,6 +86,8 @@ protected: \
 	Tout _calculate( Tin1 const & in_param_1, Tin2 const & in_param_2, Tin3 const & in_param_3 ) const; \
  \
 	void _load_cache_dependencies() const; \
+ \
+	void _unload_cache_dependencies() const; \
 }; \
 
 #define DEFINE_BRG_CACHE_3D(class_name,Tin1,Tin2,Tin3,Tout, \
@@ -91,7 +95,8 @@ protected: \
 						    init_min_2,init_max_2,init_step_2, \
 						    init_min_3,init_max_3,init_step_3, \
 						    calc_method, \
-                            dependency_loading) \
+                            dependency_loading, \
+                            dependency_unloading) \
 	Tin1 class_name::_min_1_ = init_min_1; \
 	Tin1 class_name::_max_1_ = init_max_1; \
 	Tin1 class_name::_step_1_ = init_step_1; \
@@ -111,7 +116,9 @@ protected: \
 	bool class_name::_initialised_ = false; \
 	 \
 	IceBRG::str_t class_name::_file_name_ = ""; \
-	IceBRG::int_t IceBRG::class_name::_version_number_ = 2; \
+	IceBRG::int_t IceBRG::class_name::_version_number_ = 3; \
+	 \
+	IceBRG::short_int_t IceBRG::class_name::_num_alive_ = 0; \
 	 \
 	IceBRG::array_t<IceBRG::array_t<IceBRG::array_t<Tout>>> class_name::_results_; \
 	 \
@@ -123,6 +130,10 @@ protected: \
 	void class_name::_load_cache_dependencies() const \
 	{ \
 		dependency_loading \
+	} \
+	void class_name::_load_cache_dependencies() const \
+	{ \
+		dependency_unloading \
 	}
 
 namespace IceBRG
@@ -169,10 +180,16 @@ private:
 			SPCP(name)->_resolution_2_ = (ssize_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
 			SPCP(name)->_resolution_3_ = (ssize_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
 			SPCP(name)->_file_name_ = SPCP(name)->_name_base() + "_cache.bin";
-			SPCP(name)->_version_number_ = 2; // This should be changed when there are changes to this code
+			SPCP(name)->_version_number_ = 3; // This should be changed when there are changes to this code
+			SPCP(name)->_num_alive_ = 0;
 
 			SPCP(name)->_initialised_ = true;
 		}
+
+		#ifdef _OPENMP
+		#pragma omp atomic
+		#endif
+		++(SPCP(name)->_num_alive_);
 	}
 	bool _critical_load() const
 	{
@@ -384,6 +401,9 @@ private:
 		if(bad_result) throw std::runtime_error("One or more calculations in generating cache " + SPCP(name)->_file_name_ + " failed.");
 		SPCP(name)->_loaded_ = true;
 
+		// Unload cache dependencies now
+		SPCP(name)->_unload_cache_dependencies();
+
 		// Print a message that we've finished generating the cache
 		handle_notification("Finished generating " + SPCP(name)->_file_name_ + "!");
 	}
@@ -507,7 +527,6 @@ public:
 	 */
 	void set_file_name( str_t new_name )
 	{
-		if(!SPCP(name)->_initialised_) SPP(name)->_init();
 		SPP(name)->_file_name_ = std::move(new_name);
 		if ( SPCP(name)->_loaded_ )
 		{
@@ -534,8 +553,6 @@ public:
 	         const flt_t & new_min_2, const flt_t & new_max_2, const flt_t & new_step_2,
  	         const flt_t & new_min_3, const flt_t & new_max_3, const flt_t & new_step_3)
 	{
-		SPP(name)->_init();
-
 		SPP(name)->_min_1_ = new_min_1;
 		SPP(name)->_max_1_ = new_max_1;
 		SPP(name)->_step_1_ = new_step_1;
@@ -558,9 +575,6 @@ public:
 	template<typename otype>
 	void print( otype & out) const
 	{
-
-		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
-
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
@@ -629,8 +643,6 @@ public:
 		decltype(x_1*x_2*x_3) total_weight;
 		decltype(result*total_weight) weighted_result;
 
-		if(!SPCP(name)->_initialised_) SPCP(name)->_init();
-
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
@@ -691,21 +703,30 @@ public:
 	/// Reload the cache, calculating if necessary.
 	void reload() const
 	{
-		SPCP(name)->_unload();
+		SPCP(name)->unload();
 		SPCP(name)->_load();
 	}
 
 	/// Unload the cache
 	void unload() const
 	{
-		SPCP(name)->_unload();
+		// Only safe to unload if this is the only one alive - another might be calculating
+		if(SPCP(name)->_num_alive_!=1) return;
+
+		#ifdef _OPENMP
+		#pragma omp critical(unload_brg_cache_3d)
+		#endif
+		{
+			if(SPCP(name)->_num_alive_!=1) return;
+			SPCP(name)->_unload();
+		}
 	}
 
 	/// Recalculate function. Call if you want to overwrite a cache when something's changed in the code
 	/// (for instance, the _calculate() function has been altered)
 	void recalc() const
 	{
-		SPCP(name)->_unload();
+		SPCP(name)->unload();
 		SPCP(name)->_calc();
 		SPCP(name)->_output();
 	}
@@ -713,11 +734,21 @@ public:
 	// Constructor
 	brg_cache_3d()
 	{
+		SPP(name)->_init();
+
+		#ifdef _OPENMP
+		#pragma omp atomic
+		#endif
+		++(SPCP(name)->_num_alive_);
 	}
 
 	// Deconstructor
 	virtual ~brg_cache_3d()
 	{
+		#ifdef _OPENMP
+		#pragma omp atomic
+		#endif
+		--(SPCP(name)->_num_alive_);
 	}
 
 #endif // Public methods
