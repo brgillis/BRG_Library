@@ -361,7 +361,7 @@ private:
 		// Load any caches we depend, in case this might get calculated there
 		SPCP(name)->_load_cache_dependencies();
 
-		if(!SPCP(name)->_loaded_) SPCP(name)->_calc;
+		if(!SPCP(name)->_loaded_) SPCP(name)->_calc();
 		return;
 	}
 	void _calc() const

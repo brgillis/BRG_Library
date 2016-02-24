@@ -39,8 +39,13 @@ namespace IceBRG {
 
 // Initialise the cache
 DEFINE_BRG_CACHE( mag_calibration_cache,IceBRG::flt_t,IceBRG::flt_t,
-				  IceBRG::mag_z_min,IceBRG::mag_z_max,IceBRG::mag_z_step,
-				  return mag_calibration_loader::get(in_param);,);
+				  IceBRG::mag_z_min,IceBRG::mag_z_max,IceBRG::mag_z_step
+				  ,
+				  	  return mag_calibration_loader::get(in_param);
+				  ,
+
+				  ,
+);
 
 } // namespace IceBRG
 

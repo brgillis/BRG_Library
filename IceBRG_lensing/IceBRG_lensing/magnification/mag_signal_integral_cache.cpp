@@ -48,6 +48,8 @@ DEFINE_BRG_CACHE( mag_signal_integral_cache,
 				0.000001);
 		,
 			expected_count_cache().load();
-		);
+		,
+
+);
 
 } // namespace IceBRG

@@ -51,6 +51,7 @@ DEFINE_BRG_CACHE_2D(shifting_cache,
 			return safe_sqrt(shifting_loader().get(0,z)-shifting_loader().get(t,z));
 		,
 
+		,
 		);
 
 } // namespace IceBRG

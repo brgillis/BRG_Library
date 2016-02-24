@@ -52,7 +52,9 @@ DEFINE_BRG_CACHE_3D( tNFW_sig_cache,
 			return profile.Delta_Sigma( R );
 		,
 
-		);
+		,
+
+);
 
 // Initialisation for IceBRG::tNFW_offset_sig_cache
 DEFINE_BRG_CACHE_4D( tNFW_offset_sig_cache,
@@ -70,7 +72,9 @@ DEFINE_BRG_CACHE_4D( tNFW_offset_sig_cache,
 			return profile.offset_Delta_Sigma( R, offset_R );
 		,
 			tNFW_sig_cache().load();
-		);
+		,
+
+);
 
 // Initialisation for IceBRG::tNFW_group_sig_cache
 DEFINE_BRG_CACHE_4D( tNFW_group_sig_cache,
@@ -88,7 +92,9 @@ DEFINE_BRG_CACHE_4D( tNFW_group_sig_cache,
 			return profile.semiquick_group_Delta_Sigma( R, group_c );
 		,
 			tNFW_offset_sig_cache().load();
-		);
+		,
+
+);
 
 // Initialisation for IceBRG::tNFW_shifted_sig_cache
 DEFINE_BRG_CACHE_3D( tNFW_shifted_sig_cache,
@@ -104,7 +110,9 @@ DEFINE_BRG_CACHE_3D( tNFW_shifted_sig_cache,
 			return profile.semiquick_shifted_Delta_Sigma( R );
 		,
 			tNFW_offset_sig_cache().load();
-		);
+		,
+			tNFW_offset_sig_cache().unload();
+);
 
 // Initialisation for IceBRG::tNFW_shifted_sig_no_enh_cache
 DEFINE_BRG_CACHE_3D( tNFW_shifted_no_enh_sig_cache,
@@ -120,6 +128,8 @@ DEFINE_BRG_CACHE_3D( tNFW_shifted_no_enh_sig_cache,
 			return profile.semiquick_shifted_no_enh_Delta_Sigma( R );
 		,
 			tNFW_offset_sig_cache().load();
+		,
+			tNFW_offset_sig_cache().unload();
 		);
 
 // Initialisation for IceBRG::tNFW_Sigma_cache
@@ -134,6 +144,8 @@ DEFINE_BRG_CACHE_3D( tNFW_Sigma_cache,
 			const auto R = units_cast<distance_type>(std::exp(in_param_3));
 			IceBRG::lensing_tNFW_profile profile(mass,z);
 			return profile.proj_dens( R );
+		,
+
 		,
 
 		);
@@ -154,6 +166,8 @@ DEFINE_BRG_CACHE_4D( tNFW_offset_Sigma_cache,
 			return profile.offset_Sigma( R, offset_R );
 		,
 			tNFW_Sigma_cache().load();
+		,
+
 		);
 
 // Initialisation for IceBRG::tNFW_group_Sigma_cache
@@ -172,6 +186,8 @@ DEFINE_BRG_CACHE_4D( tNFW_group_Sigma_cache,
 			return profile.semiquick_group_Sigma( R, group_c );
 		,
 			tNFW_offset_Sigma_cache().load();
+		,
+			tNFW_offset_Sigma_cache().unload();
 		);
 
 } // namespace IceBRG

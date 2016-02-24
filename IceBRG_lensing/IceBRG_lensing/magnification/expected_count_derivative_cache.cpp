@@ -46,6 +46,8 @@ DEFINE_BRG_CACHE_2D( expected_count_derivative_cache,
 			return expected_count_loader::get_derivative(m,z_min);
 		,
 			expected_count_loader::get_derivative(0,0);
+		,
+
 );
 
 } // namespace IceBRG

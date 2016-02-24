@@ -47,6 +47,8 @@ DEFINE_BRG_CACHE( mag_weight_integral_cache,
 			return integrate_Romberg(func,mag_m_min,mag_m_max,
 					0.000001);
 		,
-			expected_count_cache().load(););
+			expected_count_cache().load();
+		,
+);
 
 } // namespace IceBRG

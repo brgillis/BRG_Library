@@ -32,6 +32,7 @@
 #include "IceBRG_lensing/shifting/shifting_cache.h"
 #include "IceBRG_lensing/two_halo_term_functions.hpp"
 
+#include "IceBRG_physics/astro.h"
 #include "IceBRG_physics/density_profile/density_profile.h"
 
 // TODO: Update lensing tNFW_profile along with updates here
@@ -42,8 +43,6 @@
 #define SPCP(name) static_cast<const name*>(this)
 
 namespace IceBRG {
-
-constexpr flt_t delta_c = 1.686;
 
 template<typename name>
 class lensing_profile_extension {
