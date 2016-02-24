@@ -47,6 +47,8 @@ DEFINE_BRG_CACHE( dfa_cache, flt_t, distance_over_angle_type,
 			return integrate_add( 0, in_param )/radian;
 		,
 
+		,
+
 );
 
 // Initialisation for IceBRG::add_cache
@@ -55,12 +57,16 @@ DEFINE_BRG_CACHE_2D( add_cache, flt_t, flt_t, distance_type,
 			return IceBRG::integrate_add(in_param_1,in_param_2);
 		,
 
+		,
+
 );
 
 // Initialisation for IceBRG::tfa_cache
 DEFINE_BRG_CACHE( tfa_cache, flt_t, time_type, 0.001, 1.02, 0.001
 		,
 			return -integrate_ltd( 0, zfa( in_param ) ) / c;
+		,
+
 		,
 
 );
@@ -74,11 +80,13 @@ DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, inverse_volume_type,
 			return res;
 		,
 
+		,
+
 );
 
 // Initialisation for IceBRG::sigma_r_cache
 DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
-		0.01*unitconv::Mpctom*m, 100.*unitconv::Mpctom*m, 0.01*unitconv::Mpctom*m
+		0.1*unitconv::Mpctom*m, 100.*unitconv::Mpctom*m, 0.1*unitconv::Mpctom*m
 		,
 			constexpr flt_t nsp = 0.958;
 			const distance_type Mpc = unitconv::Mpctom * m;
@@ -107,6 +115,8 @@ DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
 			return res;
 		,
 
+		,
+
 );
 
 // Initialisation for IceBRG::l10_mass_function_cache
@@ -117,6 +127,10 @@ DEFINE_BRG_CACHE_2D( l10_mass_function_cache, flt_t, flt_t, inverse_volume_type,
 			return log10_mass_function( in_param_1, in_param_2 );
 		,
 			sigma_r_cache().load();
+			tfa_cache().load();
+		,
+			sigma_r_cache().unload();
+			tfa_cache().unload();
 );
 
 // Initialisation for IceBRG::l10_mass_function_integral_cache
@@ -131,8 +145,10 @@ DEFINE_BRG_CACHE_2D( l10_mass_function_integral_cache, flt_t, flt_t, inverse_vol
 
 			return integrate_Romberg(mass_function_integrand,in_param_1,mass_func_l10_max);
 		,
-			sigma_r_cache().load();
 			l10_mass_function_cache().load();
+		,
+			l10_mass_function_cache().unload();
+
 );
 
 // Initialisation for IceBRG::visible_cluster_density_cache
@@ -156,11 +172,11 @@ DEFINE_BRG_CACHE( visible_cluster_density_cache, flt_t, inverse_volume_type,
 
 			return res;
 		,
-			dfa_cache().load();
-			sigma_r_cache().load();
-			l10_mass_function_cache().load();
 			l10_mass_function_integral_cache().load();
 			lum_func_integral_cache().load();
+		,
+			l10_mass_function_integral_cache().unload();
+
 );
 
 // Initialisation for IceBRG::visible_clusters_cache
@@ -174,11 +190,9 @@ DEFINE_BRG_CACHE( visible_clusters_cache, flt_t, inverse_square_angle_type,
 			return res;
 		,
 			dfa_cache().load();
-			sigma_r_cache().load();
-			l10_mass_function_cache().load();
-			l10_mass_function_integral_cache().load();
-			lum_func_integral_cache().load();
 			visible_cluster_density_cache().load();
+		,
+
 );
 
 // Initialisation for IceBRG::visible_galaxy_density_cache
@@ -193,9 +207,9 @@ DEFINE_BRG_CACHE( visible_galaxy_density_cache, flt_t, inverse_volume_type,
 
 			return res;
 		,
-			dfa_cache().load();
-			sigma_r_cache().load();
 			lum_func_integral_cache().load();
+		,
+
 );
 
 // Initialisation for IceBRG::visible_galaxies_cache
@@ -209,9 +223,9 @@ DEFINE_BRG_CACHE( visible_galaxies_cache, flt_t, inverse_square_angle_type,
 			return res;
 		,
 			dfa_cache().load();
-			sigma_r_cache().load();
-			lum_func_integral_cache().load();
 			visible_galaxy_density_cache().load();
+		,
+
 );
 
 } // namespace IceBRG

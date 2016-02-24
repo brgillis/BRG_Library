@@ -140,7 +140,7 @@ protected: \
 	{ \
 		dependency_loading \
 	} \
-	void class_name::_load_cache_dependencies() const \
+	void class_name::_unload_cache_dependencies() const \
 	{ \
 		dependency_unloading \
 	}
@@ -206,6 +206,9 @@ private:
 	}
 	bool _critical_load() const
 	{
+		// Load any caches we depend upon before the critical section
+		SPCP(name)->_load_cache_dependencies();
+
 		bool bad_result=false;
 		#ifdef _OPENMP
 		#pragma omp critical(load_brg_cache_4d)
@@ -230,8 +233,6 @@ private:
 		bool need_to_calc = false;
 		int_t loop_counter = 0;
 
-		_init();
-
 		if ( SPCP(name)->_loaded_ )
 			return;
 
@@ -253,8 +254,12 @@ private:
 			catch(const std::exception &e)
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc();
+			}
+			if(need_to_calc)
+			{
+				SPCP(name)->_calc_if_necessary();
 				SPCP(name)->_output();
+				SPCP(name)->_unload();
 				continue;
 			}
 
@@ -270,7 +275,7 @@ private:
 					(file_version != SPCP(name)->_version_number_) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc();
+				SPCP(name)->_calc_if_necessary();
 				SPCP(name)->_output();
 				continue;
 			}
@@ -360,7 +365,7 @@ private:
 					|| (!in_file) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc();
+				SPCP(name)->_calc_if_necessary();
 				SPCP(name)->_output();
 				continue;
 			}
@@ -377,6 +382,16 @@ private:
 		SPCP(name)->_loaded_ = false;
 		set_zero(SPCP(name)->_results_);
 	}
+	void _calc_if_necessary() const
+	{
+		if(SPCP(name)->_loaded_) return;
+
+		// Load any caches we depend, in case this might get calculated there
+		SPCP(name)->_load_cache_dependencies();
+
+		if(!SPCP(name)->_loaded_) SPCP(name)->_calc;
+		return;
+	}
 	void _calc() const
 	{
 
@@ -388,6 +403,9 @@ private:
 		{
 			throw std::runtime_error("Bad range passed to brg_cache_4d::_calc() for " + SPCP(name)->_name_base() + "\n");
 		}
+
+		// Load any caches we depend upon before the critical section
+		SPCP(name)->_load_cache_dependencies();
 
 		// Print a message that we're generating the cache
 		handle_notification("Generating " + SPCP(name)->_file_name_ + ". This may take some time.");
@@ -450,7 +468,7 @@ private:
 
 		if ( !SPCP(name)->_loaded_ )
 		{
-			SPCP(name)->_calc();
+			SPCP(name)->_calc_if_necessary();
 		}
 
 		open_bin_file_output( out_file, SPCP(name)->_file_name_ );
@@ -620,7 +638,8 @@ public:
 		SPP(name)->_step_4_ = new_step_4;
 
 		SPCP(name)->_unload();
-		SPCP(name)->_calc();
+		SPCP(name)->_calc_if_necessary();
+		SPCP(name)->_output();
 
 	} // void set_range()
 
@@ -711,9 +730,6 @@ public:
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
-			// Load any caches we depend upon before the critical section
-			SPCP(name)->_load_cache_dependencies();
-
 			if ( SPCP(name)->_critical_load() )
 			{
 				throw std::runtime_error("ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache_4d::get()\n");
@@ -818,8 +834,8 @@ public:
 		#pragma omp critical(unload_brg_cache_4d)
 		#endif
 		{
-			if(SPCP(name)->_num_alive_!=1) return;
-			SPCP(name)->_unload();
+			if(SPCP(name)->_num_alive_==1)
+				SPCP(name)->_unload();
 		}
 	}
 
@@ -828,7 +844,7 @@ public:
 	void recalc() const
 	{
 		SPCP(name)->unload();
-		SPCP(name)->_calc();
+		SPCP(name)->_calc_if_necessary();
 		SPCP(name)->_output();
 	}
 

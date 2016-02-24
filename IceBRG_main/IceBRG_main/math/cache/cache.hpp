@@ -158,7 +158,7 @@ private:
 		// We check for initialisation twice due to the critical section here.
 		// It's expensive to enter, and we don't want to do anything inside it more than once,
 		// so we check whether we need to both once outside it and once inside it.
-		if(SPCP(name)->_initialised_)
+		if(SPCP(name)->_initialised_) return;
 
 		#ifdef _OPENMP
 		#pragma omp critical(init_brg_cache)
@@ -175,6 +175,9 @@ private:
 	}
 	bool _critical_load() const
 	{
+		// Load any caches we depend upon before the critical section
+		SPCP(name)->_load_cache_dependencies();
+
 		bool bad_result = false;
 		#ifdef _OPENMP
 		#pragma omp critical(load_brg_cache)
@@ -199,8 +202,6 @@ private:
 		bool need_to_calc = false;
 		int_t loop_counter = 0;
 
-		_init();
-
 		if ( SPCP(name)->_loaded_ )
 			return;
 
@@ -208,7 +209,7 @@ private:
 		{
 			if ( loop_counter >= 2 )
 			{
-				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in IceBRG::brg_cache_2.\n");
+				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in IceBRG::brg_cache_2d.\n");
 			}
 			else
 			{
@@ -223,7 +224,10 @@ private:
 			catch(const std::exception &e)
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc();
+			}
+			if(need_to_calc)
+			{
+				SPCP(name)->_calc_if_necessary();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -241,7 +245,7 @@ private:
 					(file_version != SPCP(name)->_version_number_) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc();
+				SPCP(name)->_calc_if_necessary();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -281,7 +285,7 @@ private:
 			if ( (i_1 != SPCP(name)->_resolution_1_) || (!in_file) )
 			{
 				need_to_calc = true;
-				SPCP(name)->_calc();
+				SPCP(name)->_calc_if_necessary();
 				SPCP(name)->_output();
 				SPCP(name)->_unload();
 				continue;
@@ -307,6 +311,16 @@ private:
 	{
 		SPCP(name)->_loaded_ = false;
 		set_zero(SPCP(name)->_results_);
+	}
+	void _calc_if_necessary() const
+	{
+		if(SPCP(name)->_loaded_) return;
+
+		// Load any caches we depend, in case this might get calculated there
+		SPCP(name)->_load_cache_dependencies();
+
+		if(!SPCP(name)->_loaded_) SPCP(name)->_calc();
+		return;
 	}
 	void _calc() const
 	{
@@ -375,7 +389,7 @@ private:
 
 		if ( !SPCP(name)->_loaded_ )
 		{
-			SPCP(name)->_calc();
+			SPCP(name)->_calc_if_necessary();
 		}
 
 		open_bin_file_output( out_file, SPCP(name)->_file_name_ );
@@ -477,7 +491,8 @@ public:
 		SPP(name)->_step_1_ = new_step;
 
 		SPCP(name)->_unload();
-		SPCP(name)->_calc();
+		SPCP(name)->_calc_if_necessary();
+		SPCP(name)->_output();
 	} // void set_range()
 
 	/**
@@ -532,9 +547,6 @@ public:
 		// Load if necessary
 		if ( !SPCP(name)->_loaded_ )
 		{
-			// Load any caches we depend upon before the critical section
-			SPCP(name)->_load_cache_dependencies();
-
 			if ( SPCP(name)->_critical_load() )
 			{
 				throw std::runtime_error("ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache::get()\n");
@@ -644,8 +656,8 @@ public:
 		#pragma omp critical(unload_brg_cache_1d)
 		#endif
 		{
-			if(SPCP(name)->_num_alive_!=1) return;
-			SPCP(name)->_unload();
+			if(SPCP(name)->_num_alive_==1)
+				SPCP(name)->_unload();
 		}
 	}
 
@@ -654,7 +666,6 @@ public:
 	void recalc() const
 	{
 		SPCP(name)->unload();
-		SPCP(name)->_calc();
 		SPCP(name)->_output();
 	}
 
