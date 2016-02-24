@@ -243,7 +243,7 @@ IceBRG::distance_type IceBRG::tNFW_profile::rs() const
 }
 IceBRG::distance_type IceBRG::tNFW_profile::rt() const
 {
-	return rvir0() / _tau_;
+	return rvir0() * _tau_/_c_;
 }
 
 IceBRG::density_type IceBRG::tNFW_profile::dens( const distance_type & r ) const

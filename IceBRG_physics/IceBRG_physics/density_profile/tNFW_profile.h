@@ -78,10 +78,9 @@ protected:
 	}
 
 	// Functions relating to tNFW profiles
-	flt_t _cfm( const mass_type mass_type, const flt_t & z=0 ) const // Concentration from mass_type relationship, from Neto
+	flt_t _cfm( const mass_type mass, const flt_t & z=0 ) const // Concentration from mass relationship, from Neto
 	{
-		//return 4.67 * std::pow( mass_type * unitconv::kgtottMsun / ( 1e4 ), -0.11 );
-		return 4.67 * std::pow( mass_type / ( 1e14 * unitconv::kgtoMsun * IceBRG::kilogram ), -0.11 );
+		return 4.67 * std::pow( mass / ( 1e14 * unitconv::Msuntokg * kg ), -0.11 );
 	}
 	flt_t _cfm() const // Concentration from mass_type relationship, from Neto
 	{

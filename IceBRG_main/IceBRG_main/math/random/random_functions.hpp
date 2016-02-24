@@ -206,44 +206,44 @@ T Pois_rand( T_in && lambda=1., T_gen & gen=rng )
 	return std::poisson_distribution<T>(std::forward<T_in>(lambda))(gen);
 } // T Pois_rand( T_in && lambda=1., T_gen & gen=rng )
 
-template< typename T=flt_t, typename T_gen=decltype(rng) >
-T rand_from_cdf_arrays( array_t<T> const & xvals, array_t<T> cvals, T_gen & gen = rng )
+template< typename T1=flt_t, typename T2=flt_t, typename T_gen=decltype(rng) >
+T1 rand_from_cdf_arrays( array_t<T1> const & xvals, array_t<T2> cvals, T_gen & gen = rng )
 {
 	assert(xvals.size()>=2 and xvals.size()==cvals.size());
 
 	// Quietly normalize the cvals
 	cvals -= cvals[0];
 
-	T cmax = cvals[cvals.size()-1];
+	T2 cmax = cvals[cvals.size()-1];
 
-	if(cmax<=0)
+	if(value_of(cmax)<=0)
 	{
 		throw std::runtime_error("Invalid values used for generating random value: Final CDF value is <= 0.");
 	}
 
-	cvals /= cmax;
+	array_t<flt_t> normed_cvals = cvals / cmax;
 
 	// Generate a random value
-	T const r = drand(0.,1.,rng);
+	flt_t const r = drand(0.,1.,rng);
 
 	// Get the index on the cdf where this lies
-	array_t<T> diffs = (cvals-r).abs();
+	array_t<flt_t> diffs = (normed_cvals-r).abs();
 	int_t i,j;
 	diffs.minCoeff(&i,&j);
 
 	// If the value at the index is below r, or the index is zero, move up one index
-	while(((cvals[i]<r) and (i<cvals.size())) or (i==0))
+	while(((normed_cvals[i]<r) and (i<normed_cvals.size())) or (i==0))
 	{
 		++i;
 	}
 
 	// Interpolate to estimate the value
-	T const clow = cvals[i - 1];
-	T const chi = cvals[i];
-	T const xlow = xvals[i - 1];
-	T const xhi = xvals[i];
+	flt_t const clow = normed_cvals[i - 1];
+	flt_t const chi = normed_cvals[i];
+	T1 const xlow = xvals[i - 1];
+	T1 const xhi = xvals[i];
 
-	T res = xlow + (xhi - xlow) / (chi - clow) * (r - clow);
+	T1 res = xlow + (xhi - xlow) / (chi - clow) * (r - clow);
 
 	// Check for edge cases
 	if( res < xvals[0] ) res = xvals[0];
@@ -257,9 +257,11 @@ template< typename Tf, typename T=flt_t, typename T_gen=decltype(rng) >
 T rand_from_cdf( Tf const & f, int_t const & N_samples=1000,
 		T const & xlow=-5., T const & xhigh=5., T_gen & gen = rng )
 {
+	typedef decltype(f(xlow)) To;
+
 	// Get an array of x points and cdf values at those points
 	array_t<T> xvals = array_t<T>::LinSpaced(N_samples, xlow, xhigh);
-	array_t<T> cvals = xvals.unaryExpr(f);
+	array_t<To> cvals = xvals.unaryExpr(f);
 
 	T res = rand_from_cdf_arrays( xvals, cvals, gen );
 
@@ -270,18 +272,24 @@ template< typename Tf, typename T=flt_t, typename T_gen=decltype(rng) >
 T rand_from_pdf( Tf const & f, int_t const & N_samples=1000,
 		T const & xlow=-5., T const & xhigh=5., T_gen & gen = rng )
 {
+	auto unitless_f = [&] (flt_t const & x)
+	{
+		return value_of(f(units_cast<T>(x)));
+	};
+
 	// Get an array of x points and pdf values at those points
-	array_t<T> xvals = array_t<T>::LinSpaced(N_samples, xlow, xhigh);
-	array_t<T> pvals = xvals.unaryExpr(f);
+	array_t<flt_t> unitless_xvals = array_t<flt_t>::LinSpaced(N_samples, value_of(xlow), value_of(xhigh));
+	array_t<flt_t> unitless_pvals = unitless_xvals.unaryExpr(unitless_f);
 
 	// Get (unnormalized) cdf values
-	array_t<T> cvals(pvals.size());
+	array_t<flt_t> cvals(N_samples);
 
-	std::partial_sum(pvals.data(), pvals.data()+pvals.size(), cvals.data(), std::plus<T>());
+	std::partial_sum(unitless_pvals.data(), unitless_pvals.data()+N_samples,
+			cvals.data(), std::plus<flt_t>());
 
-	T res = rand_from_cdf_arrays( xvals, cvals, gen );
+	flt_t res = rand_from_cdf_arrays( unitless_xvals, cvals, gen );
 
-	return res;
+	return units_cast<T>(res);
 }
 
 #endif // End global function declarations

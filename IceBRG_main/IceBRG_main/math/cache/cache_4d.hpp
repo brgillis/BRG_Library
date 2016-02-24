@@ -436,7 +436,7 @@ private:
 					for( ssize_t i_4 = 0; i_4 < SPCP(name)->_resolution_4_; ++i_4)
 					{
 						Tin4 x_4 = SPCP(name)->_min_4_ + i_4*SPCP(name)->_step_4_;
-						Tout result;
+						Tout result(0);
 						try
 						{
 							result = SPCP(name)->_calculate(x_1, x_2, x_3, x_4);

@@ -402,7 +402,7 @@ private:
 				for( ssize_t i_3 = 0; i_3 < SPCP(name)->_resolution_3_; ++i_3)
 				{
 					Tin3 x_3 = SPCP(name)->_min_3_ + i_3*SPCP(name)->_step_3_;
-					Tout result;
+					Tout result(0);
 					try
 					{
 						result = SPCP(name)->_calculate(x_1, x_2, x_3);
@@ -697,7 +697,6 @@ public:
 		weighted_result += SPCP(name)->_results_[xi_1+1][xi_2+1][xi_3] * (x_1-xlo_1)*(x_2-xlo_2)*(xhi_3-x_3);
 
 
-		SPCP(name)->_calc_if_necessary();
 		weighted_result += SPCP(name)->_results_[xi_1][xi_2][xi_3+1] * (xhi_1-x_1)*(xhi_2-x_2)*(x_3-xlo_3);
 		weighted_result += SPCP(name)->_results_[xi_1+1][xi_2][xi_3+1] * (x_1-xlo_1)*(xhi_2-x_2)*(x_3-xlo_3);
 
