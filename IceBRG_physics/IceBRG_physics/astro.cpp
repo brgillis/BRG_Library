@@ -487,7 +487,8 @@ inverse_square_angle_type cluster_angular_density_at_z(flt_t const & z)
 
 flt_t visible_clusters( square_angle_type const & area, flt_t const & z1, flt_t const & z2 )
 {
-	inverse_square_angle_type area_density = visible_clusters_cache().get(z1,z2);
+	inverse_square_angle_type area_density = visible_clusters_cache().get(z2) -
+			visible_clusters_cache().get(z1);
 
 	flt_t res = area*area_density;
 
@@ -566,7 +567,6 @@ flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z )
 
 	flt_t rank = mass_cdf_inv_interpolator(l10_m);
 
-	l10_mass_function_integral_cache().load();
 	flt_t abs_mag = lum_cdf_interpolator(rank);
 
 	return abs_mag;
@@ -575,7 +575,8 @@ flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z )
 mass_type get_mass_from_abs_mag( flt_t const & abs_mag, flt_t const & z )
 {
 	interpolator mass_cdf_interpolator = std::get<0>(get_mass_interpolators(z));
-	if(lum_cdf_inv_interpolator.empty()) set_up_lum_interpolators();
+	if(lum_cdf_inv_interpolator.empty())
+		set_up_lum_interpolators();
 
 	flt_t l10_m = mass_cdf_interpolator(lum_cdf_inv_interpolator(abs_mag));
 
@@ -617,14 +618,15 @@ inverse_square_angle_type galaxy_angular_density_at_z(flt_t const & z)
 
 	custom_unit_type<3,0,0,-2,0> vol_per_area = comoving_volume_element(z)/square(rad);
 
-	custom_unit_type<0,0,0,-2,0> density_per_area = galaxy_volume_density*vol_per_area;
+	inverse_square_angle_type density_per_area = galaxy_volume_density*vol_per_area;
 
 	return density_per_area;
 };
 
 flt_t visible_galaxies( square_angle_type const & area, flt_t const & z1, flt_t const & z2 )
 {
-	custom_unit_type<0,0,0,-2,0> area_density = visible_galaxies_cache().get(z1,z2);
+	inverse_square_angle_type area_density = visible_galaxies_cache().get(z2) -
+			visible_galaxies_cache().get(z1);
 
 	flt_t res = area*area_density;
 

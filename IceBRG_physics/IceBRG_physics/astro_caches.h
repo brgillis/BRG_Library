@@ -36,7 +36,7 @@
 namespace IceBRG
 {
 
-DECLARE_BRG_CACHE(dfa_cache,dfa,flt_t,decltype(IceBRG::custom_unit_type<1, 0, 0, -1, 0>()));
+DECLARE_BRG_CACHE(dfa_cache,dfa,flt_t,distance_over_angle_type);
 
 DECLARE_BRG_CACHE_2D(add_cache,ang_di_d,flt_t,flt_t,distance_type);
 
@@ -52,11 +52,11 @@ DECLARE_BRG_CACHE_2D(l10_mass_function_integral_cache,mass_int,flt_t,flt_t,inver
 
 DECLARE_BRG_CACHE(visible_cluster_density_cache,viscdens,flt_t,inverse_volume_type);
 
-DECLARE_BRG_CACHE_2D(visible_clusters_cache,vis_clus,flt_t,flt_t,inverse_square_angle_type);
+DECLARE_BRG_CACHE(visible_clusters_cache,vis_clus,flt_t,inverse_square_angle_type);
 
 DECLARE_BRG_CACHE(visible_galaxy_density_cache,visgdens,flt_t,inverse_volume_type);
 
-DECLARE_BRG_CACHE_2D(visible_galaxies_cache,vis_gal,flt_t,flt_t,inverse_square_angle_type);
+DECLARE_BRG_CACHE(visible_galaxies_cache,vis_gal,flt_t,inverse_square_angle_type);
 
 } // end namespace IceBRG
 

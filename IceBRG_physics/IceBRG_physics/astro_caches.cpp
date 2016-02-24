@@ -41,8 +41,8 @@
 namespace IceBRG {
 
 // Initialisation for IceBRG::dfa_cache
-DEFINE_BRG_CACHE( dfa_cache, flt_t,
-		decltype(custom_unit_type<1, 0, 0, -1, 0>()), 0, 5, 0.001
+DEFINE_BRG_CACHE( dfa_cache, flt_t, distance_over_angle_type,
+		0, 5, 0.001
 		,
 			return integrate_add( 0, in_param )/radian;
 		,
@@ -78,7 +78,7 @@ DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, inverse_volume_type,
 
 // Initialisation for IceBRG::sigma_r_cache
 DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
-		0.1*unitconv::Mpctom*m, 100.*unitconv::Mpctom*m, 0.1*unitconv::Mpctom*m
+		0.01*unitconv::Mpctom*m, 100.*unitconv::Mpctom*m, 0.01*unitconv::Mpctom*m
 		,
 			constexpr flt_t nsp = 0.958;
 			const distance_type Mpc = unitconv::Mpctom * m;
@@ -164,13 +164,12 @@ DEFINE_BRG_CACHE( visible_cluster_density_cache, flt_t, inverse_volume_type,
 );
 
 // Initialisation for IceBRG::visible_clusters_cache
-DEFINE_BRG_CACHE_2D( visible_clusters_cache, flt_t, flt_t, inverse_square_angle_type,
-		0.1, 1.3, 0.01,
-		0.1, 1.3, 0.01
+DEFINE_BRG_CACHE( visible_clusters_cache, flt_t, inverse_square_angle_type,
+		0.1, 1.3, 0.02
 		,
 
 			inverse_square_angle_type res = integrate_Romberg(cluster_angular_density_at_z,
-					in_param_1,in_param_2);
+					0.1,in_param);
 
 			return res;
 		,
@@ -200,13 +199,12 @@ DEFINE_BRG_CACHE( visible_galaxy_density_cache, flt_t, inverse_volume_type,
 );
 
 // Initialisation for IceBRG::visible_galaxies_cache
-DEFINE_BRG_CACHE_2D( visible_galaxies_cache, flt_t, flt_t, inverse_square_angle_type,
-		0.1, 2.0, 0.02,
+DEFINE_BRG_CACHE( visible_galaxies_cache, flt_t, inverse_square_angle_type,
 		0.1, 2.0, 0.02
 		,
 
 			inverse_square_angle_type res = integrate_Romberg(galaxy_angular_density_at_z,
-					in_param_1,in_param_2);
+					0.1,in_param);
 
 			return res;
 		,
