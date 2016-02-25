@@ -336,30 +336,35 @@ flt_t get_app_mag_from_abs_mag( flt_t const & abs_mag, flt_t const & z )
 // z = 0.7 for the luminosity function
 
 const inverse_volume_type phi_star = 24.43e-4 / cube( unitconv::Mpctom * m);
-constexpr flt_t mag_star = -21.53;
+constexpr flt_t mag_B_star = -21.53;
 constexpr flt_t alpha = -1.3;
-constexpr flt_t abs_mag_min = -25;
+constexpr flt_t abs_mag_B_min = -25;
 
-inverse_volume_type differential_luminosity_function( flt_t const & mag )
+inverse_volume_type differential_luminosity_function( flt_t const & mag_B )
 {
 	inverse_volume_type res = 0.4 * std::log(10.) * phi_star *
-			std::pow(10.,0.4*(mag_star-mag)*(alpha+1))*std::exp(-std::pow(10,0.4*(mag_star-mag)));
+			std::pow(10.,0.4*(mag_B_star-mag_B)*(alpha+1))*std::exp(-std::pow(10,0.4*(mag_B_star-mag_B)));
 
 	return res;
 }
-inverse_volume_type integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi )
+inverse_volume_type integrated_luminosity_function( flt_t const & mag_B_lo, flt_t const & mag_B_hi )
 {
-	inverse_volume_type res = lum_func_integral_cache().get(mag_lo,mag_hi);
+	inverse_volume_type res = lum_func_integral_cache().get(mag_B_lo,mag_B_hi);
 	return res;
 }
 
-flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim,
-		flt_t const & faint_app_mag_lim)
+flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_i_lim,
+		flt_t const & faint_app_mag_i_lim)
 {
-	flt_t faint_abs_mag_lim = get_abs_mag_from_app_mag( faint_app_mag_lim, z );
 
-	flt_t res = integrated_luminosity_function( abs_mag_min, faint_abs_mag_lim ) /
-			integrated_luminosity_function( abs_mag_min, bright_abs_mag_lim );
+	flt_t faint_abs_mag_i_lim = get_abs_mag_from_app_mag( faint_app_mag_i_lim, z );
+
+	// Estimate mag_B limits, assuming mag_B ~ mag_g
+	flt_t faint_abs_mag_B_lim = estimate_abs_mag_g_from_abs_mag_i(faint_abs_mag_i_lim);
+	flt_t bright_abs_mag_B_lim = estimate_abs_mag_g_from_abs_mag_i(bright_abs_mag_i_lim);
+
+	flt_t res = integrated_luminosity_function( abs_mag_B_min, faint_abs_mag_B_lim ) /
+			integrated_luminosity_function( abs_mag_B_min, bright_abs_mag_B_lim );
 
 	return res;
 }
@@ -433,7 +438,7 @@ inverse_volume_inverse_mass_type mass_function( mass_type const & mass, flt_t co
 }
 inverse_volume_type log10_mass_function( flt_t const & log10msun_mass, flt_t const & z )
 {
-	mass_type mass = unitconv::Msuntokg*kg*std::pow(10.,log10msun_mass);
+	mass_type mass = std::pow(10.,log10msun_mass)*unitconv::Msuntokg*kg;
 
 	inverse_volume_type res = mass_function(mass,z)*mass*std::log(10.);
 
@@ -456,9 +461,9 @@ const mass_type richness_mstar = 4.07e12*unitconv::Msuntokg*kg;
 constexpr flt_t richness_beta = 1.4;
 
 flt_t cluster_richness( mass_type const & mass, flt_t const & z,
-		flt_t const & bright_abs_mag_lim, flt_t const & faint_app_mag_lim )
+		flt_t const & bright_abs_mag_i_lim, flt_t const & faint_app_mag_i_lim )
 {
-	flt_t fb_ratio = faint_bright_ratio(z,bright_abs_mag_lim,faint_app_mag_lim);
+	flt_t fb_ratio = faint_bright_ratio(z,bright_abs_mag_i_lim,faint_app_mag_i_lim);
 
 	flt_t res = fb_ratio * std::pow(mass/richness_mstar,1./richness_beta);
 
@@ -572,12 +577,12 @@ void set_up_lum_interpolators()
 
 	int_t num_points = 150;
 
-	flt_array_t lums = flt_array_t::LinSpaced(num_points,lum_func_min_abs_mag,lum_func_max_abs_mag);
+	flt_array_t lums = flt_array_t::LinSpaced(num_points,lum_func_min_abs_mag_B,lum_func_max_abs_mag_B);
 	flt_array_t lum_cdfs(num_points);
 
 	for( int_t i=0; i<num_points; ++i )
 	{
-		lum_cdfs[i] = value_of(integrated_luminosity_function(lum_func_min_abs_mag,lums[i]));
+		lum_cdfs[i] = value_of(integrated_luminosity_function(lum_func_min_abs_mag_B,lums[i]));
 	}
 
 	// Normalize the cdfs
@@ -619,7 +624,7 @@ std::tuple<interpolator,interpolator> get_mass_interpolators(flt_t const & z)
 	return std::make_tuple(mass_interpolator,mass_inv_interpolator);
 }
 
-flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z )
+flt_t get_abs_mag_B_from_mass( mass_type const & m, flt_t const & z )
 {
 	interpolator mass_cdf_inv_interpolator = std::get<1>(get_mass_interpolators(z));
 	if(lum_cdf_interpolator.empty()) set_up_lum_interpolators();
@@ -628,34 +633,34 @@ flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z )
 
 	flt_t rank = mass_cdf_inv_interpolator(l10_m);
 
-	flt_t abs_mag = lum_cdf_interpolator(rank);
+	flt_t abs_mag_B = lum_cdf_interpolator(rank);
 
-	return abs_mag;
+	return abs_mag_B;
 }
 
-mass_type get_mass_from_abs_mag( flt_t const & abs_mag, flt_t const & z )
+mass_type get_mass_from_abs_mag_B( flt_t const & abs_mag_B, flt_t const & z )
 {
 	interpolator mass_cdf_interpolator = std::get<0>(get_mass_interpolators(z));
 	if(lum_cdf_inv_interpolator.empty())
 		set_up_lum_interpolators();
 
-	flt_t l10_m = mass_cdf_interpolator(lum_cdf_inv_interpolator(abs_mag));
+	flt_t l10_m = mass_cdf_interpolator(lum_cdf_inv_interpolator(abs_mag_B));
 
 	return std::pow(10.,l10_m)*unitconv::Msuntokg*kg;
 }
 
-flt_t get_app_mag_from_mass( mass_type const & m, flt_t const & z )
+flt_t get_app_mag_B_from_mass( mass_type const & m, flt_t const & z )
 {
-	flt_t abs_mag = get_abs_mag_from_mass(m,z);
-	flt_t app_mag = get_app_mag_from_abs_mag(abs_mag,z);
+	flt_t abs_mag_B = get_abs_mag_B_from_mass(m,z);
+	flt_t app_mag_B = get_app_mag_from_abs_mag(abs_mag_B,z);
 
-	return app_mag;
+	return app_mag_B;
 }
 
-mass_type get_mass_from_app_mag( flt_t const & app_mag, flt_t const & z )
+mass_type get_mass_from_app_mag_B( flt_t const & app_mag_B, flt_t const & z )
 {
-	flt_t abs_mag = get_abs_mag_from_app_mag(app_mag,z);
-	mass_type mass = get_mass_from_abs_mag(abs_mag,z);
+	flt_t abs_mag_B = get_abs_mag_from_app_mag(app_mag_B,z);
+	mass_type mass = get_mass_from_abs_mag_B(abs_mag_B,z);
 
 	return mass;
 }
@@ -666,11 +671,13 @@ mass_type get_mass_from_app_mag( flt_t const & app_mag, flt_t const & z )
 // Galaxy visibility functions
 #if(1)
 
-flt_t max_galaxy_abs_mag( flt_t const & z, flt_t const & faint_app_mag_lim )
+flt_t max_galaxy_abs_mag_B( flt_t const & z, flt_t const & faint_app_mag_i_lim )
 {
-	flt_t res = get_abs_mag_from_app_mag(faint_app_mag_lim,z);
+	flt_t abs_mag_i = get_abs_mag_from_app_mag(faint_app_mag_i_lim,z);
 
-	return res;
+	flt_t abs_mag_B = estimate_abs_mag_g_from_abs_mag_i(abs_mag_i);
+
+	return abs_mag_B;
 }
 
 inverse_square_angle_type galaxy_angular_density_at_z(flt_t const & z)
@@ -695,6 +702,60 @@ flt_t visible_galaxies( square_angle_type const & area, flt_t const & z1, flt_t 
 }
 
 #endif // end galaxy visibility functions
+
+// Stellar mass functions
+#if(1)
+
+// Taken from regression of CFHTLenS data. Scatter of 1.2972528920157342
+flt_t estimate_abs_mag_g_from_stellar_mass( mass_type const & stellar_mass )
+{
+	flt_t l10_m = std::log10(stellar_mass/(unitconv::Msuntokg*kg));
+
+	flt_t abs_mag_g = -1.5796318296942395 + -1.8325612213492519*l10_m;
+
+	return abs_mag_g;
+}
+
+// Taken from regression of CFHTLenS data. Log10 scatter of 0.585461144291201
+mass_type estimate_stellar_mass_from_abs_mag_g( flt_t const & abs_mag_g )
+{
+	flt_t l10_m = 2.2480200524693386 + -0.37325475722757273*abs_mag_g;
+
+	mass_type stellar_mass = std::pow(10.,l10_m)*unitconv::Msuntokg*kg;
+
+	return stellar_mass;
+}
+
+// Taken from regression of CFHTLenS data. Scatter of 0.93030163251098796
+flt_t estimate_abs_mag_i_from_stellar_mass( mass_type const & stellar_mass )
+{
+	flt_t l10_m = std::log10(stellar_mass/(unitconv::Msuntokg*kg));
+
+	flt_t abs_mag_i = -0.36207933462416264 + -2.0667489478898244*l10_m;
+
+	return abs_mag_i;
+}
+
+// Taken from regression of CFHTLenS data. Log10 scatter of 0.41169238482277282
+mass_type estimate_stellar_mass_from_abs_mag_i( flt_t const & abs_mag_i )
+{
+	flt_t l10_m = 1.3190844893636555 + -0.40474903941295159*abs_mag_i;
+
+	mass_type stellar_mass = std::pow(10.,l10_m)*unitconv::Msuntokg*kg;
+
+	return stellar_mass;
+}
+
+flt_t estimate_abs_mag_g_from_abs_mag_i( flt_t const & abs_mag_i )
+{
+	return estimate_abs_mag_g_from_stellar_mass( estimate_stellar_mass_from_abs_mag_i(abs_mag_i) );
+}
+flt_t estimate_abs_mag_i_from_abs_mag_g( flt_t const & abs_mag_g )
+{
+	return estimate_abs_mag_i_from_stellar_mass( estimate_stellar_mass_from_abs_mag_g(abs_mag_g) );
+}
+
+#endif // stellar mass functions
 
 #endif // end Global function definitions
 

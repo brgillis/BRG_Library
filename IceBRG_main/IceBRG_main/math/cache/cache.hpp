@@ -175,6 +175,8 @@ private:
 	}
 	bool _critical_load() const
 	{
+		if(SPCP(name)->_loaded_) return false;
+
 		// Load any caches we depend upon before the critical section
 		SPCP(name)->_load_cache_dependencies();
 
@@ -636,14 +638,14 @@ public:
 	/// Load the cache, calculating if necessary
 	void load() const
 	{
-		SPCP(name)->_load();
+		SPCP(name)->_critical_load();
 	}
 
 	/// Reload the cache, calculating if necessary.
 	void reload() const
 	{
 		SPCP(name)->unload();
-		SPCP(name)->_load();
+		SPCP(name)->_critical_load();
 	}
 
 	/// Unload the cache

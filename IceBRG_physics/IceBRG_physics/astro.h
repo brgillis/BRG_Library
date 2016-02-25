@@ -179,18 +179,18 @@ inline const Tr1 skydist2d( const Tr1 & ra1, const Td1 & dec1,
 // Luminosity functions
 #if(1)
 
-constexpr flt_t bright_abs_mag_max = -19.5;
-constexpr flt_t faint_app_mag_max = 27;
+constexpr flt_t bright_abs_mag_i_max = -19.5;
+constexpr flt_t faint_app_mag_i_max = 27;
 
-constexpr flt_t lum_func_min_abs_mag = -25;
-constexpr flt_t lum_func_max_abs_mag = -11;
+constexpr flt_t lum_func_min_abs_mag_B = -25;
+constexpr flt_t lum_func_max_abs_mag_B = -11;
 
 flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z );
 flt_t get_app_mag_from_abs_mag( flt_t const & abs_mag, flt_t const & z );
-inverse_volume_type differential_luminosity_function( flt_t const & mag );
-inverse_volume_type integrated_luminosity_function( flt_t const & mag_lo, flt_t const & mag_hi );
-flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
-		flt_t const & faint_app_mag_lim = faint_app_mag_max);
+inverse_volume_type differential_luminosity_function( flt_t const & mag_B );
+inverse_volume_type integrated_luminosity_function( flt_t const & mag_B_lo, flt_t const & mag_B_hi );
+flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_i_lim = bright_abs_mag_i_max,
+		flt_t const & faint_app_mag_i_lim = faint_app_mag_i_max);
 
 #endif // end luminosity functions
 
@@ -217,11 +217,11 @@ inverse_volume_type integrated_log10_mass_function( flt_t const & l10_m_lo, flt_
 #if(1)
 
 flt_t cluster_richness( mass_type const & mass, flt_t const & z,
-		flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
-		flt_t const & faint_app_mag_lim = faint_app_mag_max );
+		flt_t const & bright_abs_mag_i_lim = bright_abs_mag_i_max,
+		flt_t const & faint_app_mag_i_lim = faint_app_mag_i_max );
 mass_type min_cluster_mass( flt_t const & z,
-		flt_t const & bright_abs_mag_lim = bright_abs_mag_max,
-		flt_t const & faint_app_mag_lim = faint_app_mag_max );
+		flt_t const & bright_abs_mag_i_lim = bright_abs_mag_i_max,
+		flt_t const & faint_app_mag_i_lim = faint_app_mag_i_max );
 
 /**
  * Get the number density of clusters at a given redshift in units of
@@ -243,18 +243,18 @@ flt_t mean_cluster_richness( flt_t const & z_min, flt_t const & z_max );
 // Abundance matching functions
 #if(1)
 
-flt_t get_abs_mag_from_mass( mass_type const & m, flt_t const & z );
-mass_type get_mass_from_abs_mag( flt_t const & abs_mag, flt_t const & z );
-flt_t get_app_mag_from_mass( mass_type const & m, flt_t const & z );
-mass_type get_mass_from_app_mag( flt_t const & app_mag, flt_t const & z );
+flt_t get_abs_mag_B_from_mass( mass_type const & m, flt_t const & z );
+mass_type get_mass_from_abs_mag_B( flt_t const & abs_mag, flt_t const & z );
+flt_t get_app_mag_B_from_mass( mass_type const & m, flt_t const & z );
+mass_type get_mass_from_app_mag_B( flt_t const & app_mag, flt_t const & z );
 
 #endif // end abundance matching functions
 
 // Galaxy visibility functions
 #if(1)
 
-flt_t max_galaxy_abs_mag( flt_t const & z,
-		flt_t const & faint_app_mag_lim = faint_app_mag_max );
+flt_t max_galaxy_abs_mag_B( flt_t const & z,
+		flt_t const & faint_app_mag_i_lim = faint_app_mag_i_max );
 
 /**
  * Get the number density of galaxies at a given redshift in units of
@@ -267,6 +267,26 @@ inverse_square_angle_type galaxy_angular_density_at_z(flt_t const & z);
 flt_t visible_galaxies( square_angle_type const & area, flt_t const & z1 = 0.1, flt_t const & z2 = 2.0 );
 
 #endif // end galaxy visibility functions
+
+// Stellar mass v abs mag functions
+#if(1)
+
+// Taken from regression of CFHTLenS data. Scatter of 1.2972528920157342
+flt_t estimate_abs_mag_g_from_stellar_mass( mass_type const & stellar_mass );
+
+// Taken from regression of CFHTLenS data. Log10 scatter of 0.585461144291201
+mass_type estimate_stellar_mass_from_abs_mag_g( flt_t const & abs_mag_g );
+
+// Taken from regression of CFHTLenS data. Scatter of 0.93030163251098796
+flt_t estimate_abs_mag_i_from_stellar_mass( mass_type const & stellar_mass );
+
+// Taken from regression of CFHTLenS data. Log10 scatter of 0.41169238482277282
+mass_type estimate_stellar_mass_from_abs_mag_i( flt_t const & abs_mag_g );
+
+flt_t estimate_abs_mag_g_from_abs_mag_i( flt_t const & abs_mag_i );
+flt_t estimate_abs_mag_i_from_abs_mag_g( flt_t const & abs_mag_g );
+
+#endif // stellar mass functions
 
 #endif // end function declarations
 
