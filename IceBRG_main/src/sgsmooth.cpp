@@ -46,10 +46,8 @@
 
 #include "IceBRG_main/common.hpp"
 
+#include "IceBRG_main/external/sgsmooth.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
-
-#include "sgsmooth.h"
-
 
 namespace IceBRG{ namespace sgsmooth {
 
