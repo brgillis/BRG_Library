@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file Schechter_like_functor.cpp
+ @file expected_count_cache.cpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,29 +23,32 @@
 
  \**********************************************************************/
 
-#include "Schechter_like_functor.hpp"
 
-#include <cmath>
 #include <cstdlib>
+
+#include "IceBRG_main/common.hpp"
+
+#include "IceBRG_lensing/magnification/expected_count_cache.hpp"
+#include "IceBRG_lensing/magnification/expected_count_loader.hpp"
+#include "IceBRG_lensing/magnification/mag_global_values.hpp"
 
 
 namespace IceBRG {
 
-long_flt_t Schechter_like_functor::operator()( const long_flt_t & in_param) const
-{
-	const flt_t & mag_jump_limit = 23.;
+// Initialise the cache
+DEFINE_BRG_CACHE_2D( expected_count_cache,
+		flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()),
+		mag_m_min,mag_m_max,0.01,
+		mag_z_min,mag_z_max-0.01,0.01,
 
-	const long_flt_t x = std::pow(10,0.4*(m_star()-in_param));
-	long_flt_t result = 0.4*std::log(10.)*N_scale()*std::pow(x,alpha()+1)*
-			std::exp(-std::pow(x,mag_lower_lim_sharpness()));
+			const flt_t & m = std::fabs(in_param_1);
+			const long_flt_t z_min = std::fabs(in_param_2);
 
-	if(in_param>=mag_jump_limit) result += mag23_jump();
+			return expected_count_loader::get_count(m,z_min);
+		,
+			expected_count_loader::get_count(0,0);
+		,
 
-	const long_flt_t xh = std::pow(10,0.4*(in_param-mag_upper_lim()));
-
-	result *= std::exp(-std::pow(xh,mag_upper_lim_sharpness()));
-
-	return result;
-}
+);
 
 } // namespace IceBRG

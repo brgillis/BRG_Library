@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file expected_count_cache.cpp
+ @file expected_count_derivative_cache.cpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,20 +23,20 @@
 
  \**********************************************************************/
 
-#include "expected_count_cache.hpp"
 
 #include <cstdlib>
 
 #include "IceBRG_main/common.hpp"
 
-#include "expected_count_loader.hpp"
-#include "mag_global_values.hpp"
+#include "IceBRG_lensing/magnification/expected_count_derivative_cache.hpp"
+#include "IceBRG_lensing/magnification/expected_count_loader.hpp"
+#include "IceBRG_lensing/magnification/mag_global_values.hpp"
 
 
 namespace IceBRG {
 
 // Initialise the cache
-DEFINE_BRG_CACHE_2D( expected_count_cache,
+DEFINE_BRG_CACHE_2D( expected_count_derivative_cache,
 		flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()),
 		mag_m_min,mag_m_max,0.01,
 		mag_z_min,mag_z_max-0.01,0.01,
@@ -44,9 +44,9 @@ DEFINE_BRG_CACHE_2D( expected_count_cache,
 			const flt_t & m = std::fabs(in_param_1);
 			const long_flt_t z_min = std::fabs(in_param_2);
 
-			return expected_count_loader::get_count(m,z_min);
+			return expected_count_loader::get_derivative(m,z_min);
 		,
-			expected_count_loader::get_count(0,0);
+			expected_count_loader::get_derivative(0,0);
 		,
 
 );

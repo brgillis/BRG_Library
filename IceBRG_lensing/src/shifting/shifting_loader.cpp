@@ -25,7 +25,6 @@
 
  \**********************************************************************/
 
-#include "shifting_loader.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -44,6 +43,7 @@
 #include "IceBRG_main/vector/manipulations.hpp"
 
 #include "IceBRG_lensing/shifting/corr_alpha.hpp"
+#include "IceBRG_lensing/shifting/shifting_loader.hpp"
 
 
 // Initialisation of static vars

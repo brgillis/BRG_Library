@@ -23,7 +23,6 @@
 
  \**********************************************************************/
 
-#include "mag_correlation_function_estimator.hpp"
 
 #include <functional>
 #include <tuple>
@@ -39,7 +38,8 @@
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/vector/limit_vector.hpp"
 
-#include "magnification_alpha.hpp"
+#include "IceBRG_lensing/magnification/mag_correlation_function_estimator.hpp"
+#include "IceBRG_lensing/magnification/magnification_alpha.hpp"
 
 
 namespace IceBRG {

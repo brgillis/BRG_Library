@@ -1,8 +1,8 @@
 /**********************************************************************\
- @file mag_signal_integral_cache.cpp
+ @file magnification_alpha.cpp
  ------------------
 
- TODO <Insert file description here>
+ File containing the implementation of magnification_alpha.
 
  **********************************************************************
 
@@ -21,35 +21,30 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- \**********************************************************************/
+\**********************************************************************/
 
-#include "mag_signal_integral_cache.hpp"
-
-#include <cstdlib>
 
 #include "IceBRG_main/common.hpp"
 
-#include "IceBRG_main/math/calculus/integrate.hpp"
+#include "IceBRG_main/math/calculus/differentiate.hpp"
+#include "IceBRG_main/units/units.hpp"
 
-#include "expected_count_cache.hpp"
-#include "mag_global_values.hpp"
-#include "magnification_functors.hpp"
+#include "IceBRG_lensing/magnification/magnification_alpha.hpp"
+#include "IceBRG_lensing/magnification/expected_count_cache.hpp"
+#include "IceBRG_lensing/magnification/expected_count_derivative_cache.hpp"
 
 namespace IceBRG {
 
-// Initialise the cache
-DEFINE_BRG_CACHE( mag_signal_integral_cache,
-		flt_t,decltype(custom_unit_type<0,0,0,-2,0>()),
-		0.2,mag_z_max-0.01,0.01
-		,
-			mu_signal_integration_functor func(in_param);
+flt_t magnification_alpha(const flt_t & m, const flt_t & z)
+{
+	//return 2; // For sanity test purposes - this leads to alpha-1 = 1, so a the measured mag signal is the count overdensity
 
-			return integrate_Romberg(func,mag_m_min,mag_m_max,
-				0.000001);
-		,
-			expected_count_cache().load();
-		,
+	flt_t res = value_of(expected_count_derivative_cache().get(m,z));
 
-);
+	if(res<=0) return 1.; // 1 corresponds to a flat profile, so this is appropriate for zero counts
+
+
+	return res;
+}
 
 } // namespace IceBRG

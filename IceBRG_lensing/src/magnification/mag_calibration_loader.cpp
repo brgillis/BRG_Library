@@ -23,7 +23,6 @@
 
  \**********************************************************************/
 
-#include "mag_calibration_loader.hpp"
 
 #include <stdexcept>
 #include <string>
@@ -39,7 +38,8 @@
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/vector/summary_functions.hpp"
 
-#include "mag_global_values.hpp"
+#include "IceBRG_lensing/magnification/mag_calibration_loader.hpp"
+#include "IceBRG_lensing/magnification/mag_global_values.hpp"
 
 namespace IceBRG {
 

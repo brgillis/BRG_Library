@@ -1,12 +1,12 @@
 /**********************************************************************\
- @file shifting_cache.cpp
+ @file mag_calibration_cache.cpp
  ------------------
 
  TODO <Insert file description here>
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2015  Bryan R. Gillis
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -21,38 +21,27 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- \**********************************************************************/
-
-#include "shifting_cache.hpp"
-
-#include <cstdlib>
+\**********************************************************************/
 
 #include "IceBRG_main/common.hpp"
 
-#include "IceBRG_main/math/safe_math.hpp"
+#include "IceBRG_lensing/magnification/mag_calibration_cache.hpp"
+#include "IceBRG_lensing/magnification/mag_calibration_loader.hpp"
+#include "IceBRG_lensing/magnification/mag_global_values.hpp"
 
-#include "IceBRG_main/units/unit_conversions.hpp"
-#include "shifting_loader.hpp"
-
-// Initialise the cache
 
 namespace IceBRG {
 
-DEFINE_BRG_CACHE_2D(shifting_cache,
-		flt_t,flt_t,angle_type,
-		std::log(0.1*IceBRG::unitconv::amintorad),std::log(3800.*IceBRG::unitconv::amintorad),
-				(std::log(3800.)-std::log(0.1))/1000,
-		0.3,1.5,0.1
-		,
-			const angle_type & t = units_cast<angle_type>(std::exp(value_of(in_param_1)));
-			const flt_t & z = std::fabs(in_param_2);
+// Initialise the cache
+DEFINE_BRG_CACHE( mag_calibration_cache,IceBRG::flt_t,IceBRG::flt_t,
+				  IceBRG::mag_z_min,IceBRG::mag_z_max,IceBRG::mag_z_step
+				  ,
+				  	  return mag_calibration_loader::get(in_param);
+				  ,
 
-			if(value_of(t)==0) return units_cast<angle_type>(0);
-
-			return safe_sqrt(shifting_loader().get(0,z)-shifting_loader().get(t,z));
-		,
-
-		,
-		);
+				  ,
+);
 
 } // namespace IceBRG
+
+

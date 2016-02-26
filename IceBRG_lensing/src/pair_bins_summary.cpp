@@ -23,7 +23,6 @@
 
  \**********************************************************************/
 
-#include "pair_bins_summary.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -47,8 +46,9 @@
 #include "IceBRG_main/vector/limit_vector.hpp"
 #include "IceBRG_main/vector/summary_functions.hpp"
 
-#include "pair_bin.hpp"
-#include "pair_binner.hpp"
+#include "IceBRG_lensing/pair_bin.hpp"
+#include "IceBRG_lensing/pair_binner.hpp"
+#include "IceBRG_lensing/pair_bins_summary.hpp"
 
 
 namespace IceBRG {

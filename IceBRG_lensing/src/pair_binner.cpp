@@ -23,7 +23,6 @@
 
  \**********************************************************************/
 
-#include "pair_binner.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -41,6 +40,8 @@
 
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/units/units.hpp"
+
+#include "IceBRG_lensing/pair_binner.hpp"
 
 namespace IceBRG {
 

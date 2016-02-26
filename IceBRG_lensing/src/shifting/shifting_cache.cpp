@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file source_galaxy.cpp
+ @file shifting_cache.cpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,8 +23,36 @@
 
  \**********************************************************************/
 
-#include "source_galaxy.hpp"
+
+#include <cstdlib>
+
+#include "IceBRG_main/common.hpp"
+
+#include "IceBRG_main/math/safe_math.hpp"
+
+#include "IceBRG_main/units/unit_conversions.hpp"
+#include "IceBRG_lensing/shifting/shifting_cache.hpp"
+#include "IceBRG_lensing/shifting/shifting_loader.hpp"
+
+// Initialise the cache
 
 namespace IceBRG {
 
-} // end namespace IceBRG
+DEFINE_BRG_CACHE_2D(shifting_cache,
+		flt_t,flt_t,angle_type,
+		std::log(0.1*IceBRG::unitconv::amintorad),std::log(3800.*IceBRG::unitconv::amintorad),
+				(std::log(3800.)-std::log(0.1))/1000,
+		0.3,1.5,0.1
+		,
+			const angle_type & t = units_cast<angle_type>(std::exp(value_of(in_param_1)));
+			const flt_t & z = std::fabs(in_param_2);
+
+			if(value_of(t)==0) return units_cast<angle_type>(0);
+
+			return safe_sqrt(shifting_loader().get(0,z)-shifting_loader().get(t,z));
+		,
+
+		,
+		);
+
+} // namespace IceBRG

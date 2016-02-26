@@ -25,7 +25,6 @@
 
  \**********************************************************************/
 
-#include "expected_count_fit_loader.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -41,6 +40,7 @@
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_lensing/magnification/count_fitting_results.hpp"
+#include "IceBRG_lensing/magnification/expected_count_fit_loader.hpp"
 
 
 

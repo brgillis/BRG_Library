@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file mag_weight_integral_cache.cpp
+ @file mag_signal_integral_cache.cpp
  ------------------
 
  TODO <Insert file description here>
@@ -23,7 +23,6 @@
 
  \**********************************************************************/
 
-#include "mag_weight_integral_cache.hpp"
 
 #include <cstdlib>
 
@@ -31,24 +30,26 @@
 
 #include "IceBRG_main/math/calculus/integrate.hpp"
 
-#include "expected_count_cache.hpp"
-#include "mag_global_values.hpp"
-#include "magnification_functors.hpp"
+#include "IceBRG_lensing/magnification/expected_count_cache.hpp"
+#include "IceBRG_lensing/magnification/mag_global_values.hpp"
+#include "IceBRG_lensing/magnification/mag_signal_integral_cache.hpp"
+#include "IceBRG_lensing/magnification/magnification_functors.hpp"
 
 namespace IceBRG {
 
 // Initialise the cache
-DEFINE_BRG_CACHE( mag_weight_integral_cache,
-		flt_t, decltype(custom_unit_type<0,0,0,-2,0>()),
+DEFINE_BRG_CACHE( mag_signal_integral_cache,
+		flt_t,decltype(custom_unit_type<0,0,0,-2,0>()),
 		0.2,mag_z_max-0.01,0.01
 		,
-			mu_weight_integration_functor func(in_param);
+			mu_signal_integration_functor func(in_param);
 
 			return integrate_Romberg(func,mag_m_min,mag_m_max,
-					0.000001);
+				0.000001);
 		,
 			expected_count_cache().load();
 		,
+
 );
 
 } // namespace IceBRG

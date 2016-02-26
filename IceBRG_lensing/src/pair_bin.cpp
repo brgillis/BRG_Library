@@ -23,7 +23,6 @@
 
  \**********************************************************************/
 
-#include "pair_bin.hpp"
 
 #include <limits>
 
@@ -38,19 +37,20 @@
 
 #include "IceBRG_main/math/calculus/integrate.hpp"
 #include "IceBRG_main/math/statistics/statistic_extractors.hpp"
+#include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/math/statistics/effective_count.hpp"
 #include "IceBRG_main/math/statistics/error_of_weighted_mean.hpp"
 
 #include "IceBRG_lensing/lens_source_pair.hpp"
+#include "IceBRG_lensing/pair_bin.hpp"
 #include "IceBRG_lensing/pair_bin_summary.hpp"
-#include "IceBRG_main/units/units.hpp"
-#include "magnification/mag_calibration_cache.hpp"
-#include "magnification/mag_global_values.hpp"
-#include "magnification/mag_signal_integral_cache.hpp"
-#include "magnification/mag_weight_integral_cache.hpp"
-#include "magnification/magnification_alpha.hpp"
-#include "magnification/magnification_functors.hpp"
+#include "IceBRG_lensing/magnification/mag_calibration_cache.hpp"
+#include "IceBRG_lensing/magnification/mag_global_values.hpp"
+#include "IceBRG_lensing/magnification/mag_signal_integral_cache.hpp"
+#include "IceBRG_lensing/magnification/mag_weight_integral_cache.hpp"
+#include "IceBRG_lensing/magnification/magnification_alpha.hpp"
+#include "IceBRG_lensing/magnification/magnification_functors.hpp"
 
 namespace IceBRG {
 

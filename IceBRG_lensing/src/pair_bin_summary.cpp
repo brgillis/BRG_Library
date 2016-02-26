@@ -23,7 +23,6 @@
 
  \**********************************************************************/
 
-#include "pair_bin_summary.hpp"
 
 #include <cassert>
 #include <fstream>
@@ -40,9 +39,10 @@
 
 #include "IceBRG_main/units/units.hpp"
 
-#include "magnification/magnification_alpha.hpp"
-#include "magnification/magnification_functors.hpp"
-#include "pair_bin.hpp"
+#include "IceBRG_lensing/magnification/magnification_alpha.hpp"
+#include "IceBRG_lensing/magnification/magnification_functors.hpp"
+#include "IceBRG_lensing/pair_bin.hpp"
+#include "IceBRG_lensing/pair_bin_summary.hpp"
 
 namespace IceBRG {
 
