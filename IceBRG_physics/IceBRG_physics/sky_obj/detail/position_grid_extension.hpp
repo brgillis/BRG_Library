@@ -32,7 +32,7 @@
 
 #include "IceBRG_main/common.hpp"
 
-#include "position_grid_cache.hpp"
+#include "detail/position_grid_cache.hpp"
 
 // Macro definitions
 #if(1)

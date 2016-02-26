@@ -20,13 +20,13 @@
 
 \**********************************************************************/
 
+
 #include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/sky_obj/sky_obj.hpp"
-
 #include "IceBRG_physics/distance_measures.hpp"
+#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
 
 // IceBRG::sky_obj class methods
 #if (1)

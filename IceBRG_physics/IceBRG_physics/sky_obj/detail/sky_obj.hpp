@@ -29,9 +29,9 @@
 
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/redshift_obj.hpp"
+#include "IceBRG_physics/detail/redshift_obj.hpp"
 
-#include "position_grid_cache.hpp"
+#include "IceBRG_physics/sky_obj/detail/position_grid_cache.hpp"
 
 namespace IceBRG {
 

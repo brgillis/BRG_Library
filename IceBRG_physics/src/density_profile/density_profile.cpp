@@ -21,6 +21,8 @@
 \**********************************************************************/
 
 
+#include "../../IceBRG_physics/density_profile/detail/density_profile.hpp"
+
 #include <iostream>
 
 #include "IceBRG_main/common.hpp"
@@ -30,8 +32,7 @@
 #include "IceBRG_main/math/solvers/solvers.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/density_profile/density_profile.hpp"
-#include "IceBRG_physics/density_profile/density_profile_functors.hpp"
+#include "../../IceBRG_physics/density_profile/detail/density_profile_functors.hpp"
 
 // IceBRG::density_profile class methods
 #if (1)

@@ -29,8 +29,8 @@
 
 #include "IceBRG_main/common.hpp"
 
-#include "IceBRG_physics/sky_obj/sky_obj.hpp"
-#include "galaxy.hpp"
+#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
+#include "IceBRG_physics/sky_obj/galaxy.hpp"
 
 namespace IceBRG {
 

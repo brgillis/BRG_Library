@@ -32,7 +32,7 @@
 
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/units/unit_conversions.hpp"
-#include "../IceBRG_physics/astro_caches.hpp"
+#include "IceBRG_physics/detail/astro_caches.hpp"
 
 using namespace IceBRG;
 

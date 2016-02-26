@@ -28,7 +28,7 @@
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/common.hpp"
 
-#include "IceBRG_physics/density_profile/density_profile.hpp"
+#include "IceBRG_physics/density_profile/detail/density_profile.hpp"
 
 namespace IceBRG {
 

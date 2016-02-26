@@ -27,8 +27,7 @@
 
 #include "IceBRG_main/common.hpp"
 
-#include "density_profile.hpp"
-#include "tNFW_profile.hpp"
+#include "IceBRG_physics/density_profile/tNFW_profile.hpp"
 
 namespace IceBRG
 {

@@ -30,7 +30,8 @@
 #include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/units/units.hpp"
-#include "density_profile.hpp"
+
+#include "detail/density_profile.hpp"
 
 namespace IceBRG {
 

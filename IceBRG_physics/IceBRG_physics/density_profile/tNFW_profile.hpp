@@ -34,7 +34,7 @@
 
 #include "IceBRG_main/utility.hpp"
 
-#include "density_profile.hpp"
+#include "detail/density_profile.hpp"
 
 namespace IceBRG {
 

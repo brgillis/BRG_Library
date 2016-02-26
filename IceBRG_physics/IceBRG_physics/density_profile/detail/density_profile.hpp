@@ -35,7 +35,7 @@
 #include "IceBRG_main/math/safe_math.hpp"
 
 #include "IceBRG_physics/cosmology.hpp"
-#include "IceBRG_physics/redshift_obj.hpp"
+#include "IceBRG_physics/detail/redshift_obj.hpp"
 
 namespace IceBRG {
 

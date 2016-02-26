@@ -35,8 +35,9 @@
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_physics/astro.hpp"
-#include "IceBRG_physics/astro_caches.hpp"
-#include "IceBRG_physics/sky_obj/position_grid_cache.hpp"
+
+#include "../IceBRG_physics/sky_obj/detail/position_grid_cache.hpp"
+#include "IceBRG_physics/detail/astro_caches.hpp"
 
 namespace IceBRG {
 

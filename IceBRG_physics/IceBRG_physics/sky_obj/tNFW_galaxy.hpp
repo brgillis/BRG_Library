@@ -27,10 +27,11 @@
 
 #include "IceBRG_main/common.hpp"
 
-#include "../density_profile/density_profile.hpp"
+#include "../density_profile/detail/density_profile.hpp"
 #include "../density_profile/tNFW_profile.hpp"
+#include "../detail/sky_obj.hpp"
+
 #include "../sky_obj/galaxy.hpp"
-#include "IceBRG_physics/sky_obj/sky_obj.hpp"
 
 namespace IceBRG {
 
