@@ -41,7 +41,7 @@
 #include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
 
 #include "IceBRG_lensing/detail/source_obj.hpp"
-#include "IceBRG_lensing/detail/lens_source_pair.hpp"
+#include "../IceBRG_lensing/lens_source_pair.hpp"
 
 namespace IceBRG {
 

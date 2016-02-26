@@ -3,6 +3,7 @@
 	<name>IceBRGpy</name>
 	<comment></comment>
 	<projects>
+		<project>IceBRG_lensing</project>
 		<project>IceBRG_main</project>
 		<project>IceBRG_physics</project>
 	</projects>

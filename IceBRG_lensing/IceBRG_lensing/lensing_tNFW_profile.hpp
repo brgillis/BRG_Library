@@ -28,7 +28,7 @@
 #include <IceBRG_physics/density_profile/tNFW_profile.hpp>
 #include "IceBRG_main/common.hpp"
 
-#include "IceBRG_lensing/lensing_profile_extension.hpp"
+#include "IceBRG_lensing/detail/lensing_profile_extension.hpp"
 
 namespace IceBRG {
 

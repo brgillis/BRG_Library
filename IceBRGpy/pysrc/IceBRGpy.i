@@ -43,6 +43,23 @@
 	#include "IceBRG_physics/galaxy_visibility.hpp"
 	#include "IceBRG_physics/luminosity.hpp"
 	#include "IceBRG_physics/mass_function.hpp"
+
+	#include "IceBRG_physics/detail/redshift_obj.hpp"
+	#include "IceBRG_physics/density_profile/detail/density_profile.hpp"
+	#include "IceBRG_physics/density_profile/point_mass_profile.hpp"
+	#include "IceBRG_physics/density_profile/tNFW_profile.hpp"
+	#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
+	#include "IceBRG_physics/sky_obj/galaxy.hpp"
+
+	#include "IceBRG_lensing/detail/lensing_profile_extension.hpp"
+	#include "IceBRG_lensing/detail/pair_bin_summary.hpp"
+	#include "IceBRG_lensing/detail/pair_bin.hpp"
+	#include "IceBRG_lensing/detail/pair_bins_summary.hpp"
+	#include "IceBRG_lensing/detail/source_obj.hpp"
+	#include "IceBRG_lensing/lens_source_pair.hpp"
+	#include "IceBRG_lensing/lensing_tNFW_profile.hpp"
+	#include "IceBRG_lensing/pair_binner.hpp"
+	#include "IceBRG_lensing/source_galaxy.hpp"
 	
 	using namespace IceBRG;
 	 
@@ -60,6 +77,25 @@
 %include "/disk2/brg/include/IceBRG_physics/luminosity.hpp"
 %include "/disk2/brg/include/IceBRG_physics/mass_function.hpp"
 
+%include "/disk2/brg/include/IceBRG_physics/detail/redshift_obj.hpp"
+%include "/disk2/brg/include/IceBRG_physics/density_profile/detail/density_profile.hpp"
+%include "/disk2/brg/include/IceBRG_physics/density_profile/point_mass_profile.hpp"
+%include "/disk2/brg/include/IceBRG_physics/density_profile/tNFW_profile.hpp"
+%include "/disk2/brg/include/IceBRG_physics/sky_obj/detail/sky_obj.hpp"
+%include "/disk2/brg/include/IceBRG_physics/sky_obj/galaxy.hpp"
+
+%include "/disk2/brg/include/IceBRG_lensing/detail/lensing_profile_extension.hpp"
+%include "/disk2/brg/include/IceBRG_lensing/detail/pair_bin_summary.hpp"
+%include "/disk2/brg/include/IceBRG_lensing/detail/pair_bin.hpp"
+%include "/disk2/brg/include/IceBRG_lensing/detail/pair_bins_summary.hpp"
+%include "/disk2/brg/include/IceBRG_lensing/detail/source_obj.hpp"
+%include "/disk2/brg/include/IceBRG_lensing/lens_source_pair.hpp"
+%template(lensing_tNFW_profile_extension) IceBRG::lensing_profile_extension< IceBRG::lensing_tNFW_profile >;
+%include "/disk2/brg/include/IceBRG_lensing/lensing_tNFW_profile.hpp"
+%include "/disk2/brg/include/IceBRG_lensing/pair_binner.hpp"
+%include "/disk2/brg/include/IceBRG_lensing/source_galaxy.hpp"
+
+// Tell Swig about typedefs in use
 typedef double flt_t;
 
 typedef flt_t dimensionless_type;

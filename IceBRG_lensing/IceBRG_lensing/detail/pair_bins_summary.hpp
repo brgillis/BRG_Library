@@ -160,9 +160,9 @@ public:
 
 	// Set limits by vectors
 	pair_bins_summary(IceBRG::limit_vector< distance_type > R_bin_limits,
-			IceBRG::limit_vector< mass_type > m_bin_limits=std::vector<flt_t>(),
-			IceBRG::limit_vector< flt_t > z_bin_limits=std::vector<flt_t>(),
-			IceBRG::limit_vector< flt_t > mag_bin_limits=std::vector<flt_t>());
+			IceBRG::limit_vector< mass_type > m_bin_limits=IceBRG::limit_vector<mass_type>(),
+			IceBRG::limit_vector< flt_t > z_bin_limits=IceBRG::limit_vector<flt_t>(),
+			IceBRG::limit_vector< flt_t > mag_bin_limits=IceBRG::limit_vector<flt_t>());
 
 	// Set limits by min, max, and step
 	pair_bins_summary(const distance_type & R_min,
@@ -239,9 +239,9 @@ public:
 	void clear_mag_limits();
 
 	void set_limits(IceBRG::limit_vector< distance_type > R_bin_limits,
-			IceBRG::limit_vector< mass_type > m_bin_limits=std::vector<flt_t>(),
-			IceBRG::limit_vector< flt_t > z_bin_limits=std::vector<flt_t>(),
-			IceBRG::limit_vector< flt_t > mag_bin_limits=std::vector<flt_t>());
+			IceBRG::limit_vector< mass_type > m_bin_limits=IceBRG::limit_vector<mass_type>(),
+			IceBRG::limit_vector< flt_t > z_bin_limits=IceBRG::limit_vector<flt_t>(),
+			IceBRG::limit_vector< flt_t > mag_bin_limits=IceBRG::limit_vector<flt_t>());
 
 	void set_linear_limits(const distance_type & R_min,
 				const distance_type & R_max,

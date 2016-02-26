@@ -30,19 +30,24 @@
 								<option id="gnu.cpp.compiler.lib.debug.option.optimization.level.2066023875" name="Optimization Level" superClass="gnu.cpp.compiler.lib.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.lib.debug.option.debugging.level.1202293541" name="Debug Level" superClass="gnu.cpp.compiler.lib.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1073219011" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_lensing}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main}&quot;"/>
 									<listOptionValue builtIn="false" value="/home/brg/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/python2.7"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.flags.968427847" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.911623554" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.965718790" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="NDEBUG"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.588282239" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.lib.debug.2094518201" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.lib.debug.option.optimization.level.1185465042" name="Optimization Level" superClass="gnu.c.compiler.lib.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.lib.debug.option.debugging.level.1885675229" name="Debug Level" superClass="gnu.c.compiler.lib.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.240159915" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_lensing}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main}&quot;"/>
 								</option>
@@ -54,7 +59,15 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.1556810423" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1074193429" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.1274734225" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="IceBRG_lensing"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="IceBRG_physics"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="IceBRG_main"/>
 									<listOptionValue builtIn="false" value="python2.7"/>
+								</option>
+								<option id="gnu.cpp.link.option.paths.1459576224" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_lensing/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main/Release}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1701946214" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -64,6 +77,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.lib.debug.242628960" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.lib.debug">
 								<option id="gnu.both.asm.option.include.paths.789268499" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_lensing}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main}&quot;"/>
 								</option>
@@ -74,18 +88,25 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="IceBRG_main;cdt.managedbuild.config.gnu.lib.debug.1618539873" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+				<externalSettings containerId="IceBRG_main;cdt.managedbuild.config.gnu.lib.release.390841488" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/IceBRG_main"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_main/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_main/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="IceBRG_main" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
-				<externalSettings containerId="IceBRG_physics;cdt.managedbuild.config.gnu.lib.debug.990868816" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+				<externalSettings containerId="IceBRG_physics;cdt.managedbuild.config.gnu.lib.release.53132780" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/IceBRG_physics"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_physics/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_physics/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="IceBRG_physics" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="IceBRG_lensing;cdt.managedbuild.config.gnu.lib.release.312081502" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/IceBRG_lensing"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_lensing/Release"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="IceBRG_lensing" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -121,6 +142,7 @@
 								<option id="gnu.cpp.compiler.lib.release.option.optimization.level.1846671314" name="Optimization Level" superClass="gnu.cpp.compiler.lib.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.lib.release.option.debugging.level.2061700948" name="Debug Level" superClass="gnu.cpp.compiler.lib.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.596328119" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_lensing}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main}&quot;"/>
 									<listOptionValue builtIn="false" value="/home/brg/include"/>
@@ -139,6 +161,7 @@
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.lib.release.option.optimization.level.407775334" name="Optimization Level" superClass="gnu.c.compiler.lib.release.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.lib.release.option.debugging.level.440232630" name="Debug Level" superClass="gnu.c.compiler.lib.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1200992831" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_lensing}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main}&quot;"/>
 								</option>
@@ -150,11 +173,13 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.387953078" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1546714312" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.paths.2105857499" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_lensing/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="/home/brg/lib"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.465476679" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="IceBRG_lensing"/>
 									<listOptionValue builtIn="false" value="IceBRG_physics"/>
 									<listOptionValue builtIn="false" value="IceBRG_main"/>
 									<listOptionValue builtIn="false" value="python2.7"/>
@@ -168,6 +193,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.lib.release.856238536" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.lib.release">
 								<option id="gnu.both.asm.option.include.paths.2094778904" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_lensing}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main}&quot;"/>
 									<listOptionValue builtIn="false" value="/home/brg/include"/>
@@ -193,6 +219,13 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/IceBRG_physics"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_physics/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="IceBRG_physics" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="IceBRG_lensing;cdt.managedbuild.config.gnu.lib.release.312081502" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/IceBRG_lensing"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_lensing/Release"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="IceBRG_lensing" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>

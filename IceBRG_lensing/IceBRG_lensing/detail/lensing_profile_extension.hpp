@@ -30,9 +30,9 @@
 #include <IceBRG_physics/distance_measures.hpp>
 #include "IceBRG_main/units/units.hpp"
 
-#include "detail/lensing_profile_extension_functors.hpp"
-#include "detail/two_halo_term_functions.hpp"
-#include "shifting/detail/shifting_cache.hpp"
+#include "IceBRG_lensing/detail/lensing_profile_extension_functors.hpp"
+#include "IceBRG_lensing/detail/two_halo_term_functions.hpp"
+#include "IceBRG_lensing/shifting/detail/shifting_cache.hpp"
 
 
 // TODO: Update lensing tNFW_profile along with updates here
@@ -162,8 +162,7 @@ private:
 				min_in_param, max_in_param, 0.00001, false);
 		return out_param;
 	}
-	surface_density_type _two_halo_Delta_Sigma( const distance_type & R,
-			const flt_t & group_c ) const
+	surface_density_type _two_halo_Delta_Sigma( const distance_type & R ) const
 	{
 		assert(false); // TODO: Fill this out
 		return surface_density_type();
@@ -615,7 +614,7 @@ public:
 	}
 #endif
 
-#include "detail/two_halo_term_methods.hpp"
+#include "IceBRG_lensing/detail/two_halo_term_methods.hpp"
 
 #endif
 
