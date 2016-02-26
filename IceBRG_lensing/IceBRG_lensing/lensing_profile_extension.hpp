@@ -26,14 +26,13 @@
 #include "IceBRG_main/common.hpp"
 
 #include <IceBRG_main/math/interpolator/interpolator.hpp>
+#include <IceBRG_physics/density_profile/detail/density_profile.hpp>
 #include <IceBRG_physics/distance_measures.hpp>
-#include <IceBRG_physics/density_profile/density_profile.hpp>
-
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_lensing/lensing_profile_extension_functors.hpp"
-#include "IceBRG_lensing/two_halo_term_functions.hpp"
-#include "shifting/shifting_cache.hpp"
+#include "detail/lensing_profile_extension_functors.hpp"
+#include "detail/two_halo_term_functions.hpp"
+#include "shifting/detail/shifting_cache.hpp"
 
 
 // TODO: Update lensing tNFW_profile along with updates here
@@ -616,7 +615,7 @@ public:
 	}
 #endif
 
-#include "IceBRG_lensing/two_halo_term_methods.hpp"
+#include "detail/two_halo_term_methods.hpp"
 
 #endif
 

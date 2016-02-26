@@ -36,10 +36,11 @@
 
 #include "IceBRG_main/common.hpp"
 
-#include "IceBRG_lensing/source_obj.hpp"
-
-#include "IceBRG_physics/sky_obj/sky_obj.hpp"
 #include "IceBRG_main/units/units.hpp"
+
+#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
+
+#include "IceBRG_lensing/detail/source_obj.hpp"
 
 namespace IceBRG {
 

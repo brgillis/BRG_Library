@@ -50,8 +50,8 @@
 #include "IceBRG_main/vector/limit_vector.hpp"
 #include "IceBRG_main/vector/summary_functions.hpp"
 
-#include "lens_source_pair.hpp"
-#include "pair_bin_summary.hpp"
+#include "IceBRG_lensing/detail/lens_source_pair.hpp"
+#include "IceBRG_lensing/detail/pair_bin_summary.hpp"
 
 
 namespace IceBRG {

@@ -40,9 +40,10 @@
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_lensing/magnification/magnification_alpha.hpp"
-#include "IceBRG_lensing/magnification/magnification_functors.hpp"
-#include "IceBRG_lensing/pair_bin.hpp"
-#include "IceBRG_lensing/pair_bin_summary.hpp"
+#include "IceBRG_lensing/detail/pair_bin_summary.hpp"
+
+#include "../IceBRG_lensing/magnification/detail/magnification_functors.hpp"
+#include "IceBRG_lensing/detail/pair_bin.hpp"
 
 namespace IceBRG {
 

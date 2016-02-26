@@ -43,8 +43,8 @@
 
 #include "IceBRG_main/common.hpp"
 
-#include "pair_bin.hpp"
-#include "pair_bins_summary.hpp"
+#include "detail/pair_bin.hpp"
+#include "detail/pair_bins_summary.hpp"
 
 
 namespace IceBRG {

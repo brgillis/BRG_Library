@@ -30,8 +30,9 @@
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_lensing/magnification/magnification_alpha.hpp"
-#include "IceBRG_lensing/magnification/expected_count_cache.hpp"
-#include "IceBRG_lensing/magnification/expected_count_derivative_cache.hpp"
+
+#include "../../IceBRG_lensing/magnification/detail/expected_count_cache.hpp"
+#include "../../IceBRG_lensing/magnification/detail/expected_count_derivative_cache.hpp"
 
 namespace IceBRG {
 

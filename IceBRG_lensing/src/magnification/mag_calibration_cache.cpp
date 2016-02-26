@@ -23,10 +23,11 @@
 
 \**********************************************************************/
 
+#include "../../IceBRG_lensing/magnification/detail/mag_calibration_cache.hpp"
+
 #include "IceBRG_main/common.hpp"
 
-#include "IceBRG_lensing/magnification/mag_calibration_cache.hpp"
-#include "IceBRG_lensing/magnification/mag_calibration_loader.hpp"
+#include "../../IceBRG_lensing/magnification/detail/mag_calibration_loader.hpp"
 #include "IceBRG_lensing/magnification/mag_global_values.hpp"
 
 

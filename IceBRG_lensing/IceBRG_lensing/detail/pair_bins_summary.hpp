@@ -41,7 +41,7 @@
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/vector/limit_vector.hpp"
 
-#include "IceBRG_lensing/pair_bin_summary.hpp"
+#include "IceBRG_lensing/detail/pair_bin_summary.hpp"
 
 namespace IceBRG {
 

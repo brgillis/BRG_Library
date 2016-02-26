@@ -24,6 +24,8 @@
  \**********************************************************************/
 
 
+#include "../../IceBRG_lensing/shifting/detail/shifting_cache.hpp"
+
 #include <cstdlib>
 
 #include "IceBRG_main/common.hpp"
@@ -31,8 +33,8 @@
 #include "IceBRG_main/math/safe_math.hpp"
 
 #include "IceBRG_main/units/unit_conversions.hpp"
-#include "IceBRG_lensing/shifting/shifting_cache.hpp"
-#include "IceBRG_lensing/shifting/shifting_loader.hpp"
+
+#include "../../IceBRG_lensing/shifting/detail/shifting_loader.hpp"
 
 // Initialise the cache
 

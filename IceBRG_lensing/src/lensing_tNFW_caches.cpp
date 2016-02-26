@@ -21,6 +21,8 @@
 \**********************************************************************/
 
 
+#include "../IceBRG_lensing/detail/lensing_tNFW_caches.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -33,7 +35,6 @@
 #include "IceBRG_main/math/cache/cache_4d.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_lensing/lensing_tNFW_caches.hpp"
 #include "IceBRG_lensing/lensing_tNFW_profile.hpp"
 
 namespace IceBRG {

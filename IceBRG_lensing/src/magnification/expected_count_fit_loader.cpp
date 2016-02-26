@@ -26,6 +26,8 @@
  \**********************************************************************/
 
 
+#include "../../IceBRG_lensing/magnification/detail/expected_count_fit_loader.hpp"
+
 #include <cassert>
 #include <iostream>
 #include <sstream>
@@ -39,8 +41,7 @@
 #include "IceBRG_main/vector/elementwise_functions.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_lensing/magnification/count_fitting_results.hpp"
-#include "IceBRG_lensing/magnification/expected_count_fit_loader.hpp"
+#include "../../IceBRG_lensing/magnification/detail/count_fitting_results.hpp"
 
 
 
