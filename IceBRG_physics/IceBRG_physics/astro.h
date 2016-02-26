@@ -20,16 +20,8 @@
 
 \**********************************************************************/
 
-// body file: brg/physics/astro.cpp
-
 #ifndef _BRG_ASTRO_H_INCLUDED_
 #define _BRG_ASTRO_H_INCLUDED_
-
-#include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <string>
-#include <sstream>
 
 #include "IceBRG_main/common.h"
 
@@ -37,89 +29,14 @@
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 
-
-/** Constant Definitions **/
-#if (1)
-/**********************************************************************
- This section stores the definitions of various physical and
- astrophysical constants, stored as variables. Key points:
-
- -H_0 is set to 70 km/s/Mpc. If this is not changed, all results should
- be assumed to be in h_70 units.
- -Cosmological values are based on best-fit WMAP + priors values
- from Hinshaw et al. 2012.
- -If the _BRG_USE_UNITS_ parameter is set (see the brg_global.h file), values
- that have units will be declared as unit_objs.
-
- \**********************************************************************/
-
-// Physical Constants
-#if (1)
-#ifndef _BRG_PI_DEFINED_
-#define _BRG_PI_DEFINED_
-const flt_t & pi = M_PI;
-#endif
-
+#include "IceBRG_physics/constants.hpp"
+#include "IceBRG_physics/cosmology.hpp"
 
 namespace IceBRG
 {
 
-#ifndef _PHYS_VARS_DEFINED_
-#define _PHYS_VARS_DEFINED_
-
-#ifdef _BRG_USE_UNITS_
-const custom_unit_type<3,-2,-1,0,0> Gc = 6.67384e-11 * cube(m) / square(s) / kg; // In m^3 s^-2 kg^-1
-#else
-constexpr flt_t Gc = 6.67384e-11; // In m^3 s^-2 kg^-1
-#endif
-const velocity_type c = IceBRG::unitconv::ctomps * mps;
-
-#endif
-
-#endif // end Physical Constants
-
-// Cosmological Parameters
-#if (1)
-#ifndef _COSMO_VARS_DEFINED_
-#define _COSMO_VARS_DEFINED_
-
-const inverse_time_type H_0 = 70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second; // So all results will implicitly be in h_70 units
-
-constexpr flt_t Omega_m = 0.288; // WMAP9 + priors
-constexpr flt_t Omega_r = 0.000086; // WMAP9 + priors
-constexpr flt_t Omega_k = 0; // Assuming flat space
-constexpr flt_t Omega_l = 1 - Omega_k - Omega_m - Omega_r;
-constexpr flt_t Omega_b = 0.0472; // WMAP9 + priors
-constexpr flt_t sigma_8 = 0.830; // WMAP9 + priors
-constexpr flt_t n_s = 0.971;     // WMAP9 + priors
-const time_type t_present_day = 13.616*unitconv::Gyrtos*s;     // WMAP9 + priors
-
-#endif
-
-#endif // end Cosmological Parameters
-
-// Default parameters
-#if (1)
-#ifndef _BRG_DEFAULT_ASTRO_VARS_DEFINED_
-#define _BRG_DEFAULT_ASTRO_VARS_DEFINED_
-
-constexpr flt_t default_c = 6.; // To help prevent crashes. Warning will be output
-constexpr flt_t default_tau_factor = 2.;
-
-#endif
-#endif
-
-#endif // End Constant Definitions
-
 /** Function Declarations **/
 #if (1)
-/**********************************************************************
- This section defines various functions which I find useful for
- astrophysical calculations. All are declared in the namespace IceBRG.
-
- \**********************************************************************/
-
-inverse_time_type H( const flt_t & z );
 
 // Functions to get transverse distance_type (in m) from angle_type (in rad) or vice-versa
 custom_unit_type<1,0,0,-1,0> dfa( const flt_t & z ); // Just gives conversion factor
@@ -135,29 +52,6 @@ angle_type afd( const distance_type & d1, const distance_type & d2,
 		const flt_t & z );
 angle_type afd( const distance_type & d1x, const distance_type & d1y,
 		const distance_type & d2x, const distance_type & d2y, const flt_t & z );
-
-// Functions to work between redshift, scale factor, and time_type (in s, with zero = present day)
-flt_t zfa( const flt_t & a );
-flt_t afz( const flt_t & z );
-
-time_type tfz( const flt_t & z );
-time_type tfa( const flt_t & z );
-flt_t zft( const time_type & t );
-flt_t aft( const time_type & t );
-
-time_type universe_age( const flt_t & z );
-
-// Functions to integrate out distances
-distance_type integrate_add( const flt_t & z1, const flt_t & z2 );
-distance_type integrate_cmd( const flt_t & z1, const flt_t & z2 );
-distance_type integrate_Ld( const flt_t & z1, const flt_t & z2 );
-distance_type integrate_ltd( const flt_t & z1, const flt_t & z2 );
-distance_type integrate_add( const flt_t & z );
-distance_type integrate_cmd( const flt_t & z );
-distance_type integrate_Ld( const flt_t & z );
-distance_type integrate_ltd( const flt_t & z );
-distance_type integrate_distance( const flt_t & z1, const flt_t & z2,
-		const int_t & mode, const int_t & resolution = 10000 );
 
 distance_type ad_distance( flt_t z1, flt_t z2 = 0 );
 distance_type comoving_distance( flt_t z );
@@ -179,12 +73,6 @@ inline const Tr1 skydist2d( const Tr1 & ra1, const Td1 & dec1,
 // Luminosity functions
 #if(1)
 
-constexpr flt_t bright_abs_mag_i_max = -19.5;
-constexpr flt_t faint_app_mag_i_max = 27;
-
-constexpr flt_t lum_func_min_abs_mag_B = -25;
-constexpr flt_t lum_func_max_abs_mag_B = -11;
-
 flt_t get_abs_mag_from_app_mag( flt_t const & app_mag, flt_t const & z );
 flt_t get_app_mag_from_abs_mag( flt_t const & abs_mag, flt_t const & z );
 inverse_volume_type differential_luminosity_function( flt_t const & mag_B );
@@ -196,9 +84,6 @@ flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_i_lim = 
 
 // Mass functions
 #if(1)
-
-constexpr flt_t mass_func_l10_min = 8;
-constexpr flt_t mass_func_l10_max = 16;
 
 flt_t delta_c( flt_t const & z = 0. );
 density_type rho_bar( flt_t const & z = 0. );

@@ -47,6 +47,8 @@
 #include <boost/any.hpp>
 #include <boost/serialization/split_free.hpp>
 
+#define UNIT_CONSTEXPR const // Will instead be constexpr if not using units
+
 namespace IceBRG {
 
 // Quantity types
@@ -362,6 +364,8 @@ inline void serialize(Archive & ar, boost::units::quantity<T> & g, const unsigne
 } // namespace boost
 
 #else // #ifdef _BRG_USE_UNITS_
+
+#define UNIT_CONSTEXPR constexpr // Will instead be const if using units
 
 namespace IceBRG {
 
