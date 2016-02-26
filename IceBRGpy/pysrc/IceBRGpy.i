@@ -34,7 +34,15 @@
 	 
 	/* Include the headers in the wrapper code */
 	#include "IceBRG_main/units/unit_conversions.hpp"
-	#include "IceBRG_physics/astro.h"
+
+	#include "IceBRG_physics/abundance_matching.hpp"
+	#include "IceBRG_physics/cluster_visibility.hpp"
+	#include "IceBRG_physics/constants.hpp"
+	#include "IceBRG_physics/cosmology.hpp"
+	#include "IceBRG_physics/distance_measures.hpp"
+	#include "IceBRG_physics/galaxy_visibility.hpp"
+	#include "IceBRG_physics/luminosity.hpp"
+	#include "IceBRG_physics/mass_function.hpp"
 	
 	using namespace IceBRG;
 	 
@@ -42,7 +50,15 @@
  
 // Parse the header files to generate wrappers
 %include "/disk2/brg/include/IceBRG_main/units/unit_conversions.hpp"
-%include "/disk2/brg/include/IceBRG_physics/astro.h"
+
+%include "/disk2/brg/include/IceBRG_physics/abundance_matching.hpp"
+%include "/disk2/brg/include/IceBRG_physics/cluster_visibility.hpp"
+%include "/disk2/brg/include/IceBRG_physics/constants.hpp"
+%include "/disk2/brg/include/IceBRG_physics/cosmology.hpp"
+%include "/disk2/brg/include/IceBRG_physics/distance_measures.hpp"
+%include "/disk2/brg/include/IceBRG_physics/galaxy_visibility.hpp"
+%include "/disk2/brg/include/IceBRG_physics/luminosity.hpp"
+%include "/disk2/brg/include/IceBRG_physics/mass_function.hpp"
 
 typedef double flt_t;
 

@@ -71,14 +71,6 @@ UNIT_CONSTEXPR time_type t_present_day = 13.616*unitconv::Gyrtos*s;     // WMAP9
 constexpr flt_t default_c = 6.; // To help prevent crashes. Warning will be output
 constexpr flt_t default_tau_factor = 2.;
 
-// Luminosity function constants
-
-constexpr flt_t bright_abs_mag_i_max = -19.5;
-constexpr flt_t faint_app_mag_i_max = 27;
-
-constexpr flt_t lum_func_min_abs_mag_B = -25;
-constexpr flt_t lum_func_max_abs_mag_B = -11;
-
 // Mass function constants
 
 constexpr flt_t mass_func_l10_min = 8;

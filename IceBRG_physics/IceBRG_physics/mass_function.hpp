@@ -1,12 +1,12 @@
 /**********************************************************************\
- @file astro.h
+ @file mass_function.hpp
+ ------------------
 
- This file contains all astrophysics header files which provide useful
- functions outside the library.
+ TODO <Insert file description here>
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2016 brg
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,22 +23,26 @@
 
 \**********************************************************************/
 
-#ifndef _BRG_ASTRO_H_INCLUDED_
-#define _BRG_ASTRO_H_INCLUDED_
+#ifndef ICEBRG_PHYSICS_MASS_FUNCTION_HPP_
+#define ICEBRG_PHYSICS_MASS_FUNCTION_HPP_
 
 #include "IceBRG_main/common.h"
 
-#include "IceBRG_main/units/unit_conversions.hpp"
 #include "IceBRG_main/units/units.hpp"
-#include "IceBRG_main/math/misc_math.hpp"
 
-#include "IceBRG_physics/abundance_matching.hpp"
-#include "IceBRG_physics/cluster_visibility.hpp"
-#include "IceBRG_physics/constants.hpp"
-#include "IceBRG_physics/cosmology.hpp"
-#include "IceBRG_physics/distance_measures.hpp"
-#include "IceBRG_physics/galaxy_visibility.hpp"
-#include "IceBRG_physics/luminosity.hpp"
-#include "IceBRG_physics/mass_function.hpp"
+namespace IceBRG
+{
 
-#endif // _BRG_ASTRO_H_INCLUDED_
+flt_t delta_c( flt_t const & z = 0. );
+distance_type r_of_m( mass_type const & mass, flt_t const & z = 0. );
+flt_t sigma_of_r( distance_type const & r);
+flt_t sigma_of_m( mass_type const & mass );
+flt_t nu_of_m( mass_type const & mass, flt_t const & z = 0. );
+inverse_volume_inverse_mass_type mass_function( mass_type const & mass, flt_t const & z = 0. );
+inverse_volume_type log10_mass_function( flt_t const & log10msun_mass, flt_t const & z = 0. );
+inverse_volume_type integrated_log10_mass_function( flt_t const & l10_m_lo, flt_t const & l10_m_hi,
+		flt_t const & z = 0. );
+
+} // namespace IceBRG
+
+#endif // ICEBRG_PHYSICS_MASS_FUNCTION_HPP_

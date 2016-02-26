@@ -1,12 +1,12 @@
 /**********************************************************************\
- @file astro.h
+ @file abundance_matching.hpp
+ ------------------
 
- This file contains all astrophysics header files which provide useful
- functions outside the library.
+ TODO <Insert file description here>
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2016 brg
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,22 +23,24 @@
 
 \**********************************************************************/
 
-#ifndef _BRG_ASTRO_H_INCLUDED_
-#define _BRG_ASTRO_H_INCLUDED_
+#ifndef ICEBRG_PHYSICS_ABUNDANCE_MATCHING_HPP_
+#define ICEBRG_PHYSICS_ABUNDANCE_MATCHING_HPP_
 
 #include "IceBRG_main/common.h"
 
-#include "IceBRG_main/units/unit_conversions.hpp"
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 
-#include "IceBRG_physics/abundance_matching.hpp"
-#include "IceBRG_physics/cluster_visibility.hpp"
-#include "IceBRG_physics/constants.hpp"
-#include "IceBRG_physics/cosmology.hpp"
-#include "IceBRG_physics/distance_measures.hpp"
-#include "IceBRG_physics/galaxy_visibility.hpp"
-#include "IceBRG_physics/luminosity.hpp"
-#include "IceBRG_physics/mass_function.hpp"
+namespace IceBRG
+{
 
-#endif // _BRG_ASTRO_H_INCLUDED_
+flt_t get_abs_mag_B_from_mass( mass_type const & m, flt_t const & z );
+mass_type get_mass_from_abs_mag_B( flt_t const & abs_mag, flt_t const & z );
+flt_t get_app_mag_B_from_mass( mass_type const & m, flt_t const & z );
+mass_type get_mass_from_app_mag_B( flt_t const & app_mag, flt_t const & z );
+
+} // namespace IceBRG
+
+
+
+#endif // ICEBRG_PHYSICS_ABUNDANCE_MATCHING_HPP_

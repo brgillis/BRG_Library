@@ -1,12 +1,12 @@
 /**********************************************************************\
- @file astro.h
+ @file galaxy_visibility.hpp
+ ------------------
 
- This file contains all astrophysics header files which provide useful
- functions outside the library.
+ TODO <Insert file description here>
 
  **********************************************************************
 
- Copyright (C) 2014  Bryan R. Gillis
+ Copyright (C) 2016 brg
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,22 +23,34 @@
 
 \**********************************************************************/
 
-#ifndef _BRG_ASTRO_H_INCLUDED_
-#define _BRG_ASTRO_H_INCLUDED_
+#ifndef ICEBRG_PHYSICS_GALAXY_VISIBILITY_HPP_
+#define ICEBRG_PHYSICS_GALAXY_VISIBILITY_HPP_
 
 #include "IceBRG_main/common.h"
 
-#include "IceBRG_main/units/unit_conversions.hpp"
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 
-#include "IceBRG_physics/abundance_matching.hpp"
-#include "IceBRG_physics/cluster_visibility.hpp"
-#include "IceBRG_physics/constants.hpp"
-#include "IceBRG_physics/cosmology.hpp"
-#include "IceBRG_physics/distance_measures.hpp"
-#include "IceBRG_physics/galaxy_visibility.hpp"
-#include "IceBRG_physics/luminosity.hpp"
-#include "IceBRG_physics/mass_function.hpp"
+namespace IceBRG
+{
 
-#endif // _BRG_ASTRO_H_INCLUDED_
+flt_t max_galaxy_abs_mag_B( flt_t const & z,
+		flt_t const & faint_app_mag_i_lim = faint_app_mag_i_max );
+
+/**
+ * Get the number density of galaxies at a given redshift in units of
+ * number per square radian per unit redshift.
+ *
+ * @param z
+ * @return
+ */
+inverse_square_angle_type galaxy_angular_density_at_z(flt_t const & z);
+flt_t visible_galaxies( square_angle_type const & area, flt_t const & z1 = 0.1, flt_t const & z2 = 2.0 );
+
+} // namespace IceBRG
+
+
+
+
+
+#endif // ICEBRG_PHYSICS_GALAXY_VISIBILITY_HPP_

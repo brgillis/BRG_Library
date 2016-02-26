@@ -24,20 +24,18 @@
 
 \**********************************************************************/
 
-#ifndef COSMOLOGY_HPP_
-#define COSMOLOGY_HPP_
+#ifndef ICEBRG_PHYSICS_COSMOLOGY_HPP_
+#define ICEBRG_PHYSICS_COSMOLOGY_HPP_
 
 #include "IceBRG_main/common.h"
 
-#include "IceBRG_main/units/unit_conversions.hpp"
 #include "IceBRG_main/units/units.hpp"
-#include "IceBRG_main/math/misc_math.hpp"
-
 
 namespace IceBRG
 {
 
 inverse_time_type H( const flt_t & z );
+density_type rho_bar( flt_t const & z = 0. );
 
 // Functions to work between redshift, scale factor, and time (in s, with zero = present day)
 flt_t zfa( const flt_t & a );
@@ -62,8 +60,10 @@ distance_type integrate_ltd( const flt_t & z );
 distance_type integrate_distance( const flt_t & z1, const flt_t & z2,
 		const int_t & mode, const int_t & resolution = 10000 );
 
+// Lensing functions
+surface_density_type sigma_crit( const flt_t & z_lens, const flt_t & z_source );
 
 } // namespace IceBRG
 
 
-#endif // COSMOLOGY_HPP_
+#endif // ICEBRG_PHYSICS_COSMOLOGY_HPP_
