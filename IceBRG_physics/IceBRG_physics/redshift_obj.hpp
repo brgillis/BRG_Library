@@ -31,7 +31,8 @@
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "astro.hpp"
+#include "IceBRG_physics/constants.hpp"
+#include "IceBRG_physics/cosmology.hpp"
 
 namespace IceBRG {
 

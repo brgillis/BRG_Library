@@ -30,10 +30,10 @@
 
 #include "IceBRG_main/common.hpp"
 
+#include "IceBRG_main/math/cache/cache_3d.hpp"
 #include "IceBRG_main/math/cache/cache_4d.hpp"
-
-#include <IceBRG_physics/astro.hpp>
 #include "IceBRG_main/units/units.hpp"
+
 #include "lensing_tNFW_profile.hpp"
 
 namespace IceBRG {

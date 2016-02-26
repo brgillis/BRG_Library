@@ -32,8 +32,6 @@
 
 #include "IceBRG_main/common.hpp"
 
-#include "../astro.hpp"
-
 #include "position_grid_cache.hpp"
 
 // Macro definitions

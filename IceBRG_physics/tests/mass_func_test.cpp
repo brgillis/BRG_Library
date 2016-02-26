@@ -33,7 +33,11 @@
 #include "IceBRG_main/math/calculus/integrate.hpp"
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/units/unit_conversions.hpp"
-#include "../IceBRG_physics/astro.hpp"
+
+#include "IceBRG_physics/cluster_visibility.hpp"
+#include "IceBRG_physics/cosmology.hpp"
+#include "IceBRG_physics/galaxy_visibility.hpp"
+#include "IceBRG_physics/mass_function.hpp"
 
 using namespace IceBRG;
 

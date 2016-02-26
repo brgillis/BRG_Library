@@ -23,10 +23,11 @@
 #ifndef _BRG_LENSING_PROFILE_EXTENSION_HPP_
 #define _BRG_LENSING_PROFILE_EXTENSION_HPP_
 
-#include <IceBRG_main/math/interpolator/interpolator.hpp>
-#include <IceBRG_physics/astro.hpp>
-#include <IceBRG_physics/density_profile/density_profile.hpp>
 #include "IceBRG_main/common.hpp"
+
+#include <IceBRG_main/math/interpolator/interpolator.hpp>
+#include <IceBRG_physics/distance_measures.hpp>
+#include <IceBRG_physics/density_profile/density_profile.hpp>
 
 #include "IceBRG_main/units/units.hpp"
 

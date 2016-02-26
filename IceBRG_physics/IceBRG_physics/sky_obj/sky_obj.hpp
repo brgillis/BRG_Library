@@ -29,7 +29,6 @@
 
 #include "IceBRG_main/units/units.hpp"
 
-#include "../astro.hpp"
 #include "IceBRG_physics/redshift_obj.hpp"
 
 #include "position_grid_cache.hpp"

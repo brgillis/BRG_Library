@@ -33,8 +33,15 @@
 #include "IceBRG_main/math/cache/cache_2d.hpp"
 #include "IceBRG_main/math/calculus/integrate.hpp"
 #include "IceBRG_main/units/units.hpp"
+#include "IceBRG_main/units/unit_conversions.hpp"
 
-#include "astro.hpp"
+#include "IceBRG_physics/abundance_matching.hpp"
+#include "IceBRG_physics/cluster_visibility.hpp"
+#include "IceBRG_physics/constants.hpp"
+#include "IceBRG_physics/cosmology.hpp"
+#include "IceBRG_physics/galaxy_visibility.hpp"
+#include "IceBRG_physics/luminosity.hpp"
+#include "IceBRG_physics/mass_function.hpp"
 
 /** Static Class Initialisation **/
 #if (1)

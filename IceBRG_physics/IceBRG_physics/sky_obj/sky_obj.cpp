@@ -26,8 +26,7 @@
 
 #include "IceBRG_physics/sky_obj/sky_obj.hpp"
 
-#include "IceBRG_physics/astro.hpp"
-#include "IceBRG_physics/astro_caches.hpp"
+#include "IceBRG_physics/distance_measures.hpp"
 
 // IceBRG::sky_obj class methods
 #if (1)
