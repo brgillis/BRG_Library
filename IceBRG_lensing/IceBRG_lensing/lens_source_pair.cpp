@@ -32,16 +32,16 @@
 #include <memory>
 #endif
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 
 #include "IceBRG_lensing/source_obj.hpp"
 
-#include "IceBRG_physics/sky_obj/sky_obj.h"
+#include "IceBRG_physics/sky_obj/sky_obj.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "lens_source_pair.h"
+#include "lens_source_pair.hpp"
 
 namespace IceBRG {
 

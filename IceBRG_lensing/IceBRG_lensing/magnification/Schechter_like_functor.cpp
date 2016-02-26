@@ -23,10 +23,11 @@
 
  \**********************************************************************/
 
+#include "Schechter_like_functor.hpp"
+
 #include <cmath>
 #include <cstdlib>
 
-#include "Schechter_like_functor.h"
 
 namespace IceBRG {
 

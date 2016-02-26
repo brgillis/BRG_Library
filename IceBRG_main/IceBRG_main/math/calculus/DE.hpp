@@ -28,7 +28,7 @@
 
 #include <type_traits>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 

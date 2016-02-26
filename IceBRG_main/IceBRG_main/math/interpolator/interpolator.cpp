@@ -20,14 +20,15 @@
 
 \**********************************************************************/
 
+#include "interpolator.hpp"
+
 #include <algorithm>
 #include <cassert>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/utility.hpp"
 
-#include "interpolator.h"
 
 // Global function implementations
 bool IceBRG::p1first_lt_p2first(std::pair<flt_t,flt_t> pair1, std::pair<flt_t,flt_t> pair2)

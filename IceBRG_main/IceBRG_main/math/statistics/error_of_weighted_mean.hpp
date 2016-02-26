@@ -36,7 +36,7 @@
 #include <boost/accumulators/statistics/count.hpp>
 #include <boost/accumulators/statistics/weighted_variance.hpp>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/math/statistics/effective_count.hpp"

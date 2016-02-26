@@ -33,7 +33,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/container/table_typedefs.hpp"
 #include "IceBRG_main/utility.hpp"

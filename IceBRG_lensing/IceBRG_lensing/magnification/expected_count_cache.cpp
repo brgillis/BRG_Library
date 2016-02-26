@@ -23,14 +23,15 @@
 
  \**********************************************************************/
 
+#include "expected_count_cache.hpp"
+
 #include <cstdlib>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
-#include "IceBRG_lensing/magnification/expected_count_loader.h"
-#include "IceBRG_lensing/magnification/mag_global_values.h"
+#include "expected_count_loader.hpp"
+#include "mag_global_values.hpp"
 
-#include "expected_count_cache.h"
 
 namespace IceBRG {
 

@@ -31,7 +31,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/math/safe_math.hpp"

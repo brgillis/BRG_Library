@@ -32,7 +32,7 @@
 #include <vector>
 
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/Eigen.hpp" // Just for RowMajor and ColMajor tags
 

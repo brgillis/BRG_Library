@@ -26,7 +26,7 @@
 #ifndef ICEBRG_MAIN_FILE_ACCESS_TABLE_FORMATS_ASCII_FORMAT_HPP_
 #define ICEBRG_MAIN_FILE_ACCESS_TABLE_FORMATS_ASCII_FORMAT_HPP_
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 #include "IceBRG_main/file_access/ascii_table.hpp"
 
 namespace IceBRG {

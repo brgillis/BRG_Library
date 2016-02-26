@@ -3418,7 +3418,15 @@ SWIG_AsVal_ptrdiff_t (PyObject * obj, ptrdiff_t *val)
 	 
 	/* Include the headers in the wrapper code */
 	#include "IceBRG_main/units/unit_conversions.hpp"
-	#include "IceBRG_physics/astro.h"
+
+	#include "IceBRG_physics/abundance_matching.hpp"
+	#include "IceBRG_physics/cluster_visibility.hpp"
+	#include "IceBRG_physics/constants.hpp"
+	#include "IceBRG_physics/cosmology.hpp"
+	#include "IceBRG_physics/distance_measures.hpp"
+	#include "IceBRG_physics/galaxy_visibility.hpp"
+	#include "IceBRG_physics/luminosity.hpp"
+	#include "IceBRG_physics/mass_function.hpp"
 	
 	using namespace IceBRG;
 	 
@@ -5715,17 +5723,858 @@ SWIGINTERN PyObject *Swig_var_esutoC_get(void) {
 }
 
 
-SWIGINTERN int Swig_var_pi_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable pi is read-only.");
-  return 1;
+SWIGINTERN PyObject *_wrap_get_abs_mag_B_from_mass(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  mass_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  mass_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:get_abs_mag_B_from_mass",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_abs_mag_B_from_mass" "', argument " "1"" of type '" "mass_type""'");
+  } 
+  temp1 = static_cast< mass_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_abs_mag_B_from_mass" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::get_abs_mag_B_from_mass((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
 }
 
 
-SWIGINTERN PyObject *Swig_var_pi_get(void) {
-  PyObject *pyobj = 0;
+SWIGINTERN PyObject *_wrap_get_mass_from_abs_mag_B(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  mass_type result;
   
-  pyobj = SWIG_From_double(static_cast< double >(pi));
-  return pyobj;
+  if (!PyArg_ParseTuple(args,(char *)"OO:get_mass_from_abs_mag_B",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_mass_from_abs_mag_B" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_mass_from_abs_mag_B" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (mass_type)IceBRG::get_mass_from_abs_mag_B((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_get_app_mag_B_from_mass(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  mass_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  mass_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:get_app_mag_B_from_mass",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_app_mag_B_from_mass" "', argument " "1"" of type '" "mass_type""'");
+  } 
+  temp1 = static_cast< mass_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_app_mag_B_from_mass" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::get_app_mag_B_from_mass((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_get_mass_from_app_mag_B(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  mass_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:get_mass_from_app_mag_B",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_mass_from_app_mag_B" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_mass_from_app_mag_B" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (mass_type)IceBRG::get_mass_from_app_mag_B((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_cluster_richness__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  mass_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t *arg3 = 0 ;
+  flt_t *arg4 = 0 ;
+  mass_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  flt_t temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  flt_t temp4 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:cluster_richness",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "cluster_richness" "', argument " "1"" of type '" "mass_type""'");
+  } 
+  temp1 = static_cast< mass_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cluster_richness" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "cluster_richness" "', argument " "3"" of type '" "flt_t""'");
+  } 
+  temp3 = static_cast< flt_t >(val3);
+  arg3 = &temp3;
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "cluster_richness" "', argument " "4"" of type '" "flt_t""'");
+  } 
+  temp4 = static_cast< flt_t >(val4);
+  arg4 = &temp4;
+  result = (flt_t)IceBRG::cluster_richness((double const &)*arg1,(double const &)*arg2,(double const &)*arg3,(double const &)*arg4);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_cluster_richness__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  mass_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t *arg3 = 0 ;
+  mass_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  flt_t temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:cluster_richness",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "cluster_richness" "', argument " "1"" of type '" "mass_type""'");
+  } 
+  temp1 = static_cast< mass_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cluster_richness" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "cluster_richness" "', argument " "3"" of type '" "flt_t""'");
+  } 
+  temp3 = static_cast< flt_t >(val3);
+  arg3 = &temp3;
+  result = (flt_t)IceBRG::cluster_richness((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_cluster_richness__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  mass_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  mass_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:cluster_richness",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "cluster_richness" "', argument " "1"" of type '" "mass_type""'");
+  } 
+  temp1 = static_cast< mass_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cluster_richness" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::cluster_richness((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_cluster_richness(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_cluster_richness__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_cluster_richness__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_cluster_richness__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'cluster_richness'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    IceBRG::cluster_richness(mass_type const &,flt_t const &,flt_t const &,flt_t const &)\n"
+    "    IceBRG::cluster_richness(mass_type const &,flt_t const &,flt_t const &)\n"
+    "    IceBRG::cluster_richness(mass_type const &,flt_t const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_min_cluster_mass__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t *arg3 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  flt_t temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  mass_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:min_cluster_mass",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "min_cluster_mass" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "min_cluster_mass" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "min_cluster_mass" "', argument " "3"" of type '" "flt_t""'");
+  } 
+  temp3 = static_cast< flt_t >(val3);
+  arg3 = &temp3;
+  result = (mass_type)IceBRG::min_cluster_mass((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_min_cluster_mass__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  mass_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:min_cluster_mass",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "min_cluster_mass" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "min_cluster_mass" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (mass_type)IceBRG::min_cluster_mass((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_min_cluster_mass__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  mass_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:min_cluster_mass",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "min_cluster_mass" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (mass_type)IceBRG::min_cluster_mass((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_min_cluster_mass(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_min_cluster_mass__SWIG_2(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_min_cluster_mass__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_min_cluster_mass__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'min_cluster_mass'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    IceBRG::min_cluster_mass(flt_t const &,flt_t const &,flt_t const &)\n"
+    "    IceBRG::min_cluster_mass(flt_t const &,flt_t const &)\n"
+    "    IceBRG::min_cluster_mass(flt_t const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_cluster_angular_density_at_z(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  inverse_square_angle_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:cluster_angular_density_at_z",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "cluster_angular_density_at_z" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (inverse_square_angle_type)IceBRG::cluster_angular_density_at_z((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_visible_clusters__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  square_angle_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t *arg3 = 0 ;
+  square_angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  flt_t temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:visible_clusters",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_clusters" "', argument " "1"" of type '" "square_angle_type""'");
+  } 
+  temp1 = static_cast< square_angle_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "visible_clusters" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "visible_clusters" "', argument " "3"" of type '" "flt_t""'");
+  } 
+  temp3 = static_cast< flt_t >(val3);
+  arg3 = &temp3;
+  result = (flt_t)IceBRG::visible_clusters((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_visible_clusters__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  square_angle_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  square_angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:visible_clusters",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_clusters" "', argument " "1"" of type '" "square_angle_type""'");
+  } 
+  temp1 = static_cast< square_angle_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "visible_clusters" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::visible_clusters((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_visible_clusters__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  square_angle_type *arg1 = 0 ;
+  square_angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:visible_clusters",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_clusters" "', argument " "1"" of type '" "square_angle_type""'");
+  } 
+  temp1 = static_cast< square_angle_type >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::visible_clusters((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_visible_clusters(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_visible_clusters__SWIG_2(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_visible_clusters__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_visible_clusters__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'visible_clusters'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    IceBRG::visible_clusters(square_angle_type const &,flt_t const &,flt_t const &)\n"
+    "    IceBRG::visible_clusters(square_angle_type const &,flt_t const &)\n"
+    "    IceBRG::visible_clusters(square_angle_type const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_integrate_mean_cluster_richness_at_redshift(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:integrate_mean_cluster_richness_at_redshift",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "integrate_mean_cluster_richness_at_redshift" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::integrate_mean_cluster_richness_at_redshift((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_integrate_mean_cluster_richness(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:integrate_mean_cluster_richness",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "integrate_mean_cluster_richness" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "integrate_mean_cluster_richness" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::integrate_mean_cluster_richness((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mean_cluster_richness_at_redshift(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mean_cluster_richness_at_redshift",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "mean_cluster_richness_at_redshift" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::mean_cluster_richness_at_redshift((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mean_cluster_richness(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mean_cluster_richness",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "mean_cluster_richness" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mean_cluster_richness" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::mean_cluster_richness((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
 }
 
 
@@ -5753,6 +6602,20 @@ SWIGINTERN PyObject *Swig_var_c_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_From_double(static_cast< double >(IceBRG::c));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_t_present_day_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable t_present_day is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_t_present_day_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::t_present_day));
   return pyobj;
 }
 
@@ -5869,20 +6732,6 @@ SWIGINTERN PyObject *Swig_var_n_s_get(void) {
 }
 
 
-SWIGINTERN int Swig_var_t_present_day_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable t_present_day is read-only.");
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_t_present_day_get(void) {
-  PyObject *pyobj = 0;
-  
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::t_present_day));
-  return pyobj;
-}
-
-
 SWIGINTERN int Swig_var_default_c_set(PyObject *) {
   SWIG_Error(SWIG_AttributeError,"Variable default_c is read-only.");
   return 1;
@@ -5911,6 +6760,34 @@ SWIGINTERN PyObject *Swig_var_default_tau_factor_get(void) {
 }
 
 
+SWIGINTERN int Swig_var_mass_func_l10_min_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable mass_func_l10_min is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_mass_func_l10_min_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::mass_func_l10_min));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_mass_func_l10_max_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable mass_func_l10_max is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_mass_func_l10_max_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::mass_func_l10_max));
+  return pyobj;
+}
+
+
 SWIGINTERN PyObject *_wrap_H(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   flt_t *arg1 = 0 ;
@@ -5935,58 +6812,23 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_dfa__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_rho_bar__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   flt_t *arg1 = 0 ;
   flt_t temp1 ;
   double val1 ;
   int ecode1 = 0 ;
   PyObject * obj0 = 0 ;
-  custom_unit_type< 1,0,0,-1,0 > result;
+  density_type result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:dfa",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:rho_bar",&obj0)) SWIG_fail;
   ecode1 = SWIG_AsVal_double(obj0, &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "dfa" "', argument " "1"" of type '" "flt_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "rho_bar" "', argument " "1"" of type '" "flt_t""'");
   } 
   temp1 = static_cast< flt_t >(val1);
   arg1 = &temp1;
-  result = IceBRG::dfa((double const &)*arg1);
-  resultobj = SWIG_NewPointerObj((new custom_unit_type< 1,0,0,-1,0 >(static_cast< const custom_unit_type< 1,0,0,-1,0 >& >(result))), SWIGTYPE_p_custom_unit_typeT_1_0_0__1_0_t, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_dfa__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  angle_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  distance_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:dfa",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "dfa" "', argument " "1"" of type '" "angle_type""'");
-  } 
-  temp1 = static_cast< angle_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "dfa" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (distance_type)IceBRG::dfa((double const &)*arg1,(double const &)*arg2);
+  result = (density_type)IceBRG::rho_bar((double const &)*arg1);
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -5994,45 +6836,12 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_dfa__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_rho_bar__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  angle_type *arg1 = 0 ;
-  angle_type *arg2 = 0 ;
-  flt_t *arg3 = 0 ;
-  angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  angle_type temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  flt_t temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  distance_type result;
+  density_type result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:dfa",&obj0,&obj1,&obj2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "dfa" "', argument " "1"" of type '" "angle_type""'");
-  } 
-  temp1 = static_cast< angle_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "dfa" "', argument " "2"" of type '" "angle_type""'");
-  } 
-  temp2 = static_cast< angle_type >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "dfa" "', argument " "3"" of type '" "flt_t""'");
-  } 
-  temp3 = static_cast< flt_t >(val3);
-  arg3 = &temp3;
-  result = (distance_type)IceBRG::dfa((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
+  if (!PyArg_ParseTuple(args,(char *)":rho_bar")) SWIG_fail;
+  result = (density_type)IceBRG::rho_bar();
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -6040,83 +6849,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_dfa__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  angle_type *arg1 = 0 ;
-  angle_type *arg2 = 0 ;
-  angle_type *arg3 = 0 ;
-  angle_type *arg4 = 0 ;
-  flt_t *arg5 = 0 ;
-  angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  angle_type temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  angle_type temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  angle_type temp4 ;
-  double val4 ;
-  int ecode4 = 0 ;
-  flt_t temp5 ;
-  double val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  distance_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:dfa",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "dfa" "', argument " "1"" of type '" "angle_type""'");
-  } 
-  temp1 = static_cast< angle_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "dfa" "', argument " "2"" of type '" "angle_type""'");
-  } 
-  temp2 = static_cast< angle_type >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "dfa" "', argument " "3"" of type '" "angle_type""'");
-  } 
-  temp3 = static_cast< angle_type >(val3);
-  arg3 = &temp3;
-  ecode4 = SWIG_AsVal_double(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "dfa" "', argument " "4"" of type '" "angle_type""'");
-  } 
-  temp4 = static_cast< angle_type >(val4);
-  arg4 = &temp4;
-  ecode5 = SWIG_AsVal_double(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "dfa" "', argument " "5"" of type '" "flt_t""'");
-  } 
-  temp5 = static_cast< flt_t >(val5);
-  arg5 = &temp5;
-  result = (distance_type)IceBRG::dfa((double const &)*arg1,(double const &)*arg2,(double const &)*arg3,(double const &)*arg4,(double const &)*arg5);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_dfa(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_rho_bar(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[6];
+  PyObject *argv[2];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 1) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_rho_bar__SWIG_1(self, args);
   }
   if (argc == 1) {
     int _v;
@@ -6125,366 +6869,15 @@ SWIGINTERN PyObject *_wrap_dfa(PyObject *self, PyObject *args) {
       _v = SWIG_CheckState(res);
     }
     if (_v) {
-      return _wrap_dfa__SWIG_0(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_dfa__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_dfa__SWIG_2(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          {
-            int res = SWIG_AsVal_double(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            {
-              int res = SWIG_AsVal_double(argv[4], NULL);
-              _v = SWIG_CheckState(res);
-            }
-            if (_v) {
-              return _wrap_dfa__SWIG_3(self, args);
-            }
-          }
-        }
-      }
+      return _wrap_rho_bar__SWIG_0(self, args);
     }
   }
   
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'dfa'.\n"
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'rho_bar'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::dfa(flt_t const &)\n"
-    "    IceBRG::dfa(angle_type const &,flt_t const &)\n"
-    "    IceBRG::dfa(angle_type const &,angle_type const &,flt_t const &)\n"
-    "    IceBRG::dfa(angle_type const &,angle_type const &,angle_type const &,angle_type const &,flt_t const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_afd__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  custom_unit_type< -1,0,0,1,0 > result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:afd",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "afd" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  result = IceBRG::afd((double const &)*arg1);
-  resultobj = SWIG_NewPointerObj((new custom_unit_type< -1,0,0,1,0 >(static_cast< const custom_unit_type< -1,0,0,1,0 >& >(result))), SWIGTYPE_p_custom_unit_typeT__1_0_0_1_0_t, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_afd__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  distance_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  distance_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  angle_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:afd",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "afd" "', argument " "1"" of type '" "distance_type""'");
-  } 
-  temp1 = static_cast< distance_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "afd" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (angle_type)IceBRG::afd((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_afd__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  distance_type *arg1 = 0 ;
-  distance_type *arg2 = 0 ;
-  flt_t *arg3 = 0 ;
-  distance_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  distance_type temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  flt_t temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  angle_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:afd",&obj0,&obj1,&obj2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "afd" "', argument " "1"" of type '" "distance_type""'");
-  } 
-  temp1 = static_cast< distance_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "afd" "', argument " "2"" of type '" "distance_type""'");
-  } 
-  temp2 = static_cast< distance_type >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "afd" "', argument " "3"" of type '" "flt_t""'");
-  } 
-  temp3 = static_cast< flt_t >(val3);
-  arg3 = &temp3;
-  result = (angle_type)IceBRG::afd((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_afd__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  distance_type *arg1 = 0 ;
-  distance_type *arg2 = 0 ;
-  distance_type *arg3 = 0 ;
-  distance_type *arg4 = 0 ;
-  flt_t *arg5 = 0 ;
-  distance_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  distance_type temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  distance_type temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  distance_type temp4 ;
-  double val4 ;
-  int ecode4 = 0 ;
-  flt_t temp5 ;
-  double val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  angle_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:afd",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "afd" "', argument " "1"" of type '" "distance_type""'");
-  } 
-  temp1 = static_cast< distance_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "afd" "', argument " "2"" of type '" "distance_type""'");
-  } 
-  temp2 = static_cast< distance_type >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "afd" "', argument " "3"" of type '" "distance_type""'");
-  } 
-  temp3 = static_cast< distance_type >(val3);
-  arg3 = &temp3;
-  ecode4 = SWIG_AsVal_double(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "afd" "', argument " "4"" of type '" "distance_type""'");
-  } 
-  temp4 = static_cast< distance_type >(val4);
-  arg4 = &temp4;
-  ecode5 = SWIG_AsVal_double(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "afd" "', argument " "5"" of type '" "flt_t""'");
-  } 
-  temp5 = static_cast< flt_t >(val5);
-  arg5 = &temp5;
-  result = (angle_type)IceBRG::afd((double const &)*arg1,(double const &)*arg2,(double const &)*arg3,(double const &)*arg4,(double const &)*arg5);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_afd(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[6];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      return _wrap_afd__SWIG_0(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_afd__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_afd__SWIG_2(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          {
-            int res = SWIG_AsVal_double(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            {
-              int res = SWIG_AsVal_double(argv[4], NULL);
-              _v = SWIG_CheckState(res);
-            }
-            if (_v) {
-              return _wrap_afd__SWIG_3(self, args);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'afd'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::afd(flt_t const &)\n"
-    "    IceBRG::afd(distance_type const &,flt_t const &)\n"
-    "    IceBRG::afd(distance_type const &,distance_type const &,flt_t const &)\n"
-    "    IceBRG::afd(distance_type const &,distance_type const &,distance_type const &,distance_type const &,flt_t const &)\n");
+    "    IceBRG::rho_bar(flt_t const &)\n"
+    "    IceBRG::rho_bar()\n");
   return 0;
 }
 
@@ -7247,6 +7640,595 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_sigma_crit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  surface_density_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:sigma_crit",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "sigma_crit" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "sigma_crit" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (surface_density_type)IceBRG::sigma_crit((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_dfa__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  custom_unit_type< 1,0,0,-1,0 > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:dfa",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "dfa" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = IceBRG::dfa((double const &)*arg1);
+  resultobj = SWIG_NewPointerObj((new custom_unit_type< 1,0,0,-1,0 >(static_cast< const custom_unit_type< 1,0,0,-1,0 >& >(result))), SWIGTYPE_p_custom_unit_typeT_1_0_0__1_0_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_dfa__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  angle_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  distance_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:dfa",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "dfa" "', argument " "1"" of type '" "angle_type""'");
+  } 
+  temp1 = static_cast< angle_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "dfa" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (distance_type)IceBRG::dfa((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_dfa__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  angle_type *arg1 = 0 ;
+  angle_type *arg2 = 0 ;
+  flt_t *arg3 = 0 ;
+  angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  angle_type temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  flt_t temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  distance_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:dfa",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "dfa" "', argument " "1"" of type '" "angle_type""'");
+  } 
+  temp1 = static_cast< angle_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "dfa" "', argument " "2"" of type '" "angle_type""'");
+  } 
+  temp2 = static_cast< angle_type >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "dfa" "', argument " "3"" of type '" "flt_t""'");
+  } 
+  temp3 = static_cast< flt_t >(val3);
+  arg3 = &temp3;
+  result = (distance_type)IceBRG::dfa((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_dfa__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  angle_type *arg1 = 0 ;
+  angle_type *arg2 = 0 ;
+  angle_type *arg3 = 0 ;
+  angle_type *arg4 = 0 ;
+  flt_t *arg5 = 0 ;
+  angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  angle_type temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  angle_type temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  angle_type temp4 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  flt_t temp5 ;
+  double val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  distance_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:dfa",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "dfa" "', argument " "1"" of type '" "angle_type""'");
+  } 
+  temp1 = static_cast< angle_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "dfa" "', argument " "2"" of type '" "angle_type""'");
+  } 
+  temp2 = static_cast< angle_type >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "dfa" "', argument " "3"" of type '" "angle_type""'");
+  } 
+  temp3 = static_cast< angle_type >(val3);
+  arg3 = &temp3;
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "dfa" "', argument " "4"" of type '" "angle_type""'");
+  } 
+  temp4 = static_cast< angle_type >(val4);
+  arg4 = &temp4;
+  ecode5 = SWIG_AsVal_double(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "dfa" "', argument " "5"" of type '" "flt_t""'");
+  } 
+  temp5 = static_cast< flt_t >(val5);
+  arg5 = &temp5;
+  result = (distance_type)IceBRG::dfa((double const &)*arg1,(double const &)*arg2,(double const &)*arg3,(double const &)*arg4,(double const &)*arg5);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_dfa(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[6];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_dfa__SWIG_0(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_dfa__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_dfa__SWIG_2(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_double(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              return _wrap_dfa__SWIG_3(self, args);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'dfa'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    IceBRG::dfa(flt_t const &)\n"
+    "    IceBRG::dfa(angle_type const &,flt_t const &)\n"
+    "    IceBRG::dfa(angle_type const &,angle_type const &,flt_t const &)\n"
+    "    IceBRG::dfa(angle_type const &,angle_type const &,angle_type const &,angle_type const &,flt_t const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_afd__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  custom_unit_type< -1,0,0,1,0 > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:afd",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "afd" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = IceBRG::afd((double const &)*arg1);
+  resultobj = SWIG_NewPointerObj((new custom_unit_type< -1,0,0,1,0 >(static_cast< const custom_unit_type< -1,0,0,1,0 >& >(result))), SWIGTYPE_p_custom_unit_typeT__1_0_0_1_0_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_afd__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  distance_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  distance_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  angle_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:afd",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "afd" "', argument " "1"" of type '" "distance_type""'");
+  } 
+  temp1 = static_cast< distance_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "afd" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (angle_type)IceBRG::afd((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_afd__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  distance_type *arg1 = 0 ;
+  distance_type *arg2 = 0 ;
+  flt_t *arg3 = 0 ;
+  distance_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  distance_type temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  flt_t temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  angle_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:afd",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "afd" "', argument " "1"" of type '" "distance_type""'");
+  } 
+  temp1 = static_cast< distance_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "afd" "', argument " "2"" of type '" "distance_type""'");
+  } 
+  temp2 = static_cast< distance_type >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "afd" "', argument " "3"" of type '" "flt_t""'");
+  } 
+  temp3 = static_cast< flt_t >(val3);
+  arg3 = &temp3;
+  result = (angle_type)IceBRG::afd((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_afd__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  distance_type *arg1 = 0 ;
+  distance_type *arg2 = 0 ;
+  distance_type *arg3 = 0 ;
+  distance_type *arg4 = 0 ;
+  flt_t *arg5 = 0 ;
+  distance_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  distance_type temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  distance_type temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  distance_type temp4 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  flt_t temp5 ;
+  double val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  angle_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:afd",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "afd" "', argument " "1"" of type '" "distance_type""'");
+  } 
+  temp1 = static_cast< distance_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "afd" "', argument " "2"" of type '" "distance_type""'");
+  } 
+  temp2 = static_cast< distance_type >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "afd" "', argument " "3"" of type '" "distance_type""'");
+  } 
+  temp3 = static_cast< distance_type >(val3);
+  arg3 = &temp3;
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "afd" "', argument " "4"" of type '" "distance_type""'");
+  } 
+  temp4 = static_cast< distance_type >(val4);
+  arg4 = &temp4;
+  ecode5 = SWIG_AsVal_double(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "afd" "', argument " "5"" of type '" "flt_t""'");
+  } 
+  temp5 = static_cast< flt_t >(val5);
+  arg5 = &temp5;
+  result = (angle_type)IceBRG::afd((double const &)*arg1,(double const &)*arg2,(double const &)*arg3,(double const &)*arg4,(double const &)*arg5);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_afd(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[6];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_afd__SWIG_0(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_afd__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_afd__SWIG_2(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_double(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              return _wrap_afd__SWIG_3(self, args);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'afd'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    IceBRG::afd(flt_t const &)\n"
+    "    IceBRG::afd(distance_type const &,flt_t const &)\n"
+    "    IceBRG::afd(distance_type const &,distance_type const &,flt_t const &)\n"
+    "    IceBRG::afd(distance_type const &,distance_type const &,distance_type const &,distance_type const &,flt_t const &)\n");
+  return 0;
+}
+
+
 SWIGINTERN PyObject *_wrap_ad_distance__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   flt_t arg1 ;
@@ -7412,7 +8394,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_sigma_crit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_max_galaxy_abs_mag_B__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   flt_t *arg1 = 0 ;
   flt_t *arg2 = 0 ;
@@ -7424,22 +8406,22 @@ SWIGINTERN PyObject *_wrap_sigma_crit(PyObject *SWIGUNUSEDPARM(self), PyObject *
   int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  surface_density_type result;
+  flt_t result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:sigma_crit",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:max_galaxy_abs_mag_B",&obj0,&obj1)) SWIG_fail;
   ecode1 = SWIG_AsVal_double(obj0, &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "sigma_crit" "', argument " "1"" of type '" "flt_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "max_galaxy_abs_mag_B" "', argument " "1"" of type '" "flt_t""'");
   } 
   temp1 = static_cast< flt_t >(val1);
   arg1 = &temp1;
   ecode2 = SWIG_AsVal_double(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "sigma_crit" "', argument " "2"" of type '" "flt_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "max_galaxy_abs_mag_B" "', argument " "2"" of type '" "flt_t""'");
   } 
   temp2 = static_cast< flt_t >(val2);
   arg2 = &temp2;
-  result = (surface_density_type)IceBRG::sigma_crit((double const &)*arg1,(double const &)*arg2);
+  result = (flt_t)IceBRG::max_galaxy_abs_mag_B((double const &)*arg1,(double const &)*arg2);
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -7447,58 +8429,326 @@ fail:
 }
 
 
-SWIGINTERN int Swig_var_bright_abs_mag_max_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable bright_abs_mag_max is read-only.");
+SWIGINTERN PyObject *_wrap_max_galaxy_abs_mag_B__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:max_galaxy_abs_mag_B",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "max_galaxy_abs_mag_B" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::max_galaxy_abs_mag_B((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_max_galaxy_abs_mag_B(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_max_galaxy_abs_mag_B__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_max_galaxy_abs_mag_B__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'max_galaxy_abs_mag_B'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    IceBRG::max_galaxy_abs_mag_B(flt_t const &,flt_t const &)\n"
+    "    IceBRG::max_galaxy_abs_mag_B(flt_t const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_galaxy_angular_density_at_z(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  inverse_square_angle_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:galaxy_angular_density_at_z",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "galaxy_angular_density_at_z" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (inverse_square_angle_type)IceBRG::galaxy_angular_density_at_z((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_visible_galaxies__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  square_angle_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  flt_t *arg3 = 0 ;
+  square_angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  flt_t temp3 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:visible_galaxies",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_galaxies" "', argument " "1"" of type '" "square_angle_type""'");
+  } 
+  temp1 = static_cast< square_angle_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "visible_galaxies" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "visible_galaxies" "', argument " "3"" of type '" "flt_t""'");
+  } 
+  temp3 = static_cast< flt_t >(val3);
+  arg3 = &temp3;
+  result = (flt_t)IceBRG::visible_galaxies((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_visible_galaxies__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  square_angle_type *arg1 = 0 ;
+  flt_t *arg2 = 0 ;
+  square_angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  flt_t temp2 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:visible_galaxies",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_galaxies" "', argument " "1"" of type '" "square_angle_type""'");
+  } 
+  temp1 = static_cast< square_angle_type >(val1);
+  arg1 = &temp1;
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "visible_galaxies" "', argument " "2"" of type '" "flt_t""'");
+  } 
+  temp2 = static_cast< flt_t >(val2);
+  arg2 = &temp2;
+  result = (flt_t)IceBRG::visible_galaxies((double const &)*arg1,(double const &)*arg2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_visible_galaxies__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  square_angle_type *arg1 = 0 ;
+  square_angle_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:visible_galaxies",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_galaxies" "', argument " "1"" of type '" "square_angle_type""'");
+  } 
+  temp1 = static_cast< square_angle_type >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::visible_galaxies((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_visible_galaxies(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_visible_galaxies__SWIG_2(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_visible_galaxies__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_visible_galaxies__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'visible_galaxies'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    IceBRG::visible_galaxies(square_angle_type const &,flt_t const &,flt_t const &)\n"
+    "    IceBRG::visible_galaxies(square_angle_type const &,flt_t const &)\n"
+    "    IceBRG::visible_galaxies(square_angle_type const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN int Swig_var_bright_abs_mag_i_max_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable bright_abs_mag_i_max is read-only.");
   return 1;
 }
 
 
-SWIGINTERN PyObject *Swig_var_bright_abs_mag_max_get(void) {
+SWIGINTERN PyObject *Swig_var_bright_abs_mag_i_max_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::bright_abs_mag_max));
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::bright_abs_mag_i_max));
   return pyobj;
 }
 
 
-SWIGINTERN int Swig_var_faint_app_mag_max_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable faint_app_mag_max is read-only.");
+SWIGINTERN int Swig_var_faint_app_mag_i_max_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable faint_app_mag_i_max is read-only.");
   return 1;
 }
 
 
-SWIGINTERN PyObject *Swig_var_faint_app_mag_max_get(void) {
+SWIGINTERN PyObject *Swig_var_faint_app_mag_i_max_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::faint_app_mag_max));
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::faint_app_mag_i_max));
   return pyobj;
 }
 
 
-SWIGINTERN int Swig_var_lum_func_min_abs_mag_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable lum_func_min_abs_mag is read-only.");
+SWIGINTERN int Swig_var_lum_func_min_abs_mag_B_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable lum_func_min_abs_mag_B is read-only.");
   return 1;
 }
 
 
-SWIGINTERN PyObject *Swig_var_lum_func_min_abs_mag_get(void) {
+SWIGINTERN PyObject *Swig_var_lum_func_min_abs_mag_B_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::lum_func_min_abs_mag));
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::lum_func_min_abs_mag_B));
   return pyobj;
 }
 
 
-SWIGINTERN int Swig_var_lum_func_max_abs_mag_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable lum_func_max_abs_mag is read-only.");
+SWIGINTERN int Swig_var_lum_func_max_abs_mag_B_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable lum_func_max_abs_mag_B is read-only.");
   return 1;
 }
 
 
-SWIGINTERN PyObject *Swig_var_lum_func_max_abs_mag_get(void) {
+SWIGINTERN PyObject *Swig_var_lum_func_max_abs_mag_B_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::lum_func_max_abs_mag));
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::lum_func_max_abs_mag_B));
   return pyobj;
 }
 
@@ -7806,31 +9056,147 @@ fail:
 }
 
 
-SWIGINTERN int Swig_var_mass_func_l10_min_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable mass_func_l10_min is read-only.");
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_mass_func_l10_min_get(void) {
-  PyObject *pyobj = 0;
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_g_from_stellar_mass(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  mass_type *arg1 = 0 ;
+  mass_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
   
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::mass_func_l10_min));
-  return pyobj;
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_g_from_stellar_mass",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_g_from_stellar_mass" "', argument " "1"" of type '" "mass_type""'");
+  } 
+  temp1 = static_cast< mass_type >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_g_from_stellar_mass((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
 }
 
 
-SWIGINTERN int Swig_var_mass_func_l10_max_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable mass_func_l10_max is read-only.");
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_mass_func_l10_max_get(void) {
-  PyObject *pyobj = 0;
+SWIGINTERN PyObject *_wrap_estimate_stellar_mass_from_abs_mag_g(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  mass_type result;
   
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::mass_func_l10_max));
-  return pyobj;
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_stellar_mass_from_abs_mag_g",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_stellar_mass_from_abs_mag_g" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (mass_type)IceBRG::estimate_stellar_mass_from_abs_mag_g((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_i_from_stellar_mass(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  mass_type *arg1 = 0 ;
+  mass_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_i_from_stellar_mass",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_i_from_stellar_mass" "', argument " "1"" of type '" "mass_type""'");
+  } 
+  temp1 = static_cast< mass_type >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_i_from_stellar_mass((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_stellar_mass_from_abs_mag_i(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  mass_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_stellar_mass_from_abs_mag_i",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_stellar_mass_from_abs_mag_i" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (mass_type)IceBRG::estimate_stellar_mass_from_abs_mag_i((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_g_from_abs_mag_i(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_g_from_abs_mag_i",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_g_from_abs_mag_i" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_g_from_abs_mag_i((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_i_from_abs_mag_g(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_i_from_abs_mag_g",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_i_from_abs_mag_g" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_i_from_abs_mag_g((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
 }
 
 
@@ -7900,76 +9266,6 @@ fail:
     "  Possible C/C++ prototypes are:\n"
     "    IceBRG::delta_c(flt_t const &)\n"
     "    IceBRG::delta_c()\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_rho_bar__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  density_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:rho_bar",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "rho_bar" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  result = (density_type)IceBRG::rho_bar((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_rho_bar__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  density_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)":rho_bar")) SWIG_fail;
-  result = (density_type)IceBRG::rho_bar();
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_rho_bar(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[2];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 1) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 0) {
-    return _wrap_rho_bar__SWIG_1(self, args);
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      return _wrap_rho_bar__SWIG_0(self, args);
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'rho_bar'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::rho_bar(flt_t const &)\n"
-    "    IceBRG::rho_bar()\n");
   return 0;
 }
 
@@ -8581,1164 +9877,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_cluster_richness__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  mass_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t *arg3 = 0 ;
-  flt_t *arg4 = 0 ;
-  mass_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  flt_t temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  flt_t temp4 ;
-  double val4 ;
-  int ecode4 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:cluster_richness",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "cluster_richness" "', argument " "1"" of type '" "mass_type""'");
-  } 
-  temp1 = static_cast< mass_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cluster_richness" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "cluster_richness" "', argument " "3"" of type '" "flt_t""'");
-  } 
-  temp3 = static_cast< flt_t >(val3);
-  arg3 = &temp3;
-  ecode4 = SWIG_AsVal_double(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "cluster_richness" "', argument " "4"" of type '" "flt_t""'");
-  } 
-  temp4 = static_cast< flt_t >(val4);
-  arg4 = &temp4;
-  result = (flt_t)IceBRG::cluster_richness((double const &)*arg1,(double const &)*arg2,(double const &)*arg3,(double const &)*arg4);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_cluster_richness__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  mass_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t *arg3 = 0 ;
-  mass_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  flt_t temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:cluster_richness",&obj0,&obj1,&obj2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "cluster_richness" "', argument " "1"" of type '" "mass_type""'");
-  } 
-  temp1 = static_cast< mass_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cluster_richness" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "cluster_richness" "', argument " "3"" of type '" "flt_t""'");
-  } 
-  temp3 = static_cast< flt_t >(val3);
-  arg3 = &temp3;
-  result = (flt_t)IceBRG::cluster_richness((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_cluster_richness__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  mass_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  mass_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:cluster_richness",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "cluster_richness" "', argument " "1"" of type '" "mass_type""'");
-  } 
-  temp1 = static_cast< mass_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cluster_richness" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (flt_t)IceBRG::cluster_richness((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_cluster_richness(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[5];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_cluster_richness__SWIG_2(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_cluster_richness__SWIG_1(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          {
-            int res = SWIG_AsVal_double(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            return _wrap_cluster_richness__SWIG_0(self, args);
-          }
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'cluster_richness'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::cluster_richness(mass_type const &,flt_t const &,flt_t const &,flt_t const &)\n"
-    "    IceBRG::cluster_richness(mass_type const &,flt_t const &,flt_t const &)\n"
-    "    IceBRG::cluster_richness(mass_type const &,flt_t const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_min_cluster_mass__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t *arg3 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  flt_t temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  mass_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:min_cluster_mass",&obj0,&obj1,&obj2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "min_cluster_mass" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "min_cluster_mass" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "min_cluster_mass" "', argument " "3"" of type '" "flt_t""'");
-  } 
-  temp3 = static_cast< flt_t >(val3);
-  arg3 = &temp3;
-  result = (mass_type)IceBRG::min_cluster_mass((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_min_cluster_mass__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  mass_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:min_cluster_mass",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "min_cluster_mass" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "min_cluster_mass" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (mass_type)IceBRG::min_cluster_mass((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_min_cluster_mass__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  mass_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:min_cluster_mass",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "min_cluster_mass" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  result = (mass_type)IceBRG::min_cluster_mass((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_min_cluster_mass(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      return _wrap_min_cluster_mass__SWIG_2(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_min_cluster_mass__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_min_cluster_mass__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'min_cluster_mass'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::min_cluster_mass(flt_t const &,flt_t const &,flt_t const &)\n"
-    "    IceBRG::min_cluster_mass(flt_t const &,flt_t const &)\n"
-    "    IceBRG::min_cluster_mass(flt_t const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_cluster_angular_density_at_z(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  inverse_square_angle_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:cluster_angular_density_at_z",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "cluster_angular_density_at_z" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  result = (inverse_square_angle_type)IceBRG::cluster_angular_density_at_z((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_visible_clusters__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  square_angle_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t *arg3 = 0 ;
-  square_angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  flt_t temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:visible_clusters",&obj0,&obj1,&obj2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_clusters" "', argument " "1"" of type '" "square_angle_type""'");
-  } 
-  temp1 = static_cast< square_angle_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "visible_clusters" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "visible_clusters" "', argument " "3"" of type '" "flt_t""'");
-  } 
-  temp3 = static_cast< flt_t >(val3);
-  arg3 = &temp3;
-  result = (flt_t)IceBRG::visible_clusters((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_visible_clusters__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  square_angle_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  square_angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:visible_clusters",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_clusters" "', argument " "1"" of type '" "square_angle_type""'");
-  } 
-  temp1 = static_cast< square_angle_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "visible_clusters" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (flt_t)IceBRG::visible_clusters((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_visible_clusters__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  square_angle_type *arg1 = 0 ;
-  square_angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:visible_clusters",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_clusters" "', argument " "1"" of type '" "square_angle_type""'");
-  } 
-  temp1 = static_cast< square_angle_type >(val1);
-  arg1 = &temp1;
-  result = (flt_t)IceBRG::visible_clusters((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_visible_clusters(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      return _wrap_visible_clusters__SWIG_2(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_visible_clusters__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_visible_clusters__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'visible_clusters'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::visible_clusters(square_angle_type const &,flt_t const &,flt_t const &)\n"
-    "    IceBRG::visible_clusters(square_angle_type const &,flt_t const &)\n"
-    "    IceBRG::visible_clusters(square_angle_type const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_integrate_mean_cluster_richness_at_redshift(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:integrate_mean_cluster_richness_at_redshift",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "integrate_mean_cluster_richness_at_redshift" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  result = (flt_t)IceBRG::integrate_mean_cluster_richness_at_redshift((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_integrate_mean_cluster_richness(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:integrate_mean_cluster_richness",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "integrate_mean_cluster_richness" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "integrate_mean_cluster_richness" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (flt_t)IceBRG::integrate_mean_cluster_richness((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_mean_cluster_richness_at_redshift(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:mean_cluster_richness_at_redshift",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "mean_cluster_richness_at_redshift" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  result = (flt_t)IceBRG::mean_cluster_richness_at_redshift((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_mean_cluster_richness(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:mean_cluster_richness",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "mean_cluster_richness" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mean_cluster_richness" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (flt_t)IceBRG::mean_cluster_richness((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_get_abs_mag_from_mass(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  mass_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  mass_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:get_abs_mag_from_mass",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_abs_mag_from_mass" "', argument " "1"" of type '" "mass_type""'");
-  } 
-  temp1 = static_cast< mass_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_abs_mag_from_mass" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (flt_t)IceBRG::get_abs_mag_from_mass((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_get_mass_from_abs_mag(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  mass_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:get_mass_from_abs_mag",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_mass_from_abs_mag" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_mass_from_abs_mag" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (mass_type)IceBRG::get_mass_from_abs_mag((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_get_app_mag_from_mass(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  mass_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  mass_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:get_app_mag_from_mass",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_app_mag_from_mass" "', argument " "1"" of type '" "mass_type""'");
-  } 
-  temp1 = static_cast< mass_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_app_mag_from_mass" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (flt_t)IceBRG::get_app_mag_from_mass((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_get_mass_from_app_mag(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  mass_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:get_mass_from_app_mag",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_mass_from_app_mag" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_mass_from_app_mag" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (mass_type)IceBRG::get_mass_from_app_mag((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_max_galaxy_abs_mag__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:max_galaxy_abs_mag",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "max_galaxy_abs_mag" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "max_galaxy_abs_mag" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (flt_t)IceBRG::max_galaxy_abs_mag((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_max_galaxy_abs_mag__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:max_galaxy_abs_mag",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "max_galaxy_abs_mag" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  result = (flt_t)IceBRG::max_galaxy_abs_mag((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_max_galaxy_abs_mag(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[3];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      return _wrap_max_galaxy_abs_mag__SWIG_1(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_max_galaxy_abs_mag__SWIG_0(self, args);
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'max_galaxy_abs_mag'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::max_galaxy_abs_mag(flt_t const &,flt_t const &)\n"
-    "    IceBRG::max_galaxy_abs_mag(flt_t const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_galaxy_angular_density_at_z(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  flt_t *arg1 = 0 ;
-  flt_t temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  inverse_square_angle_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:galaxy_angular_density_at_z",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "galaxy_angular_density_at_z" "', argument " "1"" of type '" "flt_t""'");
-  } 
-  temp1 = static_cast< flt_t >(val1);
-  arg1 = &temp1;
-  result = (inverse_square_angle_type)IceBRG::galaxy_angular_density_at_z((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_visible_galaxies__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  square_angle_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  flt_t *arg3 = 0 ;
-  square_angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  flt_t temp3 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:visible_galaxies",&obj0,&obj1,&obj2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_galaxies" "', argument " "1"" of type '" "square_angle_type""'");
-  } 
-  temp1 = static_cast< square_angle_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "visible_galaxies" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "visible_galaxies" "', argument " "3"" of type '" "flt_t""'");
-  } 
-  temp3 = static_cast< flt_t >(val3);
-  arg3 = &temp3;
-  result = (flt_t)IceBRG::visible_galaxies((double const &)*arg1,(double const &)*arg2,(double const &)*arg3);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_visible_galaxies__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  square_angle_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  square_angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:visible_galaxies",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_galaxies" "', argument " "1"" of type '" "square_angle_type""'");
-  } 
-  temp1 = static_cast< square_angle_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "visible_galaxies" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (flt_t)IceBRG::visible_galaxies((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_visible_galaxies__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  square_angle_type *arg1 = 0 ;
-  square_angle_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  flt_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:visible_galaxies",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "visible_galaxies" "', argument " "1"" of type '" "square_angle_type""'");
-  } 
-  temp1 = static_cast< square_angle_type >(val1);
-  arg1 = &temp1;
-  result = (flt_t)IceBRG::visible_galaxies((double const &)*arg1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_visible_galaxies(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      return _wrap_visible_galaxies__SWIG_2(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_visible_galaxies__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_visible_galaxies__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'visible_galaxies'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::visible_galaxies(square_angle_type const &,flt_t const &,flt_t const &)\n"
-    "    IceBRG::visible_galaxies(square_angle_type const &,flt_t const &)\n"
-    "    IceBRG::visible_galaxies(square_angle_type const &)\n");
-  return 0;
-}
-
-
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"delete_SwigPyIterator", _wrap_delete_SwigPyIterator, METH_VARARGS, NULL},
@@ -9759,9 +9897,20 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"SwigPyIterator___add__", _wrap_SwigPyIterator___add__, METH_VARARGS, NULL},
 	 { (char *)"SwigPyIterator___sub__", _wrap_SwigPyIterator___sub__, METH_VARARGS, NULL},
 	 { (char *)"SwigPyIterator_swigregister", SwigPyIterator_swigregister, METH_VARARGS, NULL},
+	 { (char *)"get_abs_mag_B_from_mass", _wrap_get_abs_mag_B_from_mass, METH_VARARGS, NULL},
+	 { (char *)"get_mass_from_abs_mag_B", _wrap_get_mass_from_abs_mag_B, METH_VARARGS, NULL},
+	 { (char *)"get_app_mag_B_from_mass", _wrap_get_app_mag_B_from_mass, METH_VARARGS, NULL},
+	 { (char *)"get_mass_from_app_mag_B", _wrap_get_mass_from_app_mag_B, METH_VARARGS, NULL},
+	 { (char *)"cluster_richness", _wrap_cluster_richness, METH_VARARGS, NULL},
+	 { (char *)"min_cluster_mass", _wrap_min_cluster_mass, METH_VARARGS, NULL},
+	 { (char *)"cluster_angular_density_at_z", _wrap_cluster_angular_density_at_z, METH_VARARGS, NULL},
+	 { (char *)"visible_clusters", _wrap_visible_clusters, METH_VARARGS, NULL},
+	 { (char *)"integrate_mean_cluster_richness_at_redshift", _wrap_integrate_mean_cluster_richness_at_redshift, METH_VARARGS, NULL},
+	 { (char *)"integrate_mean_cluster_richness", _wrap_integrate_mean_cluster_richness, METH_VARARGS, NULL},
+	 { (char *)"mean_cluster_richness_at_redshift", _wrap_mean_cluster_richness_at_redshift, METH_VARARGS, NULL},
+	 { (char *)"mean_cluster_richness", _wrap_mean_cluster_richness, METH_VARARGS, NULL},
 	 { (char *)"H", _wrap_H, METH_VARARGS, NULL},
-	 { (char *)"dfa", _wrap_dfa, METH_VARARGS, NULL},
-	 { (char *)"afd", _wrap_afd, METH_VARARGS, NULL},
+	 { (char *)"rho_bar", _wrap_rho_bar, METH_VARARGS, NULL},
 	 { (char *)"zfa", _wrap_zfa, METH_VARARGS, NULL},
 	 { (char *)"afz", _wrap_afz, METH_VARARGS, NULL},
 	 { (char *)"tfz", _wrap_tfz, METH_VARARGS, NULL},
@@ -9774,18 +9923,28 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"integrate_Ld", _wrap_integrate_Ld, METH_VARARGS, NULL},
 	 { (char *)"integrate_ltd", _wrap_integrate_ltd, METH_VARARGS, NULL},
 	 { (char *)"integrate_distance", _wrap_integrate_distance, METH_VARARGS, NULL},
+	 { (char *)"sigma_crit", _wrap_sigma_crit, METH_VARARGS, NULL},
+	 { (char *)"dfa", _wrap_dfa, METH_VARARGS, NULL},
+	 { (char *)"afd", _wrap_afd, METH_VARARGS, NULL},
 	 { (char *)"ad_distance", _wrap_ad_distance, METH_VARARGS, NULL},
 	 { (char *)"comoving_distance", _wrap_comoving_distance, METH_VARARGS, NULL},
 	 { (char *)"luminosity_distance", _wrap_luminosity_distance, METH_VARARGS, NULL},
 	 { (char *)"comoving_volume_element", _wrap_comoving_volume_element, METH_VARARGS, NULL},
-	 { (char *)"sigma_crit", _wrap_sigma_crit, METH_VARARGS, NULL},
+	 { (char *)"max_galaxy_abs_mag_B", _wrap_max_galaxy_abs_mag_B, METH_VARARGS, NULL},
+	 { (char *)"galaxy_angular_density_at_z", _wrap_galaxy_angular_density_at_z, METH_VARARGS, NULL},
+	 { (char *)"visible_galaxies", _wrap_visible_galaxies, METH_VARARGS, NULL},
 	 { (char *)"get_abs_mag_from_app_mag", _wrap_get_abs_mag_from_app_mag, METH_VARARGS, NULL},
 	 { (char *)"get_app_mag_from_abs_mag", _wrap_get_app_mag_from_abs_mag, METH_VARARGS, NULL},
 	 { (char *)"differential_luminosity_function", _wrap_differential_luminosity_function, METH_VARARGS, NULL},
 	 { (char *)"integrated_luminosity_function", _wrap_integrated_luminosity_function, METH_VARARGS, NULL},
 	 { (char *)"faint_bright_ratio", _wrap_faint_bright_ratio, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_g_from_stellar_mass", _wrap_estimate_abs_mag_g_from_stellar_mass, METH_VARARGS, NULL},
+	 { (char *)"estimate_stellar_mass_from_abs_mag_g", _wrap_estimate_stellar_mass_from_abs_mag_g, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_i_from_stellar_mass", _wrap_estimate_abs_mag_i_from_stellar_mass, METH_VARARGS, NULL},
+	 { (char *)"estimate_stellar_mass_from_abs_mag_i", _wrap_estimate_stellar_mass_from_abs_mag_i, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_g_from_abs_mag_i", _wrap_estimate_abs_mag_g_from_abs_mag_i, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_i_from_abs_mag_g", _wrap_estimate_abs_mag_i_from_abs_mag_g, METH_VARARGS, NULL},
 	 { (char *)"delta_c", _wrap_delta_c, METH_VARARGS, NULL},
-	 { (char *)"rho_bar", _wrap_rho_bar, METH_VARARGS, NULL},
 	 { (char *)"r_of_m", _wrap_r_of_m, METH_VARARGS, NULL},
 	 { (char *)"sigma_of_r", _wrap_sigma_of_r, METH_VARARGS, NULL},
 	 { (char *)"sigma_of_m", _wrap_sigma_of_m, METH_VARARGS, NULL},
@@ -9793,21 +9952,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"mass_function", _wrap_mass_function, METH_VARARGS, NULL},
 	 { (char *)"log10_mass_function", _wrap_log10_mass_function, METH_VARARGS, NULL},
 	 { (char *)"integrated_log10_mass_function", _wrap_integrated_log10_mass_function, METH_VARARGS, NULL},
-	 { (char *)"cluster_richness", _wrap_cluster_richness, METH_VARARGS, NULL},
-	 { (char *)"min_cluster_mass", _wrap_min_cluster_mass, METH_VARARGS, NULL},
-	 { (char *)"cluster_angular_density_at_z", _wrap_cluster_angular_density_at_z, METH_VARARGS, NULL},
-	 { (char *)"visible_clusters", _wrap_visible_clusters, METH_VARARGS, NULL},
-	 { (char *)"integrate_mean_cluster_richness_at_redshift", _wrap_integrate_mean_cluster_richness_at_redshift, METH_VARARGS, NULL},
-	 { (char *)"integrate_mean_cluster_richness", _wrap_integrate_mean_cluster_richness, METH_VARARGS, NULL},
-	 { (char *)"mean_cluster_richness_at_redshift", _wrap_mean_cluster_richness_at_redshift, METH_VARARGS, NULL},
-	 { (char *)"mean_cluster_richness", _wrap_mean_cluster_richness, METH_VARARGS, NULL},
-	 { (char *)"get_abs_mag_from_mass", _wrap_get_abs_mag_from_mass, METH_VARARGS, NULL},
-	 { (char *)"get_mass_from_abs_mag", _wrap_get_mass_from_abs_mag, METH_VARARGS, NULL},
-	 { (char *)"get_app_mag_from_mass", _wrap_get_app_mag_from_mass, METH_VARARGS, NULL},
-	 { (char *)"get_mass_from_app_mag", _wrap_get_mass_from_app_mag, METH_VARARGS, NULL},
-	 { (char *)"max_galaxy_abs_mag", _wrap_max_galaxy_abs_mag, METH_VARARGS, NULL},
-	 { (char *)"galaxy_angular_density_at_z", _wrap_galaxy_angular_density_at_z, METH_VARARGS, NULL},
-	 { (char *)"visible_galaxies", _wrap_visible_galaxies, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -10636,9 +10780,9 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"CtoC",Swig_var_CtoC_get, Swig_var_CtoC_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Ctoesu",Swig_var_Ctoesu_get, Swig_var_Ctoesu_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"esutoC",Swig_var_esutoC_get, Swig_var_esutoC_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"pi",Swig_var_pi_get, Swig_var_pi_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Gc",Swig_var_Gc_get, Swig_var_Gc_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"c",Swig_var_c_get, Swig_var_c_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"t_present_day",Swig_var_t_present_day_get, Swig_var_t_present_day_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"H_0",Swig_var_H_0_get, Swig_var_H_0_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Omega_m",Swig_var_Omega_m_get, Swig_var_Omega_m_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Omega_r",Swig_var_Omega_r_get, Swig_var_Omega_r_set);
@@ -10647,15 +10791,14 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"Omega_b",Swig_var_Omega_b_get, Swig_var_Omega_b_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"sigma_8",Swig_var_sigma_8_get, Swig_var_sigma_8_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"n_s",Swig_var_n_s_get, Swig_var_n_s_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"t_present_day",Swig_var_t_present_day_get, Swig_var_t_present_day_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"default_c",Swig_var_default_c_get, Swig_var_default_c_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"default_tau_factor",Swig_var_default_tau_factor_get, Swig_var_default_tau_factor_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"bright_abs_mag_max",Swig_var_bright_abs_mag_max_get, Swig_var_bright_abs_mag_max_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"faint_app_mag_max",Swig_var_faint_app_mag_max_get, Swig_var_faint_app_mag_max_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"lum_func_min_abs_mag",Swig_var_lum_func_min_abs_mag_get, Swig_var_lum_func_min_abs_mag_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"lum_func_max_abs_mag",Swig_var_lum_func_max_abs_mag_get, Swig_var_lum_func_max_abs_mag_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"mass_func_l10_min",Swig_var_mass_func_l10_min_get, Swig_var_mass_func_l10_min_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"mass_func_l10_max",Swig_var_mass_func_l10_max_get, Swig_var_mass_func_l10_max_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"bright_abs_mag_i_max",Swig_var_bright_abs_mag_i_max_get, Swig_var_bright_abs_mag_i_max_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"faint_app_mag_i_max",Swig_var_faint_app_mag_i_max_get, Swig_var_faint_app_mag_i_max_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"lum_func_min_abs_mag_B",Swig_var_lum_func_min_abs_mag_B_get, Swig_var_lum_func_min_abs_mag_B_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"lum_func_max_abs_mag_B",Swig_var_lum_func_max_abs_mag_B_get, Swig_var_lum_func_max_abs_mag_B_set);
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

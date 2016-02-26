@@ -26,7 +26,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 

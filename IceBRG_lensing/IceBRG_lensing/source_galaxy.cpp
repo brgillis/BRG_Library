@@ -23,7 +23,7 @@
 
  \**********************************************************************/
 
-#include "IceBRG_lensing/source_galaxy.h"
+#include "source_galaxy.hpp"
 
 namespace IceBRG {
 

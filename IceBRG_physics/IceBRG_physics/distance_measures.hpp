@@ -27,7 +27,7 @@
 #ifndef ICEBRG_PHYSICS_DISTANCE_MEASURES_HPP_
 #define ICEBRG_PHYSICS_DISTANCE_MEASURES_HPP_
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/units/units.hpp"
 

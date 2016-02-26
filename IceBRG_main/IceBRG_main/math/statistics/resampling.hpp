@@ -37,7 +37,7 @@
 
 #include "IceBRG_main/Eigen.hpp"
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 #include "IceBRG_main/math/random/random_functions.hpp"
 
 namespace IceBRG

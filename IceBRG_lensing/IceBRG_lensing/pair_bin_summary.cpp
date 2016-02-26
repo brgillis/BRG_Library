@@ -23,25 +23,26 @@
 
  \**********************************************************************/
 
+#include "pair_bin_summary.hpp"
+
 #include <cassert>
 #include <fstream>
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/file_access/open_file.hpp"
 #include "IceBRG_main/math/calculus/integrate.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/vector/summary_functions.hpp"
 
-#include "IceBRG_lensing/magnification/magnification_alpha.h"
-#include "IceBRG_lensing/magnification/magnification_functors.h"
-#include "IceBRG_lensing/pair_bin.h"
 #include "IceBRG_main/units/units.hpp"
 
-#include "pair_bin_summary.h"
+#include "magnification/magnification_alpha.hpp"
+#include "magnification/magnification_functors.hpp"
+#include "pair_bin.hpp"
 
 namespace IceBRG {
 

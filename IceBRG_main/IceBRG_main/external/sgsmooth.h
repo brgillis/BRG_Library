@@ -32,7 +32,7 @@
 
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 namespace IceBRG{ namespace sgsmooth{
 

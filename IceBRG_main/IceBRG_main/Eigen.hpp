@@ -30,7 +30,7 @@
 #include <boost/serialization/split_free.hpp>
 #include <Eigen/Core>
 
-#include "common.h"
+#include "IceBRG_main/common.hpp"
 
 // Free begin and end definitions
 #if(1)

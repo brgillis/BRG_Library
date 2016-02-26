@@ -29,7 +29,7 @@
 #include <cassert>
 #include <cstdio>
 
-#include "tk_spline.h"
+#include "tk_spline.hpp"
 #include "IceBRG_main/utility.hpp"
 
 // band_matrix implementation

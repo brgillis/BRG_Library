@@ -32,7 +32,7 @@
 #ifndef ICEBRG_PHYSICS_CONSTANTS_HPP_
 #define ICEBRG_PHYSICS_CONSTANTS_HPP_
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/units/unit_conversions.hpp"
 #include "IceBRG_main/units/units.hpp"
@@ -41,17 +41,17 @@
 namespace IceBRG
 {
 
-// Physical/mathematical constants
-
-constexpr IceBRG::flt_t & pi = M_PI;
+// Physical/mathematical constants with units
 
 #ifdef _BRG_USE_UNITS_
 const custom_unit_type<3,-2,-1,0,0> Gc = 6.67384e-11 * cube(m) / square(s) / kg; // In m^3 s^-2 kg^-1
+const velocity_type c = IceBRG::unitconv::ctomps*mps;
+const time_type t_present_day = 13.616*unitconv::Gyrtos*s;     // WMAP9 + priors
 #else
 constexpr flt_t Gc = 6.67384e-11; // In m^3 s^-2 kg^-1
+constexpr flt_t c = IceBRG::unitconv::ctomps;
+constexpr flt_t t_present_day = 13.616*unitconv::Gyrtos;     // WMAP9 + priors
 #endif
-
-UNIT_CONSTEXPR velocity_type c = IceBRG::unitconv::ctomps * mps;
 
 // Cosmological constants
 
@@ -64,7 +64,6 @@ constexpr flt_t Omega_l = 1 - Omega_k - Omega_m - Omega_r;
 constexpr flt_t Omega_b = 0.0472; // WMAP9 + priors
 constexpr flt_t sigma_8 = 0.830; // WMAP9 + priors
 constexpr flt_t n_s = 0.971;     // WMAP9 + priors
-UNIT_CONSTEXPR time_type t_present_day = 13.616*unitconv::Gyrtos*s;     // WMAP9 + priors
 
 // Default values
 

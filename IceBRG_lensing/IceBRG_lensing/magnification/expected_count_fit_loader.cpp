@@ -25,13 +25,15 @@
 
  \**********************************************************************/
 
+#include "expected_count_fit_loader.hpp"
+
 #include <cassert>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/file_access/ascii_table_map.hpp"
 #include "IceBRG_main/utility.hpp"
@@ -40,7 +42,6 @@
 
 #include "IceBRG_lensing/magnification/count_fitting_results.hpp"
 
-#include "expected_count_fit_loader.h"
 
 
 // Initialisation of static vars

@@ -23,7 +23,7 @@
 
 \**********************************************************************/
 
-#include "error_handling.h"
+#include "error_handling.hpp"
 
 namespace IceBRG {
 

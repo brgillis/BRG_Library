@@ -20,18 +20,19 @@
 
 \**********************************************************************/
 
+#include "point_mass_profile.hpp"
+
+#include <IceBRG_main/error_handling.hpp>
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
-#include "IceBRG_main/error_handling.h"
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "point_mass_profile.h"
 
 // IceBRG::point_mass_profile class methods
 #if (1)

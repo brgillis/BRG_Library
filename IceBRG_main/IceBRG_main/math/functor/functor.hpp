@@ -30,7 +30,7 @@
 
 #include <utility>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 namespace IceBRG {
 

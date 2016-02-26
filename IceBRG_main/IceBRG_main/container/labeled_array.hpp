@@ -37,7 +37,7 @@
 #include <boost/iterator.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/Eigen.hpp"
 

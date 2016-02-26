@@ -23,17 +23,17 @@
 
  \**********************************************************************/
 
+#include "mag_weight_integral_cache.hpp"
+
 #include <cstdlib>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/calculus/integrate.hpp"
 
-#include "IceBRG_lensing/magnification/expected_count_cache.h"
-#include "IceBRG_lensing/magnification/mag_global_values.h"
-#include "IceBRG_lensing/magnification/magnification_functors.h"
-
-#include "mag_weight_integral_cache.h"
+#include "expected_count_cache.hpp"
+#include "mag_global_values.hpp"
+#include "magnification_functors.hpp"
 
 namespace IceBRG {
 

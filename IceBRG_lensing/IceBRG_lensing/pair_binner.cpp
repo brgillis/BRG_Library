@@ -23,6 +23,8 @@
 
  \**********************************************************************/
 
+#include "pair_binner.hpp"
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -30,14 +32,13 @@
 #include <stdexcept>
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/vector/limit_vector.hpp"
 #include "IceBRG_main/vector/make_vector.hpp"
 #include "IceBRG_main/vector/summary_functions.hpp"
 
-#include "pair_binner.h"
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/units/units.hpp"
 

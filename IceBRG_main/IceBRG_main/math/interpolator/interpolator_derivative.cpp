@@ -20,6 +20,8 @@
 
 \**********************************************************************/
 
+#include "interpolator_derivative.hpp"
+
 #include <utility>
 
 #include "IceBRG_main/math/calculus/differentiate.hpp"
@@ -27,7 +29,6 @@
 #include "IceBRG_main/math/random/distributions.hpp"
 #include "IceBRG_main/utility.hpp"
 
-#include "interpolator_derivative.h"
 
 // interpolator_derivative static member initialisations
 #if (1)

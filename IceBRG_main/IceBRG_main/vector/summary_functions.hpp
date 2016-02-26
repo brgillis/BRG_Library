@@ -26,7 +26,7 @@
 #include <vector>
 
 #include "../container/is_stl_container.hpp"
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/container/is_eigen_container.hpp"
 #include "IceBRG_main/utility.hpp"

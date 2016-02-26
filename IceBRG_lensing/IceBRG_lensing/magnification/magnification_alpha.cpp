@@ -23,14 +23,15 @@
 
 \**********************************************************************/
 
-#include "IceBRG_main/common.h"
+#include "magnification_alpha.hpp"
+
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/calculus/differentiate.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_lensing/magnification/expected_count_cache.h"
-#include "IceBRG_lensing/magnification/expected_count_derivative_cache.h"
-#include "IceBRG_lensing/magnification/magnification_alpha.h"
+#include "expected_count_cache.hpp"
+#include "expected_count_derivative_cache.hpp"
 
 namespace IceBRG {
 

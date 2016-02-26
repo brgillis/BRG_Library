@@ -27,11 +27,11 @@
 #define ICEBRG_PHYSICS_REDSHIFT_OBJ_HPP_
 
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/astro.h"
+#include "astro.hpp"
 
 namespace IceBRG {
 

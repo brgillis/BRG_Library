@@ -23,17 +23,18 @@
 
 \**********************************************************************/
 
+#include "mag_calibration_cache.hpp"
+
 #include <cstdlib>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 
-#include "IceBRG_lensing/magnification/mag_calibration_loader.h"
-#include "IceBRG_lensing/magnification/mag_global_values.h"
-#include "IceBRG_lensing/magnification/magnification_alpha.h"
+#include "mag_calibration_loader.hpp"
+#include "mag_global_values.hpp"
+#include "magnification_alpha.hpp"
 
-#include "mag_calibration_cache.h"
 
 namespace IceBRG {
 

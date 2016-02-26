@@ -23,15 +23,16 @@
 
 \**********************************************************************/
 
-#include "IceBRG_main/common.h"
+#include "magnification_functors.hpp"
+
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/astro.h"
-#include "IceBRG_lensing/magnification/expected_count_cache.h"
-#include "IceBRG_lensing/magnification/magnification_alpha.h"
-#include "IceBRG_lensing/magnification/magnification_functors.h"
+#include "IceBRG_physics/astro.hpp"
+#include "expected_count_cache.hpp"
+#include "magnification_alpha.hpp"
 
 namespace IceBRG {
 

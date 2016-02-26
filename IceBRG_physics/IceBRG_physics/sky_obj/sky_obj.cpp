@@ -20,14 +20,14 @@
 
 \**********************************************************************/
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/astro_caches.h"
-#include "IceBRG_physics/astro.h"
+#include "IceBRG_physics/sky_obj/sky_obj.hpp"
 
-#include "sky_obj.h"
+#include "IceBRG_physics/astro.hpp"
+#include "IceBRG_physics/astro_caches.hpp"
 
 // IceBRG::sky_obj class methods
 #if (1)

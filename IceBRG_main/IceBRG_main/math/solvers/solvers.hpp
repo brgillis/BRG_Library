@@ -23,7 +23,7 @@
 #ifndef _BRG_SOLVERS_HPP_INCLUDED_
 #define _BRG_SOLVERS_HPP_INCLUDED_
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include <cstdlib>
 #include <cmath>

@@ -20,20 +20,21 @@
 
 \**********************************************************************/
 
+#include "astro_caches.hpp"
+
 #include <cstdlib>
 #include <iostream>
 #include <exception>
 #include <string>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/cache/cache.hpp"
 #include "IceBRG_main/math/cache/cache_2d.hpp"
 #include "IceBRG_main/math/calculus/integrate.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/astro.h"
-#include "astro_caches.h"
+#include "astro.hpp"
 
 /** Static Class Initialisation **/
 #if (1)

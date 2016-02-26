@@ -35,10 +35,10 @@
 #include <string>
 #include <sstream>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/Eigen.hpp"
-#include "IceBRG_main/error_handling.h"
+#include "../../error_handling.hpp"
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/file_access/open_file.hpp"
 #include "IceBRG_main/file_access/trim_comments.hpp"

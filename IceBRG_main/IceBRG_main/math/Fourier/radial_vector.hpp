@@ -35,13 +35,13 @@
 
 #include <boost/optional.hpp>
 
-#include "IceBRG_main/common.h"
+#include "../../error_handling.hpp"
+#include "../interpolator/interpolator.hpp"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/Eigen.hpp"
 
 #include "IceBRG_main/container/is_eigen_container.hpp"
-#include "IceBRG_main/error_handling.h"
-#include "IceBRG_main/math/interpolator/interpolator.h"
 #include "IceBRG_main/math/misc_math.hpp"
 
 namespace IceBRG

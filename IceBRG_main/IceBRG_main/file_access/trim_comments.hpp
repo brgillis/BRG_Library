@@ -28,7 +28,7 @@
 #include <fstream>
 #include <string>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 namespace IceBRG
 {

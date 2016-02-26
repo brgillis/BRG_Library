@@ -20,6 +20,6 @@
 
 \**********************************************************************/
 
-#include "tNFW_galaxy.h"
+#include "tNFW_galaxy.hpp"
 
 // Nothing needs to be implemented for this class

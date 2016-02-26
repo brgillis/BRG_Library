@@ -30,10 +30,11 @@
 
 #include <cassert>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
-#include "IceBRG_physics/astro.h"
-#include "IceBRG_physics/sky_obj/position_grid_cache.h"
+#include "../astro.hpp"
+
+#include "position_grid_cache.hpp"
 
 // Macro definitions
 #if(1)

@@ -20,9 +20,10 @@
 
 \**********************************************************************/
 
-#include "IceBRG_main/common.h"
+#include "galaxy.hpp"
 
-#include "galaxy.h"
+#include "IceBRG_main/common.hpp"
+
 
 // IceBRG::galaxy class methods
 #if (1)

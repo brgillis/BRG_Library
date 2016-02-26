@@ -23,17 +23,17 @@
 #ifndef _BRG_LENSING_PROFILE_EXTENSION_HPP_
 #define _BRG_LENSING_PROFILE_EXTENSION_HPP_
 
-#include "IceBRG_main/common.h"
+#include <IceBRG_main/math/interpolator/interpolator.hpp>
+#include <IceBRG_physics/astro.hpp>
+#include <IceBRG_physics/density_profile/density_profile.hpp>
+#include "IceBRG_main/common.hpp"
 
-#include "IceBRG_main/math/interpolator/interpolator.h"
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_lensing/lensing_profile_extension_functors.hpp"
-#include "IceBRG_lensing/shifting/shifting_cache.h"
 #include "IceBRG_lensing/two_halo_term_functions.hpp"
+#include "shifting/shifting_cache.hpp"
 
-#include "IceBRG_physics/astro.h"
-#include "IceBRG_physics/density_profile/density_profile.h"
 
 // TODO: Update lensing tNFW_profile along with updates here
 

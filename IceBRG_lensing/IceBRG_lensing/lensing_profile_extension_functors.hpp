@@ -25,13 +25,13 @@
 #ifndef _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 #define _BRG_LENSING_PROFILE_EXTENSION_FUNCTORS_H_
 
+#include <IceBRG_physics/astro.hpp>
 #include "IceBRG_main/units/unit_conversions.hpp"
 #include "IceBRG_main/units/units.hpp"
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/calculus/integrate.hpp"
 
-#include "IceBRG_physics/astro.h"
 
 namespace IceBRG {
 

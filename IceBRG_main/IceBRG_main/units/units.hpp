@@ -28,7 +28,7 @@
 
 #include <cmath>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/container/is_boost_tuple.hpp"
 #include "IceBRG_main/math/ipow.hpp"

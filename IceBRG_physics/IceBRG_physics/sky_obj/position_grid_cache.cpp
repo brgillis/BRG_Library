@@ -20,9 +20,10 @@
 
 \**********************************************************************/
 
-#include "IceBRG_main/common.h"
+#include "position_grid_cache.hpp"
 
-#include "position_grid_cache.h"
+#include "IceBRG_main/common.hpp"
+
 #include "IceBRG_main/units/units.hpp"
 
 // Initialisation for IceBRG::grid_cache

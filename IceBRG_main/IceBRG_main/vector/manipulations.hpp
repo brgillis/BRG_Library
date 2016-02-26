@@ -28,7 +28,7 @@
 
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/vector/make_vector.hpp"

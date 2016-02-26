@@ -23,7 +23,7 @@
 #ifndef _BRG_UNIT_CONVERSIONS_HPP_INCLUDED_
 #define _BRG_UNIT_CONVERSIONS_HPP_INCLUDED_
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 namespace IceBRG{ namespace unitconv {
 // All unit conversions are exact (to the limit of flt_t variables) unless noted

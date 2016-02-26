@@ -23,6 +23,8 @@
 
  \**********************************************************************/
 
+#include "pair_bins_summary.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <fstream>
@@ -33,7 +35,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/file_access/ascii_table_map.hpp"
 #include "IceBRG_main/file_access/open_file.hpp"
@@ -45,10 +47,9 @@
 #include "IceBRG_main/vector/limit_vector.hpp"
 #include "IceBRG_main/vector/summary_functions.hpp"
 
-#include "IceBRG_lensing/pair_bin.h"
-#include "IceBRG_lensing/pair_binner.h"
+#include "pair_bin.hpp"
+#include "pair_binner.hpp"
 
-#include "pair_bins_summary.h"
 
 namespace IceBRG {
 

@@ -23,15 +23,16 @@
 
  \**********************************************************************/
 
+#include "shifting_cache.hpp"
+
 #include <cstdlib>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/safe_math.hpp"
 
-#include "IceBRG_lensing/shifting/shifting_loader.h"
-#include "shifting_cache.h"
 #include "IceBRG_main/units/unit_conversions.hpp"
+#include "shifting_loader.hpp"
 
 // Initialise the cache
 

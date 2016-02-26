@@ -23,6 +23,8 @@
 
  \**********************************************************************/
 
+#include "mag_calibration_loader.hpp"
+
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -30,15 +32,14 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/file_access/ascii_table_map.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/vector/summary_functions.hpp"
 
-#include "IceBRG_lensing/magnification/mag_calibration_loader.h"
-#include "IceBRG_lensing/magnification/mag_global_values.h"
+#include "mag_global_values.hpp"
 
 namespace IceBRG {
 

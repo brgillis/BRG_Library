@@ -23,7 +23,7 @@
 #ifndef _BRG_PHASE_HPP_INCLUDED_
 #define _BRG_PHASE_HPP_INCLUDED_
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #ifdef _BRG_USE_UNITS_
 #include "IceBRG_main/physics/units/unit_obj.h"

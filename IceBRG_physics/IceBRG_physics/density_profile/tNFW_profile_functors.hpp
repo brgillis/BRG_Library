@@ -25,10 +25,10 @@
 
 #include <cstdlib>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
-#include "IceBRG_physics/density_profile/density_profile.h"
-#include "IceBRG_physics/density_profile/tNFW_profile.h"
+#include "density_profile.hpp"
+#include "tNFW_profile.hpp"
 
 namespace IceBRG
 {

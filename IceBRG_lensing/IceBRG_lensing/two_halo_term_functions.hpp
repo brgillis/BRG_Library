@@ -10,7 +10,7 @@
 
 #include <cmath>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 namespace IceBRG { namespace two_halo_calcs {
 

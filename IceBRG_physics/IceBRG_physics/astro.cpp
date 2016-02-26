@@ -20,11 +20,14 @@
 
 \**********************************************************************/
 
+#include "astro.hpp"
+
+#include <IceBRG_main/math/interpolator/interpolator.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/Eigen.hpp"
 
@@ -32,14 +35,10 @@
 #include "IceBRG_main/math/cache/cache_2d.hpp"
 #include "IceBRG_main/math/calculus/differentiate.hpp"
 #include "IceBRG_main/math/calculus/integrate.hpp"
-#include "IceBRG_main/math/interpolator/interpolator.h"
-
-#include "IceBRG_physics/astro_caches.h"
-#include "IceBRG_physics/astro.h"
-
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/sky_obj/position_grid_cache.h"
+#include "astro_caches.hpp"
+#include "sky_obj/position_grid_cache.hpp"
 
 namespace IceBRG {
 

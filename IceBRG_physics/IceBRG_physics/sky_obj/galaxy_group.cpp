@@ -20,16 +20,17 @@
 
 \**********************************************************************/
 
+#include "galaxy_group.hpp"
+
+#include <IceBRG_main/error_handling.hpp>
 #include <cstdio>
 #include <stdexcept>
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
-#include "IceBRG_main/error_handling.h"
-#include "IceBRG_physics/sky_obj/galaxy.h"
+#include "IceBRG_physics/sky_obj/galaxy.hpp"
 
-#include "galaxy_group.h"
 
 // IceBRG::galaxy_group class methods
 #if (1)

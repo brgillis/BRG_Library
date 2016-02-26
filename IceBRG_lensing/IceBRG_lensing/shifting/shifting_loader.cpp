@@ -25,6 +25,8 @@
 
  \**********************************************************************/
 
+#include "shifting_loader.hpp"
+
 #include <cassert>
 #include <iostream>
 #include <sstream>
@@ -33,7 +35,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
@@ -43,7 +45,6 @@
 
 #include "IceBRG_lensing/shifting/corr_alpha.hpp"
 
-#include "shifting_loader.h"
 
 // Initialisation of static vars
 #if (1)

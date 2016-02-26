@@ -30,7 +30,7 @@
 #include <cmath>
 #include <utility>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 #include "IceBRG_main/math/functor/functor_product.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/math/safe_math.hpp"

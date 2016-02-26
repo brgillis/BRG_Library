@@ -32,7 +32,7 @@
 #include <boost/accumulators/framework/features.hpp>
 #include <boost/accumulators/framework/parameters/sample.hpp>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/misc_math.hpp"
 

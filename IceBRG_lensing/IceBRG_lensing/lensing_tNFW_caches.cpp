@@ -20,21 +20,21 @@
 
 \**********************************************************************/
 
+#include "lensing_tNFW_caches.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/math/cache/cache_4d.hpp"
 
-#include "IceBRG_lensing/lensing_tNFW_profile.h"
-
-#include "IceBRG_physics/astro.h"
-#include "lensing_tNFW_caches.h"
+#include <IceBRG_physics/astro.hpp>
 #include "IceBRG_main/units/units.hpp"
+#include "lensing_tNFW_profile.hpp"
 
 namespace IceBRG {
 

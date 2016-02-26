@@ -26,10 +26,12 @@
 #ifndef ICEBRG_PHYSICS_CLUSTER_VISIBILITY_HPP_
 #define ICEBRG_PHYSICS_CLUSTER_VISIBILITY_HPP_
 
-#include "IceBRG_main/common.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
+
+#include "IceBRG_physics/luminosity.hpp"
 
 namespace IceBRG
 {
