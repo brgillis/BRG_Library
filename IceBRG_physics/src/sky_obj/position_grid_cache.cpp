@@ -20,11 +20,11 @@
 
 \**********************************************************************/
 
-#include "position_grid_cache.hpp"
-
 #include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/units/units.hpp"
+
+#include "IceBRG_physics/sky_obj/position_grid_cache.hpp"
 
 // Initialisation for IceBRG::grid_cache
 #if (1)

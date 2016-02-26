@@ -20,7 +20,6 @@
 
 \**********************************************************************/
 
-#include "point_mass_profile.hpp"
 
 #include <IceBRG_main/error_handling.hpp>
 #include <cassert>
@@ -32,6 +31,8 @@
 
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/units/units.hpp"
+
+#include "IceBRG_physics/density_profile/point_mass_profile.hpp"
 
 
 // IceBRG::point_mass_profile class methods

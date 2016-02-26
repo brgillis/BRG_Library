@@ -20,15 +20,15 @@
 
 \**********************************************************************/
 
-#include "density_profile_functors.hpp"
 
 #include <iostream>
 
 #include "IceBRG_main/common.hpp"
 
+#include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/utility.hpp"
 
-#include "IceBRG_main/units/units.hpp"
+#include "IceBRG_physics/density_profile/density_profile_functors.hpp"
 
 // IceBRG::accel_functor class methods
 #if (1)

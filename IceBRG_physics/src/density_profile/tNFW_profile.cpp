@@ -20,9 +20,6 @@
 
 \**********************************************************************/
 
-#include "tNFW_profile.hpp"
-
-#include <IceBRG_main/error_handling.hpp>
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -31,10 +28,13 @@
 
 #include "IceBRG_main/common.hpp"
 
+#include "IceBRG_main/error_handling.hpp"
 #include "IceBRG_main/math/solvers/solvers.hpp"
-#include "IceBRG_physics/density_profile/tNFW_profile_functors.hpp"
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/utility.hpp"
+
+#include "IceBRG_physics/density_profile/tNFW_profile.hpp"
+#include "IceBRG_physics/density_profile/tNFW_profile_functors.hpp"
 
 
 constexpr IceBRG::flt_t min_x = 0.0001;

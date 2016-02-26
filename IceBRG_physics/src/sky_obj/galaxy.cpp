@@ -20,9 +20,9 @@
 
 \**********************************************************************/
 
-#include "galaxy.hpp"
 
 #include "IceBRG_main/common.hpp"
+#include "IceBRG_physics/sky_obj/galaxy.hpp"
 
 
 // IceBRG::galaxy class methods

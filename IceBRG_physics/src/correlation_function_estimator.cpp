@@ -36,7 +36,7 @@
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/vector/limit_vector.hpp"
 
-#include "correlation_function_estimator.h"
+#include "IceBRG_physics/correlation_function_estimator.hpp"
 
 namespace IceBRG {
 
