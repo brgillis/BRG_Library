@@ -33,11 +33,24 @@
 namespace IceBRG
 {
 
+// Mass function constants
+
+constexpr flt_t mass_func_l10_min = 8;
+constexpr flt_t mass_func_l10_max = 16;
+
+// Functions
+
+flt_t unnormed_power_spectrum( inverse_distance_type const & k);
+
 flt_t delta_c( flt_t const & z = 0. );
-distance_type r_of_m( mass_type const & mass, flt_t const & z = 0. );
-flt_t sigma_of_r( distance_type const & r);
+
+distance_type r_of_m( mass_type const & mass );
+
+flt_t sigma_of_r( distance_type const & r );
 flt_t sigma_of_m( mass_type const & mass );
+
 flt_t nu_of_m( mass_type const & mass, flt_t const & z = 0. );
+
 inverse_volume_inverse_mass_type mass_function( mass_type const & mass, flt_t const & z = 0. );
 inverse_volume_type log10_mass_function( flt_t const & log10msun_mass, flt_t const & z = 0. );
 inverse_volume_type integrated_log10_mass_function( flt_t const & l10_m_lo, flt_t const & l10_m_hi,

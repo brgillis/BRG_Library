@@ -50,6 +50,8 @@ namespace IceBRG {
 // Forward-declare pair_bin
 class pair_bin;
 
+constexpr const flt_t default_mass = 1e14*unitconv::Msuntokg*kg;
+
 /**
  *
  */
@@ -462,19 +464,19 @@ public:
 	flt_t gamma_square_stderr() const;
 
 	surface_density_type model_delta_Sigma_t(const flt_t & MLratio_1h = 50.,
-			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
 	flt_t model_gamma_t(const flt_t & MLratio_1h = 50.,
-			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
 
 	surface_density_type model_1h_delta_Sigma_t(const flt_t & MLratio_1h = 50.) const;
 	flt_t model_1h_gamma_t(const flt_t & MLratio_1h = 50.) const;
 
 	surface_density_type model_offset_delta_Sigma_t(
-			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
-	flt_t model_offset_gamma_t(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+	flt_t model_offset_gamma_t(const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
 
 #endif // Shear
@@ -520,24 +522,24 @@ public:
 	surface_density_type Sigma_stderr() const;
 
 	flt_t model_mu(const flt_t & MLratio_1h = 50.,
-			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
 	flt_t model_kappa(const flt_t & MLratio_1h = 50.,
-			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
 	surface_density_type model_Sigma(const flt_t & MLratio_1h = 50.,
-			const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+			const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
 
 	flt_t model_1h_mu(const flt_t & MLratio_1h = 50.) const;
 	flt_t model_1h_kappa(const flt_t & MLratio_1h = 50.) const;
 	surface_density_type model_1h_Sigma(const flt_t & MLratio_1h = 50.) const;
 
-	flt_t model_offset_mu(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+	flt_t model_offset_mu(const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
-	flt_t model_offset_kappa(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+	flt_t model_offset_kappa(const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
-	surface_density_type model_offset_Sigma(const mass_type & mean_group_mass = 1e14*unitconv::Msuntokg*kg,
+	surface_density_type model_offset_Sigma(const mass_type & mean_group_mass = default_mass,
 			const flt_t & sat_frac = 0.2) const;
 
 #endif // Magnification

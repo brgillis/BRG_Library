@@ -100,7 +100,6 @@ public:
 	{
 		return _z_err_;
 	}
-	int_t z_grid() const;
 #endif
 
 	// Astro calculations

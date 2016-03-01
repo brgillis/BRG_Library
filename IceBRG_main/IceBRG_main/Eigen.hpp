@@ -69,8 +69,8 @@ auto end(Eigen::Array<Derived,Nrow,Ncol,Options,Maxrow,Maxcol> & vec) -> decltyp
 
 namespace IceBRG {
 
-template<typename T>
-using array_t = Eigen::Array<T,Eigen::Dynamic,1>;
+template<typename T, int Nrow=Eigen::Dynamic, int Ncol=1>
+using array_t = Eigen::Array<T,Nrow,Ncol>;
 
 typedef array_t<flt_t> flt_array_t;
 typedef array_t<long_flt_t> long_flt_array_t;

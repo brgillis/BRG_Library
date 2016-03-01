@@ -6859,6 +6859,20 @@ SWIGINTERN PyObject *Swig_var_H_0_get(void) {
 }
 
 
+SWIGINTERN int Swig_var_h_0_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable h_0 is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_h_0_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::h_0));
+  return pyobj;
+}
+
+
 SWIGINTERN int Swig_var_Omega_m_set(PyObject *) {
   SWIG_Error(SWIG_AttributeError,"Variable Omega_m is read-only.");
   return 1;
@@ -6981,34 +6995,6 @@ SWIGINTERN PyObject *Swig_var_default_tau_factor_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_From_double(static_cast< double >(IceBRG::default_tau_factor));
-  return pyobj;
-}
-
-
-SWIGINTERN int Swig_var_mass_func_l10_min_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable mass_func_l10_min is read-only.");
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_mass_func_l10_min_get(void) {
-  PyObject *pyobj = 0;
-  
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::mass_func_l10_min));
-  return pyobj;
-}
-
-
-SWIGINTERN int Swig_var_mass_func_l10_max_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable mass_func_l10_max is read-only.");
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_mass_func_l10_max_get(void) {
-  PyObject *pyobj = 0;
-  
-  pyobj = SWIG_From_double(static_cast< double >(IceBRG::mass_func_l10_max));
   return pyobj;
 }
 
@@ -9321,6 +9307,202 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_vis_from_abs_mag_i(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_vis_from_abs_mag_i",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_vis_from_abs_mag_i" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_vis_from_abs_mag_i((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_i_from_abs_mag_vis(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_i_from_abs_mag_vis",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_i_from_abs_mag_vis" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_i_from_abs_mag_vis((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_vis_from_stellar_mass(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  mass_type *arg1 = 0 ;
+  mass_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_vis_from_stellar_mass",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_vis_from_stellar_mass" "', argument " "1"" of type '" "mass_type""'");
+  } 
+  temp1 = static_cast< mass_type >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_vis_from_stellar_mass((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_stellar_mass_from_abs_mag_vis(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  mass_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_stellar_mass_from_abs_mag_vis",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_stellar_mass_from_abs_mag_vis" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (mass_type)IceBRG::estimate_stellar_mass_from_abs_mag_vis((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_g_from_abs_mag_vis(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_g_from_abs_mag_vis",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_g_from_abs_mag_vis" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_g_from_abs_mag_vis((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_estimate_abs_mag_vis_from_abs_mag_g(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  flt_t *arg1 = 0 ;
+  flt_t temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:estimate_abs_mag_vis_from_abs_mag_g",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "estimate_abs_mag_vis_from_abs_mag_g" "', argument " "1"" of type '" "flt_t""'");
+  } 
+  temp1 = static_cast< flt_t >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::estimate_abs_mag_vis_from_abs_mag_g((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN int Swig_var_mass_func_l10_min_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable mass_func_l10_min is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_mass_func_l10_min_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::mass_func_l10_min));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_mass_func_l10_max_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable mass_func_l10_max is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_mass_func_l10_max_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::mass_func_l10_max));
+  return pyobj;
+}
+
+
+SWIGINTERN PyObject *_wrap_unnormed_power_spectrum(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  inverse_distance_type *arg1 = 0 ;
+  inverse_distance_type temp1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  flt_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:unnormed_power_spectrum",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "unnormed_power_spectrum" "', argument " "1"" of type '" "inverse_distance_type""'");
+  } 
+  temp1 = static_cast< inverse_distance_type >(val1);
+  arg1 = &temp1;
+  result = (flt_t)IceBRG::unnormed_power_spectrum((double const &)*arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_delta_c__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   flt_t *arg1 = 0 ;
@@ -9391,42 +9573,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_r_of_m__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  mass_type *arg1 = 0 ;
-  flt_t *arg2 = 0 ;
-  mass_type temp1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  flt_t temp2 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  distance_type result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:r_of_m",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "r_of_m" "', argument " "1"" of type '" "mass_type""'");
-  } 
-  temp1 = static_cast< mass_type >(val1);
-  arg1 = &temp1;
-  ecode2 = SWIG_AsVal_double(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "r_of_m" "', argument " "2"" of type '" "flt_t""'");
-  } 
-  temp2 = static_cast< flt_t >(val2);
-  arg2 = &temp2;
-  result = (distance_type)IceBRG::r_of_m((double const &)*arg1,(double const &)*arg2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_r_of_m__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_r_of_m(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   mass_type *arg1 = 0 ;
   mass_type temp1 ;
@@ -9447,52 +9594,6 @@ SWIGINTERN PyObject *_wrap_r_of_m__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObje
   return resultobj;
 fail:
   return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_r_of_m(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[3];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      return _wrap_r_of_m__SWIG_1(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_r_of_m__SWIG_0(self, args);
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'r_of_m'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    IceBRG::r_of_m(mass_type const &,flt_t const &)\n"
-    "    IceBRG::r_of_m(mass_type const &)\n");
-  return 0;
 }
 
 
@@ -10243,28 +10344,6 @@ SWIGINTERN PyObject *_wrap_redshift_obj_z_err(PyObject *SWIGUNUSEDPARM(self), Py
   arg1 = reinterpret_cast< IceBRG::redshift_obj * >(argp1);
   result = (flt_t)((IceBRG::redshift_obj const *)arg1)->z_err();
   resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_redshift_obj_z_grid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  IceBRG::redshift_obj *arg1 = (IceBRG::redshift_obj *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  int_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:redshift_obj_z_grid",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IceBRG__redshift_obj, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "redshift_obj_z_grid" "', argument " "1"" of type '" "IceBRG::redshift_obj const *""'"); 
-  }
-  arg1 = reinterpret_cast< IceBRG::redshift_obj * >(argp1);
-  result = ((IceBRG::redshift_obj const *)arg1)->z_grid();
-  resultobj = SWIG_NewPointerObj((new int_t(static_cast< const int_t& >(result))), SWIGTYPE_p_int_t, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -16259,6 +16338,20 @@ SWIGINTERN PyObject *galaxy_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObjec
   SWIG_TypeNewClientData(SWIGTYPE_p_IceBRG__galaxy, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
+
+SWIGINTERN int Swig_var_default_mass_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable default_mass is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_default_mass_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(IceBRG::default_mass));
+  return pyobj;
+}
+
 
 SWIGINTERN PyObject *_wrap_new_pair_bin_summary__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
@@ -41446,6 +41539,13 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"estimate_stellar_mass_from_abs_mag_i", _wrap_estimate_stellar_mass_from_abs_mag_i, METH_VARARGS, NULL},
 	 { (char *)"estimate_abs_mag_g_from_abs_mag_i", _wrap_estimate_abs_mag_g_from_abs_mag_i, METH_VARARGS, NULL},
 	 { (char *)"estimate_abs_mag_i_from_abs_mag_g", _wrap_estimate_abs_mag_i_from_abs_mag_g, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_vis_from_abs_mag_i", _wrap_estimate_abs_mag_vis_from_abs_mag_i, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_i_from_abs_mag_vis", _wrap_estimate_abs_mag_i_from_abs_mag_vis, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_vis_from_stellar_mass", _wrap_estimate_abs_mag_vis_from_stellar_mass, METH_VARARGS, NULL},
+	 { (char *)"estimate_stellar_mass_from_abs_mag_vis", _wrap_estimate_stellar_mass_from_abs_mag_vis, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_g_from_abs_mag_vis", _wrap_estimate_abs_mag_g_from_abs_mag_vis, METH_VARARGS, NULL},
+	 { (char *)"estimate_abs_mag_vis_from_abs_mag_g", _wrap_estimate_abs_mag_vis_from_abs_mag_g, METH_VARARGS, NULL},
+	 { (char *)"unnormed_power_spectrum", _wrap_unnormed_power_spectrum, METH_VARARGS, NULL},
 	 { (char *)"delta_c", _wrap_delta_c, METH_VARARGS, NULL},
 	 { (char *)"r_of_m", _wrap_r_of_m, METH_VARARGS, NULL},
 	 { (char *)"sigma_of_r", _wrap_sigma_of_r, METH_VARARGS, NULL},
@@ -41460,7 +41560,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"redshift_obj_set_z_err", _wrap_redshift_obj_set_z_err, METH_VARARGS, NULL},
 	 { (char *)"redshift_obj_z", _wrap_redshift_obj_z, METH_VARARGS, NULL},
 	 { (char *)"redshift_obj_z_err", _wrap_redshift_obj_z_err, METH_VARARGS, NULL},
-	 { (char *)"redshift_obj_z_grid", _wrap_redshift_obj_z_grid, METH_VARARGS, NULL},
 	 { (char *)"redshift_obj_H", _wrap_redshift_obj_H, METH_VARARGS, NULL},
 	 { (char *)"redshift_obj_rho_crit", _wrap_redshift_obj_rho_crit, METH_VARARGS, NULL},
 	 { (char *)"redshift_obj_redshift_obj_clone", _wrap_redshift_obj_redshift_obj_clone, METH_VARARGS, NULL},
@@ -42954,6 +43053,7 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"c",Swig_var_c_get, Swig_var_c_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"t_present_day",Swig_var_t_present_day_get, Swig_var_t_present_day_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"H_0",Swig_var_H_0_get, Swig_var_H_0_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"h_0",Swig_var_h_0_get, Swig_var_h_0_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Omega_m",Swig_var_Omega_m_get, Swig_var_Omega_m_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Omega_r",Swig_var_Omega_r_get, Swig_var_Omega_r_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Omega_k",Swig_var_Omega_k_get, Swig_var_Omega_k_set);
@@ -42963,13 +43063,14 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"n_s",Swig_var_n_s_get, Swig_var_n_s_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"default_c",Swig_var_default_c_get, Swig_var_default_c_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"default_tau_factor",Swig_var_default_tau_factor_get, Swig_var_default_tau_factor_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"mass_func_l10_min",Swig_var_mass_func_l10_min_get, Swig_var_mass_func_l10_min_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"mass_func_l10_max",Swig_var_mass_func_l10_max_get, Swig_var_mass_func_l10_max_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"bright_abs_mag_i_max",Swig_var_bright_abs_mag_i_max_get, Swig_var_bright_abs_mag_i_max_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"faint_app_mag_i_max",Swig_var_faint_app_mag_i_max_get, Swig_var_faint_app_mag_i_max_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"lum_func_min_abs_mag_B",Swig_var_lum_func_min_abs_mag_B_get, Swig_var_lum_func_min_abs_mag_B_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"lum_func_max_abs_mag_B",Swig_var_lum_func_max_abs_mag_B_get, Swig_var_lum_func_max_abs_mag_B_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"mass_func_l10_min",Swig_var_mass_func_l10_min_get, Swig_var_mass_func_l10_min_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"mass_func_l10_max",Swig_var_mass_func_l10_max_get, Swig_var_mass_func_l10_max_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"virial_density_factor",Swig_var_virial_density_factor_get, Swig_var_virial_density_factor_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"default_mass",Swig_var_default_mass_get, Swig_var_default_mass_set);
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

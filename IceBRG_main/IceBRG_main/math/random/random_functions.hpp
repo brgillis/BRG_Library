@@ -64,16 +64,19 @@ T Gaus_rand( T_gen & gen=rng )
 {
 	return std::normal_distribution<T>()(gen);
 } // flt_t Gaus_rand()
-template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
-T Gaus_rand( T_in && mean, T_in && stddev = 1.0, T_gen & gen=rng )
+template< typename T=flt_t, typename T_mean=flt_t, typename T_stddev=flt_t,
+		typename T_gen=decltype(rng) >
+T Gaus_rand( T_mean && mean, T_stddev && stddev = 1.0, T_gen & gen=rng )
 {
-	return std::normal_distribution<T>(std::forward<T_in>(mean),std::forward<T_in>(stddev))(gen);
+	return std::normal_distribution<T>(std::forward<T_mean>(mean),
+			std::forward<T_stddev>(stddev))(gen);
 
 } // flt_t Gaus_rand(flt_t mean, flt_t stddev)
 
 // Returns a random variable from a Gaussian distribution, truncated between min and max
-template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
-T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, T_gen & gen=rng )
+template< typename T=flt_t, typename T_mean=flt_t, typename T_stddev=flt_t,
+		typename T_min=flt_t, typename T_max=flt_t, typename T_gen=decltype(rng) >
+T trunc_Gaus_rand( T_mean && mean, T_stddev && stddev, T_min && min, T_max && max, T_gen & gen=rng )
 {
 	assert(max>min);
 
@@ -95,7 +98,7 @@ T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, T_gen
 	}
 
 	// Failsafe
-	return (min+max)/2.;
+	return (std::forward<T_min>(min)+std::forward<T_max>(max))/2.;
 
 } // T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, gen_t & gen=rng )
 
@@ -109,17 +112,21 @@ T log10Gaus_rand( T_gen & gen=rng )
 
 	return ( fact * std::pow(10., Gaus_rand<T>(gen) ) );
 } // flt_t log10Gaus_rand()
-template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
-T log10Gaus_rand( T_in && mean, T_in && stddev = 1., T_gen & gen=rng )
+template< typename T=flt_t, typename T_mean=flt_t, typename T_stddev=flt_t,
+		typename T_gen=decltype(rng) >
+T log10Gaus_rand( T_mean && mean, T_stddev && stddev = 1., T_gen & gen=rng )
 {
 	const flt_t & fact = std::exp( -square( stddev*std::log(10.) ) / 2 );
 
-	return ( fact * std::pow(10., Gaus_rand<T,T_in>(std::forward<T_in>(mean),std::forward<T_in>(stddev),gen) ) );
+	return ( fact * std::pow(10., Gaus_rand<T,T_mean,T_stddev>(std::forward<T_mean>(mean),
+			std::forward<T_stddev>(stddev),gen) ) );
 } // flt_t log10Gaus_rand(flt_t mean, flt_t stddev)
 
 // Returns a random variable from a log10_Gaussian distribution, truncated between min and max
-template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
-T trunc_log10Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, T_gen & gen=rng )
+template< typename T=flt_t, typename T_mean=flt_t, typename T_stddev=flt_t,
+		typename T_min=flt_t, typename T_max=flt_t, typename T_gen=decltype(rng) >
+T trunc_log10Gaus_rand( const T_mean & mean, const T_stddev & stddev, T_min && min, T_max && max,
+		T_gen & gen=rng )
 {
 	assert(max>min);
 
@@ -144,7 +151,7 @@ T trunc_log10Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, 
 	}
 
 	// Failsafe
-	return std::pow(10.,(min+max)/2.);
+	return std::pow(10.,(std::forward<T_min>(min)+std::forward<T_max>(max))/2.);
 
 } // T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, gen_t & gen=rng )
 
@@ -156,8 +163,9 @@ T Rayleigh_rand( T_in && sigma=1., T_gen & gen=rng )
 }
 
 // Returns a random variable from a Gaussian distribution, truncated between min and max
-template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
-T trunc_Rayleigh_rand( T_in && sigma, T_in && max, T_gen & gen=rng )
+template< typename T=flt_t, typename T_sigma=flt_t, typename T_max=flt_t,
+		typename T_gen=decltype(rng) >
+T trunc_Rayleigh_rand( const T_sigma & sigma, T_max && max, T_gen & gen=rng )
 {
 	assert(max>0.);
 
@@ -179,19 +187,21 @@ T trunc_Rayleigh_rand( T_in && sigma, T_in && max, T_gen & gen=rng )
 	}
 
 	// Failsafe
-	return max/2.;
+	return std::forward<T_max>(max)/2.;
 
-} // T trunc_Gaus_rand( T_in && mean, T_in && stddev, T_in && min, T_in && max, gen_t & gen=rng )
+} // T trunc_Rayleigh_rand( T_sigma && sigma, T_max && max, T_gen & gen=rng )
 
 // Get a Rayleigh random variable, smoothly contracted to always be less than max
-template< typename T=flt_t, typename T_in=flt_t, typename T_gen=decltype(rng) >
-T contracted_Rayleigh_rand( T_in && sigma, T_in && max, T_in && p, T_gen & gen=rng )
+template< typename T=flt_t, typename T_sigma=flt_t, typename T_max=flt_t,
+		typename T_p=flt_t, typename T_gen=decltype(rng) >
+T contracted_Rayleigh_rand( T_sigma && sigma, T_max && max, const T_p & p, T_gen & gen=rng )
 {
 	// Generate an initial random Rayleigh variable
-	T first_result = Rayleigh_rand(sigma);
+	T first_result = Rayleigh_rand(std::forward<T_sigma>(sigma));
 
 	// Transform it via Bryan's formula to rein in large values to be less than the max_val
-	return (first_result / std::pow(1 + std::pow(first_result / max, p), 1.0 / p));
+	return (first_result / std::pow(1 + std::pow(first_result / std::forward<T_max>(max), p),
+			1.0 / p));
 }
 
 // Returns a Poisson random variable.

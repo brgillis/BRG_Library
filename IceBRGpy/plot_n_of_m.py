@@ -49,11 +49,11 @@ def main(argv):
     n_z5 = np.zeros_like(l10_masses)
     
     for i in range(len(l10_masses)):
-        n_z1[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z1)*np.power(1e3*IceBRGpy.Mpctom,3))
-        n_z2[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z2)*np.power(1e3*IceBRGpy.Mpctom,3))
-        n_z3[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z3)*np.power(1e3*IceBRGpy.Mpctom,3))
-        n_z4[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z4)*np.power(1e3*IceBRGpy.Mpctom,3))
-        n_z5[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z5)*np.power(1e3*IceBRGpy.Mpctom,3))
+        n_z1[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z1)*np.power(IceBRGpy.Mpctom,3))
+        n_z2[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z2)*np.power(IceBRGpy.Mpctom,3))
+        n_z3[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z3)*np.power(IceBRGpy.Mpctom,3))
+        n_z4[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z4)*np.power(IceBRGpy.Mpctom,3))
+        n_z5[i] = np.log10(IceBRGpy.log10_mass_function(l10_masses[i],z5)*np.power(IceBRGpy.Mpctom,3))
         
     fig = pyplot.figure()
     
@@ -65,7 +65,7 @@ def main(argv):
     ax.plot(l10_masses,n_z4,label="z="+str(z4))
     ax.plot(l10_masses,n_z5,label="z="+str(z5))
     
-    ax.set_ylim(0,12)
+    ax.set_ylim(-10,2)
     
     ax.legend(loc='upper left')
     

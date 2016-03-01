@@ -73,12 +73,12 @@ BOOST_AUTO_TEST_CASE( mass_func_test )
 		return log10_mass_function(log10_mass,z)*std::pow(10.,log10_mass)*unitconv::Msuntokg*kg;
 	};
 
-	density_type dens = integrate_Romberg(density_at_scale_0,0.,16.);
+	density_type dens_0 = integrate_Romberg(density_at_scale_0,0.,16.);
 
-	density_type matter_dens = rho_bar(z);
+	density_type matter_dens = rho_bar(0.);
 
-	BOOST_CHECK_LE(value_of(dens),value_of(matter_dens));
-	BOOST_CHECK_CLOSE(value_of(dens),value_of(matter_dens),25);
+	BOOST_CHECK_GE(value_of(dens_0),0.5*value_of(matter_dens));
+	BOOST_CHECK_LE(value_of(dens_0),value_of(matter_dens));
 
 	// Try for z=0.9
 
@@ -100,13 +100,47 @@ BOOST_AUTO_TEST_CASE( mass_func_test )
 		return log10_mass_function(log10_mass,z)*std::pow(10.,log10_mass)*unitconv::Msuntokg*kg;
 	};
 
-	dens = integrate_Romberg(density_at_scale_0_9,0.,16.);
+	density_type dens_0_9 = integrate_Romberg(density_at_scale_0_9,0.,16.);
 
-	matter_dens = rho_bar(z);
+	matter_dens = rho_bar(0.);
 
 	// Between half and 100% of matter should be in collapsed haloes
-	BOOST_CHECK_GE(value_of(dens),0.5*value_of(matter_dens));
-	BOOST_CHECK_LE(value_of(dens),value_of(matter_dens));
+	BOOST_CHECK_GE(value_of(dens_0_9),0.5*value_of(matter_dens));
+	BOOST_CHECK_LE(value_of(dens_0_9),value_of(matter_dens));
+
+	// Less collapsed now than at z=0
+	BOOST_CHECK_LE(value_of(dens_0_9),value_of(dens_0));
+
+	// Try for z=2.0
+
+	z = 2.0;
+
+	n1 = log10_mass_function(log10msun_m1,z)*Gpc_cubed;
+	n2 = log10_mass_function(log10msun_m2,z)*Gpc_cubed;
+	n3 = log10_mass_function(log10msun_m3,z)*Gpc_cubed;
+	n4 = log10_mass_function(log10msun_m4,z)*Gpc_cubed;
+	n5 = log10_mass_function(log10msun_m5,z)*Gpc_cubed;
+
+	BOOST_CHECK_LT(value_of(n2),value_of(n1));
+	BOOST_CHECK_LT(value_of(n3),value_of(n2));
+	BOOST_CHECK_LT(value_of(n4),value_of(n3));
+	BOOST_CHECK_LT(value_of(n5),value_of(n4));
+
+	auto density_at_scale_2_0 = [&] (flt_t const & log10_mass)
+	{
+		return log10_mass_function(log10_mass,z)*std::pow(10.,log10_mass)*unitconv::Msuntokg*kg;
+	};
+
+	density_type dens_2_0 = integrate_Romberg(density_at_scale_2_0,0.,16.);
+
+	matter_dens = rho_bar(0.);
+
+	// Between half and 100% of matter should be in collapsed haloes
+	BOOST_CHECK_GE(value_of(dens_2_0),0.5*value_of(matter_dens));
+	BOOST_CHECK_LE(value_of(dens_2_0),value_of(matter_dens));
+
+	// Less collapsed now than at z=0
+	BOOST_CHECK_LE(value_of(dens_2_0),value_of(dens_0_9));
 }
 
 BOOST_AUTO_TEST_CASE( vis_clusters_test )
@@ -115,8 +149,8 @@ BOOST_AUTO_TEST_CASE( vis_clusters_test )
 
 	flt_t n = visible_clusters(area);
 
-	BOOST_CHECK_GT(n,5);
-	BOOST_CHECK_LT(n,50);
+	BOOST_CHECK_GT(n,1);
+	BOOST_CHECK_LT(n,10);
 }
 
 BOOST_AUTO_TEST_CASE( vis_galaxies_test )
@@ -136,7 +170,8 @@ BOOST_AUTO_TEST_CASE( cluster_richness_test )
 
 	flt_t mean_richness = mean_cluster_richness(z1,z2);
 
-	BOOST_CHECK_GT(mean_richness,0);
+	BOOST_CHECK_GT(mean_richness,2);
+	BOOST_CHECK_LT(mean_richness,10);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

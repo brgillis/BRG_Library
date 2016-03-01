@@ -38,7 +38,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.flags.968427847" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.911623554" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.965718790" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+								<option id="gnu.cpp.compiler.option.preprocessor.def.965718790" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="NDEBUG"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.588282239" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -179,10 +179,11 @@
 									<listOptionValue builtIn="false" value="/home/brg/lib"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.465476679" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="IceBRG_lensing"/>
+									<listOptionValue builtIn="false" value="IceBRG_lensing"/>
 									<listOptionValue builtIn="false" value="IceBRG_physics"/>
 									<listOptionValue builtIn="false" value="IceBRG_main"/>
 									<listOptionValue builtIn="false" value="python2.7"/>
+									<listOptionValue builtIn="false" value="boost_serialization"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1631030665" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-fopenmp" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.569223945" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">

@@ -90,8 +90,11 @@
 %include "/disk2/brg/include/IceBRG_lensing/detail/pair_bins_summary.hpp"
 %include "/disk2/brg/include/IceBRG_lensing/detail/source_obj.hpp"
 %include "/disk2/brg/include/IceBRG_lensing/lens_source_pair.hpp"
-%template(lensing_tNFW_profile_extension) IceBRG::lensing_profile_extension< IceBRG::lensing_tNFW_profile >;
+
+%template(lensing_tNFW_profile_extension)
+	IceBRG::lensing_profile_extension< IceBRG::lensing_tNFW_profile >;
 %include "/disk2/brg/include/IceBRG_lensing/lensing_tNFW_profile.hpp"
+
 %include "/disk2/brg/include/IceBRG_lensing/pair_binner.hpp"
 %include "/disk2/brg/include/IceBRG_lensing/source_galaxy.hpp"
 

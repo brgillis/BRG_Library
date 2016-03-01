@@ -33,6 +33,8 @@
 #include "IceBRG_main/container/is_boost_tuple.hpp"
 #include "IceBRG_main/math/ipow.hpp"
 
+#include "IceBRG_main/units/unit_conversions.hpp"
+
 // Enable dimensional analysis unless the NDEBUG flag is defined
 #ifndef NDEBUG
 #define _BRG_USE_UNITS_
@@ -409,6 +411,8 @@ typedef flt_t distance_over_angle_type;
 typedef flt_t inverse_volume_inverse_mass_type;
 
 typedef flt_t any_units_type;
+
+// Base units
 
 constexpr flt_t meter(1.);
 constexpr flt_t second(1.);

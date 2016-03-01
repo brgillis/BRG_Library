@@ -47,15 +47,17 @@ namespace IceBRG
 const custom_unit_type<3,-2,-1,0,0> Gc = 6.67384e-11 * cube(m) / square(s) / kg; // In m^3 s^-2 kg^-1
 const velocity_type c = IceBRG::unitconv::ctomps*mps;
 const time_type t_present_day = 13.616*unitconv::Gyrtos*s;     // WMAP9 + priors
+const inverse_time_type H_0 = 70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second; // So all results will implicitly be in h_70 units
+const flt_t h_0 = H_0 / (100*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second);
 #else
 constexpr flt_t Gc = 6.67384e-11; // In m^3 s^-2 kg^-1
 constexpr flt_t c = IceBRG::unitconv::ctomps;
 constexpr flt_t t_present_day = 13.616*unitconv::Gyrtos;     // WMAP9 + priors
+constexpr flt_t H_0 = 70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second; // So all results will implicitly be in h_70 units
+constexpr flt_t h_0 = H_0 / (100*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second);
 #endif
 
 // Cosmological constants
-
-const inverse_time_type H_0 = 70*unitconv::kmtom/unitconv::stos/unitconv::Mpctom / IceBRG::second; // So all results will implicitly be in h_70 units
 
 constexpr flt_t Omega_m = 0.288; // WMAP9 + priors
 constexpr flt_t Omega_r = 0.000086; // WMAP9 + priors
@@ -69,11 +71,6 @@ constexpr flt_t n_s = 0.971;     // WMAP9 + priors
 
 constexpr flt_t default_c = 6.; // To help prevent crashes. Warning will be output
 constexpr flt_t default_tau_factor = 2.;
-
-// Mass function constants
-
-constexpr flt_t mass_func_l10_min = 8;
-constexpr flt_t mass_func_l10_max = 16;
 
 } // namespace IceBRG
 

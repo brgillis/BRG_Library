@@ -177,7 +177,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.116939682" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.other.other.1327976032" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.optimization.flags.2123619879" superClass="gnu.cpp.compiler.option.optimization.flags" value="-fopenmp " valueType="string"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.2123619879" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-fopenmp " valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.841982544" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.lib.debug.851960214" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.debug">
@@ -282,7 +282,7 @@
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.251711167" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="/disk2/brg/lib"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1292948927" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-fopenmp" valueType="string"/>
@@ -302,10 +302,10 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="IceBRG_main;cdt.managedbuild.config.gnu.lib.debug.1618539873" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+				<externalSettings containerId="IceBRG_main;cdt.managedbuild.config.gnu.lib.release.390841488" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/IceBRG_main"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_main/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/IceBRG_main/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="IceBRG_main" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

@@ -66,8 +66,20 @@ flt_t estimate_abs_mag_i_from_stellar_mass( mass_type const & stellar_mass );
 // Taken from regression of CFHTLenS data. Log10 scatter of 0.41169238482277282
 mass_type estimate_stellar_mass_from_abs_mag_i( flt_t const & abs_mag_g );
 
+// Combining the above two regressions
 flt_t estimate_abs_mag_g_from_abs_mag_i( flt_t const & abs_mag_i );
 flt_t estimate_abs_mag_i_from_abs_mag_g( flt_t const & abs_mag_g );
+
+// Taken from zeropoints in Lance's code
+flt_t estimate_abs_mag_vis_from_abs_mag_i( flt_t const & abs_mag_i );
+flt_t estimate_abs_mag_i_from_abs_mag_vis( flt_t const & abs_mag_vis );
+
+// More ways to use mag_vis
+flt_t estimate_abs_mag_vis_from_stellar_mass( mass_type const & stellar_mass );
+mass_type estimate_stellar_mass_from_abs_mag_vis( flt_t const & abs_mag_vis );
+flt_t estimate_abs_mag_g_from_abs_mag_vis( flt_t const & abs_mag_vis );
+flt_t estimate_abs_mag_vis_from_abs_mag_g( flt_t const & abs_mag_g );
+
 
 } // namespace IceBRG
 

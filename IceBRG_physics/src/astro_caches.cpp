@@ -96,13 +96,9 @@ DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, inverse_volume_type,
 DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
 		0.01*unitconv::Mpctom*m, 100.*unitconv::Mpctom*m, 0.01*unitconv::Mpctom*m
 		,
-			constexpr flt_t nsp = 0.958;
-			const distance_type Mpc = unitconv::Mpctom * m;
-			const flt_t h = H_0 / (100. * (unitconv::kmtom*m)/s/Mpc);
-			const distance_type Mpc_o_h = Mpc/h;
-			const flt_t xi = Omega_m * h;
+			const distance_type Mpc_o_h = unitconv::Mpctom * m/h_0;
 
-			distance_type aR = in_param/h;
+			distance_type aR = in_param/h_0;
 
 			auto power_spectrum = [&] (inverse_distance_type const & k)
 			{
@@ -110,16 +106,13 @@ DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
 				using std::sin;
 				using std::cos;
 
-				flt_t res = pow(k*Mpc_o_h,2. + nsp) * square(log(1. + 2.34*Mpc_o_h * k / xi) /
-						(2.34*Mpc_o_h * k / xi) /
-						pow(1. + 3.89*Mpc_o_h * k / xi + square(16.2*Mpc_o_h * k / xi) + cube(5.47*Mpc_o_h * k / xi) +
-								quart(6.71*Mpc_o_h * k / xi),0.25)) *
+				flt_t res = unnormed_power_spectrum(k) *
 								square(3. * (sin(k * aR) - k * aR * cos(k * aR)) / cube(k * aR));
 
 				return res;
 			};
 
-			flt_t res = Mpc_o_h*integrate_Romberg(power_spectrum,0.01/Mpc_o_h,100./Mpc_o_h)/(2.*square(pi));
+			flt_t res = Mpc_o_h*integrate_Romberg(power_spectrum,0.001/Mpc_o_h,1000./Mpc_o_h)/(2.*square(pi));
 			return res;
 		,
 

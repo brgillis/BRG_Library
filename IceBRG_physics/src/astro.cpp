@@ -372,6 +372,23 @@ flt_t faint_bright_ratio( flt_t const & z, flt_t const & bright_abs_mag_i_lim,
 // Mass-related functions
 #if(1)
 
+flt_t unnormed_power_spectrum( inverse_distance_type const & k)
+{
+	using std::log;
+
+	constexpr flt_t nsp = 0.958;
+	const distance_type Mpc = unitconv::Mpctom * m;
+	const distance_type Mpc_o_h = Mpc/h_0;
+	const flt_t xi = Omega_m * h_0;
+
+	flt_t res = pow(k*Mpc_o_h,2. + nsp) * square(log(1. + 2.34*Mpc_o_h * k / xi) /
+			(2.34*Mpc_o_h * k / xi) /
+			pow(1. + 3.89*Mpc_o_h * k / xi + square(16.2*Mpc_o_h * k / xi) + cube(5.47*Mpc_o_h * k / xi) +
+					quart(6.71*Mpc_o_h * k / xi),0.25));
+
+	return res;
+}
+
 // Press-Schechter formalism functions
 flt_t delta_c( flt_t const & z )
 {
@@ -387,15 +404,15 @@ density_type rho_bar( flt_t const & z)
 
 	return res;
 }
-distance_type r_of_m( mass_type const & mass, flt_t const & z )
+distance_type r_of_m( mass_type const & mass )
 {
-	distance_type r = ipow<1,3>(3.*mass/(4*pi*rho_bar(z)));
+	distance_type r = ipow<1,3>(3.*mass/(4*pi*rho_bar(0.)));
 
 	return r;
 }
 flt_t sigma_of_r( distance_type const & r)
 {
-	return 0.8*sigma_r_cache().get(r)/sigma_r_cache().get(8.*unitconv::Mpctom*m);
+	return 0.8*sqrt(sigma_r_cache().get(r)/sigma_r_cache().get(8.*unitconv::Mpctom*m/h_0));
 }
 flt_t sigma_of_m( mass_type const & mass )
 {
@@ -430,7 +447,7 @@ inverse_volume_inverse_mass_type mass_function( mass_type const & mass, flt_t co
 
 	custom_unit_type<0,0,-1,0,0> d_ln_nu_d_m = differentiate(&ln_nu_of_m,mass);
 
-	inverse_volume_inverse_mass_type res = rho_bar(z)/mass * f_of_nu * d_ln_nu_d_m;
+	inverse_volume_inverse_mass_type res = rho_bar(0.)/mass * f_of_nu * d_ln_nu_d_m;
 
 	return res;
 }
@@ -744,6 +761,7 @@ mass_type estimate_stellar_mass_from_abs_mag_i( flt_t const & abs_mag_i )
 	return stellar_mass;
 }
 
+// Combining regressions
 flt_t estimate_abs_mag_g_from_abs_mag_i( flt_t const & abs_mag_i )
 {
 	return estimate_abs_mag_g_from_stellar_mass( estimate_stellar_mass_from_abs_mag_i(abs_mag_i) );
@@ -751,6 +769,38 @@ flt_t estimate_abs_mag_g_from_abs_mag_i( flt_t const & abs_mag_i )
 flt_t estimate_abs_mag_i_from_abs_mag_g( flt_t const & abs_mag_g )
 {
 	return estimate_abs_mag_i_from_stellar_mass( estimate_stellar_mass_from_abs_mag_g(abs_mag_g) );
+}
+
+// Using Lance's zeropoints to convert between i and vis
+flt_t estimate_abs_mag_vis_from_abs_mag_i( flt_t const & abs_mag_i )
+{
+	return abs_mag_i + 0.2643;
+}
+flt_t estimate_abs_mag_i_from_abs_mag_vis( flt_t const & abs_mag_vis )
+{
+	return abs_mag_vis - 0.2643;
+}
+
+// More ways to use mag_vis
+flt_t estimate_abs_mag_vis_from_stellar_mass( mass_type const & stellar_mass )
+{
+	return estimate_abs_mag_vis_from_abs_mag_i(
+			estimate_abs_mag_i_from_stellar_mass(stellar_mass) );
+}
+mass_type estimate_stellar_mass_from_abs_mag_vis( flt_t const & abs_mag_vis )
+{
+	return estimate_stellar_mass_from_abs_mag_i(
+			estimate_abs_mag_i_from_abs_mag_vis(abs_mag_vis) );
+}
+
+// Connecting magnitude conversions
+flt_t estimate_abs_mag_g_from_abs_mag_vis( flt_t const & abs_mag_vis )
+{
+	return estimate_abs_mag_g_from_abs_mag_i( estimate_abs_mag_i_from_abs_mag_vis(abs_mag_vis) );
+}
+flt_t estimate_abs_mag_vis_from_abs_mag_g( flt_t const & abs_mag_g )
+{
+	return estimate_abs_mag_vis_from_abs_mag_i( estimate_abs_mag_i_from_abs_mag_g(abs_mag_g) );
 }
 
 #endif // stellar mass functions
