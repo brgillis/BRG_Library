@@ -25,15 +25,68 @@
 
 // SWIG includes
 %include "typemaps.i"
+%include "std_pair.i"
 %include "std_string.i"
 %include "std_vector.i"
+
+%{
+#define SWIG_FILE_WITH_INIT
+%}
+%include "numpy.i"
+%init %{
+import_array();
+%}
+// some additional backward compatibility declarations for supporting numpy < 1.7.0
+%{
+#if NPY_API_VERSION < 0x00000007
+#define NPY_ARRAY_C_CONTIGUOUS NPY_C_CONTIGUOUS
+#define NPY_ARRAY_F_CONTIGUOUS NPY_F_CONTIGUOUS
+#define NPY_ARRAY_ALIGNED  NPY_ALIGNED
+#endif
+%}
 
 %module IceBRGpy
 
 %{
 	 
 	/* Include the headers in the wrapper code */
+	
+	#include <utility>
+	
 	#include "IceBRG_main/units/unit_conversions.hpp"
+
+	#include "IceBRG_main/vector/rebin.hpp"
+
+	template< typename T >
+	std::pair<int,int> rebin_wrap( T * p_image,
+			int ss_nx,
+			int ss_ny)
+	{
+		auto out_array = IceBRG::rebin(p_image,
+							ss_nx,
+							ss_ny,
+							0,
+							0,
+							5);
+		
+		for(int i=0; i<ss_nx*ss_ny; ++i)
+		{
+			p_image[i] = 0;
+		}
+		
+		int ncols = out_array.cols();
+		int nrows = out_array.rows();
+		
+		for(int i=0; i<ncols; ++i)
+		{
+			for(int j=0; j<nrows; ++j)
+			{
+				p_image[i+j*ncols] = out_array(i,j);
+			}
+		}
+		
+		return std::make_pair(ncols,nrows);
+	}
 
 	#include "IceBRG_physics/abundance_matching.hpp"
 	#include "IceBRG_physics/cluster_visibility.hpp"
@@ -67,6 +120,56 @@
  
 // Parse the header files to generate wrappers
 %include "/disk2/brg/include/IceBRG_main/units/unit_conversions.hpp"
+
+%apply (int* INPLACE_ARRAY2, int DIM1, int DIM2)
+	{( int * p_image,
+			int ss_nx,
+			int ss_ny)}
+
+%apply (double* INPLACE_ARRAY2, int DIM1, int DIM2)
+	{( double * p_image,
+			int ss_nx,
+			int ss_ny)}
+
+%template() std::pair<int,int>;
+
+%include "/disk2/brg/include/IceBRG_main/vector/rebin.hpp"
+
+
+template< typename T >
+std::pair<int,int>
+rebin_wrap( T * p_image,
+		int ss_nx,
+		int ss_ny )
+{
+	auto out_array = IceBRG::rebin(p_image,
+						ss_nx,
+						ss_ny,
+						0,
+						0,
+						5);
+	
+	for(int i=0; i<ss_nx*ss_ny; ++i)
+	{
+		p_image[i] = 0;
+	}
+	
+	int ncols = out_array.cols();
+	int nrows = out_array.rows();
+	
+	for(int i=0; i<ncols; ++i)
+	{
+		for(int j=0; j<nrows; ++j)
+		{
+			p_image[i+j*ncols] = out_array(i,j);
+		}
+	}
+	
+	return std::make_pair(ncols,nrows);
+}
+
+%template(rebin_float) rebin_wrap<double>;
+%template(rebin_int) rebin_wrap<int>;
 
 %include "/disk2/brg/include/IceBRG_physics/abundance_matching.hpp"
 %include "/disk2/brg/include/IceBRG_physics/cluster_visibility.hpp"
