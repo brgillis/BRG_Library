@@ -2956,29 +2956,30 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_IceBRG__source_galaxy swig_types[16]
 #define SWIGTYPE_p_IceBRG__source_obj swig_types[17]
 #define SWIGTYPE_p_IceBRG__tNFW_profile swig_types[18]
-#define SWIGTYPE_p_char swig_types[19]
-#define SWIGTYPE_p_custom_unit_typeT_0_0_0_2_0_t swig_types[20]
-#define SWIGTYPE_p_custom_unit_typeT_0__2_0_0_0_t swig_types[21]
-#define SWIGTYPE_p_custom_unit_typeT_1_0_0__1_0_t swig_types[22]
-#define SWIGTYPE_p_custom_unit_typeT__1_0_0_1_0_t swig_types[23]
-#define SWIGTYPE_p_custom_unit_typeT__4_0_2_0_0_t swig_types[24]
-#define SWIGTYPE_p_double swig_types[25]
-#define SWIGTYPE_p_first_type swig_types[26]
-#define SWIGTYPE_p_int_t swig_types[27]
-#define SWIGTYPE_p_lens_source_pair swig_types[28]
-#define SWIGTYPE_p_second_type swig_types[29]
-#define SWIGTYPE_p_ssize_t swig_types[30]
-#define SWIGTYPE_p_std__invalid_argument swig_types[31]
-#define SWIGTYPE_p_std__istream swig_types[32]
-#define SWIGTYPE_p_std__ostream swig_types[33]
-#define SWIGTYPE_p_std__string swig_types[34]
-#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[35]
-#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[36]
-#define SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_t_t swig_types[37]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[38]
-#define SWIGTYPE_p_unitconv_map swig_types[39]
-static swig_type_info *swig_types[41];
-static swig_module_info swig_module = {swig_types, 40, 0, 0, 0, 0};
+#define SWIGTYPE_p_T swig_types[19]
+#define SWIGTYPE_p_char swig_types[20]
+#define SWIGTYPE_p_custom_unit_typeT_0_0_0_2_0_t swig_types[21]
+#define SWIGTYPE_p_custom_unit_typeT_0__2_0_0_0_t swig_types[22]
+#define SWIGTYPE_p_custom_unit_typeT_1_0_0__1_0_t swig_types[23]
+#define SWIGTYPE_p_custom_unit_typeT__1_0_0_1_0_t swig_types[24]
+#define SWIGTYPE_p_custom_unit_typeT__4_0_2_0_0_t swig_types[25]
+#define SWIGTYPE_p_double swig_types[26]
+#define SWIGTYPE_p_first_type swig_types[27]
+#define SWIGTYPE_p_int_t swig_types[28]
+#define SWIGTYPE_p_lens_source_pair swig_types[29]
+#define SWIGTYPE_p_second_type swig_types[30]
+#define SWIGTYPE_p_ssize_t swig_types[31]
+#define SWIGTYPE_p_std__invalid_argument swig_types[32]
+#define SWIGTYPE_p_std__istream swig_types[33]
+#define SWIGTYPE_p_std__ostream swig_types[34]
+#define SWIGTYPE_p_std__string swig_types[35]
+#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[36]
+#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[37]
+#define SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_t_t swig_types[38]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[39]
+#define SWIGTYPE_p_unitconv_map swig_types[40]
+static swig_type_info *swig_types[42];
+static swig_module_info swig_module = {swig_types, 41, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2991,16 +2992,16 @@ static swig_module_info swig_module = {swig_types, 40, 0, 0, 0, 0};
 #endif
 
 /*-----------------------------------------------
-              @(target):= _IceBRGpy.so
+              @(target):= _IceBRG.so
   ------------------------------------------------*/
 #if PY_VERSION_HEX >= 0x03000000
-#  define SWIG_init    PyInit__IceBRGpy
+#  define SWIG_init    PyInit__IceBRG
 
 #else
-#  define SWIG_init    init_IceBRGpy
+#  define SWIG_init    init_IceBRG
 
 #endif
-#define SWIG_name    "_IceBRGpy"
+#define SWIG_name    "_IceBRG"
 
 #define SWIGVERSION 0x030000 
 #define SWIG_VERSION SWIGVERSION
@@ -3484,14 +3485,17 @@ SWIG_AsVal_ptrdiff_t (PyObject * obj, ptrdiff_t *val)
 	template< typename T >
 	std::pair<int,int> rebin_wrap( T * p_image,
 			int ss_nx,
-			int ss_ny)
+			int ss_ny,
+			int x_offset=0,
+			int y_offset=0,
+			int subsampling_factor=5)
 	{
 		auto out_array = IceBRG::rebin(p_image,
 							ss_nx,
 							ss_ny,
-							0,
-							0,
-							5);
+							x_offset,
+							y_offset,
+							subsampling_factor);
 		
 		for(int i=0; i<ss_nx*ss_ny; ++i)
 		{
@@ -6944,25 +6948,52 @@ SWIGINTERN PyObject *Swig_var_esutoC_get(void) {
 }
 
 
-SWIGINTERN PyObject *_wrap_rebin_float(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_rebin_int__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  double *arg1 = (double *) 0 ;
+  int *arg1 = (int *) 0 ;
   int arg2 ;
   int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
   PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
   PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
   std::pair< int,int > result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:rebin_float",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:rebin_int",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
   {
-    array1 = obj_to_array_no_conversion(obj0, NPY_DOUBLE);
+    array1 = obj_to_array_no_conversion(obj0, NPY_INT);
     if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
       || !require_native(array1)) SWIG_fail;
-    arg1 = (double*) array_data(array1);
+    arg1 = (int*) array_data(array1);
     arg2 = (int) array_size(array1,0);
     arg3 = (int) array_size(array1,1);
   }
-  result = rebin_wrap< double >(arg1,arg2,arg3);
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_int" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_int" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  ecode6 = SWIG_AsVal_int(obj3, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "rebin_int" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = static_cast< int >(val6);
+  result = rebin_wrap< int >(arg1,arg2,arg3,arg4,arg5,arg6);
   resultobj = swig::from(static_cast< std::pair<int,int > >(result));
   return resultobj;
 fail:
@@ -6970,7 +7001,86 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_rebin_int(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_rebin_int__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int *arg1 = (int *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:rebin_int",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_INT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (int*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_int" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_int" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  result = rebin_wrap< int >(arg1,arg2,arg3,arg4,arg5);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_int__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int *arg1 = (int *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:rebin_int",&obj0,&obj1)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_INT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (int*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_int" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  result = rebin_wrap< int >(arg1,arg2,arg3,arg4);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_int__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int *arg1 = (int *) 0 ;
   int arg2 ;
@@ -6993,6 +7103,1420 @@ SWIGINTERN PyObject *_wrap_rebin_int(PyObject *SWIGUNUSEDPARM(self), PyObject *a
   return resultobj;
 fail:
   return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_int(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_INT);
+    }
+    if (_v) {
+      if (argc <= 1) {
+        return _wrap_rebin_int__SWIG_3(self, args);
+      }
+      if (argc <= 2) {
+        return _wrap_rebin_int__SWIG_3(self, args);
+      }
+      return _wrap_rebin_int__SWIG_3(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_INT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_rebin_int__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_INT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_rebin_int__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_INT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_rebin_int__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'rebin_int'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    rebin_wrap< int >(int *,int,int,int,int,int)\n"
+    "    rebin_wrap< int >(int *,int,int,int,int)\n"
+    "    rebin_wrap< int >(int *,int,int,int)\n"
+    "    rebin_wrap< int >(int *,int,int)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_long__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long *arg1 = (long *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:rebin_long",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_LONG);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (long*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_long" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_long" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  ecode6 = SWIG_AsVal_int(obj3, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "rebin_long" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = static_cast< int >(val6);
+  result = rebin_wrap< long >(arg1,arg2,arg3,arg4,arg5,arg6);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_long__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long *arg1 = (long *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:rebin_long",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_LONG);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (long*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_long" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_long" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  result = rebin_wrap< long >(arg1,arg2,arg3,arg4,arg5);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_long__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long *arg1 = (long *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:rebin_long",&obj0,&obj1)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_LONG);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (long*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_long" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  result = rebin_wrap< long >(arg1,arg2,arg3,arg4);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_long__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long *arg1 = (long *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  PyArrayObject *array1 = NULL ;
+  PyObject * obj0 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:rebin_long",&obj0)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_LONG);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (long*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  result = rebin_wrap< long >(arg1,arg2,arg3);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_long(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_LONG);
+    }
+    if (_v) {
+      if (argc <= 1) {
+        return _wrap_rebin_long__SWIG_3(self, args);
+      }
+      if (argc <= 2) {
+        return _wrap_rebin_long__SWIG_3(self, args);
+      }
+      return _wrap_rebin_long__SWIG_3(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_LONG);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_rebin_long__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_LONG);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_rebin_long__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_LONG);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_rebin_long__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'rebin_long'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    rebin_wrap< long >(long *,int,int,int,int,int)\n"
+    "    rebin_wrap< long >(long *,int,int,int,int)\n"
+    "    rebin_wrap< long >(long *,int,int,int)\n"
+    "    rebin_wrap< long >(long *,int,int)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_uint__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  unsigned int *arg1 = (unsigned int *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:rebin_uint",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_UINT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (unsigned int*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_uint" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_uint" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  ecode6 = SWIG_AsVal_int(obj3, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "rebin_uint" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = static_cast< int >(val6);
+  result = rebin_wrap< unsigned int >(arg1,arg2,arg3,arg4,arg5,arg6);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_uint__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  unsigned int *arg1 = (unsigned int *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:rebin_uint",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_UINT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (unsigned int*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_uint" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_uint" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  result = rebin_wrap< unsigned int >(arg1,arg2,arg3,arg4,arg5);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_uint__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  unsigned int *arg1 = (unsigned int *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:rebin_uint",&obj0,&obj1)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_UINT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (unsigned int*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_uint" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  result = rebin_wrap< unsigned int >(arg1,arg2,arg3,arg4);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_uint__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  unsigned int *arg1 = (unsigned int *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  PyArrayObject *array1 = NULL ;
+  PyObject * obj0 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:rebin_uint",&obj0)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_UINT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (unsigned int*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  result = rebin_wrap< unsigned int >(arg1,arg2,arg3);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_uint(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_UINT);
+    }
+    if (_v) {
+      if (argc <= 1) {
+        return _wrap_rebin_uint__SWIG_3(self, args);
+      }
+      if (argc <= 2) {
+        return _wrap_rebin_uint__SWIG_3(self, args);
+      }
+      return _wrap_rebin_uint__SWIG_3(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_UINT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_rebin_uint__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_UINT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_rebin_uint__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_UINT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_rebin_uint__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'rebin_uint'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    rebin_wrap< unsigned int >(unsigned int *,int,int,int,int,int)\n"
+    "    rebin_wrap< unsigned int >(unsigned int *,int,int,int,int)\n"
+    "    rebin_wrap< unsigned int >(unsigned int *,int,int,int)\n"
+    "    rebin_wrap< unsigned int >(unsigned int *,int,int)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_ulong__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  unsigned long *arg1 = (unsigned long *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:rebin_ulong",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_ULONG);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (unsigned long*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_ulong" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_ulong" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  ecode6 = SWIG_AsVal_int(obj3, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "rebin_ulong" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = static_cast< int >(val6);
+  result = rebin_wrap< unsigned long >(arg1,arg2,arg3,arg4,arg5,arg6);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_ulong__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  unsigned long *arg1 = (unsigned long *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:rebin_ulong",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_ULONG);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (unsigned long*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_ulong" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_ulong" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  result = rebin_wrap< unsigned long >(arg1,arg2,arg3,arg4,arg5);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_ulong__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  unsigned long *arg1 = (unsigned long *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:rebin_ulong",&obj0,&obj1)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_ULONG);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (unsigned long*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_ulong" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  result = rebin_wrap< unsigned long >(arg1,arg2,arg3,arg4);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_ulong__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  unsigned long *arg1 = (unsigned long *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  PyArrayObject *array1 = NULL ;
+  PyObject * obj0 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:rebin_ulong",&obj0)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_ULONG);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (unsigned long*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  result = rebin_wrap< unsigned long >(arg1,arg2,arg3);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_ulong(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_ULONG);
+    }
+    if (_v) {
+      if (argc <= 1) {
+        return _wrap_rebin_ulong__SWIG_3(self, args);
+      }
+      if (argc <= 2) {
+        return _wrap_rebin_ulong__SWIG_3(self, args);
+      }
+      return _wrap_rebin_ulong__SWIG_3(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_ULONG);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_rebin_ulong__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_ULONG);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_rebin_ulong__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_ULONG);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_rebin_ulong__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'rebin_ulong'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    rebin_wrap< unsigned long >(unsigned long *,int,int,int,int,int)\n"
+    "    rebin_wrap< unsigned long >(unsigned long *,int,int,int,int)\n"
+    "    rebin_wrap< unsigned long >(unsigned long *,int,int,int)\n"
+    "    rebin_wrap< unsigned long >(unsigned long *,int,int)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_float__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float *arg1 = (float *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:rebin_float",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_FLOAT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (float*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_float" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_float" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  ecode6 = SWIG_AsVal_int(obj3, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "rebin_float" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = static_cast< int >(val6);
+  result = rebin_wrap< float >(arg1,arg2,arg3,arg4,arg5,arg6);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_float__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float *arg1 = (float *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:rebin_float",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_FLOAT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (float*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_float" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_float" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  result = rebin_wrap< float >(arg1,arg2,arg3,arg4,arg5);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_float__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float *arg1 = (float *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:rebin_float",&obj0,&obj1)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_FLOAT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (float*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_float" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  result = rebin_wrap< float >(arg1,arg2,arg3,arg4);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_float__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float *arg1 = (float *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  PyArrayObject *array1 = NULL ;
+  PyObject * obj0 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:rebin_float",&obj0)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_FLOAT);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (float*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  result = rebin_wrap< float >(arg1,arg2,arg3);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_float(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_FLOAT);
+    }
+    if (_v) {
+      if (argc <= 1) {
+        return _wrap_rebin_float__SWIG_3(self, args);
+      }
+      if (argc <= 2) {
+        return _wrap_rebin_float__SWIG_3(self, args);
+      }
+      return _wrap_rebin_float__SWIG_3(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_FLOAT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_rebin_float__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_FLOAT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_rebin_float__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_FLOAT);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_rebin_float__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'rebin_float'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    rebin_wrap< float >(float *,int,int,int,int,int)\n"
+    "    rebin_wrap< float >(float *,int,int,int,int)\n"
+    "    rebin_wrap< float >(float *,int,int,int)\n"
+    "    rebin_wrap< float >(float *,int,int)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_double__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double *arg1 = (double *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:rebin_double",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_DOUBLE);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (double*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_double" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_double" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  ecode6 = SWIG_AsVal_int(obj3, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "rebin_double" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = static_cast< int >(val6);
+  result = rebin_wrap< double >(arg1,arg2,arg3,arg4,arg5,arg6);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_double__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double *arg1 = (double *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:rebin_double",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_DOUBLE);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (double*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_double" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj2, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "rebin_double" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  result = rebin_wrap< double >(arg1,arg2,arg3,arg4,arg5);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_double__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double *arg1 = (double *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  PyArrayObject *array1 = NULL ;
+  int val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:rebin_double",&obj0,&obj1)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_DOUBLE);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (double*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  ecode4 = SWIG_AsVal_int(obj1, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "rebin_double" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  result = rebin_wrap< double >(arg1,arg2,arg3,arg4);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_double__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double *arg1 = (double *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  PyArrayObject *array1 = NULL ;
+  PyObject * obj0 = 0 ;
+  std::pair< int,int > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:rebin_double",&obj0)) SWIG_fail;
+  {
+    array1 = obj_to_array_no_conversion(obj0, NPY_DOUBLE);
+    if (!array1 || !require_dimensions(array1,2) || !require_contiguous(array1)
+      || !require_native(array1)) SWIG_fail;
+    arg1 = (double*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+  }
+  result = rebin_wrap< double >(arg1,arg2,arg3);
+  resultobj = swig::from(static_cast< std::pair<int,int > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_rebin_double(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_DOUBLE);
+    }
+    if (_v) {
+      if (argc <= 1) {
+        return _wrap_rebin_double__SWIG_3(self, args);
+      }
+      if (argc <= 2) {
+        return _wrap_rebin_double__SWIG_3(self, args);
+      }
+      return _wrap_rebin_double__SWIG_3(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_DOUBLE);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_rebin_double__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_DOUBLE);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_rebin_double__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = is_array(argv[0]) && PyArray_EquivTypenums(array_type(argv[0]),
+        NPY_DOUBLE);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_rebin_double__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'rebin_double'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    rebin_wrap< double >(double *,int,int,int,int,int)\n"
+    "    rebin_wrap< double >(double *,int,int,int,int)\n"
+    "    rebin_wrap< double >(double *,int,int,int)\n"
+    "    rebin_wrap< double >(double *,int,int)\n");
+  return 0;
 }
 
 
@@ -42541,8 +44065,12 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"SwigPyIterator___add__", _wrap_SwigPyIterator___add__, METH_VARARGS, NULL},
 	 { (char *)"SwigPyIterator___sub__", _wrap_SwigPyIterator___sub__, METH_VARARGS, NULL},
 	 { (char *)"SwigPyIterator_swigregister", SwigPyIterator_swigregister, METH_VARARGS, NULL},
-	 { (char *)"rebin_float", _wrap_rebin_float, METH_VARARGS, NULL},
 	 { (char *)"rebin_int", _wrap_rebin_int, METH_VARARGS, NULL},
+	 { (char *)"rebin_long", _wrap_rebin_long, METH_VARARGS, NULL},
+	 { (char *)"rebin_uint", _wrap_rebin_uint, METH_VARARGS, NULL},
+	 { (char *)"rebin_ulong", _wrap_rebin_ulong, METH_VARARGS, NULL},
+	 { (char *)"rebin_float", _wrap_rebin_float, METH_VARARGS, NULL},
+	 { (char *)"rebin_double", _wrap_rebin_double, METH_VARARGS, NULL},
 	 { (char *)"get_abs_mag_B_from_mass", _wrap_get_abs_mag_B_from_mass, METH_VARARGS, NULL},
 	 { (char *)"get_mass_from_abs_mag_B", _wrap_get_mass_from_abs_mag_B, METH_VARARGS, NULL},
 	 { (char *)"get_app_mag_B_from_mass", _wrap_get_app_mag_B_from_mass, METH_VARARGS, NULL},
@@ -43172,6 +44700,7 @@ static swig_type_info _swigt__p_IceBRG__sky_obj = {"_p_IceBRG__sky_obj", "IceBRG
 static swig_type_info _swigt__p_IceBRG__source_galaxy = {"_p_IceBRG__source_galaxy", "IceBRG::source_galaxy *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_IceBRG__source_obj = {"_p_IceBRG__source_obj", "IceBRG::source_obj *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_IceBRG__tNFW_profile = {"_p_IceBRG__tNFW_profile", "IceBRG::tNFW_profile *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_T = {"_p_T", "T *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_custom_unit_typeT_0_0_0_2_0_t = {"_p_custom_unit_typeT_0_0_0_2_0_t", "custom_unit_type< 0,0,0,2,0 > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_custom_unit_typeT_0__2_0_0_0_t = {"_p_custom_unit_typeT_0__2_0_0_0_t", "custom_unit_type< 0,-2,0,0,0 > *", 0, 0, (void*)0, 0};
@@ -43214,6 +44743,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_IceBRG__source_galaxy,
   &_swigt__p_IceBRG__source_obj,
   &_swigt__p_IceBRG__tNFW_profile,
+  &_swigt__p_T,
   &_swigt__p_char,
   &_swigt__p_custom_unit_typeT_0_0_0_2_0_t,
   &_swigt__p_custom_unit_typeT_0__2_0_0_0_t,
@@ -43256,6 +44786,7 @@ static swig_cast_info _swigc__p_IceBRG__sky_obj[] = {  {&_swigt__p_IceBRG__sourc
 static swig_cast_info _swigc__p_IceBRG__source_galaxy[] = {  {&_swigt__p_IceBRG__source_galaxy, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_IceBRG__source_obj[] = {  {&_swigt__p_IceBRG__source_obj, 0, 0, 0},  {&_swigt__p_IceBRG__source_galaxy, _p_IceBRG__source_galaxyTo_p_IceBRG__source_obj, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_IceBRG__tNFW_profile[] = {  {&_swigt__p_IceBRG__tNFW_profile, 0, 0, 0},  {&_swigt__p_IceBRG__lensing_tNFW_profile, _p_IceBRG__lensing_tNFW_profileTo_p_IceBRG__tNFW_profile, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_T[] = {  {&_swigt__p_T, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_custom_unit_typeT_0_0_0_2_0_t[] = {  {&_swigt__p_custom_unit_typeT_0_0_0_2_0_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_custom_unit_typeT_0__2_0_0_0_t[] = {  {&_swigt__p_custom_unit_typeT_0__2_0_0_0_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -43298,6 +44829,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_IceBRG__source_galaxy,
   _swigc__p_IceBRG__source_obj,
   _swigc__p_IceBRG__tNFW_profile,
+  _swigc__p_T,
   _swigc__p_char,
   _swigc__p_custom_unit_typeT_0_0_0_2_0_t,
   _swigc__p_custom_unit_typeT_0__2_0_0_0_t,

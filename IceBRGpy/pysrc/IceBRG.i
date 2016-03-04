@@ -45,7 +45,7 @@ import_array();
 #endif
 %}
 
-%module IceBRGpy
+%module IceBRG
 
 %{
 	 
@@ -60,14 +60,17 @@ import_array();
 	template< typename T >
 	std::pair<int,int> rebin_wrap( T * p_image,
 			int ss_nx,
-			int ss_ny)
+			int ss_ny,
+			int x_offset=0,
+			int y_offset=0,
+			int subsampling_factor=5)
 	{
 		auto out_array = IceBRG::rebin(p_image,
 							ss_nx,
 							ss_ny,
-							0,
-							0,
-							5);
+							x_offset,
+							y_offset,
+							subsampling_factor);
 		
 		for(int i=0; i<ss_nx*ss_ny; ++i)
 		{
@@ -125,7 +128,22 @@ import_array();
 	{( int * p_image,
 			int ss_nx,
 			int ss_ny)}
-
+%apply (long* INPLACE_ARRAY2, int DIM1, int DIM2)
+	{( long* p_image,
+			int ss_nx,
+			int ss_ny)}
+%apply (unsigned int* INPLACE_ARRAY2, int DIM1, int DIM2)
+	{( unsigned int * p_image,
+			int ss_nx,
+			int ss_ny)}
+%apply (unsigned long* INPLACE_ARRAY2, int DIM1, int DIM2)
+	{( unsigned long* p_image,
+			int ss_nx,
+			int ss_ny)}
+%apply (float* INPLACE_ARRAY2, int DIM1, int DIM2)
+	{( float * p_image,
+			int ss_nx,
+			int ss_ny)}
 %apply (double* INPLACE_ARRAY2, int DIM1, int DIM2)
 	{( double * p_image,
 			int ss_nx,
@@ -140,14 +158,17 @@ template< typename T >
 std::pair<int,int>
 rebin_wrap( T * p_image,
 		int ss_nx,
-		int ss_ny )
+		int ss_ny,
+		int x_offset=0,
+		int y_offset=0,
+		int subsampling_factor=5 )
 {
 	auto out_array = IceBRG::rebin(p_image,
 						ss_nx,
 						ss_ny,
-						0,
-						0,
-						5);
+						x_offset,
+						y_offset,
+						subsampling_factor);
 	
 	for(int i=0; i<ss_nx*ss_ny; ++i)
 	{
@@ -168,8 +189,12 @@ rebin_wrap( T * p_image,
 	return std::make_pair(ncols,nrows);
 }
 
-%template(rebin_float) rebin_wrap<double>;
 %template(rebin_int) rebin_wrap<int>;
+%template(rebin_long) rebin_wrap<long>;
+%template(rebin_uint) rebin_wrap<unsigned int>;
+%template(rebin_ulong) rebin_wrap<unsigned long>;
+%template(rebin_float) rebin_wrap<float>;
+%template(rebin_double) rebin_wrap<double>;
 
 %include "/disk2/brg/include/IceBRG_physics/abundance_matching.hpp"
 %include "/disk2/brg/include/IceBRG_physics/cluster_visibility.hpp"
