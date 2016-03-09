@@ -26,12 +26,12 @@ from copy import deepcopy
 import numpy as np
 
 try:
-    import IceBRGpy
+    import IceBRG
 except ImportError as _e:
-    from Release import IceBRGpy
+    from Release import IceBRG
 
 
-def rebin(a, x_offset=0, y_offset=0, subsampling_factor=5, conserve=False):
+def rebin(a, x_shift=0, y_shift=0, subsampling_factor=5, conserve=False):
     """ Rebins an array with a given offset and subsampling factor. Note that
         unless 'conserve' is set to True, the input array will be overwritten.
     """
@@ -39,22 +39,27 @@ def rebin(a, x_offset=0, y_offset=0, subsampling_factor=5, conserve=False):
     # If we want to conserve, do so by operating on a copy of the array
     if(conserve):
         a = deepcopy(a)
+    else:
+        # Ensure it's contiguous
+        a = np.ascontiguousarray(a)
     
     # Use the proper function for the data type
     if a.dtype == 'float32':
-        new_shape = IceBRGpy.rebin_float(a,x_offset,y_offset,subsampling_factor)
+        f = IceBRG.rebin_float
     elif a.dtype == 'float64':
-        new_shape = IceBRGpy.rebin_double(a,x_offset,y_offset,subsampling_factor)
+        f = IceBRG.rebin_double
     elif a.dtype == 'int32':
-        new_shape = IceBRGpy.rebin_int(a,x_offset,y_offset,subsampling_factor)
+        f = IceBRG.rebin_int
     elif a.dtype == 'int64':
-        new_shape = IceBRGpy.rebin_long(a,x_offset,y_offset,subsampling_factor)
+        f = IceBRG.rebin_long
     elif a.dtype == 'uint32':
-        new_shape = IceBRGpy.rebin_uint(a,x_offset,y_offset,subsampling_factor)
+        f = IceBRG.rebin_uint
     elif a.dtype == 'uint64':
-        new_shape = IceBRGpy.rebin_ulong(a,x_offset,y_offset,subsampling_factor)
+        f = IceBRG.rebin_ulong
     else:
         raise Exception("Unsupported data type for rebinning: " + str(a.dtype))
+    
+    new_shape = f(a,x_shift,y_shift,subsampling_factor)
     
     # Resort the new array into the proper shape
     new_size = np.product(new_shape)
