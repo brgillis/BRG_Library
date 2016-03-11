@@ -64,8 +64,10 @@ Eigen::Array<typename T::Scalar, Eigen::Dynamic,Eigen::Dynamic>>::type
 	{
 		for( int yi=0; yi<rb_ny; ++yi)
 		{
-			int_t xm = x_offset + subsampling_factor*(xi+1) - int_t(subsampling_factor/2.);
-			int_t ym = y_offset + subsampling_factor*(yi+1) - int_t(subsampling_factor/2.);
+//			int_t xm = x_offset + subsampling_factor*(xi+1) - int_t(subsampling_factor/2.);
+//			int_t ym = y_offset + subsampling_factor*(yi+1) - int_t(subsampling_factor/2.);
+			int_t xm = x_offset + subsampling_factor*xi;
+			int_t ym = y_offset + subsampling_factor*yi;
 
 			rebinned_array(xi,yi) =
 					subsampled_image.block(xm,ym,subsampling_factor,subsampling_factor).sum();

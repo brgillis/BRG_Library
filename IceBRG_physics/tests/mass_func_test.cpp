@@ -43,6 +43,18 @@ using namespace IceBRG;
 
 BOOST_AUTO_TEST_SUITE (Mass_Func_Test)
 
+BOOST_AUTO_TEST_CASE( vis_galaxies_test )
+{
+	square_angle_type area = 1.*square(unitconv::amintorad*rad);
+
+	galaxy_angular_density_at_z(0.2);
+
+	flt_t n = visible_galaxies(area);
+
+	BOOST_CHECK_GT(n,50);
+	BOOST_CHECK_LT(n,500);
+}
+
 BOOST_AUTO_TEST_CASE( mass_func_test )
 {
 	flt_t z = 0;
@@ -151,16 +163,6 @@ BOOST_AUTO_TEST_CASE( vis_clusters_test )
 
 	BOOST_CHECK_GT(n,1);
 	BOOST_CHECK_LT(n,10);
-}
-
-BOOST_AUTO_TEST_CASE( vis_galaxies_test )
-{
-	square_angle_type area = 1.*square(unitconv::amintorad*rad);
-
-	flt_t n = visible_galaxies(area);
-
-	BOOST_CHECK_GT(n,50);
-	BOOST_CHECK_LT(n,500);
 }
 
 BOOST_AUTO_TEST_CASE( cluster_richness_test )

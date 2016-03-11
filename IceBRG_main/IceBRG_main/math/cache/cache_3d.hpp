@@ -53,6 +53,8 @@
 // SPP: "Static Polymorphic Pointer"
 #define SPP(name) static_cast<name*>(this)
 
+#define ICEBRG_STRINGIFY(a) #a
+
 #define DECLARE_BRG_CACHE_3D(class_name,name_base,Tin1,Tin2,Tin3,Tout) \
 class class_name : public IceBRG::brg_cache_3d<class_name,Tin1,Tin2,Tin3,Tout> \
 { \
@@ -88,6 +90,8 @@ protected: \
 	void _load_cache_dependencies() const; \
  \
 	void _unload_cache_dependencies() const; \
+ \
+ 	bool _critical_load() const; \
 }; \
 
 #define DEFINE_BRG_CACHE_3D(class_name,Tin1,Tin2,Tin3,Tout, \
@@ -134,6 +138,27 @@ protected: \
 	void class_name::_unload_cache_dependencies() const \
 	{ \
 		dependency_unloading \
+	} \
+	bool class_name::_critical_load() const \
+	{ \
+		if(static_cast<const class_name*>(this)->_loaded_) return false; \
+ \
+		static_cast<const class_name*>(this)->_load_cache_dependencies(); \
+ \
+		bool bad_result = false; \
+		_Pragma( ICEBRG_STRINGIFY(omp critical( load_brg_cache_##class_name  ) ) ) \
+		{ \
+			try \
+			{ \
+				static_cast<const class_name*>(this)->_load(); \
+			} \
+			catch(const std::exception &e) \
+			{ \
+				handle_error_message(e.what()); \
+				bad_result = true; \
+			} \
+		} \
+		return bad_result; \
 	}
 
 namespace IceBRG
@@ -193,163 +218,7 @@ private:
 	}
 	bool _critical_load() const
 	{
-		if(SPCP(name)->_loaded_) return false;
-
-		// Load any caches we depend upon before the critical section
-		SPCP(name)->_load_cache_dependencies();
-
-		bool bad_result=false;
-		#ifdef _OPENMP
-		#pragma omp critical(load_brg_cache_3d)
-		#endif
-		{
-			try
-			{
-				SPCP(name)->_load();
-			}
-			catch(const std::exception &e)
-			{
-				handle_error_message(e.what());
-				bad_result=true;
-			}
-		}
-		return bad_result;
-	}
-	void _load() const
-	{
-		std::ifstream in_file;
-		str_t file_data;
-		bool need_to_calc = false;
-		int_t loop_counter = 0;
-
-		if ( SPCP(name)->_loaded_ )
-			return;
-
-		do
-		{
-			if ( loop_counter >= 2 )
-			{
-				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in IceBRG::brg_cache_2.\n");
-			}
-			else
-			{
-				loop_counter++;
-			}
-			need_to_calc = false;
-
-			try
-			{
-				open_bin_file_input( in_file, SPCP(name)->_file_name_ );
-			}
-			catch(const std::exception &e)
-			{
-				need_to_calc = true;
-			}
-			if(need_to_calc)
-			{
-				SPCP(name)->_calc_if_necessary();
-				SPCP(name)->_output();
-				SPCP(name)->_unload();
-				continue;
-			}
-
-			// Check that it has the right name and version
-
-			char file_name[BRG_CACHE_ND_NAME_SIZE];
-			int_t file_version = std::numeric_limits<int_t>::max();
-
-			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
-			in_file.read((char *)&file_version,sizeof(file_version));
-
-			if( (!in_file) || (((str_t)file_name) != SPCP(name)->_name_base()) ||
-					(file_version != SPCP(name)->_version_number_) )
-			{
-				need_to_calc = true;
-				SPCP(name)->_calc_if_necessary();
-				SPCP(name)->_output();
-				continue;
-			}
-
-			// Load range parameters
-
-			decltype(value_of(SPCP(name)->_min_1_)) temp_in_1;
-			const std::streamsize in1_size = sizeof(temp_in_1);
-
-			in_file.read((char *)&temp_in_1,in1_size);
-			SPCP(name)->_min_1_ = units_cast<Tin1>(temp_in_1);
-			in_file.read((char *)&temp_in_1,in1_size);
-			SPCP(name)->_max_1_ = units_cast<Tin1>(temp_in_1);
-			in_file.read((char *)&temp_in_1,in1_size);
-			SPCP(name)->_step_1_ = units_cast<Tin1>(temp_in_1);
-
-			decltype(value_of(SPCP(name)->_min_2_)) temp_in_2;
-			const std::streamsize in2_size = sizeof(temp_in_2);
-
-			in_file.read((char *)&temp_in_2,in2_size);
-			SPCP(name)->_min_2_ = units_cast<Tin2>(temp_in_2);
-			in_file.read((char *)&temp_in_2,in2_size);
-			SPCP(name)->_max_2_ = units_cast<Tin2>(temp_in_2);
-			in_file.read((char *)&temp_in_2,in2_size);
-			SPCP(name)->_step_2_ = units_cast<Tin2>(temp_in_2);
-
-			decltype(value_of(SPCP(name)->_min_3_)) temp_in_3;
-			const std::streamsize in3_size = sizeof(temp_in_3);
-
-			in_file.read((char *)&temp_in_3,in3_size);
-			SPCP(name)->_min_3_ = units_cast<Tin3>(temp_in_3);
-			in_file.read((char *)&temp_in_3,in3_size);
-			SPCP(name)->_max_3_ = units_cast<Tin3>(temp_in_3);
-			in_file.read((char *)&temp_in_3,in3_size);
-			SPCP(name)->_step_3_ = units_cast<Tin3>(temp_in_3);
-
-			// Set up data
-			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
-			SPCP(name)->_resolution_2_ = (ssize_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
-			SPCP(name)->_resolution_3_ = (ssize_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
-			make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
-					SPCP(name)->_resolution_3_ );
-
-			// Read in data
-
-			// Initialise
-			decltype(value_of(SPCP(name)->_results_[0][0][0])) temp_out;
-			const std::streamsize out_size = sizeof(temp_out);
-			ssize_t i_1=0, i_2=0, i_3=0;
-
-			while ( ( !in_file.eof() ) && ( i_3 < SPCP(name)->_resolution_3_ )
-					&& (in_file) )
-			{
-				in_file.read((char *)&temp_out,out_size);
-				SPCP(name)->_results_[i_1][i_2][i_3] = units_cast<Tout>(temp_out);
-
-				++i_1;
-				if(i_1==SPCP(name)->_resolution_1_)
-				{
-					++i_2;
-					if(i_2==SPCP(name)->_resolution_2_)
-					{
-						++i_3;
-						i_2=0;
-					}
-					i_1=0;
-				}
-			}
-
-			// Check that it was all read properly
-			if ( (i_3 != SPCP(name)->_resolution_3_) || (i_2 != 0) || (i_1 != 0) || (!in_file) )
-			{
-				need_to_calc = true;
-				SPCP(name)->_calc_if_necessary();
-				SPCP(name)->_output();
-				continue;
-			}
-
-		} while ( need_to_calc );
-
-		// Finish up
-		in_file.close();
-		in_file.clear();
-		SPCP(name)->_loaded_ = true;
+		return true;
 	}
 	void _unload() const
 	{
@@ -531,6 +400,142 @@ protected:
 	/// sections of the same name being called recursively.
 	void _load_cache_dependencies() const
 	{
+	}
+	void _load() const
+	{
+		std::ifstream in_file;
+		str_t file_data;
+		bool need_to_calc = false;
+		int_t loop_counter = 0;
+
+		if ( SPCP(name)->_loaded_ )
+			return;
+
+		do
+		{
+			if ( loop_counter >= 2 )
+			{
+				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in IceBRG::brg_cache_2.\n");
+			}
+			else
+			{
+				loop_counter++;
+			}
+			need_to_calc = false;
+
+			try
+			{
+				open_bin_file_input( in_file, SPCP(name)->_file_name_ );
+			}
+			catch(const std::exception &e)
+			{
+				need_to_calc = true;
+			}
+			if(need_to_calc)
+			{
+				SPCP(name)->_calc_if_necessary();
+				SPCP(name)->_output();
+				SPCP(name)->_unload();
+				continue;
+			}
+
+			// Check that it has the right name and version
+
+			char file_name[BRG_CACHE_ND_NAME_SIZE];
+			int_t file_version = std::numeric_limits<int_t>::max();
+
+			in_file.read(file_name,BRG_CACHE_ND_NAME_SIZE);
+			in_file.read((char *)&file_version,sizeof(file_version));
+
+			if( (!in_file) || (((str_t)file_name) != SPCP(name)->_name_base()) ||
+					(file_version != SPCP(name)->_version_number_) )
+			{
+				need_to_calc = true;
+				SPCP(name)->_calc_if_necessary();
+				SPCP(name)->_output();
+				continue;
+			}
+
+			// Load range parameters
+
+			decltype(value_of(SPCP(name)->_min_1_)) temp_in_1;
+			const std::streamsize in1_size = sizeof(temp_in_1);
+
+			in_file.read((char *)&temp_in_1,in1_size);
+			SPCP(name)->_min_1_ = units_cast<Tin1>(temp_in_1);
+			in_file.read((char *)&temp_in_1,in1_size);
+			SPCP(name)->_max_1_ = units_cast<Tin1>(temp_in_1);
+			in_file.read((char *)&temp_in_1,in1_size);
+			SPCP(name)->_step_1_ = units_cast<Tin1>(temp_in_1);
+
+			decltype(value_of(SPCP(name)->_min_2_)) temp_in_2;
+			const std::streamsize in2_size = sizeof(temp_in_2);
+
+			in_file.read((char *)&temp_in_2,in2_size);
+			SPCP(name)->_min_2_ = units_cast<Tin2>(temp_in_2);
+			in_file.read((char *)&temp_in_2,in2_size);
+			SPCP(name)->_max_2_ = units_cast<Tin2>(temp_in_2);
+			in_file.read((char *)&temp_in_2,in2_size);
+			SPCP(name)->_step_2_ = units_cast<Tin2>(temp_in_2);
+
+			decltype(value_of(SPCP(name)->_min_3_)) temp_in_3;
+			const std::streamsize in3_size = sizeof(temp_in_3);
+
+			in_file.read((char *)&temp_in_3,in3_size);
+			SPCP(name)->_min_3_ = units_cast<Tin3>(temp_in_3);
+			in_file.read((char *)&temp_in_3,in3_size);
+			SPCP(name)->_max_3_ = units_cast<Tin3>(temp_in_3);
+			in_file.read((char *)&temp_in_3,in3_size);
+			SPCP(name)->_step_3_ = units_cast<Tin3>(temp_in_3);
+
+			// Set up data
+			SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
+			SPCP(name)->_resolution_2_ = (ssize_t) max( ( ( SPCP(name)->_max_2_ - SPCP(name)->_min_2_ ) / safe_d(SPCP(name)->_step_2_)) + 1, 2);
+			SPCP(name)->_resolution_3_ = (ssize_t) max( ( ( SPCP(name)->_max_3_ - SPCP(name)->_min_3_ ) / safe_d(SPCP(name)->_step_3_)) + 1, 2);
+			make_vector_default( SPCP(name)->_results_, SPCP(name)->_resolution_1_, SPCP(name)->_resolution_2_,
+					SPCP(name)->_resolution_3_ );
+
+			// Read in data
+
+			// Initialise
+			decltype(value_of(SPCP(name)->_results_[0][0][0])) temp_out;
+			const std::streamsize out_size = sizeof(temp_out);
+			ssize_t i_1=0, i_2=0, i_3=0;
+
+			while ( ( !in_file.eof() ) && ( i_3 < SPCP(name)->_resolution_3_ )
+					&& (in_file) )
+			{
+				in_file.read((char *)&temp_out,out_size);
+				SPCP(name)->_results_[i_1][i_2][i_3] = units_cast<Tout>(temp_out);
+
+				++i_1;
+				if(i_1==SPCP(name)->_resolution_1_)
+				{
+					++i_2;
+					if(i_2==SPCP(name)->_resolution_2_)
+					{
+						++i_3;
+						i_2=0;
+					}
+					i_1=0;
+				}
+			}
+
+			// Check that it was all read properly
+			if ( (i_3 != SPCP(name)->_resolution_3_) || (i_2 != 0) || (i_1 != 0) || (!in_file) )
+			{
+				need_to_calc = true;
+				SPCP(name)->_calc_if_necessary();
+				SPCP(name)->_output();
+				continue;
+			}
+
+		} while ( need_to_calc );
+
+		// Finish up
+		in_file.close();
+		in_file.clear();
+		SPCP(name)->_loaded_ = true;
 	}
 
 #endif // Protected methods

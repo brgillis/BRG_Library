@@ -173,7 +173,7 @@ DEFINE_BRG_CACHE( visible_cluster_density_cache, flt_t, inverse_volume_type,
 
 			return res;
 		,
-			dfa_cache().get(0.);
+			dfa_cache().load();
 			l10_mass_function_integral_cache().load();
 			lum_func_integral_cache().load();
 		,

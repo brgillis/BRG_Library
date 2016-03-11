@@ -50,7 +50,7 @@ namespace IceBRG {
 // Forward-declare pair_bin
 class pair_bin;
 
-constexpr const flt_t default_mass = 1e14*unitconv::Msuntokg*kg;
+const mass_type default_mass = 1e14*unitconv::Msuntokg*kg;
 
 /**
  *
