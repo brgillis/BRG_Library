@@ -3504,16 +3504,16 @@ SWIG_AsVal_ptrdiff_t (PyObject * obj, ptrdiff_t *val)
 		
 		int ncols = out_array.cols();
 		int nrows = out_array.rows();
-		
+
 		for(int i=0; i<ncols; ++i)
 		{
 			for(int j=0; j<nrows; ++j)
 			{
-				p_image[i+j*ncols] = out_array(i,j);
+				p_image[j+i*ncols] = out_array(j,i);
 			}
 		}
 		
-		return std::make_pair(ncols,nrows);
+		return std::make_pair(nrows,ncols);
 	}
 
 	#include "IceBRG_physics/abundance_matching.hpp"

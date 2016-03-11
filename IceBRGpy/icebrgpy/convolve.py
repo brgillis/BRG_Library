@@ -39,21 +39,21 @@ def fftw_convolve(im1, im2, norm=False):
     im1_shape = np.shape(im1)
     im2_shape = np.shape(im2)
     
-    max_size = np.max((np.max(im1_shape),np.max(im2_shape)))
+    output_shape = np.add(im1_shape,im2_shape)
     
-    p = int(np.log(float(max_size))/np.log(2.)+1.5)
+    p = np.asarray(np.ceil(np.log2(output_shape)),dtype='int')
     
-    padded_size = 2**p
+    padded_shape = np.power(2,p)
     
     # Set up the images on arrays
     
-    im1_padded = pyfftw.zeros_aligned((padded_size,padded_size),np.float32)
-    im2_padded = pyfftw.zeros_aligned((padded_size,padded_size),np.float32)
+    im1_padded = pyfftw.zeros_aligned(padded_shape,np.float32)
+    im2_padded = pyfftw.zeros_aligned(padded_shape,np.float32)
     
-    im1_transformed = pyfftw.empty_aligned((padded_size,padded_size//2+1),np.complex64)
-    im2_transformed = pyfftw.empty_aligned((padded_size,padded_size//2+1),np.complex64)
+    im1_transformed = pyfftw.empty_aligned((padded_shape[0],padded_shape[1]//2+1),np.complex64)
+    im2_transformed = pyfftw.empty_aligned((padded_shape[0],padded_shape[1]//2+1),np.complex64)
     
-    im_convolved = pyfftw.empty_aligned((padded_size,padded_size),np.float32)
+    im_convolved = pyfftw.empty_aligned(padded_shape,np.float32)
     
     # Set up transform plans
     transform_1 = pyfftw.FFTW(im1_padded,im1_transformed,axes=(0, 1))
@@ -61,11 +61,11 @@ def fftw_convolve(im1, im2, norm=False):
     inv_transform = pyfftw.FFTW(im1_transformed,im_convolved,axes=(0, 1),
                                  direction='FFTW_BACKWARD')
 
-    center = padded_size - (padded_size + 1) // 2
-    im1_padded[[slice(center-im1_shape[0]//2,center+(im1_shape[0]+1)//2),
-                slice(center-im1_shape[1]//2,center+(im1_shape[1]+1)//2)]] = im1
-    im2_padded[[slice(center-im2_shape[0]//2,center+(im2_shape[0]+1)//2),
-                slice(center-im2_shape[1]//2,center+(im2_shape[1]+1)//2)]] = im2
+    center = padded_shape - (padded_shape + 1) // 2
+    im1_padded[[slice(center[0]-im1_shape[0]//2,center[0]+(im1_shape[0]+1)//2),
+                slice(center[1]-im1_shape[1]//2,center[1]+(im1_shape[1]+1)//2)]] = im1
+    im2_padded[[slice(center[0]-im2_shape[0]//2,center[0]+(im2_shape[0]+1)//2),
+                slice(center[1]-im2_shape[1]//2,center[1]+(im2_shape[1]+1)//2)]] = im2
                
     # Shift im2 for proper alignment
     im2_padded = pyfftw.interfaces.scipy_fftpack.ifftshift(im2_padded)
@@ -91,6 +91,8 @@ def fftw_convolve(im1, im2, norm=False):
         s = im_convolved.sum()
         if s != 0:
             im_convolved *= init_norm/s
+        else:
+            pass
     
-    return im_convolved[(padded_size-im1_shape[0])/2:(padded_size-im1_shape[0])/2+im1_shape[0],
-                        (padded_size-im1_shape[1])/2:(padded_size-im1_shape[1])/2+im1_shape[1]]
+    return im_convolved[(padded_shape[0]-output_shape[0])/2:(padded_shape[0]-output_shape[0])/2+output_shape[0],
+                        (padded_shape[1]-output_shape[1])/2:(padded_shape[1]-output_shape[1])/2+output_shape[1]]

@@ -79,16 +79,16 @@ import_array();
 		
 		int ncols = out_array.cols();
 		int nrows = out_array.rows();
-		
+
 		for(int i=0; i<ncols; ++i)
 		{
 			for(int j=0; j<nrows; ++j)
 			{
-				p_image[i+j*ncols] = out_array(i,j);
+				p_image[j+i*ncols] = out_array(j,i);
 			}
 		}
 		
-		return std::make_pair(ncols,nrows);
+		return std::make_pair(nrows,ncols);
 	}
 
 	#include "IceBRG_physics/abundance_matching.hpp"
@@ -177,16 +177,16 @@ rebin_wrap( T * p_image,
 	
 	int ncols = out_array.cols();
 	int nrows = out_array.rows();
-	
-	for(int i=0; i<ncols; ++i)
+
+	for(int i=0; i<nrows; ++i)
 	{
-		for(int j=0; j<nrows; ++j)
+		for(int j=0; j<ncols; ++j)
 		{
-			p_image[i+j*ncols] = out_array(i,j);
+			p_image[i+j*nrows] = out_array(i,j);
 		}
 	}
-	
-	return std::make_pair(ncols,nrows);
+
+	return std::make_pair(nrows,ncols);
 }
 
 %template(rebin_int) rebin_wrap<int>;
