@@ -36,7 +36,7 @@ namespace IceBRG
 // Luminosity function constants
 
 constexpr flt_t bright_abs_mag_i_max = -19.5;
-constexpr flt_t faint_app_mag_i_max = 27;
+constexpr flt_t faint_app_mag_i_max = 28;
 
 constexpr flt_t lum_func_min_abs_mag_B = -25;
 constexpr flt_t lum_func_max_abs_mag_B = -11;

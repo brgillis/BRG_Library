@@ -51,8 +51,8 @@ Eigen::Array<typename T::Scalar, Eigen::Dynamic,Eigen::Dynamic>>::type
 	ssize_t ss_ny = subsampled_image.rows();
 
 	// Get the size of the final image
-	ssize_t rb_nx = 2 * (((ss_nx-std::abs(x_shift))/subsampling_factor - 1) / 2) + 1;
-	ssize_t rb_ny = 2 * (((ss_ny-std::abs(y_shift))/subsampling_factor - 1) / 2) + 1;
+	ssize_t rb_nx = 2 * (((ss_nx-2*std::abs(x_shift))/subsampling_factor - 1) / 2) + 1;
+	ssize_t rb_ny = 2 * (((ss_ny-2*std::abs(y_shift))/subsampling_factor - 1) / 2) + 1;
 
 	int_t x_offset = (ss_nx - rb_nx*subsampling_factor)/2 - x_shift;
 	int_t y_offset = (ss_ny - rb_ny*subsampling_factor)/2 - y_shift;

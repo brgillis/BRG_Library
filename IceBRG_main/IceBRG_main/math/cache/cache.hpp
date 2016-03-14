@@ -112,9 +112,9 @@ protected: \
 	bool class_name::_initialised_ = false; \
 	 \
 	IceBRG::str_t class_name::_file_name_ = ""; \
-	IceBRG::int_t IceBRG::class_name::_version_number_ = 3; \
+	IceBRG::int_t class_name::_version_number_ = 3; \
 	 \
-	IceBRG::short_int_t IceBRG::class_name::_num_alive_ = 0; \
+	IceBRG::short_int_t class_name::_num_alive_ = 0; \
 	 \
 	IceBRG::array_t<Tout> class_name::_results_; \
 	 \
