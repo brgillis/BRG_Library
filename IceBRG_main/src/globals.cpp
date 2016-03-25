@@ -1,12 +1,12 @@
 /**********************************************************************\
- @file error_handling.cpp
+ @file globals.cpp
  ------------------
 
- TODO <Insert file description here>
+ Initialization for the globals class, providing default values.
 
  **********************************************************************
 
- Copyright (C) 2015 brg
+ Copyright (C) 2015, 2016 brg
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,11 +23,13 @@
 
 \**********************************************************************/
 
-#include "IceBRG_main/error_handling.hpp"
+#include "IceBRG_main/globals.hpp"
 
 namespace IceBRG {
 
-error_behavior_type error_behavior = error_behavior_type::WARN;
+str_t globals::workdir = ".";
+
+error_behavior_type globals::error_behavior = error_behavior_type::WARN;
 
 }
 

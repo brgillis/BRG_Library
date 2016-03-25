@@ -30,23 +30,16 @@
 #include <stdexcept>
 #include <string>
 
+#include "IceBRG_main/common.hpp"
+#include "IceBRG_main/globals.hpp"
+#include "IceBRG_main/logging.hpp"
+
 namespace IceBRG {
 
-/// Error behavior enum
-enum class error_behavior_type
-{
-	THROW,
-	WARN,
-	LOG,
-	NOTHING
-};
-
-extern error_behavior_type error_behavior;
-
 /// Handle an error message
-inline void handle_error(const std::string & str)
+inline void handle_error(str_t const & str)
 {
-	switch (error_behavior) {
+	switch (globals::error_behavior) {
 		case error_behavior_type::THROW:
 			throw std::runtime_error(str);
 			break;
@@ -54,7 +47,7 @@ inline void handle_error(const std::string & str)
 			std::cerr << "WARNING: " << str << std::endl;
 			break;
 		case error_behavior_type::LOG:
-			std::cerr << "WARNING: " << str << std::endl; // TODO Implement logger
+			ICEBRG_LOG_TRIVIAL(error) << str << std::endl;
 			break;
 		case error_behavior_type::NOTHING:
 			break;
@@ -64,9 +57,9 @@ inline void handle_error(const std::string & str)
 }
 
 /// Handle a notification
-inline void handle_notification(const std::string & str)
+inline void handle_notification(str_t const & str)
 {
-	switch (error_behavior) {
+	switch (globals::error_behavior) {
 		case error_behavior_type::THROW:
 			std::cout << str << std::endl;
 			break;
@@ -74,7 +67,7 @@ inline void handle_notification(const std::string & str)
 			std::cout << str << std::endl;
 			break;
 		case error_behavior_type::LOG:
-			std::cout << str << std::endl; // TODO Implement logger
+			ICEBRG_LOG_TRIVIAL(info) << str << std::endl;
 			break;
 		case error_behavior_type::NOTHING:
 			break;
@@ -84,9 +77,9 @@ inline void handle_notification(const std::string & str)
 }
 
 /// Handle an error message when throwing isn't an option
-inline void handle_error_message(const std::string & str)
+inline void handle_error_message(str_t const & str)
 {
-	switch (error_behavior) {
+	switch (globals::error_behavior) {
 		case error_behavior_type::THROW:
 			std::cerr << "WARNING: " << str << std::endl;
 			break;
@@ -94,7 +87,7 @@ inline void handle_error_message(const std::string & str)
 			std::cerr << "WARNING: " << str << std::endl;
 			break;
 		case error_behavior_type::LOG:
-			std::cerr << "WARNING: " << str << std::endl; // TODO Implement logger
+			ICEBRG_WARN_TRIVIAL() << str << std::endl;
 			break;
 		case error_behavior_type::NOTHING:
 			break;

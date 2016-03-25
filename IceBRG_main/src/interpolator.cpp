@@ -20,12 +20,13 @@
 
 \**********************************************************************/
 
-#include "interpolator.hpp"
 
 #include <algorithm>
 #include <cassert>
 
 #include "IceBRG_main/common.hpp"
+
+#include "IceBRG_main/math/interpolator/interpolator.hpp"
 
 #include "IceBRG_main/utility.hpp"
 

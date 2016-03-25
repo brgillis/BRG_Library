@@ -20,12 +20,12 @@
 
 \**********************************************************************/
 
-#include "interpolator_derivative.hpp"
 
 #include <utility>
 
 #include "IceBRG_main/math/calculus/differentiate.hpp"
 #include "IceBRG_main/math/calculus/integrate.hpp"
+#include "IceBRG_main/math/interpolator/interpolator_derivative.hpp"
 #include "IceBRG_main/math/random/distributions.hpp"
 #include "IceBRG_main/utility.hpp"
 
