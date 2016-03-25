@@ -39,9 +39,6 @@
 // Constructor
 IceBRG::galaxy_group::galaxy_group( size_t init_num_members )
 {
-	if ( init_num_members < 0 )
-		init_num_members = 0;
-
 	z_phot = z_phot_err = 0;
 	odds = 1;
 

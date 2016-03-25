@@ -118,7 +118,7 @@ IceBRG::density_type IceBRG::point_mass_profile::enc_dens(
 	return enc_mass( r ) / ( 4. / 3. * pi * cube( r ) );
 }
 IceBRG::mass_type IceBRG::point_mass_profile::enc_mass(
-		const distance_type & r) const
+		const distance_type & ) const
 {
 	return _mass_;
 }

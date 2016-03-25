@@ -32,11 +32,12 @@
 #include "IceBRG_main/math/cache/cache_2d.hpp"
 #include "IceBRG_main/math/calculus/differentiate.hpp"
 #include "IceBRG_main/math/calculus/integrate.hpp"
+#include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_physics/astro.hpp"
 
-#include "../IceBRG_physics/sky_obj/detail/position_grid_cache.hpp"
+#include "IceBRG_physics/sky_obj/detail/position_grid_cache.hpp"
 #include "IceBRG_physics/detail/astro_caches.hpp"
 
 namespace IceBRG {
@@ -44,11 +45,11 @@ namespace IceBRG {
 /** Global Function Definitions **/
 #if (1)
 
-inverse_time_type H( const flt_t & test_z )
+inverse_time_type H( const flt_t & z )
 {
 	// Friedmann equation, assuming omega = -1
-	if(test_z==0) return H_0;
-	flt_t zp1 = 1.+test_z;
+	if(is_zero(z)) return H_0;
+	flt_t zp1 = 1.+z;
 	return H_0 * sqrt( Omega_r * quart( zp1 )
 							+ Omega_m * cube( zp1 )
 							+ Omega_k * square( zp1 ) + Omega_l );
@@ -186,7 +187,7 @@ distance_type integrate_distance( const flt_t & z1_init,
 	int_t i;
 	short_int_t sign = 1;
 
-	if(z1==z2) return 0;
+	if(is_zero(z1-z2)) return 0;
 
 	OK0 = 1 - OM0 - OL0 - OR0;
 
@@ -196,7 +197,7 @@ distance_type integrate_distance( const flt_t & z1_init,
 		sign = -1;
 	}
 
-	if ( z1 == 0 )
+	if ( is_zero(z1) )
 	{
 		z = z2;
 		h1 = value_of(H_0);
@@ -503,7 +504,7 @@ inverse_square_angle_type cluster_angular_density_at_z(flt_t const & z)
 	inverse_square_angle_type density_per_area = cluster_volume_density*vol_per_area;
 
 	return density_per_area;
-};
+}
 
 flt_t visible_clusters( square_angle_type const & area, flt_t const & z1, flt_t const & z2 )
 {
@@ -547,7 +548,7 @@ flt_t mean_cluster_richness_at_redshift( flt_t const & z )
 
 flt_t integrate_mean_cluster_richness( flt_t const & z_min, flt_t const & z_max )
 {
-	if(z_min==z_max)
+	if(is_zero(z_max-z_min))
 	{
 		return mean_cluster_richness_at_redshift(z_min);
 	}
@@ -704,7 +705,7 @@ inverse_square_angle_type galaxy_angular_density_at_z(flt_t const & z)
 	inverse_square_angle_type density_per_area = galaxy_volume_density*vol_per_area;
 
 	return density_per_area;
-};
+}
 
 flt_t visible_galaxies( square_angle_type const & area, flt_t const & z1, flt_t const & z2 )
 {

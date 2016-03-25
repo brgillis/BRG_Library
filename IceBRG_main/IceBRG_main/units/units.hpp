@@ -343,13 +343,13 @@ namespace boost {
 namespace serialization {
 
 template<class Archive, class T>
-void save(Archive & ar, const boost::units::quantity<T> & g, const unsigned int version)
+void save(Archive & ar, const boost::units::quantity<T> & g, const unsigned int )
 {
 	IceBRG::flt_t val = g.value();
     ar & val;
 }
 template<class Archive, class T>
-void load(Archive & ar, boost::units::quantity<T> & g, const unsigned int version)
+void load(Archive & ar, boost::units::quantity<T> & g, const unsigned int )
 {
 	IceBRG::flt_t val;
 	ar & val;

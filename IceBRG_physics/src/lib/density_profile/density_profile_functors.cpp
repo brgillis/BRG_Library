@@ -20,15 +20,13 @@
 
 \**********************************************************************/
 
-
-#include "../../IceBRG_physics/density_profile/detail/density_profile_functors.hpp"
-
 #include <iostream>
 
 #include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/utility.hpp"
+#include "IceBRG_physics/density_profile/detail/density_profile_functors.hpp"
 
 
 // IceBRG::accel_functor class methods
@@ -120,7 +118,7 @@ IceBRG::solve_rhm_functor::solve_rhm_functor()
 	_host_ptr_ = NULL;
 	_target_mass_ = 0;
 }
-;
+
 IceBRG::solve_rhm_functor::solve_rhm_functor(
 		const density_profile *init_host, const mass_type &new_target_mass )
 {

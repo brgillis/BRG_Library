@@ -91,9 +91,9 @@ public:
 	void clear_points();
 
 	// Accessors to current and default interpolation types
-	static const allowed_interpolation_type default_interpolation_type()
+	static allowed_interpolation_type default_interpolation_type()
 		{return _default_interpolation_type_;}
-	const allowed_interpolation_type interpolation_type() const
+	allowed_interpolation_type interpolation_type() const
 		{return _interpolation_type_;}
 
 	// Set functions for the current and default interpolation types

@@ -1630,7 +1630,7 @@ bool greater_than_or_equal( const T1 & v1, const T2 & v2 )
 // not
 #if (1)
 template<typename T>
-inline const T v_not(T v)
+inline T v_not(T v)
 {
 	for(typename T::size_type i=0; i < v.size(); i++)
 	{
@@ -1639,7 +1639,7 @@ inline const T v_not(T v)
 	return v;
 }
 
-inline const bool v_not(const bool v)
+inline bool v_not(const bool v)
 {
 	return !v;
 }

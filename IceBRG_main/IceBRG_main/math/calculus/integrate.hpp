@@ -418,8 +418,7 @@ inline auto integrate_mc( const f * func,
 // Scalar-in, scalar-out version.
 template< typename f, typename Tin >
 inline auto integrate_Romberg( const f & func,
-		const Tin & min_in_param, const Tin & max_in_param, flt_t precision = 0.00001,
-		bool tighten_precision = false ) -> decltype(func(min_in_param)*min_in_param)
+		const Tin & min_in_param, const Tin & max_in_param, flt_t precision = 0.00001 ) -> decltype(func(min_in_param)*min_in_param)
 {
 	typedef decltype(func(min_in_param)) Tfout;
 	typedef decltype(Tfout()*min_in_param) Tout;
@@ -770,15 +769,15 @@ inline auto integrate_product_Romberg( const f_in_1 & func1,
 template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_weighted_Romberg( const f_in_1 & func,
 		const f_in_2 & func_weight, const T & min_in_param, const T & max_in_param,
-		const flt_t & precision = 0.00001, const bool tighten_precision = false ) ->
+		const flt_t & precision = 0.00001 ) ->
 			decltype(func(min_in_param))
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func, func_weight );
 
 	auto prod_out_param = integrate_Romberg( fprod, min_in_param, max_in_param,
-			precision, tighten_precision );
+			precision );
 	auto weight_out_param = integrate_Romberg( func_weight, min_in_param, max_in_param,
-			precision, tighten_precision );
+			precision );
 
 	auto res = prod_out_param / safe_d( weight_out_param );
 	return res;
@@ -789,16 +788,15 @@ template< typename f_in_1, typename f_in_2, typename T >
 inline auto integrate_weighted_Romberg( const f_in_1 & func,
 		const f_in_2 & func_weight,	const std::vector< T > & min_in_param,
 		const std::vector< T > & max_in_param, const flt_t & precision = 0.00001,
-		const bool tighten_precision = false,
 		const std::vector< T > & passed_in_param = std::vector< T >( 0 ) ) ->
 			decltype(func(min_in_param))
 {
 	functor_product< f_in_1, f_in_2, T > fprod( func, func_weight );
 
 	auto prod_out_param = integrate_Romberg( fprod, min_in_param, max_in_param,
-			precision, tighten_precision, passed_in_param );
+			precision, passed_in_param );
 	auto weight_out_param = integrate_Romberg( func_weight, min_in_param, max_in_param,
-			precision, tighten_precision, passed_in_param );
+			precision, passed_in_param );
 
 	decltype(func(min_in_param)) out_param( ssize(prod_out_param) );
 	for ( ssize_t i = 0; i < ssize(prod_out_param); i++ )

@@ -41,14 +41,23 @@
 
 namespace IceBRG {
 
-// Returns true if val is Not a Number - Personal implementation, to make sure it works for all types
+/// Checks if a value is disable, with pragmas to disable the warning for floating point equality checks
+template< typename T >
+inline bool is_zero( T const & val )
+{
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+  return val==0;
+}
+
+/// Returns true if val is Not a Number - Personal implementation, to make sure it works for all types
 template< typename T,
 typename std::enable_if< std::numeric_limits<T>::has_quiet_NaN, T>::type* = nullptr>
 inline bool isnan( const T & val )
 {
+#pragma GCC diagnostic ignored "-Wfloat-equal"
 	return ( val != val );
 }
-inline bool isnan( const std::string & val )
+inline bool isnan( std::string const & )
 {
 	return false;
 }
@@ -66,11 +75,14 @@ inline bool isinf( T val )
 {
 	using std::fabs;
 #ifdef _BRG_USE_UNITS_
+#pragma warning( push )
+#pragma warning( disable : float-equal )
 	if(std::numeric_limits<T>::max()==0) return fabs( (flt_t)val ) > std::numeric_limits<flt_t>::max();
+#pragma warning( pop )
 #endif
 	return fabs( val ) > std::numeric_limits<T>::max();
 }
-inline bool isinf( const std::string & val )
+inline bool isinf( const std::string & )
 {
 	return false;
 }
@@ -89,7 +101,7 @@ inline bool isbad( const T & val )
 	using IceBRG::isinf; // Use ADL here
 	return ( isnan( val ) || isinf( val ) );
 }
-inline bool isbad( std::string & val)
+inline bool isbad( std::string const & )
 {
 	return false;
 }

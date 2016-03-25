@@ -87,6 +87,7 @@ inline const Ta safe_pow( const Ta & a, const flt_t & x )
 
 	std::modf( x, &ipart );
 
+#pragma GCC diagnostic ignored "-Wfloat-equal"
 	if ( ( a < Ta(0.) ) && ( ipart != x ) )
 	{
 #ifdef _BRG_WARN_FOR_SAFE_FUNCTIONS_TRIGGERED_

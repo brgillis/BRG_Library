@@ -197,7 +197,7 @@ template< typename T=flt_t, typename T_sigma=flt_t, typename T_max=flt_t,
 T contracted_Rayleigh_rand( T_sigma && sigma, T_max && max, const T_p & p, T_gen & gen=rng )
 {
 	// Generate an initial random Rayleigh variable
-	T first_result = Rayleigh_rand(std::forward<T_sigma>(sigma));
+	T first_result = Rayleigh_rand(std::forward<T_sigma>(sigma),gen);
 
 	// Transform it via Bryan's formula to rein in large values to be less than the max_val
 	return (first_result / std::pow(1 + std::pow(first_result / std::forward<T_max>(max), p),
@@ -234,7 +234,7 @@ T1 rand_from_cdf_arrays( array_t<T1> const & xvals, array_t<T2> cvals, T_gen & g
 	array_t<flt_t> normed_cvals = cvals / cmax;
 
 	// Generate a random value
-	flt_t const r = drand(0.,1.,rng);
+	flt_t const r = drand(0.,1.,gen);
 
 	// Get the index on the cdf where this lies
 	array_t<flt_t> diffs = (normed_cvals-r).abs();

@@ -120,35 +120,35 @@ public:
 
 #if (1) // Set functions - will return 1 if profile doesn't support this method of setting
 	// All take values in default unit set (m, s, kg, K, rad, C)
-	virtual void set_mvir( const mass_type & new_mvir )
+	virtual void set_mvir( const mass_type & )
 	{
 		throw std::logic_error("density_profile::set_mvir(...) must be overloaded to be used.\n");
 	}
-	virtual void set_vvir( const velocity_type & new_vvir )
+	virtual void set_vvir( const velocity_type & )
 	{
 		throw std::logic_error("density_profile::set_vvir(...) must be overloaded to be used.\n");
 	}
-	virtual void set_rvir( const distance_type & new_rvir )
+	virtual void set_rvir( const distance_type & )
 	{
 		throw std::logic_error("density_profile::set_rvir(...) must be overloaded to be used.\n");
 	}
-	virtual void set_rs( const distance_type & new_rs ) // Scale radius
+	virtual void set_rs( const distance_type & ) // Scale radius
 	{
 		throw std::logic_error("density_profile::set_rs(...) must be overloaded to be used.\n");
 	}
-	virtual void set_rt( const distance_type & new_rt ) // Tidal/truncation radius
+	virtual void set_rt( const distance_type & ) // Tidal/truncation radius
 	{
 		throw std::logic_error("density_profile::set_rt(...) must be overloaded to be used.\n");
 	}
-	virtual void set_parameters( const std::vector< any_units_type > &parameters )
+	virtual void set_parameters( const std::vector< any_units_type > & )
 	{
 		throw std::logic_error("density_profile::set_parameters(...) must be overloaded to be used.\n");
 	}
-	virtual void set_tau( const flt_t & new_tau ) // Truncation parameter
+	virtual void set_tau( const flt_t & ) // Truncation parameter
 	{
 		throw std::logic_error("density_profile::set_tau(...) must be overloaded to be used.\n");
 	}
-	virtual void set_c( const flt_t & new_c ) // Concentration
+	virtual void set_c( const flt_t & ) // Concentration
 	{
 		throw std::logic_error("density_profile::set_c(...) must be overloaded to be used.\n");
 	}
@@ -282,7 +282,7 @@ public:
 
 	acceleration_type accel( const distance_type & r) const // Gravitational acceleration at radius r
 	{
-		if(value_of(r)==0.)
+		if(is_zero(value_of(r)))
 			return 0;
 		else
 			return -Gc * enc_mass( r ) / square( r );
@@ -295,7 +295,7 @@ public:
 
 #if (1) // Other operations
 
-	virtual void truncate_to_fraction( const flt_t & fraction ) // Adjusts parameters of this class to decrease the mass to fraction of its previous mass.
+	virtual void truncate_to_fraction( const flt_t & ) // Adjusts parameters of this class to decrease the mass to fraction of its previous mass.
 	{
 		throw std::logic_error("density_profile::truncate_to_fraction() must be overloaded to be used.\n");
 	}

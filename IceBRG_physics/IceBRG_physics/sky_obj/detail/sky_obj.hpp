@@ -121,7 +121,7 @@ public:
 	{
 		return _weight_;
 	}
-	const int_t index() const
+	int_t index() const
 	{
 		return _index_;
 	}

@@ -174,7 +174,7 @@ public:
 	}
 
 	/// Copy constructor
-	limit_vector(const limit_vector<T,A> & other) = default;
+	limit_vector(const limit_vector<T,A> & ) = default;
 
 	/// Copy and set allocator
 	limit_vector(const limit_vector<T,A> & other, const allocator_type & alloc)
@@ -247,7 +247,7 @@ public:
 	}
 
 	/// Move constructor
-	limit_vector(limit_vector<T,A> && other) = default;
+	limit_vector(limit_vector<T,A> && ) = default;
 
 	/// Move and set allocator
 	limit_vector(limit_vector<T,A> && other, const allocator_type& alloc)
@@ -1134,7 +1134,7 @@ public:
 #if(1)
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const int_t version)
+    void serialize(Archive & ar, const int_t )
     {
     	ar & _base_;
     	ar & _type_;
@@ -1168,7 +1168,7 @@ void swap(IceBRG::limit_vector<T,A> & same, IceBRG::limit_vector<T,A> & other)
 
 namespace IceBRG {
 template<typename T, typename A=std::allocator<T>>
-bool is_monotonically_increasing(const IceBRG::limit_vector<T,A> &v)
+bool is_monotonically_increasing(const IceBRG::limit_vector<T,A> &)
 {
 	return true;
 }

@@ -57,7 +57,7 @@ DEFINE_BRG_CACHE( dfa_cache, flt_t, distance_over_angle_type,
 
 		,
 
-);
+)
 
 // Initialisation for IceBRG::add_cache
 DEFINE_BRG_CACHE_2D( add_cache, flt_t, flt_t, distance_type,
@@ -67,7 +67,7 @@ DEFINE_BRG_CACHE_2D( add_cache, flt_t, flt_t, distance_type,
 
 		,
 
-);
+)
 
 // Initialisation for IceBRG::tfa_cache
 DEFINE_BRG_CACHE( tfa_cache, flt_t, time_type, 0.001, 1.02, 0.001
@@ -77,7 +77,7 @@ DEFINE_BRG_CACHE( tfa_cache, flt_t, time_type, 0.001, 1.02, 0.001
 
 		,
 
-);
+)
 
 // Initialisation for IceBRG::lum_func_integral_cache
 DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, inverse_volume_type,
@@ -90,7 +90,7 @@ DEFINE_BRG_CACHE_2D( lum_func_integral_cache, flt_t, flt_t, inverse_volume_type,
 
 		,
 
-);
+)
 
 // Initialisation for IceBRG::sigma_r_cache
 DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
@@ -118,7 +118,7 @@ DEFINE_BRG_CACHE( sigma_r_cache, distance_type, flt_t,
 
 		,
 
-);
+)
 
 // Initialisation for IceBRG::l10_mass_function_cache
 DEFINE_BRG_CACHE_2D( l10_mass_function_cache, flt_t, flt_t, inverse_volume_type,
@@ -132,7 +132,7 @@ DEFINE_BRG_CACHE_2D( l10_mass_function_cache, flt_t, flt_t, inverse_volume_type,
 		,
 			sigma_r_cache().unload();
 			tfa_cache().unload();
-);
+)
 
 // Initialisation for IceBRG::l10_mass_function_integral_cache
 DEFINE_BRG_CACHE_2D( l10_mass_function_integral_cache, flt_t, flt_t, inverse_volume_type,
@@ -150,7 +150,7 @@ DEFINE_BRG_CACHE_2D( l10_mass_function_integral_cache, flt_t, flt_t, inverse_vol
 		,
 			l10_mass_function_cache().unload();
 
-);
+)
 
 // Initialisation for IceBRG::visible_cluster_density_cache
 DEFINE_BRG_CACHE( visible_cluster_density_cache, flt_t, inverse_volume_type,
@@ -163,14 +163,6 @@ DEFINE_BRG_CACHE( visible_cluster_density_cache, flt_t, inverse_volume_type,
 
 			inverse_volume_type res = lum_func_integral_cache().get(lum_func_min_abs_mag_B,max_abs_mag_B_central);
 
-//			flt_t l10_min_mass = std::log10(min_mass/(unitconv::Msuntokg*kg));
-//
-//			l10_mass_function_cache l10_mf_cache;
-//
-//			auto l10_mass_function_at_z = [&] (flt_t const & l10_m) {return l10_mf_cache.get(l10_m,in_param);};
-//
-//			inverse_volume_type res = integrate_Romberg(l10_mass_function_at_z,l10_min_mass,mass_func_l10_max);
-
 			return res;
 		,
 			dfa_cache().load();
@@ -179,7 +171,7 @@ DEFINE_BRG_CACHE( visible_cluster_density_cache, flt_t, inverse_volume_type,
 		,
 			l10_mass_function_integral_cache().unload();
 
-);
+)
 
 // Initialisation for IceBRG::visible_clusters_cache
 DEFINE_BRG_CACHE( visible_clusters_cache, flt_t, inverse_square_angle_type,
@@ -195,7 +187,7 @@ DEFINE_BRG_CACHE( visible_clusters_cache, flt_t, inverse_square_angle_type,
 			visible_cluster_density_cache().load();
 		,
 
-);
+)
 
 // Initialisation for IceBRG::visible_galaxy_density_cache
 DEFINE_BRG_CACHE( visible_galaxy_density_cache, flt_t, inverse_volume_type,
@@ -209,11 +201,10 @@ DEFINE_BRG_CACHE( visible_galaxy_density_cache, flt_t, inverse_volume_type,
 
 			return res;
 		,
-			dfa_cache().load();
 			lum_func_integral_cache().load();
 		,
 
-);
+)
 
 // Initialisation for IceBRG::visible_galaxies_cache
 DEFINE_BRG_CACHE( visible_galaxies_cache, flt_t, inverse_square_angle_type,
@@ -229,7 +220,7 @@ DEFINE_BRG_CACHE( visible_galaxies_cache, flt_t, inverse_square_angle_type,
 			visible_galaxy_density_cache().load();
 		,
 
-);
+)
 
 // Initialisation for IceBRG::visible_galaxy_density_cache
 DEFINE_BRG_CACHE( cluster_richness_at_z_cache, flt_t, flt_t,
@@ -242,7 +233,7 @@ DEFINE_BRG_CACHE( cluster_richness_at_z_cache, flt_t, flt_t,
 			l10_mass_function_cache().load();
 		,
 
-);
+)
 
 // Initialisation for IceBRG::visible_galaxies_cache
 DEFINE_BRG_CACHE_2D( cluster_richness_cache, flt_t, flt_t, flt_t,
@@ -256,7 +247,7 @@ DEFINE_BRG_CACHE_2D( cluster_richness_cache, flt_t, flt_t, flt_t,
 			visible_cluster_density_cache().load();
 		,
 
-);
+)
 
 } // namespace IceBRG
 

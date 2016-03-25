@@ -79,15 +79,15 @@ public:
 	// Get functions
 #if (1)
 
-	static const int_t ra_grid_change_num()
+	static int_t ra_grid_change_num()
 	{
 		return _ra_grid_change_num_;
 	}
-	static const int_t dec_grid_change_num()
+	static int_t dec_grid_change_num()
 	{
 		return _dec_grid_change_num_;
 	}
-	static const int_t z_grid_change_num()
+	static int_t z_grid_change_num()
 	{
 		return _z_grid_change_num_;
 	}

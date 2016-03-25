@@ -129,7 +129,7 @@ public:
 	/// Weighted calculation function, using a Hamilton-like estimator. This assumes the weight
 	/// function passed here has an expected value of zero.
 	Eigen::ArrayXd calculate_weighted(const std::function<flt_t(angle_type)> &
-			weight_function = [] (const angle_type & theta) {return 1.;}) const;
+			weight_function = [] (const angle_type & ) {return 1.;}) const;
 
 	/// Calculation function for dipole correlation function with a given offset. The offset should
 	/// vary from [0,1) or [-0.5,0.5) for unique results.

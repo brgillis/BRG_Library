@@ -83,9 +83,9 @@ struct _ipow_s<1> {
 
 template<>
 struct _ipow_s<0> {
-	const flt_t & value;
+	const flt_t value;
 
-	_ipow_s( const flt_t & v )
+	_ipow_s( const flt_t & )
 	: value(1.)
 	{
 	}

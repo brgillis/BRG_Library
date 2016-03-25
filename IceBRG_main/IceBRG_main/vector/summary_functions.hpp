@@ -389,7 +389,7 @@ inline bool some_true_some_false(const std::vector<bool> & v)
 	return ( (!all_true(v)) && (!all_false(v)) );
 }
 
-constexpr inline bool some_true_some_false(const bool & v)
+constexpr inline bool some_true_some_false(const bool & )
 {
 	return false;
 }

@@ -83,9 +83,9 @@ public:
 	virtual void set_member( size_t index, galaxy * new_member );
 	virtual void set_member_index( size_t index, size_t new_member_index );
 	virtual void add_member( galaxy * new_member =
-			false );
+			nullptr );
 	virtual void remove_member( galaxy * rem_member =
-			false );
+			nullptr );
 
 	// Implementations of pure virtual functions from sky_obj
 #if (1)

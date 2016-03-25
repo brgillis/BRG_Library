@@ -69,7 +69,7 @@ inline auto differentiate( const f * func, const T & in_param,
 	bool zero_in_flag = false;
 
 	// Check if any in_params are zero. If so, estimate small factor from other in_params
-	if ( value_of(in_param) == 0 )
+	if ( is_zero(value_of(in_param)) )
 	{
 		zero_in_flag = true;
 	}
@@ -127,7 +127,7 @@ inline auto differentiate( const f * func, const T & in_param,
 // Vector-in, vector-out version
 template< typename f, typename T >
 inline std::vector< std::vector< T > > differentiate( const f * func, const std::vector< T > & in_params,
-		const int_t order = 1, const flt_t & power = 1 )
+		const int_t order = 1, const int_t & power = 1 )
 {
 	auto num_in_params = ssize(in_params);
 	std::vector< std::vector< T > > Jacobian;

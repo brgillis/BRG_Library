@@ -30,6 +30,7 @@
 #include <cstdio>
 
 #include "IceBRG_main/external/tk_spline.hpp"
+#include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/utility.hpp"
 
 // band_matrix implementation
@@ -97,7 +98,7 @@ void tk::band_matrix::lu_decompose() {
    // preconditioning
    // normalize column i so that a_ii=1
    for(::IceBRG::int_t i=0; i<this->dim(); i++) {
-      assert(this->operator()(i,i)!=0.0);
+      assert(!::IceBRG::is_zero(this->operator()(i,i)));
       this->saved_diag(i)=1.0/this->operator()(i,i);
       j_min=std::max(0,i-this->num_lower());
       j_max=std::min(this->dim()-1,i+this->num_upper());
@@ -111,7 +112,7 @@ void tk::band_matrix::lu_decompose() {
    for(::IceBRG::int_t k=0; k<this->dim(); k++) {
       i_max=std::min(this->dim()-1,k+this->num_lower());  // num_lower not a mistake!
       for(::IceBRG::int_t i=k+1; i<=i_max; i++) {
-         assert(this->operator()(k,k)!=0.0);
+         assert(!::IceBRG::is_zero(this->operator()(k,k)));
          x=-this->operator()(i,k)/this->operator()(k,k);
          this->operator()(i,k)=-x;                         // assembly part of L
          j_max=std::min(this->dim()-1,k+this->num_upper());

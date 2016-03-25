@@ -34,8 +34,7 @@
 #include "IceBRG_main/utility.hpp"
 
 #include "IceBRG_physics/density_profile/tNFW_profile.hpp"
-
-#include "../../IceBRG_physics/density_profile/detail/tNFW_profile_functors.hpp"
+#include "IceBRG_physics/density_profile/detail/tNFW_profile_functors.hpp"
 
 
 constexpr IceBRG::flt_t min_x = 0.0001;

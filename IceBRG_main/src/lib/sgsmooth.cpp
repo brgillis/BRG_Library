@@ -287,7 +287,7 @@ static int_t lu_factorize(float_mat &A, uint_vect &idx, flt_t tol=TINY_FLOAT)
             if (fabs(A[i][j]) > maxval)
                 maxval = fabs(A[i][j]);
         }
-        if (maxval == 0.0) {
+        if (is_zero(maxval)) {
             sgs_error("lu_factorize(): zero pivot found.\n");
             return 0;
         }
