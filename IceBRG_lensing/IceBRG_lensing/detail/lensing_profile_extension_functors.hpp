@@ -67,7 +67,7 @@ public:
 	{
 		_offset_R_ = new_offset_R;
 	}
-	const distance_type offset_R()
+	distance_type offset_R()
 	{
 		return _offset_R_;
 	}
@@ -572,7 +572,7 @@ public:
 		const flt_t & precision = 0.000001;
 
 		auto out_param = IceBRG::integrate_Romberg( func, min_in_param, max_in_param,
-				precision, false );
+				precision );
 
 		return out_param / (pi * rad);
 	}

@@ -105,7 +105,7 @@ private:
 #if(1)
 	friend class boost::serialization::access;
 	template<class Archive>
-	void serialize(Archive & ar, const int_t version)
+	void serialize(Archive & ar, const int_t )
 	{
 		ar & _R_min_ & _R_max_;
 		ar & _m_min_ & _m_max_;

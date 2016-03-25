@@ -38,7 +38,7 @@
 
 namespace IceBRG {
 
-DECLARE_BRG_CACHE(mag_calibration_cache,magcalib,flt_t,flt_t);
+DECLARE_BRG_CACHE(mag_calibration_cache,magcalib,flt_t,flt_t)
 
 } // end namespace IceBRG
 

@@ -38,7 +38,7 @@
 namespace IceBRG {
 
 DECLARE_BRG_CACHE_2D(expected_count_derivative_cache,magexdrv,
-		flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()));
+		flt_t,flt_t,decltype(custom_unit_type<0,0,0,-2,0>()))
 
 } // end namespace IceBRG
 

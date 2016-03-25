@@ -36,9 +36,11 @@
 
 #include "IceBRG_main/common.hpp"
 
-#include "../../error_handling.hpp"
+#include "IceBRG_main/error_handling.hpp"
 #include "IceBRG_main/file_access/ascii_table.hpp"
 #include "IceBRG_main/file_access/open_file.hpp"
+#include "IceBRG_main/file_system.hpp"
+#include "IceBRG_main/globals.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/math/safe_math.hpp"
 #include "IceBRG_main/units/units.hpp"
@@ -220,6 +222,10 @@ private:
 	{
 		return true;
 	}
+	str_t _current_file_name() const
+	{
+		return join_path(globals::workdir,SPCP(name)->_file_name_);
+	}
 	void _unload() const
 	{
 		SPCP(name)->_loaded_ = false;
@@ -250,7 +256,7 @@ private:
 		SPCP(name)->_load_cache_dependencies();
 
 		// Print a message that we're generating the cache
-		handle_notification("Generating " + SPCP(name)->_file_name_ + ". This may take some time.");
+		handle_notification("Generating " + SPCP(name)->_current_file_name() + ". This may take some time.");
 
 		// Set up data
 		SPCP(name)->_resolution_1_ = (ssize_t) max( ( ( SPCP(name)->_max_1_ - SPCP(name)->_min_1_ ) / safe_d(SPCP(name)->_step_1_)) + 1, 2);
@@ -287,14 +293,14 @@ private:
 			}
 		}
 
-		if(bad_result) throw std::runtime_error("One or more calculations in generating cache " + SPCP(name)->_file_name_ + " failed.");
+		if(bad_result) throw std::runtime_error("One or more calculations in generating cache " + SPCP(name)->_current_file_name() + " failed.");
 		SPCP(name)->_loaded_ = true;
 
 		// Unload cache dependencies now
 		SPCP(name)->_unload_cache_dependencies();
 
 		// Print a message that we've finished generating the cache
-		handle_notification("Finished generating " + SPCP(name)->_file_name_ + "!");
+		handle_notification("Finished generating " + SPCP(name)->_current_file_name() + "!");
 	}
 	void _output() const
 	{
@@ -308,7 +314,7 @@ private:
 		}
 
 
-		open_bin_file_output( out_file, SPCP(name)->_file_name_ );
+		open_bin_file_output( out_file, SPCP(name)->_current_file_name() );
 
 		// Output name and version
 
@@ -415,7 +421,7 @@ protected:
 		{
 			if ( loop_counter >= 2 )
 			{
-				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_file_name_ + " in IceBRG::brg_cache_2.\n");
+				throw std::runtime_error("Infinite loop detected trying to load " + SPCP(name)->_current_file_name() + " in IceBRG::brg_cache_2.\n");
 			}
 			else
 			{
@@ -425,7 +431,7 @@ protected:
 
 			try
 			{
-				open_bin_file_input( in_file, SPCP(name)->_file_name_ );
+				open_bin_file_input( in_file, SPCP(name)->_current_file_name() );
 			}
 			catch(const std::exception &e)
 			{
@@ -674,7 +680,7 @@ public:
 		{
 			if ( SPCP(name)->_critical_load() )
 			{
-				throw std::runtime_error("ERROR: Could neither load " + SPCP(name)->_file_name_ + " nor calculate in brg_cache_3d::get()\n");
+				throw std::runtime_error("ERROR: Could neither load " + SPCP(name)->_current_file_name() + " nor calculate in brg_cache_3d::get()\n");
 			}
 		}
 

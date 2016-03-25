@@ -36,28 +36,28 @@
 namespace IceBRG {
 
 DECLARE_BRG_CACHE_3D(tNFW_sig_cache,tNFW_sig,
-		flt_t,flt_t,flt_t,surface_density_type);
+		flt_t,flt_t,flt_t,surface_density_type)
 
 DECLARE_BRG_CACHE_4D(tNFW_offset_sig_cache,tN_o_sig,
-		flt_t,flt_t,flt_t,flt_t,surface_density_type);
+		flt_t,flt_t,flt_t,flt_t,surface_density_type)
 
 DECLARE_BRG_CACHE_4D(tNFW_group_sig_cache,tN_g_sig,
-		flt_t,flt_t,flt_t,flt_t,surface_density_type);
+		flt_t,flt_t,flt_t,flt_t,surface_density_type)
 
 DECLARE_BRG_CACHE_3D(tNFW_shifted_sig_cache,tN_s_sig,
-		flt_t,flt_t,flt_t,surface_density_type);
+		flt_t,flt_t,flt_t,surface_density_type)
 
 DECLARE_BRG_CACHE_3D(tNFW_shifted_no_enh_sig_cache,tNsnhsig,
-		flt_t,flt_t,flt_t,surface_density_type);
+		flt_t,flt_t,flt_t,surface_density_type)
 
 DECLARE_BRG_CACHE_3D(tNFW_Sigma_cache,tNFWSigm,
-		flt_t,flt_t,flt_t,surface_density_type);
+		flt_t,flt_t,flt_t,surface_density_type)
 
 DECLARE_BRG_CACHE_4D(tNFW_offset_Sigma_cache,tNoSigma,
-		flt_t,flt_t,flt_t,flt_t,surface_density_type);
+		flt_t,flt_t,flt_t,flt_t,surface_density_type)
 
 DECLARE_BRG_CACHE_4D(tNFW_group_Sigma_cache,tNgSigma,
-		flt_t,flt_t,flt_t,flt_t,surface_density_type);
+		flt_t,flt_t,flt_t,flt_t,surface_density_type)
 
 } // end namespace IceBRG
 

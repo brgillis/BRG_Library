@@ -59,9 +59,11 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.1556810423" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1074193429" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.1274734225" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="IceBRG_lensing"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="IceBRG_physics"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="IceBRG_main"/>
+									<listOptionValue builtIn="false" value="IceBRG_lensing"/>
+									<listOptionValue builtIn="false" value="boost_serialization"/>
+									<listOptionValue builtIn="false" value="boost_log"/>
+									<listOptionValue builtIn="false" value="IceBRG_physics"/>
+									<listOptionValue builtIn="false" value="IceBRG_main"/>
 									<listOptionValue builtIn="false" value="python2.7"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1459576224" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
@@ -184,6 +186,7 @@
 									<listOptionValue builtIn="false" value="IceBRG_main"/>
 									<listOptionValue builtIn="false" value="python2.7"/>
 									<listOptionValue builtIn="false" value="boost_serialization"/>
+									<listOptionValue builtIn="false" value="boost_log"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1631030665" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-fopenmp" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.569223945" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">

@@ -54,7 +54,7 @@ private:
 // Basic calculation functions which should be overridden if possible
 #if(1)
 
-	const surface_density_type _proj_dens( const distance_type & R ) const // Projected surface density_type at radius R
+	surface_density_type _proj_dens( const distance_type & R ) const // Projected surface density_type at radius R
 	{
 		distance_type R_to_use = abs( R );
 		flt_t inf_factor = 20;
@@ -73,13 +73,13 @@ private:
 		else
 		{
 			out_param = IceBRG::integrate_Romberg( func, min_in_param,
-					max_in_param, 0.00001, false );
+					max_in_param, 0.00001 );
 		}
 
 		return 2. * out_param;
 	}
 
-	const mass_type _proj_enc_mass( const distance_type & R ) const // Mass enclosed within a cylinder of radius R
+	mass_type _proj_enc_mass( const distance_type & R ) const // Mass enclosed within a cylinder of radius R
 	{
 		if ( R == units_cast<distance_type>(0.) )
 			return units_cast<mass_type>(0.);
@@ -89,7 +89,7 @@ private:
 		mass_type out_param( units_cast<mass_type>(0.) );
 
 		out_param = IceBRG::integrate_Romberg( func, min_in_param,
-				max_in_param, 0.00001, false );
+				max_in_param, 0.00001 );
 
 		return out_param;
 	}
@@ -119,7 +119,7 @@ private:
 		angle_type max_in_param_ring(pi * rad);
 
 		auto out_param_ring = IceBRG::integrate_Romberg( ringfunc, min_in_param_ring,
-				max_in_param_ring, precision, false );
+				max_in_param_ring, precision );
 
 		ringmean = out_param_ring / (pi * rad);
 
@@ -127,7 +127,7 @@ private:
 		distance_type max_in_param_circ = offset_R_to_use+R_to_use;
 
 		auto out_param_circ = IceBRG::integrate_Romberg( circfunc, min_in_param_circ,
-				max_in_param_circ, precision, false );
+				max_in_param_circ, precision );
 
 		circmean = out_param_circ / ( pi * square(R_to_use) );
 
@@ -145,7 +145,7 @@ private:
 				max_in_param( 2.5*SPCP(name)->rvir() );
 
 		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
-				min_in_param, max_in_param, 0.00001, false);
+				min_in_param, max_in_param, 0.00001);
 
 		return out_param;
 	}
@@ -159,10 +159,10 @@ private:
 				max_in_param( 2.5*SPCP(name)->rvir() );
 
 		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
-				min_in_param, max_in_param, 0.00001, false);
+				min_in_param, max_in_param, 0.00001);
 		return out_param;
 	}
-	surface_density_type _two_halo_Delta_Sigma( const distance_type & R ) const
+	surface_density_type _two_halo_Delta_Sigma( const distance_type &  ) const
 	{
 		assert(false); // TODO: Fill this out
 		return surface_density_type();
@@ -183,7 +183,7 @@ private:
 		angle_type max_in_param_ring = pi * rad;
 
 		auto out_param_ring = IceBRG::integrate_Romberg( ringfunc, min_in_param_ring,
-				max_in_param_ring, precision, false );
+				max_in_param_ring, precision );
 
 		surface_density_type ringmean = out_param_ring / (pi*rad);
 
@@ -216,7 +216,7 @@ private:
 				max_in_param( 2.5*SPCP(name)->rvir() );
 
 		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
-				min_in_param, max_in_param, 0.00001, false);
+				min_in_param, max_in_param, 0.00001);
 
 		return out_param;
 	}
@@ -245,7 +245,7 @@ private:
 		distance_type min_in_param( units_cast<distance_type>(SMALL_FACTOR) ), max_in_param( 2.5*SPCP(name)->rvir() );
 
 		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
-				min_in_param, max_in_param, 0.00001, false);
+				min_in_param, max_in_param, 0.00001);
 
 		return out_param;
 	}
@@ -272,7 +272,7 @@ private:
 		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
 
 		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
-				min_in_param, max_in_param, precision, false );
+				min_in_param, max_in_param, precision );
 
 		return out_param;
 	}
@@ -290,7 +290,7 @@ private:
 		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
 
 		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
-				min_in_param, max_in_param, 0.00001, false);
+				min_in_param, max_in_param, 0.00001);
 		return out_param;
 	}
 
@@ -309,7 +309,7 @@ private:
 		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
 
 		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
-				min_in_param, max_in_param, precision, false );
+				min_in_param, max_in_param, precision );
 
 		return out_param;
 	}
@@ -327,7 +327,7 @@ private:
 		distance_type min_in_param( units_cast<distance_type>(0.) ), max_in_param( 4.*sigma );
 
 		surface_density_type out_param = IceBRG::integrate_weighted_Romberg( func, weight_func,
-				min_in_param, max_in_param, 0.00001, false);
+				min_in_param, max_in_param, 0.00001);
 		return out_param;
 	}
 

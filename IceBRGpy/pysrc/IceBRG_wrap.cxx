@@ -2964,22 +2964,23 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_custom_unit_typeT__1_0_0_1_0_t swig_types[24]
 #define SWIGTYPE_p_custom_unit_typeT__4_0_2_0_0_t swig_types[25]
 #define SWIGTYPE_p_double swig_types[26]
-#define SWIGTYPE_p_first_type swig_types[27]
-#define SWIGTYPE_p_int_t swig_types[28]
-#define SWIGTYPE_p_lens_source_pair swig_types[29]
-#define SWIGTYPE_p_second_type swig_types[30]
-#define SWIGTYPE_p_ssize_t swig_types[31]
-#define SWIGTYPE_p_std__invalid_argument swig_types[32]
-#define SWIGTYPE_p_std__istream swig_types[33]
-#define SWIGTYPE_p_std__ostream swig_types[34]
-#define SWIGTYPE_p_std__string swig_types[35]
-#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[36]
-#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[37]
-#define SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_t_t swig_types[38]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[39]
-#define SWIGTYPE_p_unitconv_map swig_types[40]
-static swig_type_info *swig_types[42];
-static swig_module_info swig_module = {swig_types, 41, 0, 0, 0, 0};
+#define SWIGTYPE_p_error_behavior_type swig_types[27]
+#define SWIGTYPE_p_first_type swig_types[28]
+#define SWIGTYPE_p_int_t swig_types[29]
+#define SWIGTYPE_p_lens_source_pair swig_types[30]
+#define SWIGTYPE_p_second_type swig_types[31]
+#define SWIGTYPE_p_ssize_t swig_types[32]
+#define SWIGTYPE_p_std__invalid_argument swig_types[33]
+#define SWIGTYPE_p_std__istream swig_types[34]
+#define SWIGTYPE_p_std__ostream swig_types[35]
+#define SWIGTYPE_p_std__string swig_types[36]
+#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[37]
+#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[38]
+#define SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_t_t swig_types[39]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[40]
+#define SWIGTYPE_p_unitconv_map swig_types[41]
+static swig_type_info *swig_types[43];
+static swig_module_info swig_module = {swig_types, 42, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3477,10 +3478,38 @@ SWIG_AsVal_ptrdiff_t (PyObject * obj, ptrdiff_t *val)
 	/* Include the headers in the wrapper code */
 	
 	#include <utility>
-	
-	#include "IceBRG_main/units/unit_conversions.hpp"
 
+	#include "IceBRG_main/globals.hpp"
+	#include "IceBRG_main/units/unit_conversions.hpp"
 	#include "IceBRG_main/vector/rebin.hpp"
+
+	#include "IceBRG_physics/abundance_matching.hpp"
+	#include "IceBRG_physics/cluster_visibility.hpp"
+	#include "IceBRG_physics/constants.hpp"
+	#include "IceBRG_physics/cosmology.hpp"
+	#include "IceBRG_physics/distance_measures.hpp"
+	#include "IceBRG_physics/galaxy_visibility.hpp"
+	#include "IceBRG_physics/luminosity.hpp"
+	#include "IceBRG_physics/mass_function.hpp"
+
+	#include "IceBRG_physics/detail/redshift_obj.hpp"
+	#include "IceBRG_physics/density_profile/detail/density_profile.hpp"
+	#include "IceBRG_physics/density_profile/point_mass_profile.hpp"
+	#include "IceBRG_physics/density_profile/tNFW_profile.hpp"
+	#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
+	#include "IceBRG_physics/sky_obj/galaxy.hpp"
+
+	#include "IceBRG_lensing/detail/lensing_profile_extension.hpp"
+	#include "IceBRG_lensing/detail/pair_bin_summary.hpp"
+	#include "IceBRG_lensing/detail/pair_bin.hpp"
+	#include "IceBRG_lensing/detail/pair_bins_summary.hpp"
+	#include "IceBRG_lensing/detail/source_obj.hpp"
+	#include "IceBRG_lensing/lens_source_pair.hpp"
+	#include "IceBRG_lensing/lensing_tNFW_profile.hpp"
+	#include "IceBRG_lensing/pair_binner.hpp"
+	#include "IceBRG_lensing/source_galaxy.hpp"
+	
+	using namespace IceBRG;
 
 	template< typename T >
 	std::pair<int,int> rebin_wrap( T * p_image,
@@ -3515,34 +3544,6 @@ SWIG_AsVal_ptrdiff_t (PyObject * obj, ptrdiff_t *val)
 		
 		return std::make_pair(nrows,ncols);
 	}
-
-	#include "IceBRG_physics/abundance_matching.hpp"
-	#include "IceBRG_physics/cluster_visibility.hpp"
-	#include "IceBRG_physics/constants.hpp"
-	#include "IceBRG_physics/cosmology.hpp"
-	#include "IceBRG_physics/distance_measures.hpp"
-	#include "IceBRG_physics/galaxy_visibility.hpp"
-	#include "IceBRG_physics/luminosity.hpp"
-	#include "IceBRG_physics/mass_function.hpp"
-
-	#include "IceBRG_physics/detail/redshift_obj.hpp"
-	#include "IceBRG_physics/density_profile/detail/density_profile.hpp"
-	#include "IceBRG_physics/density_profile/point_mass_profile.hpp"
-	#include "IceBRG_physics/density_profile/tNFW_profile.hpp"
-	#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
-	#include "IceBRG_physics/sky_obj/galaxy.hpp"
-
-	#include "IceBRG_lensing/detail/lensing_profile_extension.hpp"
-	#include "IceBRG_lensing/detail/pair_bin_summary.hpp"
-	#include "IceBRG_lensing/detail/pair_bin.hpp"
-	#include "IceBRG_lensing/detail/pair_bins_summary.hpp"
-	#include "IceBRG_lensing/detail/source_obj.hpp"
-	#include "IceBRG_lensing/lens_source_pair.hpp"
-	#include "IceBRG_lensing/lensing_tNFW_profile.hpp"
-	#include "IceBRG_lensing/pair_binner.hpp"
-	#include "IceBRG_lensing/source_galaxy.hpp"
-	
-	using namespace IceBRG;
 	 
 
 
@@ -4483,19 +4484,12 @@ namespace swig {
       }
     
 
-SWIGINTERNINLINE PyObject* 
-SWIG_From_unsigned_SS_long  (unsigned long value)
-{
-  return (value > LONG_MAX) ?
-    PyLong_FromUnsignedLong(value) : PyLong_FromLong(static_cast< long >(value)); 
-}
-
-
-SWIGINTERNINLINE PyObject *
-SWIG_From_size_t  (size_t value)
-{    
-  return SWIG_From_unsigned_SS_long  (static_cast< unsigned long >(value));
-}
+	IceBRG::str_t get_workdir() { return IceBRG::globals::workdir; }
+	void set_workdir( IceBRG::str_t const & workdir ) { IceBRG::globals::workdir = workdir; }
+	
+	error_behavior_type get_error_behavior() { return IceBRG::globals::error_behavior; }
+	void set_error_behavior( error_behavior_type const & error_behavior )
+	{ IceBRG::globals::error_behavior = error_behavior; }
 
 
 SWIGINTERN swig_type_info*
@@ -4508,6 +4502,34 @@ SWIG_pchar_descriptor(void)
     init = 1;
   }
   return info;
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_FromCharPtrAndSize(const char* carray, size_t size)
+{
+  if (carray) {
+    if (size > INT_MAX) {
+      swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+      return pchar_descriptor ? 
+	SWIG_InternalNewPointerObj(const_cast< char * >(carray), pchar_descriptor, 0) : SWIG_Py_Void();
+    } else {
+#if PY_VERSION_HEX >= 0x03000000
+      return PyUnicode_FromStringAndSize(carray, static_cast< int >(size));
+#else
+      return PyString_FromStringAndSize(carray, static_cast< int >(size));
+#endif
+    }
+  } else {
+    return SWIG_Py_Void();
+  }
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_std_string  (const std::string& s)
+{
+  return SWIG_FromCharPtrAndSize(s.data(), s.size());
 }
 
 
@@ -4618,31 +4640,18 @@ SWIG_AsPtr_std_string (PyObject * obj, std::string **val)
 }
 
 
-SWIGINTERNINLINE PyObject *
-SWIG_FromCharPtrAndSize(const char* carray, size_t size)
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long  (unsigned long value)
 {
-  if (carray) {
-    if (size > INT_MAX) {
-      swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
-      return pchar_descriptor ? 
-	SWIG_InternalNewPointerObj(const_cast< char * >(carray), pchar_descriptor, 0) : SWIG_Py_Void();
-    } else {
-#if PY_VERSION_HEX >= 0x03000000
-      return PyUnicode_FromStringAndSize(carray, static_cast< int >(size));
-#else
-      return PyString_FromStringAndSize(carray, static_cast< int >(size));
-#endif
-    }
-  } else {
-    return SWIG_Py_Void();
-  }
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLong(value) : PyLong_FromLong(static_cast< long >(value)); 
 }
 
 
 SWIGINTERNINLINE PyObject *
-SWIG_From_std_string  (const std::string& s)
-{
-  return SWIG_FromCharPtrAndSize(s.data(), s.size());
+SWIG_From_size_t  (size_t value)
+{    
+  return SWIG_From_unsigned_SS_long  (static_cast< unsigned long >(value));
 }
 
 
@@ -8517,6 +8526,84 @@ fail:
     "    rebin_wrap< double >(double *,int,int,int)\n"
     "    rebin_wrap< double >(double *,int,int)\n");
   return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_get_workdir(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IceBRG::str_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":get_workdir")) SWIG_fail;
+  result = get_workdir();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_set_workdir(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IceBRG::str_t *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:set_workdir",&obj0)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(obj0, &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "set_workdir" "', argument " "1"" of type '" "IceBRG::str_t const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "set_workdir" "', argument " "1"" of type '" "IceBRG::str_t const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  set_workdir((std::string const &)*arg1);
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_get_error_behavior(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  error_behavior_type result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":get_error_behavior")) SWIG_fail;
+  result = get_error_behavior();
+  resultobj = SWIG_NewPointerObj((new error_behavior_type(static_cast< const error_behavior_type& >(result))), SWIGTYPE_p_error_behavior_type, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_set_error_behavior(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  error_behavior_type *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:set_error_behavior",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_error_behavior_type,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "set_error_behavior" "', argument " "1"" of type '" "error_behavior_type const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "set_error_behavior" "', argument " "1"" of type '" "error_behavior_type const &""'"); 
+  }
+  arg1 = reinterpret_cast< error_behavior_type * >(argp1);
+  set_error_behavior((error_behavior_type const &)*arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
 }
 
 
@@ -44071,6 +44158,10 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"rebin_ulong", _wrap_rebin_ulong, METH_VARARGS, NULL},
 	 { (char *)"rebin_float", _wrap_rebin_float, METH_VARARGS, NULL},
 	 { (char *)"rebin_double", _wrap_rebin_double, METH_VARARGS, NULL},
+	 { (char *)"get_workdir", _wrap_get_workdir, METH_VARARGS, NULL},
+	 { (char *)"set_workdir", _wrap_set_workdir, METH_VARARGS, NULL},
+	 { (char *)"get_error_behavior", _wrap_get_error_behavior, METH_VARARGS, NULL},
+	 { (char *)"set_error_behavior", _wrap_set_error_behavior, METH_VARARGS, NULL},
 	 { (char *)"get_abs_mag_B_from_mass", _wrap_get_abs_mag_B_from_mass, METH_VARARGS, NULL},
 	 { (char *)"get_mass_from_abs_mag_B", _wrap_get_mass_from_abs_mag_B, METH_VARARGS, NULL},
 	 { (char *)"get_app_mag_B_from_mass", _wrap_get_app_mag_B_from_mass, METH_VARARGS, NULL},
@@ -44708,6 +44799,7 @@ static swig_type_info _swigt__p_custom_unit_typeT_1_0_0__1_0_t = {"_p_custom_uni
 static swig_type_info _swigt__p_custom_unit_typeT__1_0_0_1_0_t = {"_p_custom_unit_typeT__1_0_0_1_0_t", "custom_unit_type< -1,0,0,1,0 > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_custom_unit_typeT__4_0_2_0_0_t = {"_p_custom_unit_typeT__4_0_2_0_0_t", "custom_unit_type< -4,0,2,0,0 > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "inverse_time_type *|temperature_type *|inverse_square_angle_type *|angle_type *|square_angle_type *|inverse_angle_type *|inverse_volume_inverse_mass_type *|dimensionless_type *|mass_type *|area_type *|inverse_area_type *|any_units_type *|time_type *|inverse_volume_type *|inverse_distance_type *|volume_type *|distance_type *|acceleration_type *|velocity_type *|density_type *|inverse_density_type *|surface_density_type *|inverse_surface_density_type *|double *|flt_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_error_behavior_type = {"_p_error_behavior_type", "error_behavior_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_first_type = {"_p_first_type", "first_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int_t = {"_p_int_t", "int_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_lens_source_pair = {"_p_lens_source_pair", "lens_source_pair *", 0, 0, (void*)0, 0};
@@ -44716,7 +44808,7 @@ static swig_type_info _swigt__p_ssize_t = {"_p_ssize_t", "ssize_t *", 0, 0, (voi
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__istream = {"_p_std__istream", "std::istream *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__ostream = {"_p_std__ostream", "std::ostream *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *|str_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_double_std__allocatorT_double_t_t = {"_p_std__vectorT_double_std__allocatorT_double_t_t", "std::vector< double,std::allocator< double > > *|std::vector< flt_t,std::allocator< flt_t > > *|std::vector< any_units_type,std::allocator< any_units_type > > *|std::vector< distance_type,std::allocator< distance_type > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__string_std__allocatorT_std__string_t_t = {"_p_std__vectorT_std__string_std__allocatorT_std__string_t_t", "std::vector< std::string,std::allocator< std::string > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_t_t = {"_p_std__vectorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_std__allocatorT_std__vectorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_std__allocatorT_std__vectorT_IceBRG__pair_bin_summary_std__allocatorT_IceBRG__pair_bin_summary_t_t_t_t_t_t_t_t", "std::vector< std::vector< std::vector< std::vector< IceBRG::pair_bin_summary,std::allocator< IceBRG::pair_bin_summary > >,std::allocator< std::vector< IceBRG::pair_bin_summary,std::allocator< IceBRG::pair_bin_summary > > > >,std::allocator< std::vector< std::vector< IceBRG::pair_bin_summary,std::allocator< IceBRG::pair_bin_summary > >,std::allocator< std::vector< IceBRG::pair_bin_summary,std::allocator< IceBRG::pair_bin_summary > > > > > >,std::allocator< std::vector< std::vector< std::vector< IceBRG::pair_bin_summary,std::allocator< IceBRG::pair_bin_summary > >,std::allocator< std::vector< IceBRG::pair_bin_summary,std::allocator< IceBRG::pair_bin_summary > > > >,std::allocator< std::vector< std::vector< IceBRG::pair_bin_summary,std::allocator< IceBRG::pair_bin_summary > >,std::allocator< std::vector< IceBRG::pair_bin_summary,std::allocator< IceBRG::pair_bin_summary > > > > > > > > *", 0, 0, (void*)0, 0};
@@ -44751,6 +44843,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_custom_unit_typeT__1_0_0_1_0_t,
   &_swigt__p_custom_unit_typeT__4_0_2_0_0_t,
   &_swigt__p_double,
+  &_swigt__p_error_behavior_type,
   &_swigt__p_first_type,
   &_swigt__p_int_t,
   &_swigt__p_lens_source_pair,
@@ -44794,6 +44887,7 @@ static swig_cast_info _swigc__p_custom_unit_typeT_1_0_0__1_0_t[] = {  {&_swigt__
 static swig_cast_info _swigc__p_custom_unit_typeT__1_0_0_1_0_t[] = {  {&_swigt__p_custom_unit_typeT__1_0_0_1_0_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_custom_unit_typeT__4_0_2_0_0_t[] = {  {&_swigt__p_custom_unit_typeT__4_0_2_0_0_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_error_behavior_type[] = {  {&_swigt__p_error_behavior_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_first_type[] = {  {&_swigt__p_first_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int_t[] = {  {&_swigt__p_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_lens_source_pair[] = {  {&_swigt__p_lens_source_pair, 0, 0, 0},{0, 0, 0, 0}};
@@ -44837,6 +44931,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_custom_unit_typeT__1_0_0_1_0_t,
   _swigc__p_custom_unit_typeT__4_0_2_0_0_t,
   _swigc__p_double,
+  _swigc__p_error_behavior_type,
   _swigc__p_first_type,
   _swigc__p_int_t,
   _swigc__p_lens_source_pair,

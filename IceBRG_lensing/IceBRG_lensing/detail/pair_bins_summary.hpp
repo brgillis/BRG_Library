@@ -123,7 +123,7 @@ private:
 #if(1)
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const int_t version)
+    void serialize(Archive & ar, const int_t )
     {
     	ar & _R_bin_limits_;
     	ar & _m_bin_limits_;

@@ -39,7 +39,7 @@
 namespace IceBRG {
 
 DECLARE_BRG_CACHE(mag_weight_integral_cache,mg_w_int,
-		flt_t,decltype(custom_unit_type<0,0,0,-2,0>()));
+		flt_t,decltype(custom_unit_type<0,0,0,-2,0>()))
 
 } // end namespace IceBRG
 
