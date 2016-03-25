@@ -1,5 +1,5 @@
 /**********************************************************************\
- @file IceBRGpy.i
+ @file cIceBRGpy.i
  ------------------
 
  TODO <Insert file description here>
@@ -45,7 +45,7 @@ import_array();
 #endif
 %}
 
-%module IceBRG
+%module cIceBRGpy
 
 %{
 	 
