@@ -152,7 +152,7 @@
 									<listOptionValue builtIn="false" value="/home/brg/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/python2.7"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.optimization.flags.582620939" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-fopenmp -funroll-loops -march=native -mfpmath=sse -flto" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.582620939" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-fopenmp -funroll-loops -march=native -mfpmath=sse" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1569804230" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="NDEBUG"/>
 									<listOptionValue builtIn="false" value="EIGEN_DONT_PARALLELIZE"/>

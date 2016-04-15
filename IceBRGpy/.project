@@ -14,7 +14,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/Swig-Python Builder (IceBRGpy).launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/Swig-Python Builder (cIceBRGpy).launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
