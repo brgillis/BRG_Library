@@ -106,7 +106,7 @@
 								<option id="gnu.cpp.compiler.lib.release.option.debugging.level.767761123" name="Debug Level" superClass="gnu.cpp.compiler.lib.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.other.pic.1715450531" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.1728648225" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.optimization.flags.280014728" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-fopenmp -funroll-loops -march=native -mfpmath=sse -flto" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.280014728" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-fopenmp -funroll-loops -march=native -mfpmath=sse" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1661097150" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_physics}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/IceBRG_main}&quot;"/>
