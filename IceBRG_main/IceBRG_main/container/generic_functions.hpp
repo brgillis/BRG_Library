@@ -186,7 +186,7 @@ void fix_step_sigmas( T & v_sigmas, const T & v_min, const T & v_max )
 
 // Fix step sigmas - make sure it's not larger than max-min, and make sure it's positive
 template< typename T, BRG_F_IS_CONTAINER(T) >
-void fix_step_sigmas( const T & v_sigmas )
+void fix_step_sigmas( T & v_sigmas )
 {
 	typedef typename std::decay<decltype(v_sigmas[0])>::type value_type;
 

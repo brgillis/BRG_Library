@@ -1091,7 +1091,7 @@ T solve_MCMC( const f & func, const T & init_in_params,
 		{
 			good_result = false;
 		}
-		flt_t new_log_likelihood = -annealing*out_param/2.;
+		flt_t new_log_likelihood = -annealing*annealing*out_param/2.;
 
 		// If it's usable, check if we should step to it
 		bool step_to_it = false;
@@ -1132,7 +1132,7 @@ T solve_MCMC( const f & func, const T & init_in_params,
 			annealing *= annealing_factor;
 
 			// Recalculate likelihood
-			last_log_likelihood *= annealing_factor;
+			last_log_likelihood *= annealing_factor*annealing_factor;
 
 			// Check if we're going into the last cycle
 			if(max_steps-step<=annealing_period)

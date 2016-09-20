@@ -577,22 +577,6 @@ T1 max( const T1 & v1, const T2 &v2 )
 	return vr;
 }
 
-template< typename T1, typename T2,
-BRG_F_IS_STL_OR_EIGEN(T1),
-BRG_F_IS_STL_OR_EIGEN(T2) >
-T1 max( T1 && v1, const T2 &v2 )
-{
-
-	assert(v1.size()==v2.size());
-
-	for(decltype(v1.size()) i = 0; i < v1.size(); i++)
-	{
-		v1[i] = max(v1[i], v2[i]);
-	}
-
-	return v1;
-}
-
 template< typename T1, typename T2, BRG_F_FIRST_STL(T1,T2) >
 T1 max( const T1 & v1, const T2 &v2 )
 {
@@ -636,21 +620,6 @@ T1 max( const T1 & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-BRG_F_IS_EIGEN(T1),
-BRG_F_NOT_CONTAINER(T2),
-typename std::enable_if<!IceBRG::is_eigen_container<T2>::value,char>::type = 0 >
-T1 max( T1 && v1, const T2 &v2 )
-{
-
-	for(decltype(v1.size()) i = 0; i < v1.size(); i++)
-	{
-		v1[i] = max(v1[i], v2);
-	}
-
-	return v1;
-}
-
-template< typename T1, typename T2,
 BRG_F_NOT_CONTAINER(T1),
 BRG_F_IS_STL(T2) >
 T2 max( const T1 & v1, const T2 & v2 )
@@ -667,19 +636,6 @@ T2 max( const T1 & v1, const T2 & v2 )
 
 template< typename T1, typename T2,
 BRG_F_NOT_CONTAINER(T1),
-BRG_F_IS_STL(T2) >
-T2 max( const T1 & v1, T2 && v2 )
-{
-	for(auto & v : v2)
-	{
-		v = max(v1, v);
-	}
-
-	return v2;
-}
-
-template< typename T1, typename T2,
-BRG_F_NOT_CONTAINER(T1),
 BRG_F_IS_EIGEN(T2) >
 T2 max( const T1 & v1, const T2 & v2 )
 {
@@ -691,19 +647,6 @@ T2 max( const T1 & v1, const T2 & v2 )
 	}
 
 	return vr;
-}
-
-template< typename T1, typename T2,
-BRG_F_NOT_CONTAINER(T1),
-BRG_F_IS_EIGEN(T2) >
-T2 max( const T1 & v1, T2 && v2 )
-{
-	for(decltype(v2.size()) i = 0; i < v2.size(); i++)
-	{
-		v2[i] = max(v1, v2[i]);
-	}
-
-	return v2;
 }
 
 #endif // Element-wise max
@@ -729,22 +672,6 @@ T1 min( const T1 & v1, const T2 &v2 )
 	return vr;
 }
 
-template< typename T1, typename T2,
-BRG_F_IS_STL_OR_EIGEN(T1),
-BRG_F_IS_STL_OR_EIGEN(T2) >
-T1 min( T1 && v1, const T2 &v2 )
-{
-
-	assert(v1.size()==v2.size());
-
-	for(decltype(v1.size()) i = 0; i < v1.size(); i++)
-	{
-		v1[i] = min(v1[i], v2[i]);
-	}
-
-	return v1;
-}
-
 template< typename T1, typename T2, BRG_F_FIRST_STL(T1,T2),
 		BRG_F_NOT_CONTAINER(T2) >
 T1 min( const T1 & v1, const T2 &v2 )
@@ -758,19 +685,6 @@ T1 min( const T1 & v1, const T2 &v2 )
 	}
 
 	return vr;
-}
-
-template< typename T1, typename T2, BRG_F_FIRST_STL(T1,T2),
-		BRG_F_NOT_CONTAINER(T2) >
-T1 min( T1 && v1, const T2 &v2 )
-{
-
-	for(auto & v : v1)
-	{
-		v = min(v, v2);
-	}
-
-	return v1;
 }
 
 template< typename T1, typename T2,
@@ -790,21 +704,6 @@ T1 min( const T1 & v1, const T2 &v2 )
 }
 
 template< typename T1, typename T2,
-BRG_F_IS_EIGEN(T1),
-BRG_F_NOT_CONTAINER(T2),
-typename std::enable_if<!IceBRG::is_eigen_container<T2>::value,char>::type = 0 >
-T1 min( T1 && v1, const T2 &v2 )
-{
-
-	for(decltype(v1.size()) i = 0; i < v1.size(); i++)
-	{
-		v1[i] = min(v1[i], v2);
-	}
-
-	return v1;
-}
-
-template< typename T1, typename T2,
 BRG_F_NOT_CONTAINER(T1),
 BRG_F_IS_STL(T2) >
 T2 min( const T1 & v1, const T2 & v2 )
@@ -821,19 +720,6 @@ T2 min( const T1 & v1, const T2 & v2 )
 
 template< typename T1, typename T2,
 BRG_F_NOT_CONTAINER(T1),
-BRG_F_IS_STL(T2) >
-T2 min( const T1 & v1, T2 && v2 )
-{
-	for(auto & v : v2)
-	{
-		v = min(v1, v);
-	}
-
-	return v2;
-}
-
-template< typename T1, typename T2,
-BRG_F_NOT_CONTAINER(T1),
 BRG_F_IS_EIGEN(T2) >
 T2 min( const T1 & v1, const T2 & v2 )
 {
@@ -845,19 +731,6 @@ T2 min( const T1 & v1, const T2 & v2 )
 	}
 
 	return vr;
-}
-
-template< typename T1, typename T2,
-BRG_F_NOT_CONTAINER(T1),
-BRG_F_IS_EIGEN(T2) >
-T2 min( const T1 & v1, T2 && v2 )
-{
-	for(decltype(v2.size()) i = 0; i < v2.size(); i++)
-	{
-		v2[i] = min(v1, v2[i]);
-	}
-
-	return v2;
 }
 
 #endif // Element-wise min
