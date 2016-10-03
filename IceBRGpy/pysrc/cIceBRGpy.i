@@ -112,7 +112,7 @@ import_array();
 		{
 			for(int j=0; j<nrows; ++j)
 			{
-				p_image[j+i*ncols] = out_array(j,i);
+				p_image[j+i*nrows] = out_array(j,i);
 			}
 		}
 		
@@ -161,33 +161,7 @@ rebin_wrap( T * p_image,
 		int ss_ny,
 		int x_offset=0,
 		int y_offset=0,
-		int subsampling_factor=5 )
-{
-	auto out_array = IceBRG::rebin(p_image,
-						ss_nx,
-						ss_ny,
-						x_offset,
-						y_offset,
-						subsampling_factor);
-	
-	for(int i=0; i<ss_nx*ss_ny; ++i)
-	{
-		p_image[i] = 0;
-	}
-	
-	int ncols = out_array.cols();
-	int nrows = out_array.rows();
-
-	for(int i=0; i<nrows; ++i)
-	{
-		for(int j=0; j<ncols; ++j)
-		{
-			p_image[i+j*nrows] = out_array(i,j);
-		}
-	}
-
-	return std::make_pair(nrows,ncols);
-}
+		int subsampling_factor=5 );
 
 %template(rebin_int) rebin_wrap<int>;
 %template(rebin_long) rebin_wrap<long>;
