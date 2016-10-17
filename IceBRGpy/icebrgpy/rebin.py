@@ -65,5 +65,7 @@ def rebin(a, x_shift=0, y_shift=0, subsampling_factor=5, conserve=False):
     new_size = np.product(new_shape)
 
     rebinned_array = np.reshape(np.ravel(a)[0:new_size], new_shape)
+    
+    assert(not np.any(np.isnan(rebinned_array)))
 
     return rebinned_array
