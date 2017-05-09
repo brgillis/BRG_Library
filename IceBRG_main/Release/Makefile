@@ -1,5 +1,5 @@
 CC = gcc # C compiler
-CFLAGS = -fPIC -Wall -Wextra -std=c++11 -fopenmp -O3 -I../ -I/home/brg/include # C flags
+CFLAGS = -fPIC -Wall -Wextra -std=c++11 -DNDEBUG -fopenmp -O3 -I../ -I/home/brg/include # C flags
 LDFLAGS =  -fopenmp # linking flags
 RM = rm -f  # rm command
 TARGET_LIB = libIceBRG_main.a # target lib

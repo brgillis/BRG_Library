@@ -54,8 +54,8 @@ Eigen::Array<typename T::Scalar, Eigen::Dynamic,Eigen::Dynamic>>::type
 	ssize_t rb_nx = 2 * (((ss_nx-2*std::abs(x_shift))/subsampling_factor - 1) / 2) + 1;
 	ssize_t rb_ny = 2 * (((ss_ny-2*std::abs(y_shift))/subsampling_factor - 1) / 2) + 1;
 
-	int_t x_offset = (ss_nx - rb_nx*subsampling_factor)/2 - x_shift;
-	int_t y_offset = (ss_ny - rb_ny*subsampling_factor)/2 - y_shift;
+	int_t x_offset = (ss_nx - (rb_nx)*subsampling_factor)/2 - x_shift;
+	int_t y_offset = (ss_ny - (rb_ny)*subsampling_factor)/2 - y_shift;
 
 	// Make the rebinned array
 	Tout rebinned_array = Tout::Zero(rb_nx,rb_ny);
@@ -64,15 +64,11 @@ Eigen::Array<typename T::Scalar, Eigen::Dynamic,Eigen::Dynamic>>::type
 	{
 		for( int yi=0; yi<rb_ny; ++yi)
 		{
-//			int_t xm = x_offset + subsampling_factor*(xi+1) - int_t(subsampling_factor/2.);
-//			int_t ym = y_offset + subsampling_factor*(yi+1) - int_t(subsampling_factor/2.);
 			int_t xm = x_offset + subsampling_factor*xi;
 			int_t ym = y_offset + subsampling_factor*yi;
 
 			rebinned_array(xi,yi) =
 					subsampled_image.block(xm,ym,subsampling_factor,subsampling_factor).sum();
-
-//			rebinned_array(xi,yi) = subsampled_image(xm,ym);
 		}
 	}
 
@@ -103,3 +99,4 @@ Eigen::Array<T,Eigen::Dynamic,Eigen::Dynamic>>::type
 
 
 #endif // ICEBRG_MAIN_VECTOR_REBIN_HPP_
+
