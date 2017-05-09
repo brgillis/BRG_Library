@@ -381,11 +381,12 @@ flt_t unnormed_power_spectrum( inverse_distance_type const & k)
 	const distance_type Mpc = unitconv::Mpctom * m;
 	const distance_type Mpc_o_h = Mpc/h_0;
 	const flt_t xi = Omega_m * h_0;
+	const auto k_Mpc_o_xi_h = k * Mpc_o_h / xi;
 
-	flt_t res = pow(k*Mpc_o_h,2. + nsp) * square(log(1. + 2.34*Mpc_o_h * k / xi) /
-			(2.34*Mpc_o_h * k / xi) /
-			pow(1. + 3.89*Mpc_o_h * k / xi + square(16.2*Mpc_o_h * k / xi) + cube(5.47*Mpc_o_h * k / xi) +
-					quart(6.71*Mpc_o_h * k / xi),0.25));
+	flt_t res = pow(k*Mpc_o_h,2. + nsp) * square(log(1. + 2.34*k_Mpc_o_xi_h) /
+			(2.34*k_Mpc_o_xi_h) /
+			pow(1. + 3.89*k_Mpc_o_xi_h + square(16.2*k_Mpc_o_xi_h) + cube(5.47*k_Mpc_o_xi_h) +
+					quart(6.71*k_Mpc_o_xi_h),0.25));
 
 	return res;
 }
