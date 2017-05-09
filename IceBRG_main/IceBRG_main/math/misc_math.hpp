@@ -177,9 +177,9 @@ inline T1 max( const T1 & a, const T2 & b )
 }
 template<  class T1, class T2, class T3, BRG_F_NOT_CONTAINER(T1), BRG_F_NOT_CONTAINER(T2),
 		BRG_F_NOT_CONTAINER(T3)>
-inline T2 bound( T1 && lower_bound, T2 && a, T3 && upper_bound)
+inline T2 bound( const T1 & lower_bound, const T2 & a, const T3 & upper_bound)
 {
-	return IceBRG::min( IceBRG::max( std::forward<T2>(a), std::forward<T1>(lower_bound) ) , std::forward<T3>(upper_bound) );
+	return IceBRG::min( IceBRG::max( a, lower_bound ) , upper_bound );
 }
 
 // The below two variants return by reference, in case you

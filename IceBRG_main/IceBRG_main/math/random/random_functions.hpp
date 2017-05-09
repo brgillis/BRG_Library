@@ -162,7 +162,7 @@ T Rayleigh_rand( T_in && sigma=1., T_gen & gen=rng )
 	return std::forward<T_in>(sigma)*std::sqrt(-2.*std::log(drand<T>(gen)));
 }
 
-// Returns a random variable from a Gaussian distribution, truncated between min and max
+// Returns a random variable from a Rayleigh distribution, truncated between min and max
 template< typename T=flt_t, typename T_sigma=flt_t, typename T_max=flt_t,
 		typename T_gen=decltype(rng) >
 T trunc_Rayleigh_rand( const T_sigma & sigma, T_max && max, T_gen & gen=rng )

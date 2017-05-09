@@ -1,4 +1,4 @@
-""" @file /disk2/brg/Program_Files/workspace/Generate_GalSim_Images/galsim_images_generation/lru_cache.py
+""" @file /disk2/brg/Program_Files/workspace/Generate_GalSim_Images/SHE_SIM_galaxy_image_generation/lru_cache.py
 
     Created 7 Oct 2015
 

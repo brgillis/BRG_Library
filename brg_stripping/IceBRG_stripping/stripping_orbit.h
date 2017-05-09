@@ -1175,6 +1175,20 @@ public:
 	 */
 	const int get_final_frac_m_vir_ret( double & final_frac_m_ret ) const;
 	/**
+	 * Get final retained mass of the comparison data.
+	 *
+	 * @param mret Variable to be loaded with final retained mass.
+	 * @return Int flag - zero for success, otherwise for error.
+	 */
+	const int get_final_comp_m_ret( BRG_MASS & m_ret ) const;
+	/**
+	 * Get final retained mass fraction of the comparison data.
+	 *
+	 * @param mret Variable to be loaded with final retained mass.
+	 * @return Int flag - zero for success, otherwise for error.
+	 */
+	const int get_final_comp_frac_m_ret( double & final_frac_m_ret ) const;
+	/**
 	 * Get the final sum_deltarho value, in a long double variable.
 	 * @param final_sum_deltarho Variable to be loaded with final sum_delta_rho.
 	 * @return Int flag - zero for success, otherwise for error.
@@ -1227,6 +1241,18 @@ public:
 	 * @return Final retained mass fraction.
 	 */
 	const double final_frac_m_ret() const;
+	/**
+	 * Get the final retained mass of the comparison data, throwing an exception on failure.
+	 *
+	 * @return Final retained mass.
+	 */
+	const BRG_MASS final_comp_m_ret() const;
+	/**
+	 * Get the final retained mass fraction of the comparison data, throwing an exception on failure.
+	 *
+	 * @return Final retained mass fraction.
+	 */
+	const double final_comp_frac_m_ret() const;
 	/**
 	 * Get the final retained virial mass, throwing an exception on failure.
 	 *

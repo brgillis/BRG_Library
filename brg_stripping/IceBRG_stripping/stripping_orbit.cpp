@@ -2081,6 +2081,28 @@ const int IceBRG::stripping_orbit::get_frac_m_vir_ret_at_t( CONST_BRG_TIME_REF  
 	frac_m_ret = max( _m_vir_ret_interpolator_(t), 0. );
 	return 0;
 }
+const int IceBRG::stripping_orbit::get_final_comp_m_ret( BRG_MASS & m_ret ) const
+{
+	double frac_m_ret;
+
+	int res = get_final_comp_frac_m_ret( frac_m_ret );
+
+	m_ret = _init_satellite_ptr_->mtot()*frac_m_ret;
+
+	return res;
+}
+const int IceBRG::stripping_orbit::get_final_comp_frac_m_ret( double & frac_m_ret ) const
+{
+	return get_comp_frac_m_ret_at_t( t_max(), frac_m_ret );
+}
+const BRG_MASS IceBRG::stripping_orbit::final_comp_m_ret() const
+{
+	return _init_satellite_ptr_->mtot()*comp_frac_m_ret_at_t(t_max());
+}
+const BRG_MASS IceBRG::stripping_orbit::final_comp_frac_m_ret() const
+{
+	return comp_frac_m_ret_at_t(t_max());
+}
 const int IceBRG::stripping_orbit::get_comp_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
 {
 	try
