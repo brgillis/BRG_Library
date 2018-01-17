@@ -46,9 +46,9 @@ public:
 	const density_profile *satellite_ptr;
 
 	long double sum_delta_rho, Daccel, omega;
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF in_param, const bool silent = false ) const;
-	solve_rt_it_functor( const BRG_UNITS init_omega,
-			const density_profile *init_satellite, const BRG_UNITS init_Daccel,
+	flt_t operator()( flt_t const & in_param, const bool silent = false ) const;
+	solve_rt_it_functor( const flt_t init_omega,
+			const density_profile *init_satellite, const flt_t init_Daccel,
 			const long double init_sum_delta_rho = 0 );
 
 	solve_rt_it_functor();
@@ -67,9 +67,9 @@ public:
 	const density_profile *satellite_ptr;
 
 	long double sum_delta_rho, Daccel, omega;
-	BRG_UNITS operator()( CONST_BRG_UNITS_REF  in_param, const bool silent = false ) const;
-	solve_rt_grid_functor( const BRG_UNITS init_omega,
-			const density_profile *init_satellite, const BRG_UNITS init_Daccel,
+	flt_t operator()( flt_t const &  in_param, const bool silent = false ) const;
+	solve_rt_grid_functor( const flt_t init_omega,
+			const density_profile *init_satellite, const flt_t init_Daccel,
 			const long double init_sum_delta_rho = 0 );
 
 	solve_rt_grid_functor();

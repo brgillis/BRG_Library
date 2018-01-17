@@ -52,17 +52,17 @@ private:
 	mutable bool _is_cached_;
 	const density_profile *_host_ptr_;
 
-	BRG_DISTANCE _x_, _y_, _z_, _r_;
-	BRG_TIME _dt_;
+	distance_type _x_, _y_, _z_, _r_;
+	time_type _dt_;
 	mutable std::vector< std::vector< long double > > _dv_;
 
 public:
 
 	// Constructors
 	gabdt();
-	gabdt( const density_profile *init_host, CONST_BRG_DISTANCE_REF init_x,
-			CONST_BRG_DISTANCE_REF init_y, CONST_BRG_DISTANCE_REF init_z,
-			CONST_BRG_TIME_REF init_dt );
+	gabdt( const density_profile *init_host, distance_type const & init_x,
+			distance_type const & init_y, distance_type const & init_z,
+			time_type const & init_dt );
 
 	// Destructor
 	virtual ~gabdt()
@@ -74,11 +74,11 @@ public:
 
 	// Set functions
 	void set( const IceBRG::density_profile *new_host_ptr,
-			CONST_BRG_DISTANCE_REF new_x, CONST_BRG_DISTANCE_REF new_y,
-			CONST_BRG_DISTANCE_REF new_z, CONST_BRG_TIME_REF new_dt );
-	void set_pos( CONST_BRG_DISTANCE_REF new_x, CONST_BRG_DISTANCE_REF new_y,
-			CONST_BRG_DISTANCE_REF new_z );
-	void set_dt( CONST_BRG_TIME_REF dt );
+			distance_type const & new_x, distance_type const & new_y,
+			distance_type const & new_z, time_type const & new_dt );
+	void set_pos( distance_type const & new_x, distance_type const & new_y,
+			distance_type const & new_z );
+	void set_dt( time_type const & dt );
 	void set_host_ptr( const density_profile *new_host_ptr );
 	void override_zero();
 
@@ -87,15 +87,15 @@ public:
 
 	// Get functions
 	const density_profile * host() const;
-	BRG_DISTANCE x() const;
-	BRG_DISTANCE y() const;
-	BRG_DISTANCE z() const;
-	BRG_DISTANCE r() const;
+	distance_type x() const;
+	distance_type y() const;
+	distance_type z() const;
+	distance_type r() const;
 	std::vector< std::vector< long double > > dv() const; // involves calculation if necessary
 	long double dv( const int x_i, const int y_i ) const; // involves calculation if necessary
 
 	// Operator overloading
-	BRG_UNITS operator*( const gabdt & other_gabdt ) const; // Dot-product(ish) operator
+	flt_t operator*( const gabdt & other_gabdt ) const; // Dot-product(ish) operator
 
 	gabdt & operator+=( const gabdt & other_gabdt ); // Addition
 	gabdt operator+( const gabdt & other_gabdt ) const;
@@ -131,7 +131,7 @@ public:
 	const density_profile *host_ptr;
 
 	// Function method
-	std::vector< BRG_UNITS > operator()( const std::vector< BRG_UNITS > & in_params,
+	std::vector< flt_t > operator()( const std::vector< flt_t > & in_params,
 			const bool silent = false ) const;
 
 };

@@ -114,8 +114,8 @@ private:
 	 * If you want to turn off adaptive step size, set step_length_power to 0
 	 * Alternatively, set step_length_power to 1 for even steps in position
 	 */
-	static BRG_VELOCITY _default_v_0_; /// "Pivot" velocity
-	static BRG_DISTANCE _default_r_0_; /// "Pivot" radial distance
+	static velocity_type _default_v_0_; /// "Pivot" velocity
+	static distance_type _default_r_0_; /// "Pivot" radial distance
 	static double _default_step_length_power_; /// How strongly variable step length is implemented
 	static double _default_step_factor_max_; /// Maximum allowed value of (v_0/v)^(step_length_power)
 	static double _default_step_factor_min_; /// Minimum allowed value of (v_0/v)^(step_length_power)
@@ -139,8 +139,8 @@ private:
 	 * If you want to turn off adaptive step size, set step_length_power to 0
 	 * Alternatively, set step_length_power to 1 for even steps in position
 	 */
-	BRG_VELOCITY _v_0_; /// "Pivot" velocity
-	BRG_DISTANCE _r_0_; /// "Pivot" radial distance
+	velocity_type _v_0_; /// "Pivot" velocity
+	distance_type _r_0_; /// "Pivot" radial distance
 	double _step_length_power_; /// How strongly variable step length is implemented
 	double _step_factor_max_; /// Maximum allowed value of (v_0/v)^(step_length_power)
 	double _step_factor_min_; /// Minimum allowed value of (v_0/v)^(step_length_power)
@@ -186,12 +186,12 @@ private:
 
 	//@{
 	/// The values of t_min/max based only on the points passed to the orbit.
-	BRG_TIME _t_min_natural_value_, _t_max_natural_value_;
+	time_type _t_min_natural_value_, _t_max_natural_value_;
 	//@}
 
 	//@{
 	/// The values of t_min/max the user has told us to use.
-	BRG_TIME _t_min_override_value_, _t_max_override_value_;
+	time_type _t_min_override_value_, _t_max_override_value_;
 	//@}
 
 	//@{
@@ -228,14 +228,14 @@ private:
 	std::vector< double > _vx_unknown_points_,
 			_vy_unknown_points_, _vz_unknown_points_,
 			_t_points_, _host_param_t_points_;
-	std::vector< std::pair< double, std::vector< BRG_UNITS > > > _host_parameter_points_;
+	std::vector< std::pair< double, std::vector< flt_t > > > _host_parameter_points_;
 	//@}
 
 	/// Any discontinuity times the user has told us about.
-	std::vector< BRG_TIME > _discontinuity_times_;
+	std::vector< time_type > _discontinuity_times_;
 
 	/// Discontinuity times, cleaned of duplicates and out-of-bounds values, then sorted
-	mutable std::vector< BRG_TIME > _cleaned_discontinuity_times_;
+	mutable std::vector< time_type > _cleaned_discontinuity_times_;
 
 	/// Interpolator for calculated retained mass fraction, so we can estimate it at any time.
 	mutable IceBRG::interpolator _m_ret_interpolator_;
@@ -665,9 +665,9 @@ public:
 	 * @param test_mass Optional: A comparison retained mass fraction at this point in the orbit.
 	 * @param test_mass_error Optional: Error on the comparison retained mass fraction.
 	 */
-	void add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
-			CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
-			CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
+	void add_point( distance_type const & x, distance_type const & y,
+			distance_type const & z, velocity_type const & vx,
+			velocity_type const & vy, velocity_type const & vz, time_type const & t,
 			const double test_mass = 1, const double test_mass_error = 1 );
 	/**
 	 * Tell the orbit about a point along the satellite's path relative to the host, where
@@ -691,9 +691,9 @@ public:
 	 * @param test_mass Optional: A comparison retained mass fraction at this point in the orbit.
 	 * @param test_mass_error Optional: Error on the comparison retained mass fraction.
 	 */
-	void force_add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
-			CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
-			CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
+	void force_add_point( distance_type const & x, distance_type const & y,
+			distance_type const & z, velocity_type const & vx,
+			velocity_type const & vy, velocity_type const & vz, time_type const & t,
 			const double test_mass = 1, const double test_mass_error = 1 );
 	/**
 	 * Tell the orbit about a point along the satellite's path relative to the host, where
@@ -717,8 +717,8 @@ public:
 	 * @param test_mass Optional: A comparison retained mass fraction at this point in the orbit.
 	 * @param test_mass_error Optional: Error on the comparison retained mass fraction.
 	 */
-	void add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
-			CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
+	void add_point( distance_type const & x, distance_type const & y,
+			distance_type const & z, time_type const & t,
 			const double new_test_mass = 1, const double test_mass_error = 1 ); // Only use if v is unknown
 	/**
 	 * Tell the orbit about a point along the satellite's path relative to the host, where
@@ -741,8 +741,8 @@ public:
 	 * @param test_mass Optional: A comparison retained mass fraction at this point in the orbit.
 	 * @param test_mass_error Optional: Error on the comparison retained mass fraction.
 	 */
-	void force_add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
-			CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
+	void force_add_point( distance_type const & x, distance_type const & y,
+			distance_type const & z, time_type const & t,
 			const double new_test_mass = 1, const double test_mass_error = 1 ); // Only use if v is unknown
 	/**
 	 * Tell the orbit about the time of a discontinuity. For instance, this could be where the
@@ -751,7 +751,7 @@ public:
 	 * @param t The time of a discontinuity in seconds.
 	 *          Use the function SALTSA::zft(z) if only redshift is known.
 	 */
-	void add_discontinuity_time( CONST_BRG_TIME_REF t ); // Splits into segments to be calculated individually
+	void add_discontinuity_time( time_type const & t ); // Splits into segments to be calculated individually
 	/**
 	 * Tell the orbit about the state of the host halo at a given time. This version checks
 	 * to ensure that no duplicate times are added (only among host parameter point times).
@@ -767,7 +767,7 @@ public:
 	 * @param t The time of this point. If only redshift is available, use the function SALTSA::zft(z).
 	 * @param silent Whether or not to suppress error messages.
 	 */
-	void add_host_parameter_point( const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
+	void add_host_parameter_point( const std::vector< flt_t > &parameters, time_type const & t,
 			const bool silent = false );
 	/**
 	 * Tell the orbit about the state of the host halo at a given time. This version does
@@ -783,7 +783,7 @@ public:
 	 * @param t The time of this point. If only redshift is available, use the function SALTSA::zft(z).
 	 * @param silent Whether or not to suppress error messages.
 	 */
-	void force_add_host_parameter_point( const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
+	void force_add_host_parameter_point( const std::vector< flt_t > &parameters, time_type const & t,
 			const bool silent = false );
 	/**
 	 * Clears all phase-space points that the orbit has been told about.
@@ -823,7 +823,7 @@ public:
 	 *                   mass if left to default.
 	 * @param new_init_tau Truncation parameter tau of the profile. Will be 2*c if left to default
 	 */
-	void set_tNFW_init_satellite( CONST_BRG_MASS_REF new_init_mvir0,
+	void set_tNFW_init_satellite( mass_type const & new_init_mvir0,
 			const double z = 0, const double new_init_c = -1,
 			const double new_init_tau = -1 );
 	/**
@@ -835,7 +835,7 @@ public:
 	 *                   mass if left to default.
 	 * @param new_init_tau Truncation parameter tau of the profile. Will be 2*c if left to default
 	 */
-	void set_tNFW_init_host( CONST_BRG_MASS_REF new_mvir0, const double z = 0,
+	void set_tNFW_init_host( mass_type const & new_mvir0, const double z = 0,
 			const double new_c = -1, const double new_tau = -1 );
 	/**
 	 * Clears initial satellite profile. Not actually necessary to do at any point, as setting to
@@ -859,14 +859,14 @@ public:
 	 *
 	 * @param new_t_min The new minimum time.
 	 */
-	void set_t_min( CONST_BRG_TIME_REF  new_t_min );
+	void set_t_min( time_type const &  new_t_min );
 	/**
 	 * Override the default maximum time for stripping calculation. For instance, use this if
 	 * you only want to calculate stripping for a subsection of the orbit.
 	 *
 	 * @param new_t_min The new maximum time.
 	 */
-	void set_t_max( CONST_BRG_TIME_REF  new_t_max );
+	void set_t_max( time_type const &  new_t_max );
 	/**
 	 * Reset the minimum time to the default value (which will be the lowest time point passed
 	 * to the orbit).
@@ -998,8 +998,8 @@ public:
 	static const ssize_t & default_spline_resolution() noexcept {return _default_spline_resolution_;}
 	static const allowed_interpolation_type & default_interpolation_type() noexcept
 		{return _default_interpolation_type_;}
-	static BRG_VELOCITY & default_v_0() noexcept {return _default_v_0_;}
-	static BRG_DISTANCE & default_r_0() noexcept {return _default_r_0_;}
+	static velocity_type & default_v_0() noexcept {return _default_v_0_;}
+	static distance_type & default_r_0() noexcept {return _default_r_0_;}
 	static const double & default_step_length_power() noexcept {return _default_step_length_power_;}
 	static const double & default_step_factor_max() noexcept {return _default_step_factor_max_;}
 	static const double & default_step_factor_min() noexcept {return _default_step_factor_min_;}
@@ -1027,8 +1027,8 @@ public:
 	const ssize_t & spline_resolution() const noexcept {return _base_resolution_;}
 	const allowed_interpolation_type & interpolation_type() const noexcept
 		{return _interpolation_type_;}
-	const BRG_VELOCITY & v_0() const noexcept {return _v_0_;}
-	const BRG_DISTANCE & r_0() const noexcept {return _r_0_;}
+	const velocity_type & v_0() const noexcept {return _v_0_;}
+	const distance_type & r_0() const noexcept {return _r_0_;}
 	const double & step_length_power() const noexcept {return _step_length_power_;}
 	const double & step_factor_max() const noexcept {return _step_factor_max_;}
 	const double & step_factor_min() const noexcept {return _step_factor_min_;}
@@ -1052,15 +1052,15 @@ public:
 	const ssize_t & num_segments() const noexcept {return _num_segments_;}
 
 	/// Accessor to what t_min would be if not overridden.
-	const BRG_TIME & t_min_natural_value() const noexcept {return _t_min_natural_value_;}
+	const time_type & t_min_natural_value() const noexcept {return _t_min_natural_value_;}
 	/// Accessor to what t_max would be if not overridden.
-	const BRG_TIME & t_max_natural_value() const noexcept {return _t_max_natural_value_;}
+	const time_type & t_max_natural_value() const noexcept {return _t_max_natural_value_;}
 	/// Accessor to the override value of t_min
-	const BRG_TIME & t_min_override_value() const noexcept {return _t_min_override_value_;}
+	const time_type & t_min_override_value() const noexcept {return _t_min_override_value_;}
 	/// Accessor to the override value of t_max
-	const BRG_TIME & t_max_override_value() const noexcept {return _t_max_override_value_;}
+	const time_type & t_max_override_value() const noexcept {return _t_max_override_value_;}
 	/// Accessor to the current value of t_min
-	const BRG_TIME t_min() const
+	const time_type t_min() const
 	{
 		if(_override_t_min_)
 			return _t_min_override_value_;
@@ -1068,7 +1068,7 @@ public:
 			return _t_min_natural_value_;
 	}
 	/// Accessor to the current value of t_max
-	BRG_TIME t_max() const
+	time_type t_max() const
 	{
 		if(_override_t_max_)
 			return _t_max_override_value_;
@@ -1102,12 +1102,12 @@ public:
 	const std::vector< double > & vz_spline_unknown_points() const noexcept {return _vz_unknown_points_;}
 	const std::vector< std::pair< double, double > > & test_mass_spline_points() const noexcept
 			{return _test_mass_points_;}
-	const std::vector< std::pair< double, std::vector< BRG_UNITS > > > & host_parameter_spline_points() const noexcept
+	const std::vector< std::pair< double, std::vector< flt_t > > > & host_parameter_spline_points() const noexcept
 			{return _host_parameter_points_;}
 	//@}
 
 	/// Accessor to the list of discontinuity times
-	const std::vector< BRG_TIME > discontinuity_times() const noexcept {return _discontinuity_times_;}
+	const std::vector< time_type > discontinuity_times() const noexcept {return _discontinuity_times_;}
 
 	/// Accessor to initial satellite halo pointer
 	const density_profile * init_satellite_ptr() const noexcept {return _init_satellite_ptr_;}
@@ -1151,14 +1151,14 @@ public:
 	 * @param mret Variable to be loaded with final retained mass.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_final_m_ret( BRG_MASS & m_ret ) const;
+	const int get_final_m_ret( mass_type & m_ret ) const;
 	/**
 	 * Get final retained virial mass, calculating if necessary.
 	 *
 	 * @param fmret Variable to be loaded with final retained mass fraction.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_final_m_vir_ret( BRG_MASS & m_vir_ret ) const;
+	const int get_final_m_vir_ret( mass_type & m_vir_ret ) const;
 	/**
 	 * Get final retained mass fraction, calculating if necessary.
 	 *
@@ -1179,7 +1179,7 @@ public:
 	 * @param mret Variable to be loaded with final retained mass.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_final_comp_m_ret( BRG_MASS & m_ret ) const;
+	const int get_final_comp_m_ret( mass_type & m_ret ) const;
 	/**
 	 * Get final retained mass fraction of the comparison data.
 	 *
@@ -1198,7 +1198,7 @@ public:
 	 * @param final_sum_deltarho Variable to be loaded with final sum_delta_rho.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_final_sum_deltarho( BRG_UNITS & final_sum_deltarho ) const;
+	const int get_final_sum_deltarho( flt_t & final_sum_deltarho ) const;
 	/**
 	 * Get the final sum_gabdt.
 	 * @param final_sum_gabdt Variable to be loaded with final sum_gabdt.
@@ -1210,7 +1210,7 @@ public:
 	 * @param t Variable to be loaded with final infall time.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_last_infall_time( BRG_TIME & t ) const;
+	const int get_last_infall_time( time_type & t ) const;
 	/**
 	 * Get a clone of the final satellite profile.
 	 * @param final_satellite_clone Pointer to be created with new, pointing to clone (be sure to delete!)
@@ -1233,7 +1233,7 @@ public:
 	 *
 	 * @return Final retained mass.
 	 */
-	const BRG_MASS final_m_ret() const;
+	const mass_type final_m_ret() const;
 	/**
 	 * Get the final retained mass fraction, throwing an exception on failure.
 	 *
@@ -1245,7 +1245,7 @@ public:
 	 *
 	 * @return Final retained mass.
 	 */
-	const BRG_MASS final_comp_m_ret() const;
+	const mass_type final_comp_m_ret() const;
 	/**
 	 * Get the final retained mass fraction of the comparison data, throwing an exception on failure.
 	 *
@@ -1257,7 +1257,7 @@ public:
 	 *
 	 * @return Final retained mass.
 	 */
-	const BRG_MASS final_m_vir_ret() const;
+	const mass_type final_m_vir_ret() const;
 	/**
 	 * Get the final retained virial mass fraction, throwing an exception on failure.
 	 *
@@ -1268,7 +1268,7 @@ public:
 	 * Get the final sum_deltarho, throwing exception on failure.
 	 * @return The final sum_deltarho.
 	 */
-	const BRG_UNITS final_sum_deltarho() const;
+	const flt_t final_sum_deltarho() const;
 	/**
 	 * Get the final sum_gabdt, throwing exception on failure.
 	 * @return The final sum_gabdt.
@@ -1279,7 +1279,7 @@ public:
 	 * exception on failure.
 	 * @return The last discontinuity time.
 	 */
-	const BRG_TIME last_infall_time() const;
+	const time_type last_infall_time() const;
 	/**
 	 * Clone the final satellite, throwing exception on failure.
 	 * @return A clone of the final satellite. Make sure to store this value and delete it later!
@@ -1308,7 +1308,7 @@ public:
 	 * @param mret Variable to be loaded with the retained mass estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_m_ret_at_t( CONST_BRG_TIME_REF  t, BRG_MASS & m_ret) const;
+	const int get_m_ret_at_t( time_type const &  t, mass_type & m_ret) const;
 	/**
 	 * Get an estimate of the retained mass fraction at an arbitrary time. _record_full_data_ must be set to
 	 * True to get this; the orbit will be calculated again with it set if necessary.
@@ -1317,7 +1317,7 @@ public:
 	 * @param fmret Variable to be loaded with the retained mass fraction estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret ) const;
+	const int get_frac_m_ret_at_t( time_type const &  t, double & frac_m_ret ) const;
 	/**
 	 * Get an estimate of the retained virial mass at an arbitrary time. _record_full_data_ must be set to
 	 * True to get this; the orbit will be calculated again with it set if necessary.
@@ -1326,7 +1326,7 @@ public:
 	 * @param mret Variable to be loaded with the retained mass estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_m_vir_ret_at_t( CONST_BRG_TIME_REF  t, BRG_MASS & m_ret) const;
+	const int get_m_vir_ret_at_t( time_type const &  t, mass_type & m_ret) const;
 	/**
 	 * Get an estimate of the retained virial mass fraction at an arbitrary time. _record_full_data_ must be set to
 	 * True to get this; the orbit will be calculated again with it set if necessary.
@@ -1335,7 +1335,7 @@ public:
 	 * @param mret Variable to be loaded with the retained mass estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_frac_m_vir_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret ) const;
+	const int get_frac_m_vir_ret_at_t( time_type const &  t, double & frac_m_ret ) const;
 	/**
 	 * Get an estimate of the retained mass fraction of the comparison orbit at an arbitrary time.
 	 *
@@ -1343,7 +1343,7 @@ public:
 	 * @param fmret Variable to be loaded with the retained mass estimate.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_comp_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & m_ret) const;
+	const int get_comp_frac_m_ret_at_t( time_type const &  t, double & m_ret) const;
 	/**
 	 * Get an estimate of the retained mass fraction error of the comparison orbit at an arbitrary time.
 	 *
@@ -1351,7 +1351,7 @@ public:
 	 * @param fmret_err Variable to be loaded with the retained mass estimate fraction error.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_comp_frac_m_ret_error_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret_error) const;
+	const int get_comp_frac_m_ret_error_at_t( time_type const &  t, double & frac_m_ret_error) const;
 
 	// Get data at arbitrary time (throws exception on failure)
 	/**
@@ -1362,7 +1362,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass.
 	 * @return Retained mass estimate.
 	 */
-	const BRG_MASS m_ret_at_t(CONST_BRG_TIME_REF  t) const;
+	const mass_type m_ret_at_t(time_type const &  t) const;
 	/**
 	 * Get the retained mass fraction at an arbitrary time, throwing an exception on failure.
 	 * _record_full_data_ must be set to True to get this; the orbit will be calculated again
@@ -1371,7 +1371,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass.
 	 * @return Retained mass fraction estimate.
 	 */
-	const double frac_m_ret_at_t(CONST_BRG_TIME_REF  t) const;
+	const double frac_m_ret_at_t(time_type const &  t) const;
 	/**
 	 * Get the retained virial mass at an arbitrary time, throwing an exception on failure.
 	 * _record_full_data_ must be set to True to get this; the orbit will be calculated again
@@ -1380,7 +1380,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass.
 	 * @return Retained mass estimate.
 	 */
-	const BRG_MASS m_vir_ret_at_t(CONST_BRG_TIME_REF  t) const;
+	const mass_type m_vir_ret_at_t(time_type const &  t) const;
 	/**
 	 * Get the retained virial mass fraction at an arbitrary time, throwing an exception on failure.
 	 * _record_full_data_ must be set to True to get this; the orbit will be calculated again
@@ -1389,7 +1389,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass.
 	 * @return Retained mass fraction estimate.
 	 */
-	const double frac_m_vir_ret_at_t(CONST_BRG_TIME_REF  t) const;
+	const double frac_m_vir_ret_at_t(time_type const &  t) const;
 	/**
 	 * Get the retained mass fraction of the comparison orbit at an arbitrary time, throwing an exception
 	 * on failure.
@@ -1397,7 +1397,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass fraction.
 	 * @return Retained mass fraction estimate.
 	 */
-	const double comp_frac_m_ret_at_t(CONST_BRG_TIME_REF  t) const;
+	const double comp_frac_m_ret_at_t(time_type const &  t) const;
 	/**
 	 * Get the retained mass fraction error of the comparison orbit at an arbitrary time, throwing an
 	 * exception on failure.
@@ -1405,7 +1405,7 @@ public:
 	 * @param t Time for which to get an estimate of the retained mass fraction error.
 	 * @return Retained mass fraction error estimate.
 	 */
-	const double comp_frac_m_ret_error_at_t(CONST_BRG_TIME_REF  t) const;
+	const double comp_frac_m_ret_error_at_t(time_type const &  t) const;
 
 	// Quality of fit.
 	/**

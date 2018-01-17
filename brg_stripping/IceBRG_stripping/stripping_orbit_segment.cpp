@@ -40,17 +40,18 @@
 
 #include "stripping_orbit_segment.h"
 
+using namespace IceBRG;
 
 // IceBRG::stripping_orbit_segment class method implementations
 #if (1)
 
 double IceBRG::stripping_orbit_segment::_tidal_strip_retained( const density_profile *host_group,
-		const density_profile *satellite, CONST_BRG_DISTANCE_REF r,
-		CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt,
-		CONST_BRG_TIME_REF time_step, const long double &sum_delta_rho ) const
+		const density_profile *satellite, distance_type const & r,
+		velocity_type const & vr, velocity_type const & vt,
+		time_type const & time_step, const long double &sum_delta_rho ) const
 {
-	BRG_DISTANCE new_rt;
-	BRG_TIME inst_tangential_orbital_period, inst_full_orbital_period,
+	distance_type new_rt;
+	time_type inst_tangential_orbital_period, inst_full_orbital_period,
 		inst_orbital_period, hm_period, stripping_period;
 	double mass_frac_retained, mass_frac_lost_total;
 	inst_tangential_orbital_period = 2 * pi * r / safe_d(vt);
@@ -86,15 +87,15 @@ double IceBRG::stripping_orbit_segment::_tidal_strip_retained( const density_pro
 	return mass_frac_retained;
 }
 
-BRG_DISTANCE IceBRG::stripping_orbit_segment::_get_rt( const density_profile *host_group,
-		const density_profile *satellite, CONST_BRG_DISTANCE_REF r,
-		CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt,
-		CONST_BRG_TIME_REF time_step, const long double &sum_delta_rho,
+distance_type IceBRG::stripping_orbit_segment::_get_rt( const density_profile *host_group,
+		const density_profile *satellite, distance_type const & r,
+		velocity_type const & vr, velocity_type const & vt,
+		time_type const & time_step, const long double &sum_delta_rho,
 		const bool silent ) const
 {
-	BRG_UNITS omega;
-	BRG_DISTANCE new_rt, old_rt;
-	BRG_UNITS max_rt = 0;
+	flt_t omega;
+	distance_type new_rt, old_rt;
+	flt_t max_rt = 0;
 
 	omega = vt / safe_d( r );
 
@@ -115,7 +116,7 @@ BRG_DISTANCE IceBRG::stripping_orbit_segment::_get_rt( const density_profile *ho
 	old_rt = satellite->rt();
 
 	// First, we try solving iteratively
-	new_rt = solve_iterate( &rt_it_solver, old_rt, 1, 0.0001, 1000 );
+	new_rt = solve_iterate( rt_it_solver, old_rt, 1, 0.0001, 1000 );
 	if ( ( new_rt == 0 ) || ( isbad( new_rt ) ) )
 	{
 		// Iteratively didn't work, so we go to the grid option
@@ -124,7 +125,7 @@ BRG_DISTANCE IceBRG::stripping_orbit_segment::_get_rt( const density_profile *ho
 		old_rt = new_rt;
 		try
 		{
-			new_rt = solve_grid( &rt_grid_solver, (BRG_UNITS)0., max_rt, 100, (BRG_UNITS)0.);
+			new_rt = solve_grid( rt_grid_solver, (flt_t)0., max_rt, 100, (flt_t)0.);
 		}
 		catch(const std::exception &e)
 		{
@@ -712,8 +713,8 @@ void IceBRG::stripping_orbit_segment::set_tidal_shocking_power(
 #endif
 
 
-void IceBRG::stripping_orbit_segment::add_point( CONST_BRG_DISTANCE_REF x,
-		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
+void IceBRG::stripping_orbit_segment::add_point( distance_type const & x,
+		distance_type const & y, distance_type const & z, time_type const & t,
 		const double new_mass )
 {
 	_calculated_ = false;
@@ -730,9 +731,9 @@ void IceBRG::stripping_orbit_segment::add_point( CONST_BRG_DISTANCE_REF x,
 		_t_max_natural_value_ = t;
 }
 
-void IceBRG::stripping_orbit_segment::add_point( CONST_BRG_DISTANCE_REF x,
-		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
-		CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
+void IceBRG::stripping_orbit_segment::add_point( distance_type const & x,
+		distance_type const & y, distance_type const & z, velocity_type const & vx,
+		velocity_type const & vy, velocity_type const & vz, time_type const & t,
 		const double new_test_mass )
 {
 	_calculated_ = false;
@@ -750,7 +751,7 @@ void IceBRG::stripping_orbit_segment::add_point( CONST_BRG_DISTANCE_REF x,
 }
 
 void IceBRG::stripping_orbit_segment::add_x_point(
-		CONST_BRG_DISTANCE_REF x, CONST_BRG_TIME_REF t )
+		distance_type const & x, time_type const & t )
 {
 	_calculated_ = false;
 
@@ -763,7 +764,7 @@ void IceBRG::stripping_orbit_segment::add_x_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_y_point(
-		CONST_BRG_DISTANCE_REF y, CONST_BRG_TIME_REF t )
+		distance_type const & y, time_type const & t )
 {
 	_calculated_ = false;
 	_y_spline_.add_point( t, y );
@@ -774,7 +775,7 @@ void IceBRG::stripping_orbit_segment::add_y_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_z_point(
-		CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t )
+		distance_type const & z, time_type const & t )
 {
 	_calculated_ = false;
 	_z_spline_.add_point( t, z );
@@ -785,7 +786,7 @@ void IceBRG::stripping_orbit_segment::add_z_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_vx_point(
-		CONST_BRG_VELOCITY_REF vx, CONST_BRG_TIME_REF t )
+		velocity_type const & vx, time_type const & t )
 {
 	_calculated_ = false;
 	_vx_spline_.add_point( t, vx );
@@ -796,7 +797,7 @@ void IceBRG::stripping_orbit_segment::add_vx_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_vy_point(
-		CONST_BRG_VELOCITY_REF vy, CONST_BRG_TIME_REF t )
+		velocity_type const & vy, time_type const & t )
 {
 	_calculated_ = false;
 	_vy_spline_.add_point( t, vy );
@@ -807,7 +808,7 @@ void IceBRG::stripping_orbit_segment::add_vy_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_vz_point(
-		CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t )
+		velocity_type const & vz, time_type const & t )
 {
 	_calculated_ = false;
 	_vz_spline_.add_point( t, vz );
@@ -818,7 +819,7 @@ void IceBRG::stripping_orbit_segment::add_vz_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_unknown_vx_point(
-		CONST_BRG_TIME_REF t )
+		time_type const & t )
 {
 	_calculated_ = false;
 	_vx_spline_.add_unknown_point( t );
@@ -829,7 +830,7 @@ void IceBRG::stripping_orbit_segment::add_unknown_vx_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_unknown_vy_point(
-		CONST_BRG_TIME_REF t )
+		time_type const & t )
 {
 	_calculated_ = false;
 	_vy_spline_.add_unknown_point( t );
@@ -840,7 +841,7 @@ void IceBRG::stripping_orbit_segment::add_unknown_vy_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_unknown_vz_point(
-		CONST_BRG_TIME_REF t )
+		time_type const & t )
 {
 	_calculated_ = false;
 	_vz_spline_.add_unknown_point( t );
@@ -851,7 +852,7 @@ void IceBRG::stripping_orbit_segment::add_unknown_vz_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_test_mass_point(
-		const double test_mass, CONST_BRG_TIME_REF t )
+		const double test_mass, time_type const & t )
 {
 	_calculated_ = false;
 	_test_mass_spline_.add_point( t, test_mass );
@@ -862,7 +863,7 @@ void IceBRG::stripping_orbit_segment::add_test_mass_point(
 }
 
 void IceBRG::stripping_orbit_segment::add_host_parameter_point(
-		const std::vector< BRG_UNITS > & parameters, CONST_BRG_TIME_REF t,
+		const std::vector< flt_t > & parameters, time_type const & t,
 		const bool silent )
 {
 	const ssize_t num_parameters = ssize(parameters);
@@ -952,7 +953,7 @@ void IceBRG::stripping_orbit_segment::set_init_sum_gabdt(
 }
 
 void IceBRG::stripping_orbit_segment::set_tNFW_init_satellite(
-		CONST_BRG_MASS_REF new_init_mvir0, const double z,
+		mass_type const & new_init_mvir0, const double z,
 		const double new_init_c, const double new_init_tau )
 {
 	_using_private_init_satellite_ = true;
@@ -979,7 +980,7 @@ void IceBRG::stripping_orbit_segment::set_tNFW_init_satellite(
 }
 
 void IceBRG::stripping_orbit_segment::set_tNFW_host(
-		CONST_BRG_MASS_REF new_init_mvir0, const double z,
+		mass_type const & new_init_mvir0, const double z,
 		const double new_init_c, const double new_init_tau )
 {
 	_using_private_init_host_ = true;
@@ -1009,14 +1010,14 @@ void IceBRG::stripping_orbit_segment::set_tNFW_host(
 }
 
 void IceBRG::stripping_orbit_segment::set_t_min(
-		CONST_BRG_TIME_REF new_t_min )
+		time_type const & new_t_min )
 {
 	_t_min_override_val_ = new_t_min;
 	_override_t_min_ = true;
 }
 
 void IceBRG::stripping_orbit_segment::set_t_max(
-		CONST_BRG_TIME_REF new_t_max )
+		time_type const & new_t_max )
 {
 	_t_max_override_val_ = new_t_max;
 	_override_t_max_ = true;
@@ -1133,12 +1134,12 @@ void IceBRG::stripping_orbit_segment::set_record_full_data(
 // Function to calculate stripping
 void IceBRG::stripping_orbit_segment::calc( const bool silent ) const
 {
-	BRG_DISTANCE r;
-	BRG_VELOCITY v, vt, vr;
-	BRG_TIME t, t_step, t_min_to_use, t_max_to_use;
-	BRG_UNITS current_deltarho;
-	std::vector< BRG_UNITS > satellite_parameters;
-	std::vector< BRG_UNITS > host_parameters;
+	distance_type r;
+	velocity_type v, vt, vr;
+	time_type t, t_step, t_min_to_use, t_max_to_use;
+	flt_t current_deltarho;
+	std::vector< flt_t > satellite_parameters;
+	std::vector< flt_t > host_parameters;
 	int num_host_parameters = 0;
 	int counter = 0;
 	double step_length_factor = 1;
@@ -1257,8 +1258,8 @@ void IceBRG::stripping_orbit_segment::calc( const bool silent ) const
 		_host_parameter_data_.push_back( host_parameters );
 	}
 
-	const BRG_MASS init_mtot = _current_satellite_ptr_->mtot();
-	const BRG_MASS init_mvir = _current_satellite_ptr_->mvir();
+	const mass_type init_mtot = _current_satellite_ptr_->mtot();
+	const mass_type init_mvir = _current_satellite_ptr_->mvir();
 
 	// Loop over time
 	for ( t = t_min_to_use; t < t_max_to_use;
@@ -1659,7 +1660,7 @@ void IceBRG::stripping_orbit_segment::print_full_data(
 		}
 	}
 
-	BRG_TIME t_min_to_use, t_max_to_use;
+	time_type t_min_to_use, t_max_to_use;
 
 	if ( _override_t_min_ )
 	{
@@ -1850,8 +1851,8 @@ void IceBRG::stripping_orbit_segment::print_full_data(
 		print_table( *out, data, std::vector<std::string>(), silent );
 }
 
-BRG_UNITS IceBRG::stripping_orbit_segment::_delta_rho(
-		const int index, const double x, CONST_BRG_TIME_REF t_step,
+flt_t IceBRG::stripping_orbit_segment::_delta_rho(
+		const int index, const double x, time_type const & t_step,
 		const bool silent ) const
 {
 	if ( index < 1 )
@@ -1879,15 +1880,15 @@ BRG_UNITS IceBRG::stripping_orbit_segment::_delta_rho(
 	return max( result, 0. );
 }
 
-const double IceBRG::stripping_orbit_segment::_step_length_factor( CONST_BRG_VELOCITY_REF  v, CONST_BRG_DISTANCE_REF  r ) const
+const double IceBRG::stripping_orbit_segment::_step_length_factor( velocity_type const &  v, distance_type const &  r ) const
 {
 	/* Method to determine the appropriate factor for the step length.
 	 * It uses the host's virial velocity and radius so that parts of
 	 * the orbit with either high velocity or low distance from the host
 	 * will take small steps (and the inverse as well).
 	 */
-	BRG_VELOCITY v_0;
-	BRG_DISTANCE r_0;
+	velocity_type v_0;
+	distance_type r_0;
 
 	// Determine proper scaling from the virial velocities, using the
 	// most appropriate value depending on what's been loaded.
@@ -1944,7 +1945,7 @@ const double IceBRG::stripping_orbit_segment::_step_length_factor( CONST_BRG_VEL
 	return min(step_length_factor_v,step_length_factor_r);
 }
 
-BRG_DISTANCE IceBRG::stripping_orbit_segment::_rvir(
+distance_type IceBRG::stripping_orbit_segment::_rvir(
 		const int index ) const
 {
 	return _current_satellite_ptr_->rvir();
@@ -1982,7 +1983,7 @@ void IceBRG::stripping_orbit_segment::_pass_interpolation_type() const
 }
 
 int IceBRG::stripping_orbit_segment::get_final_m_ret(
-BRG_MASS & m_ret, const bool silent ) const
+mass_type & m_ret, const bool silent ) const
 {
 	try
 	{
@@ -2023,7 +2024,7 @@ int IceBRG::stripping_orbit_segment::get_m_ret_points(
 }
 
 int IceBRG::stripping_orbit_segment::get_final_m_vir_ret(
-BRG_MASS & m_ret, const bool silent ) const
+mass_type & m_ret, const bool silent ) const
 {
 	try
 	{
@@ -2078,7 +2079,7 @@ long double & sum_deltarho, const bool silent ) const
 }
 
 int IceBRG::stripping_orbit_segment::get_final_sum_deltarho(
-		BRG_UNITS & sum_deltarho, const bool silent ) const
+		flt_t & sum_deltarho, const bool silent ) const
 {
 	try
 	{
@@ -2147,7 +2148,7 @@ int IceBRG::stripping_orbit_segment::clone_final_host(
 
 #if (1) // Get final data (throws exception on error)
 
-BRG_MASS IceBRG::stripping_orbit_segment::final_m_ret() const
+mass_type IceBRG::stripping_orbit_segment::final_m_ret() const
 {
 	if(!_calculated_) calc();
 
@@ -2173,7 +2174,7 @@ std::vector< std::pair<double,double> > IceBRG::stripping_orbit_segment::m_ret_p
 
 	return result;
 }
-BRG_MASS IceBRG::stripping_orbit_segment::final_m_vir_ret() const
+mass_type IceBRG::stripping_orbit_segment::final_m_vir_ret() const
 {
 	if(!_calculated_) calc();
 
@@ -2200,7 +2201,7 @@ std::vector< std::pair<double,double> > IceBRG::stripping_orbit_segment::m_vir_r
 	return result;
 }
 
-BRG_UNITS IceBRG::stripping_orbit_segment::final_sum_deltarho() const
+flt_t IceBRG::stripping_orbit_segment::final_sum_deltarho() const
 {
 	if(!_calculated_) calc();
 

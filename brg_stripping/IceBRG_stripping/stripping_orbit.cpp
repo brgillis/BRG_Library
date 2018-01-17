@@ -47,6 +47,7 @@
 #include "stripping_orbit.h"
 
 using namespace std;
+using namespace IceBRG;
 
 /** Static member initialisations **/
 #if (1)
@@ -65,8 +66,8 @@ IceBRG::stripping_orbit::allowed_interpolation_type IceBRG::stripping_orbit::_de
 // This gives smaller steps when the satellite is moving faster.
 // If you want to turn off adaptive step size, set step_length_power to 0
 // Alternatively, set step_length_power to 1 for even steps in position
-BRG_VELOCITY IceBRG::stripping_orbit::_default_v_0_ = 400 * unitconv::kmpstomps; // 400 km/s
-BRG_DISTANCE IceBRG::stripping_orbit::_default_r_0_ = 400 * unitconv::kpctom; // 400 kpc
+velocity_type IceBRG::stripping_orbit::_default_v_0_ = 400 * unitconv::kmpstomps; // 400 km/s
+distance_type IceBRG::stripping_orbit::_default_r_0_ = 400 * unitconv::kpctom; // 400 kpc
 double IceBRG::stripping_orbit::_default_step_length_power_ = 3.0;
 double IceBRG::stripping_orbit::_default_step_factor_max_ = 10; // Maximum allowed value of (v_0/v)^(step_length_power)
 double IceBRG::stripping_orbit::_default_step_factor_min_ = 0.001; // Minimum allowed value of (v_0/v)^(step_length_power)
@@ -512,8 +513,8 @@ void IceBRG::stripping_orbit::clear_calcs() const
 	_likely_disrupted_ = false;
 }
 
-void IceBRG::stripping_orbit::add_point( CONST_BRG_DISTANCE_REF x,
-		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
+void IceBRG::stripping_orbit::add_point( distance_type const & x,
+		distance_type const & y, distance_type const & z, time_type const & t,
 		const double test_mass, const double test_mass_error )
 {
 	// Check if there's already a point with this t value
@@ -525,8 +526,8 @@ void IceBRG::stripping_orbit::add_point( CONST_BRG_DISTANCE_REF x,
 	force_add_point(x, y, z, t, test_mass, test_mass_error );
 }
 
-void IceBRG::stripping_orbit::force_add_point( CONST_BRG_DISTANCE_REF x,
-		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
+void IceBRG::stripping_orbit::force_add_point( distance_type const & x,
+		distance_type const & y, distance_type const & z, time_type const & t,
 		const double test_mass, const double test_mass_error )
 {
 	_calculated_ = false;
@@ -555,9 +556,9 @@ void IceBRG::stripping_orbit::force_add_point( CONST_BRG_DISTANCE_REF x,
 	}
 }
 
-void IceBRG::stripping_orbit::add_point( CONST_BRG_DISTANCE_REF x,
-		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
-		CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
+void IceBRG::stripping_orbit::add_point( distance_type const & x,
+		distance_type const & y, distance_type const & z, velocity_type const & vx,
+		velocity_type const & vy, velocity_type const & vz, time_type const & t,
 		const double test_mass, const double test_mass_error )
 {
 	// Check if there's already a point with this t value
@@ -569,9 +570,9 @@ void IceBRG::stripping_orbit::add_point( CONST_BRG_DISTANCE_REF x,
 	return force_add_point(x, y, z, vx, vy, vz, t, test_mass, test_mass_error );
 }
 
-void IceBRG::stripping_orbit::force_add_point( CONST_BRG_DISTANCE_REF x,
-		CONST_BRG_DISTANCE_REF y, CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
-		CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
+void IceBRG::stripping_orbit::force_add_point( distance_type const & x,
+		distance_type const & y, distance_type const & z, velocity_type const & vx,
+		velocity_type const & vy, velocity_type const & vz, time_type const & t,
 		const double test_mass, const double test_mass_error )
 {
 	_calculated_ = false;
@@ -601,7 +602,7 @@ void IceBRG::stripping_orbit::force_add_point( CONST_BRG_DISTANCE_REF x,
 }
 
 void IceBRG::stripping_orbit::add_host_parameter_point(
-		const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
+		const std::vector< flt_t > &parameters, time_type const & t,
 		const bool silent )
 {
 	// Check if there's already a point with this t value
@@ -614,7 +615,7 @@ void IceBRG::stripping_orbit::add_host_parameter_point(
 }
 
 void IceBRG::stripping_orbit::force_add_host_parameter_point(
-		const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
+		const std::vector< flt_t > &parameters, time_type const & t,
 		const bool silent )
 {
 	// Check num_parameters matches vector size
@@ -624,7 +625,7 @@ void IceBRG::stripping_orbit::force_add_host_parameter_point(
 	}
 
 	_host_parameter_points_.push_back(
-			std::pair< double, std::vector< BRG_UNITS > >( t, parameters ) );
+			std::pair< double, std::vector< flt_t > >( t, parameters ) );
 	_host_param_t_points_.push_back(t);
 
 	if ( ssize(_host_parameter_points_) >= 2 )
@@ -634,7 +635,7 @@ void IceBRG::stripping_orbit::force_add_host_parameter_point(
 }
 
 void IceBRG::stripping_orbit::add_discontinuity_time(
-		CONST_BRG_TIME_REF t )
+		time_type const & t )
 {
 	try
 	{
@@ -704,7 +705,7 @@ void IceBRG::stripping_orbit::set_init_satellite(
 }
 
 void IceBRG::stripping_orbit::set_tNFW_init_satellite(
-		CONST_BRG_MASS_REF new_init_mvir0, const double z,
+		mass_type const & new_init_mvir0, const double z,
 		const double new_init_c, const double new_init_tau )
 {
 	_using_private_init_satellite_ = true;
@@ -723,7 +724,7 @@ void IceBRG::stripping_orbit::set_tNFW_init_satellite(
 }
 
 void IceBRG::stripping_orbit::set_tNFW_init_host(
-		CONST_BRG_MASS_REF new_init_mvir0, const double z,
+		mass_type const & new_init_mvir0, const double z,
 		const double new_init_c, const double new_init_tau )
 {
 	_using_private_init_host_ = true;
@@ -1353,13 +1354,13 @@ void IceBRG::stripping_orbit::reset_tidal_shocking_power()
 }
 #endif
 
-void IceBRG::stripping_orbit::set_t_min( CONST_BRG_TIME_REF new_t_min )
+void IceBRG::stripping_orbit::set_t_min( time_type const & new_t_min )
 {
 	_t_min_override_value_ = new_t_min;
 	_override_t_min_ = true;
 }
 
-void IceBRG::stripping_orbit::set_t_max( CONST_BRG_TIME_REF new_t_max )
+void IceBRG::stripping_orbit::set_t_max( time_type const & new_t_max )
 {
 	_t_max_override_value_ = new_t_max;
 	_override_t_max_ = true;
@@ -1568,7 +1569,7 @@ void IceBRG::stripping_orbit::calc( const bool silent ) const
 	for ( ssize_t i = 0; i < ssize(_host_parameter_points_); i++ )
 	{
 		double t = _host_parameter_points_.at( i ).first;
-		std::vector< BRG_UNITS > host_parameters =
+		std::vector< flt_t > host_parameters =
 				_host_parameter_points_.at( i ).second;
 		int segment_counter = 0;
 		for ( ssize_t j = 0; j < _num_segments_ - 1; j++ )
@@ -1884,7 +1885,7 @@ void IceBRG::stripping_orbit::print_full_data( std::ostream *out ) const
 	}
 }
 
-const int IceBRG::stripping_orbit::get_final_m_ret( BRG_MASS & m_ret ) const
+const int IceBRG::stripping_orbit::get_final_m_ret( mass_type & m_ret ) const
 {
 	if(_likely_disrupted_)
 	{
@@ -1919,7 +1920,7 @@ const int IceBRG::stripping_orbit::get_final_m_ret( BRG_MASS & m_ret ) const
 	m_ret = _init_satellite_ptr_->mtot()*_final_frac_m_ret_list_.back();
 	return 0;
 }
-const int IceBRG::stripping_orbit::get_m_ret_at_t( CONST_BRG_TIME_REF t, BRG_MASS & m_ret) const
+const int IceBRG::stripping_orbit::get_m_ret_at_t( time_type const & t, mass_type & m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -1961,7 +1962,7 @@ const int IceBRG::stripping_orbit::get_final_frac_m_ret( double & frac_m_ret ) c
 	}
 	return 0;
 }
-const int IceBRG::stripping_orbit::get_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
+const int IceBRG::stripping_orbit::get_frac_m_ret_at_t( time_type const &  t, double & frac_m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -1982,7 +1983,7 @@ const int IceBRG::stripping_orbit::get_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, d
 	frac_m_ret = max( _m_ret_interpolator_(t), 0. );
 	return 0;
 }
-const int IceBRG::stripping_orbit::get_final_m_vir_ret( BRG_MASS & m_ret ) const
+const int IceBRG::stripping_orbit::get_final_m_vir_ret( mass_type & m_ret ) const
 {
 	if(likely_disrupted())
 	{
@@ -2010,7 +2011,7 @@ const int IceBRG::stripping_orbit::get_final_m_vir_ret( BRG_MASS & m_ret ) const
 	}
 	return 0;
 }
-const int IceBRG::stripping_orbit::get_m_vir_ret_at_t( CONST_BRG_TIME_REF  t, BRG_MASS & m_ret) const
+const int IceBRG::stripping_orbit::get_m_vir_ret_at_t( time_type const &  t, mass_type & m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2059,7 +2060,7 @@ const int IceBRG::stripping_orbit::get_final_frac_m_vir_ret( double & frac_m_ret
 	}
 	return 0;
 }
-const int IceBRG::stripping_orbit::get_frac_m_vir_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
+const int IceBRG::stripping_orbit::get_frac_m_vir_ret_at_t( time_type const &  t, double & frac_m_ret) const
 {
 	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
 	{
@@ -2080,7 +2081,7 @@ const int IceBRG::stripping_orbit::get_frac_m_vir_ret_at_t( CONST_BRG_TIME_REF  
 	frac_m_ret = max( _m_vir_ret_interpolator_(t), 0. );
 	return 0;
 }
-const int IceBRG::stripping_orbit::get_final_comp_m_ret( BRG_MASS & m_ret ) const
+const int IceBRG::stripping_orbit::get_final_comp_m_ret( mass_type & m_ret ) const
 {
 	double frac_m_ret;
 
@@ -2094,15 +2095,15 @@ const int IceBRG::stripping_orbit::get_final_comp_frac_m_ret( double & frac_m_re
 {
 	return get_comp_frac_m_ret_at_t( t_max(), frac_m_ret );
 }
-const BRG_MASS IceBRG::stripping_orbit::final_comp_m_ret() const
+const mass_type IceBRG::stripping_orbit::final_comp_m_ret() const
 {
 	return _init_satellite_ptr_->mtot()*comp_frac_m_ret_at_t(t_max());
 }
-const BRG_MASS IceBRG::stripping_orbit::final_comp_frac_m_ret() const
+const mass_type IceBRG::stripping_orbit::final_comp_frac_m_ret() const
 {
 	return comp_frac_m_ret_at_t(t_max());
 }
-const int IceBRG::stripping_orbit::get_comp_frac_m_ret_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
+const int IceBRG::stripping_orbit::get_comp_frac_m_ret_at_t( time_type const &  t, double & frac_m_ret) const
 {
 	try
 	{
@@ -2114,7 +2115,7 @@ const int IceBRG::stripping_orbit::get_comp_frac_m_ret_at_t( CONST_BRG_TIME_REF 
 	}
 	return 0;
 }
-const int IceBRG::stripping_orbit::get_comp_frac_m_ret_error_at_t( CONST_BRG_TIME_REF  t, double & frac_m_ret) const
+const int IceBRG::stripping_orbit::get_comp_frac_m_ret_error_at_t( time_type const &  t, double & frac_m_ret) const
 {
 	try
 	{
@@ -2150,7 +2151,7 @@ const int IceBRG::stripping_orbit::get_final_sum_deltarho(
 }
 
 const int IceBRG::stripping_orbit::get_final_sum_deltarho(
-		BRG_UNITS & final_sum_deltarho ) const
+		flt_t & final_sum_deltarho ) const
 {
 	if ( !_calculated_ )
 	{
@@ -2194,7 +2195,7 @@ const int IceBRG::stripping_orbit::get_final_sum_gabdt(
 }
 
 const int IceBRG::stripping_orbit::get_last_infall_time(
-		BRG_TIME & t ) const
+		time_type & t ) const
 {
 	if ( !_calculated_ )
 	{
@@ -2298,9 +2299,9 @@ const int IceBRG::stripping_orbit::clone_final_host(
 }
 
 // Get final data (throws exception on failure)
-const BRG_MASS IceBRG::stripping_orbit::final_m_ret() const
+const mass_type IceBRG::stripping_orbit::final_m_ret() const
 {
-	BRG_MASS result = -1;
+	mass_type result = -1;
 
 	if(likely_disrupted()) return 0;
 
@@ -2310,9 +2311,9 @@ const BRG_MASS IceBRG::stripping_orbit::final_m_ret() const
 	}
 	return result;
 }
-const BRG_MASS IceBRG::stripping_orbit::m_ret_at_t(CONST_BRG_TIME_REF  t) const
+const mass_type IceBRG::stripping_orbit::m_ret_at_t(time_type const &  t) const
 {
-	BRG_MASS result = -1;
+	mass_type result = -1;
 
 	if ( get_m_ret_at_t( t, result ) )
 	{
@@ -2320,9 +2321,9 @@ const BRG_MASS IceBRG::stripping_orbit::m_ret_at_t(CONST_BRG_TIME_REF  t) const
 	}
 	return result;
 }
-const BRG_MASS IceBRG::stripping_orbit::final_m_vir_ret() const
+const mass_type IceBRG::stripping_orbit::final_m_vir_ret() const
 {
-	BRG_MASS result = -1;
+	mass_type result = -1;
 
 	if(likely_disrupted()) return 0;
 
@@ -2332,9 +2333,9 @@ const BRG_MASS IceBRG::stripping_orbit::final_m_vir_ret() const
 	}
 	return result;
 }
-const BRG_MASS IceBRG::stripping_orbit::m_vir_ret_at_t(CONST_BRG_TIME_REF  t) const
+const mass_type IceBRG::stripping_orbit::m_vir_ret_at_t(time_type const &  t) const
 {
-	BRG_MASS result = -1;
+	mass_type result = -1;
 
 	if ( get_m_vir_ret_at_t( t, result ) )
 	{
@@ -2353,7 +2354,7 @@ const double IceBRG::stripping_orbit::final_frac_m_vir_ret() const
 	}
 	return result;
 }
-const double IceBRG::stripping_orbit::frac_m_vir_ret_at_t(CONST_BRG_TIME_REF t) const
+const double IceBRG::stripping_orbit::frac_m_vir_ret_at_t(time_type const & t) const
 {
 	double result = -1;
 
@@ -2363,18 +2364,18 @@ const double IceBRG::stripping_orbit::frac_m_vir_ret_at_t(CONST_BRG_TIME_REF t) 
 	}
 	return result;
 }
-const double IceBRG::stripping_orbit::comp_frac_m_ret_at_t(CONST_BRG_TIME_REF  t) const
+const double IceBRG::stripping_orbit::comp_frac_m_ret_at_t(time_type const &  t) const
 {
 	return _test_mass_interpolator_(t);
 }
-const double IceBRG::stripping_orbit::comp_frac_m_ret_error_at_t(CONST_BRG_TIME_REF  t) const
+const double IceBRG::stripping_orbit::comp_frac_m_ret_error_at_t(time_type const &  t) const
 {
 	return _test_mass_error_interpolator_(t);
 }
 
-const BRG_UNITS IceBRG::stripping_orbit::final_sum_deltarho() const
+const flt_t IceBRG::stripping_orbit::final_sum_deltarho() const
 {
-	BRG_UNITS result = -1;
+	flt_t result = -1;
 
 	if ( get_final_sum_deltarho( result ) )
 	{
@@ -2394,9 +2395,9 @@ const IceBRG::gabdt IceBRG::stripping_orbit::final_sum_gabdt() const
 	return result;
 }
 
-const BRG_TIME IceBRG::stripping_orbit::last_infall_time() const
+const time_type IceBRG::stripping_orbit::last_infall_time() const
 {
-	BRG_TIME result;
+	time_type result;
 
 	if ( get_last_infall_time( result ) )
 	{

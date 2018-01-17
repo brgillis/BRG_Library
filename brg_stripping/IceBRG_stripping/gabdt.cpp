@@ -35,6 +35,8 @@
 
 #include "gabdt.h"
 
+using namespace IceBRG;
+
 // IceBRG::gabdt class method implementations
 #if (1)
 
@@ -44,15 +46,15 @@ IceBRG::gabdt::gabdt( void )
 }
 
 IceBRG::gabdt::gabdt( const density_profile *new_host,
-		CONST_BRG_DISTANCE_REF new_x, CONST_BRG_DISTANCE_REF new_y,
-		CONST_BRG_DISTANCE_REF new_z, CONST_BRG_TIME_REF new_dt )
+		distance_type const & new_x, distance_type const & new_y,
+		distance_type const & new_z, time_type const & new_dt )
 {
 	set( new_host, new_x, new_y, new_z, new_dt );
 }
 
 void IceBRG::gabdt::set( const density_profile *new_host,
-		CONST_BRG_DISTANCE_REF new_x, CONST_BRG_DISTANCE_REF new_y,
-		CONST_BRG_DISTANCE_REF new_z, CONST_BRG_TIME_REF new_dt )
+		distance_type const & new_x, distance_type const & new_y,
+		distance_type const & new_z, time_type const & new_dt )
 {
 	_is_cached_ = false;
 	_host_ptr_ = new_host;
@@ -73,8 +75,8 @@ void IceBRG::gabdt::set_host_ptr( const density_profile *new_host )
 	_is_cached_ = false;
 	_host_ptr_ = new_host;
 }
-void IceBRG::gabdt::set_pos( CONST_BRG_DISTANCE_REF new_x,
-		CONST_BRG_DISTANCE_REF new_y, CONST_BRG_DISTANCE_REF new_z )
+void IceBRG::gabdt::set_pos( distance_type const & new_x,
+		distance_type const & new_y, distance_type const & new_z )
 {
 	_is_cached_ = false;
 	_x_ = new_x;
@@ -83,7 +85,7 @@ void IceBRG::gabdt::set_pos( CONST_BRG_DISTANCE_REF new_x,
 	_r_ = dist3d( _x_, _y_, _z_ );
 	_dv_.clear();
 }
-void IceBRG::gabdt::set_dt( CONST_BRG_TIME_REF new_dt )
+void IceBRG::gabdt::set_dt( time_type const & new_dt )
 {
 	if ( _is_cached_ )
 	{
@@ -101,9 +103,9 @@ void IceBRG::gabdt::calc_dv( const bool silent ) const
 	gabdt_functor gabdtf;
 	gabdtf.host_ptr = _host_ptr_;
 	size_t num_in_params = 3, num_out_params = 3;
-	std::vector< BRG_UNITS > in_params( num_in_params, 0 ), out_params(
+	std::vector< flt_t > in_params( num_in_params, 0 ), out_params(
 			num_out_params, 0 );
-	std::vector< std::vector< BRG_UNITS > > Jacobian;
+	std::vector< std::vector< flt_t > > Jacobian;
 	make_vector_zeroes( _dv_, num_out_params, num_in_params );
 
 	in_params[0] = _x_;
@@ -158,19 +160,19 @@ const IceBRG::density_profile * IceBRG::gabdt::host() const
 {
 	return _host_ptr_;
 }
-BRG_DISTANCE IceBRG::gabdt::x() const
+distance_type IceBRG::gabdt::x() const
 {
 	return _x_;
 }
-BRG_DISTANCE IceBRG::gabdt::y() const
+distance_type IceBRG::gabdt::y() const
 {
 	return _y_;
 }
-BRG_DISTANCE IceBRG::gabdt::z() const
+distance_type IceBRG::gabdt::z() const
 {
 	return _z_;
 }
-BRG_DISTANCE IceBRG::gabdt::r() const
+distance_type IceBRG::gabdt::r() const
 {
 	return _r_;
 }
@@ -187,7 +189,7 @@ long double IceBRG::gabdt::dv( const int x_i, const int y_i ) const
 	return dv().at(x_i).at(y_i);
 }
 
-BRG_UNITS IceBRG::gabdt::operator*( const gabdt & other_gabdt ) const // "Dot-product" operator
+flt_t IceBRG::gabdt::operator*( const gabdt & other_gabdt ) const // "Dot-product" operator
 {
 	if ( !_is_cached_ )
 		calc_dv();
@@ -271,10 +273,10 @@ IceBRG::gabdt_functor::gabdt_functor()
 }
 
 // Operator()
-std::vector< BRG_UNITS > IceBRG::gabdt_functor::operator()(
-		const std::vector< BRG_UNITS > & in_params, const bool silent ) const
+std::vector< flt_t > IceBRG::gabdt_functor::operator()(
+		const std::vector< flt_t > & in_params, const bool silent ) const
 {
-	std::vector< BRG_UNITS > out_params(3,0);
+	std::vector< flt_t > out_params(3,0);
 
 	assert( in_params.size() == 3 );
 	double R = dist3d( in_params[0], in_params[1], in_params[2] );

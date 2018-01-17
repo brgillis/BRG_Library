@@ -35,9 +35,11 @@
 
 #include "IceBRG_main/math/interpolator/interpolator.hpp"
 #include "IceBRG_main/math/interpolator/interpolator_derivative.hpp"
+#include "IceBRG_main/units/units.hpp"
+
+#include "IceBRG_physics/detail/phase.hpp"
 
 #include "gabdt.h"
-#include "IceBRG_main/units/units.hpp"
 
 namespace IceBRG {
 
@@ -96,7 +98,7 @@ private:
 	gabdt _init_sum_gabdt_;
 
 	// Global parameters
-	BRG_TIME _t_min_natural_value_, _t_max_natural_value_, _t_min_override_val_, _t_max_override_val_;
+	time_type _t_min_natural_value_, _t_max_natural_value_, _t_min_override_val_, _t_max_override_val_;
 	bool _override_t_min_, _override_t_max_;
 	mutable bool _record_full_data_;
 	bool _host_loaded_, _satellite_loaded_;
@@ -114,13 +116,13 @@ private:
 	mutable std::vector< IceBRG::interpolator > _host_parameter_splines_;
 
 	// Vectors for output data
-	mutable std::vector< BRG_UNITS > _delta_rho_list_,
+	mutable std::vector< flt_t > _delta_rho_list_,
 			_x_data_, _y_data_, _z_data_, _vx_data_, _vy_data_, _vz_data_,
 			_rt_list_, _rt_ratio_list_;
 	mutable std::vector< long double > _sum_delta_rho_list_, _m_ret_list_;
 	mutable std::vector< double >_m_vir_ret_list_;
-	mutable std::vector< std::vector< BRG_UNITS > > _satellite_parameter_data_; // Keeps track of satellite's parameters (ie. mass, tau)
-	mutable std::vector< std::vector< BRG_UNITS > > _host_parameter_data_;
+	mutable std::vector< std::vector< flt_t > > _satellite_parameter_data_; // Keeps track of satellite's parameters (ie. mass, tau)
+	mutable std::vector< std::vector< flt_t > > _host_parameter_data_;
 
 	// Other maintained vectors for calculations
 	mutable std::vector< gabdt > _gabdt_list_;
@@ -137,21 +139,21 @@ private:
 	// Private functions
 	void _init();
 	void _reserve( const ssize_t n, const bool silent = false ) const;
-	BRG_UNITS _delta_rho( const int index, const double x,
-			CONST_BRG_TIME_REF t_step, const bool silent = false ) const;
-	const double _step_length_factor( CONST_BRG_VELOCITY_REF  v, CONST_BRG_DISTANCE_REF  r ) const;
-	BRG_DISTANCE _rvir( const int index = 0 ) const;
+	flt_t _delta_rho( const int index, const double x,
+			time_type const & t_step, const bool silent = false ) const;
+	const double _step_length_factor( velocity_type const &  v, distance_type const &  r ) const;
+	distance_type _rvir( const int index = 0 ) const;
 	void _pass_interpolation_type() const;
 
 	// Calculation assistance functions
 	double _tidal_strip_retained( const density_profile *host,
-			const density_profile *satellite, CONST_BRG_DISTANCE_REF r,
-			CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt,
-			CONST_BRG_TIME_REF time_step, const long double &sum_delta_rho = 0 ) const;
-	BRG_DISTANCE _get_rt( const density_profile *host,
-			const density_profile *satellite, CONST_BRG_DISTANCE_REF r,
-			CONST_BRG_VELOCITY_REF vr, CONST_BRG_VELOCITY_REF vt,
-			CONST_BRG_TIME_REF time_step, const long double &sum_delta_rho,
+			const density_profile *satellite, distance_type const & r,
+			velocity_type const & vr, velocity_type const & vt,
+			time_type const & time_step, const long double &sum_delta_rho = 0 ) const;
+	distance_type _get_rt( const density_profile *host,
+			const density_profile *satellite, distance_type const & r,
+			velocity_type const & vr, velocity_type const & vt,
+			time_type const & time_step, const long double &sum_delta_rho,
 			const bool silent = false ) const;
 #endif
 
@@ -187,25 +189,25 @@ public:
 #endif
 
 	// Functions to add points to the splines
-	void add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
-			CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t,
+	void add_point( distance_type const & x, distance_type const & y,
+			distance_type const & z, time_type const & t,
 			double new_test_mass = 1 );
-	void add_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_DISTANCE_REF y,
-			CONST_BRG_DISTANCE_REF z, CONST_BRG_VELOCITY_REF vx,
-			CONST_BRG_VELOCITY_REF vy, CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t,
+	void add_point( distance_type const & x, distance_type const & y,
+			distance_type const & z, velocity_type const & vx,
+			velocity_type const & vy, velocity_type const & vz, time_type const & t,
 			double new_test_mass = 1 );
-	void add_x_point( CONST_BRG_DISTANCE_REF x, CONST_BRG_TIME_REF t );
-	void add_y_point( CONST_BRG_DISTANCE_REF y, CONST_BRG_TIME_REF t );
-	void add_z_point( CONST_BRG_DISTANCE_REF z, CONST_BRG_TIME_REF t );
-	void add_vx_point( CONST_BRG_VELOCITY_REF vx, CONST_BRG_TIME_REF t );
-	void add_vy_point( CONST_BRG_VELOCITY_REF vy, CONST_BRG_TIME_REF t );
-	void add_vz_point( CONST_BRG_VELOCITY_REF vz, CONST_BRG_TIME_REF t );
-	void add_unknown_vx_point( CONST_BRG_TIME_REF t );
-	void add_unknown_vy_point( CONST_BRG_TIME_REF t );
-	void add_unknown_vz_point( CONST_BRG_TIME_REF t );
-	void add_test_mass_point( const double test_mass, CONST_BRG_TIME_REF t );
+	void add_x_point( distance_type const & x, time_type const & t );
+	void add_y_point( distance_type const & y, time_type const & t );
+	void add_z_point( distance_type const & z, time_type const & t );
+	void add_vx_point( velocity_type const & vx, time_type const & t );
+	void add_vy_point( velocity_type const & vy, time_type const & t );
+	void add_vz_point( velocity_type const & vz, time_type const & t );
+	void add_unknown_vx_point( time_type const & t );
+	void add_unknown_vy_point( time_type const & t );
+	void add_unknown_vz_point( time_type const & t );
+	void add_test_mass_point( const double test_mass, time_type const & t );
 	void add_host_parameter_point(
-			const std::vector< BRG_UNITS > &parameters, CONST_BRG_TIME_REF t,
+			const std::vector< flt_t > &parameters, time_type const & t,
 			const bool silent = false );
 
 
@@ -246,13 +248,13 @@ public:
 
 
 	// Set initial/global parameters
-	void set_tNFW_init_satellite( CONST_BRG_MASS_REF new_init_mvir0,
+	void set_tNFW_init_satellite( mass_type const & new_init_mvir0,
 			const double z = 0, const double new_init_c = -1,
 			const double new_init_tau = -1 );
-	void set_tNFW_host( CONST_BRG_MASS_REF new_mvir0, const double z = 0,
+	void set_tNFW_host( mass_type const & new_mvir0, const double z = 0,
 			const double new_c = -1, const double new_tau = -1 );
-	void set_t_min( CONST_BRG_TIME_REF new_t_min );
-	void set_t_max( CONST_BRG_TIME_REF new_t_max );
+	void set_t_min( time_type const & new_t_min );
+	void set_t_max( time_type const & new_t_max );
 	void reset_t_min();
 	void reset_t_max();
 	void set_init_sum_deltarho( const long double &new_init_sum_deltarho );
@@ -308,8 +310,8 @@ public:
 	ssize_t spline_resolution() const {return _spline_resolution_;}
 	stripping_orbit::allowed_interpolation_type interpolation_type()
 		{return _interpolation_type_;}
-	BRG_VELOCITY v_0() const {return _v_0_;}
-	BRG_DISTANCE r_0() const {return _r_0_;}
+	velocity_type v_0() const {return _v_0_;}
+	distance_type r_0() const {return _r_0_;}
 	double step_length_power() const {return _step_length_power_;}
 	double step_factor_max() const {return _step_factor_max_;}
 	double step_factor_min() const {return _step_factor_min_;}
@@ -330,21 +332,21 @@ public:
 	bool bad_result() const {return _bad_result_;};
 	const density_profile * init_satellite_ptr() const {return _init_satellite_ptr_;};
 	const density_profile * init_host_ptr() const {return _init_host_ptr_;};
-	BRG_TIME t_min_natural_value() const {return _t_min_natural_value_;};
+	time_type t_min_natural_value() const {return _t_min_natural_value_;};
 #endif
 
 	// Get final data (returns 1 on error)
-	int get_final_m_ret( BRG_MASS & m_ret,
+	int get_final_m_ret( mass_type & m_ret,
 			const bool silent = false ) const;
 	int get_final_frac_m_ret( double & final_frac_m_ret,
 			const bool silent = false ) const;
-	int get_final_m_vir_ret( BRG_MASS & m_vir_ret,
+	int get_final_m_vir_ret( mass_type & m_vir_ret,
 			const bool silent = false ) const;
 	int get_final_frac_m_vir_ret( double & final_frac_m_vir_ret,
 			const bool silent = false ) const;
 	int get_final_sum_deltarho( long double & final_sum_deltarho,
 			const bool silent = false ) const;
-	int get_final_sum_deltarho( BRG_UNITS & final_sum_deltarho,
+	int get_final_sum_deltarho( flt_t & final_sum_deltarho,
 			const bool silent = false ) const;
 	int get_m_ret_points( std::vector< std::pair<double,double> > & m_ret_points,
 			const bool silent = false ) const;
@@ -358,11 +360,11 @@ public:
 			const bool silent = false ) const; // Creates a clone. Make sure to delete!
 
 	// Get final data (throws exception on error)
-	BRG_MASS final_m_ret() const;
+	mass_type final_m_ret() const;
 	double final_frac_m_ret() const;
-	BRG_MASS final_m_vir_ret() const;
+	mass_type final_m_vir_ret() const;
 	double final_frac_m_vir_ret() const;
-	BRG_UNITS final_sum_deltarho() const;
+	flt_t final_sum_deltarho() const;
 	long double long_final_sum_deltarho() const;
 	std::vector< std::pair<double,double> > m_ret_points() const;
 	std::vector< std::pair<double,double> > m_vir_ret_points() const;

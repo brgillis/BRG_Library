@@ -30,14 +30,16 @@
 
 #include "solve_rt_functors.h"
 
+using namespace IceBRG;
+
 // IceBRG::solve_rt_grid_functor class method implementations
 #if (1)
 
-BRG_UNITS IceBRG::solve_rt_grid_functor::operator()(
-		CONST_BRG_UNITS_REF  in_param, const bool silent ) const
+flt_t IceBRG::solve_rt_grid_functor::operator()(
+		flt_t const &  in_param, const bool silent ) const
 {
-	BRG_DISTANCE r;
-	BRG_MASS delta_M;
+	distance_type r;
+	mass_type delta_M;
 	r = std::fabs( in_param );
 
 	delta_M = sum_delta_rho * 4. / 3. * pi * cube( r );
@@ -63,8 +65,8 @@ IceBRG::solve_rt_grid_functor::solve_rt_grid_functor()
 	return;
 }
 IceBRG::solve_rt_grid_functor::solve_rt_grid_functor(
-		const BRG_UNITS init_omega, const density_profile *init_satellite,
-		const BRG_UNITS init_Daccel, const long double init_sum_delta_rho )
+		const flt_t init_omega, const density_profile *init_satellite,
+		const flt_t init_Daccel, const long double init_sum_delta_rho )
 {
 	omega = init_omega;
 	satellite_ptr = init_satellite;
@@ -78,12 +80,12 @@ IceBRG::solve_rt_grid_functor::solve_rt_grid_functor(
 // IceBRG::solve_rt_grid_functor class method implementations
 #if(1)
 
-BRG_UNITS IceBRG::solve_rt_it_functor::operator()(
-		CONST_BRG_UNITS_REF in_param, const bool silent ) const
+flt_t IceBRG::solve_rt_it_functor::operator()(
+		flt_t const & in_param, const bool silent ) const
 {
-	BRG_DISTANCE r = 0;
-	BRG_MASS delta_M = 0;
-	BRG_UNITS r3 = 0;
+	distance_type r = 0;
+	mass_type delta_M = 0;
+	flt_t r3 = 0;
 
 	r = std::fabs( in_param );
 
@@ -111,8 +113,8 @@ IceBRG::solve_rt_it_functor::solve_rt_it_functor()
 	return;
 }
 IceBRG::solve_rt_it_functor::solve_rt_it_functor(
-		const BRG_UNITS init_omega, const density_profile *init_satellite,
-		const BRG_UNITS init_Daccel, const long double init_sum_delta_rho )
+		const flt_t init_omega, const density_profile *init_satellite,
+		const flt_t init_Daccel, const long double init_sum_delta_rho )
 {
 	omega = init_omega;
 	satellite_ptr = init_satellite;
