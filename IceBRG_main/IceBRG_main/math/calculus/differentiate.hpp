@@ -129,7 +129,7 @@ template< typename f, typename T >
 inline std::vector< std::vector< T > > differentiate( const f * func, const std::vector< T > & in_params,
 		const int_t order = 1, const int_t & power = 1 )
 {
-	auto num_in_params = ssize(in_params);
+	size_t num_in_params = ssize(in_params);
 	std::vector< std::vector< T > > Jacobian;
 
 	std::vector< T > d_in_params( 0 );
