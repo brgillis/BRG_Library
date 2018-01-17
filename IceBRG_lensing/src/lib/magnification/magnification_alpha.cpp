@@ -29,10 +29,10 @@
 #include "IceBRG_main/math/calculus/differentiate.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_lensing/magnification/magnification_alpha.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/magnification_alpha.hpp"
 
-#include "IceBRG_lensing/magnification/detail/expected_count_cache.hpp"
-#include "IceBRG_lensing/magnification/detail/expected_count_derivative_cache.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/expected_count_cache.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/expected_count_derivative_cache.hpp"
 
 namespace IceBRG {
 

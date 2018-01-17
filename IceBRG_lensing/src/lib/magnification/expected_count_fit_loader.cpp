@@ -40,8 +40,8 @@
 #include "IceBRG_main/vector/elementwise_functions.hpp"
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_lensing/magnification/detail/count_fitting_results.hpp"
-#include "IceBRG_lensing/magnification/detail/expected_count_fit_loader.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/count_fitting_results.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/expected_count_fit_loader.hpp"
 
 
 

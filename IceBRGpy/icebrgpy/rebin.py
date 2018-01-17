@@ -1,4 +1,4 @@
-""" @file /disk2/brg/git/brg_library/IceBRGpy/icebrgpy/rebin.py
+""" @file /disk2/brg/git/brg_library/IceBRGpy/SHE_GST_IceBRGpy/rebin.py
 
     Created 4 Mar 2016
 

@@ -27,8 +27,8 @@
 
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_lensing/lensing_tNFW_profile.hpp"
-#include "IceBRG_lensing/detail/lensing_tNFW_caches.hpp"
+#include "SHE_GST_IceBRG_lensing/lensing_tNFW_profile.hpp"
+#include "SHE_GST_IceBRG_lensing/detail/lensing_tNFW_caches.hpp"
 
 
 namespace IceBRG {

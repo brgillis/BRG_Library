@@ -23,7 +23,7 @@
 
  \**********************************************************************/
 
-#include "IceBRG_lensing/magnification/detail/Schechter_like_functor.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/Schechter_like_functor.hpp"
 
 #include <cmath>
 #include <cstdlib>

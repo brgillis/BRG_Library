@@ -37,11 +37,11 @@
 #include "IceBRG_main/units/units.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 
-#include "IceBRG_physics/distance_measures.hpp"
-#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
+#include "SHE_GST_IceBRG_physics/distance_measures.hpp"
+#include "SHE_GST_IceBRG_physics/sky_obj/detail/sky_obj.hpp"
 
-#include "IceBRG_lensing/detail/source_obj.hpp"
-#include "IceBRG_lensing/lens_source_pair.hpp"
+#include "SHE_GST_IceBRG_lensing/detail/source_obj.hpp"
+#include "SHE_GST_IceBRG_lensing/lens_source_pair.hpp"
 
 namespace IceBRG {
 

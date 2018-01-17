@@ -24,7 +24,7 @@
  \**********************************************************************/
 
 
-#include "IceBRG_lensing/magnification/detail/mag_weight_integral_cache.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/mag_weight_integral_cache.hpp"
 
 #include <cstdlib>
 
@@ -32,9 +32,9 @@
 
 #include "IceBRG_main/math/calculus/integrate.hpp"
 
-#include "IceBRG_lensing/magnification/detail/expected_count_cache.hpp"
-#include "IceBRG_lensing/magnification/detail/magnification_functors.hpp"
-#include "IceBRG_lensing/magnification/mag_global_values.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/expected_count_cache.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/magnification_functors.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/mag_global_values.hpp"
 
 namespace IceBRG {
 

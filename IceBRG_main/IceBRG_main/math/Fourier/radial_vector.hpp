@@ -35,7 +35,7 @@
 
 #include <boost/optional.hpp>
 
-#include "../../error_handling.hpp"
+#include "error_handling.hpp"
 #include "../interpolator/interpolator.hpp"
 #include "IceBRG_main/common.hpp"
 

@@ -43,11 +43,11 @@
 #include "IceBRG_main/math/interpolator/interpolator.h"
 #include "IceBRG_main/math/interpolator/interpolator_derivative.h"
 
-#include "IceBRG_physics/astro.h"
-#include "IceBRG_physics/density_profile/density_profile.h"
-#include "IceBRG_physics/density_profile/tNFW_profile.h"
-#include "IceBRG_physics/phase.hpp"
-#include "IceBRG_physics/units/unit_obj.h"
+#include "SHE_GST_IceBRG_physics/astro.h"
+#include "SHE_GST_IceBRG_physics/density_profile/density_profile.h"
+#include "SHE_GST_IceBRG_physics/density_profile/tNFW_profile.h"
+#include "SHE_GST_IceBRG_physics/phase.hpp"
+#include "SHE_GST_IceBRG_physics/units/unit_obj.h"
 
 #include "gabdt.h"
 

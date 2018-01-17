@@ -28,7 +28,7 @@
 #ifndef _BRG_SOURCE_OBJ_H_INCLUDED_
 #define _BRG_SOURCE_OBJ_H_INCLUDED_
 
-#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
+#include "SHE_GST_IceBRG_physics/sky_obj/detail/sky_obj.hpp"
 
 namespace IceBRG {
 

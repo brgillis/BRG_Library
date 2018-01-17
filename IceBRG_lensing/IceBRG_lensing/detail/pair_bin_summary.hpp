@@ -43,7 +43,7 @@
 #include "IceBRG_main/container/table_typedefs.hpp"
 #include "IceBRG_main/vector/summary_functions.hpp"
 
-#include "IceBRG_lensing/lensing_tNFW_profile.hpp"
+#include "SHE_GST_IceBRG_lensing/lensing_tNFW_profile.hpp"
 
 namespace IceBRG {
 

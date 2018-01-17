@@ -24,8 +24,8 @@
 
 #include "IceBRG_main/global.h"
 
-#include "IceBRG_physics/density_profile/density_profile.h"
-#include "IceBRG_physics/units/unit_obj.h"
+#include "SHE_GST_IceBRG_physics/density_profile/density_profile.h"
+#include "SHE_GST_IceBRG_physics/units/unit_obj.h"
 #include "IceBRG_main/utility.hpp"
 
 #include "solve_rt_functors.h"

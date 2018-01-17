@@ -1,4 +1,4 @@
-""" @file /disk2/brg/git/brg_library/IceBRGpy/icebrgpy/convolve.py
+""" @file /disk2/brg/git/brg_library/IceBRGpy/SHE_GST_IceBRGpy/convolve.py
 
     Created 8 Mar 2016
 

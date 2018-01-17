@@ -38,9 +38,9 @@
 
 #include "IceBRG_main/units/units.hpp"
 
-#include "IceBRG_physics/sky_obj/detail/sky_obj.hpp"
+#include "SHE_GST_IceBRG_physics/sky_obj/detail/sky_obj.hpp"
 
-#include "IceBRG_lensing/detail/source_obj.hpp"
+#include "SHE_GST_IceBRG_lensing/detail/source_obj.hpp"
 
 namespace IceBRG {
 

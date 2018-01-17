@@ -52,7 +52,7 @@
 
 #include "../lens_source_pair.hpp"
 
-#include "IceBRG_lensing/detail/pair_bin_summary.hpp"
+#include "SHE_GST_IceBRG_lensing/detail/pair_bin_summary.hpp"
 
 
 namespace IceBRG {

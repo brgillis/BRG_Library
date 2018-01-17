@@ -28,7 +28,7 @@
 #ifndef _BRG_SOURCE_GALAXY_H_INCLUDED_
 #define _BRG_SOURCE_GALAXY_H_INCLUDED_
 
-#include <IceBRG_physics/sky_obj/galaxy.hpp>
+#include <SHE_GST_IceBRG_physics/sky_obj/galaxy.hpp>
 
 #include "detail/source_obj.hpp"
 

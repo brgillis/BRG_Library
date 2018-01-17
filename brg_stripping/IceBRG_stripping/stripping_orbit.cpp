@@ -38,9 +38,9 @@
 
 #include "IceBRG_main/utility.hpp"
 
-#include "IceBRG_physics/astro.h"
-#include "IceBRG_physics/phase.hpp"
-#include "IceBRG_physics/units/unit_obj.h"
+#include "SHE_GST_IceBRG_physics/astro.h"
+#include "SHE_GST_IceBRG_physics/phase.hpp"
+#include "SHE_GST_IceBRG_physics/units/unit_obj.h"
 
 #include "gabdt.h"
 #include "solve_rt_functors.h"

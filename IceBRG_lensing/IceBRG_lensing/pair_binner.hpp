@@ -38,7 +38,7 @@
 
 #include <boost/container/flat_set.hpp>
 #include <boost/optional.hpp>
-#include <IceBRG_physics/sky_obj/galaxy.hpp>
+#include <SHE_GST_IceBRG_physics/sky_obj/galaxy.hpp>
 #include "IceBRG_main/units/units.hpp"
 
 #include "IceBRG_main/common.hpp"

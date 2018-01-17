@@ -25,10 +25,10 @@
 #ifndef _BRG_LENSING_TNFW_PROFILE_H_
 #define _BRG_LENSING_TNFW_PROFILE_H_
 
-#include <IceBRG_physics/density_profile/tNFW_profile.hpp>
+#include <SHE_GST_IceBRG_physics/density_profile/tNFW_profile.hpp>
 #include "IceBRG_main/common.hpp"
 
-#include "IceBRG_lensing/detail/lensing_profile_extension.hpp"
+#include "SHE_GST_IceBRG_lensing/detail/lensing_profile_extension.hpp"
 
 namespace IceBRG {
 

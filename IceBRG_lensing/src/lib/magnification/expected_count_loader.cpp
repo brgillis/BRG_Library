@@ -24,7 +24,7 @@
  \**********************************************************************/
 
 
-#include "IceBRG_lensing/magnification/detail/expected_count_loader.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/detail/expected_count_loader.hpp"
 
 #include <stdexcept>
 #include <string>
@@ -40,7 +40,7 @@
 #include "IceBRG_main/utility.hpp"
 #include "IceBRG_main/vector/limit_vector.hpp"
 
-#include "IceBRG_lensing/magnification/mag_global_values.hpp"
+#include "SHE_GST_IceBRG_lensing/magnification/mag_global_values.hpp"
 
 #undef USE_FIELD_WEIGHTING
 
