@@ -38,16 +38,15 @@
 #include <vector>
 #include <stdexcept>
 
-#include "IceBRG_main/global.h"
+#include "IceBRG_main/common.hpp"
 
-#include "IceBRG_main/math/interpolator/interpolator.h"
-#include "IceBRG_main/math/interpolator/interpolator_derivative.h"
+#include "IceBRG_main/math/interpolator/interpolator.hpp"
+#include "IceBRG_main/math/interpolator/interpolator_derivative.hpp"
 
-#include "SHE_GST_IceBRG_physics/astro.h"
-#include "SHE_GST_IceBRG_physics/density_profile/density_profile.h"
-#include "SHE_GST_IceBRG_physics/density_profile/tNFW_profile.h"
-#include "SHE_GST_IceBRG_physics/phase.hpp"
-#include "SHE_GST_IceBRG_physics/units/unit_obj.h"
+#include "IceBRG_physics/astro.hpp"
+#include "IceBRG_physics/density_profile/detail/density_profile.hpp"
+#include "IceBRG_physics/density_profile/tNFW_profile.hpp"
+#include "IceBRG_main/units/units.hpp"
 
 #include "gabdt.h"
 

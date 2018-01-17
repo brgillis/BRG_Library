@@ -3,7 +3,6 @@
 	<name>brg_stripping</name>
 	<comment></comment>
 	<projects>
-		<project>brg</project>
 		<project>IceBRG_main</project>
 		<project>IceBRG_physics</project>
 	</projects>

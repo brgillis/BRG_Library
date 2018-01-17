@@ -25,12 +25,12 @@
 #include <utility>
 #include <vector>
 
-#include "IceBRG_main/global.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/file_access/ascii_table.hpp"
 
-#include "IceBRG_main/math/interpolator/interpolator.h"
-#include "IceBRG_main/math/interpolator/interpolator_derivative.h"
+#include "IceBRG_main/math/interpolator/interpolator.hpp"
+#include "IceBRG_main/math/interpolator/interpolator_derivative.hpp"
 #include "IceBRG_main/math/solvers/solvers.hpp"
 
 #include "IceBRG_main/utility.hpp"

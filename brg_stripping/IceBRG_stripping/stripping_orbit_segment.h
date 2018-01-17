@@ -31,13 +31,13 @@
 
 #include <vector>
 
-#include "IceBRG_main/global.h"
+#include "IceBRG_main/common.hpp"
 
-#include "IceBRG_main/math/interpolator/interpolator.h"
-#include "IceBRG_main/math/interpolator/interpolator_derivative.h"
+#include "IceBRG_main/math/interpolator/interpolator.hpp"
+#include "IceBRG_main/math/interpolator/interpolator_derivative.hpp"
 
 #include "gabdt.h"
-#include "SHE_GST_IceBRG_physics/units/unit_obj.h"
+#include "IceBRG_main/units/units.hpp"
 
 namespace IceBRG {
 

@@ -27,20 +27,19 @@
 #include <sstream>
 #include <utility>
 
-#include "IceBRG_main/global.h"
+#include "IceBRG_main/common.hpp"
 
 #include "IceBRG_main/file_access/ascii_table.hpp"
 
 #include "IceBRG_main/math/calculus/integrate.hpp"
-#include "IceBRG_main/math/interpolator/interpolator.h"
-#include "IceBRG_main/math/interpolator/interpolator_derivative.h"
+#include "IceBRG_main/math/interpolator/interpolator.hpp"
+#include "IceBRG_main/math/interpolator/interpolator_derivative.hpp"
 #include "IceBRG_main/math/solvers/solvers.hpp"
 
 #include "IceBRG_main/utility.hpp"
 
-#include "SHE_GST_IceBRG_physics/astro.h"
-#include "SHE_GST_IceBRG_physics/phase.hpp"
-#include "SHE_GST_IceBRG_physics/units/unit_obj.h"
+#include "IceBRG_physics/astro.hpp"
+#include "IceBRG_main/units/units.hpp"
 
 #include "gabdt.h"
 #include "solve_rt_functors.h"
