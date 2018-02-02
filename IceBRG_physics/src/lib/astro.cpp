@@ -42,6 +42,8 @@
 
 namespace IceBRG {
 
+flt_t sigma_8 = 0.9;
+
 /** Global Function Definitions **/
 #if (1)
 
@@ -414,7 +416,7 @@ distance_type r_of_m( mass_type const & mass )
 }
 flt_t sigma_of_r( distance_type const & r)
 {
-	return 0.8*sqrt(sigma_r_cache().get(r)/sigma_r_cache().get(8.*unitconv::Mpctom*m/h_0));
+	return sigma_8*sqrt(sigma_r_cache().get(r)/sigma_r_cache().get(8.*unitconv::Mpctom*m/h_0));
 }
 flt_t sigma_of_m( mass_type const & mass )
 {
