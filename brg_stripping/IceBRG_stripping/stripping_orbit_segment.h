@@ -70,8 +70,8 @@ private:
 	// This gives smaller steps when the satellite is moving faster.
 	// If you want to turn off adaptive step size, set step_length_power to 0
 	// Alternatively, set step_length_power to 1 for even steps in position
-	double _v_0_; // 400 km/s
-	double _r_0_; // 400 kpc
+	velocity_type _v_0_; // 400 km/s
+	distance_type _r_0_; // 400 kpc
 	double _step_length_power_; // How strongly variable step length is implemented
 	double _step_factor_max_; // Maximum allowed value of (v_0/v)^(step_length_power)
 	double _step_factor_min_; // Minimum allowed value of (v_0/v)^(step_length_power)

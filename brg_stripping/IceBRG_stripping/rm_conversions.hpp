@@ -28,14 +28,22 @@
 
 #include <tuple>
 
+#include <Eigen/Core>
 #include "IceBRG_main/common.hpp"
+#include "IceBRG_main/math/cache/cache_2d.hpp"
 
 namespace IceBRG
 {
 
+DECLARE_BRG_CACHE_2D(rratio_cache,r_ratio,flt_t,flt_t,flt_t);
+DECLARE_BRG_CACHE_2D(mratio_cache,m_ratio,flt_t,flt_t,flt_t);
+
 flt_t get_delta_c(flt_t const & z);
 
-std::tuple<flt_t,flt_t> calculate_RM_ratio(flt_t const & z, flt_t const & c);
+Eigen::Array2f calculate_RM_ratio(flt_t const & z, flt_t const & c);
+
+flt_t get_R_ratio(flt_t const & z, flt_t const & c);
+flt_t get_M_ratio(flt_t const & z, flt_t const & c);
 
 } // namespace IceBRG
 

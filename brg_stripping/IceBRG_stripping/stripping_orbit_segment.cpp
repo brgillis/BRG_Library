@@ -116,7 +116,14 @@ distance_type IceBRG::stripping_orbit_segment::_get_rt( const density_profile *h
 	old_rt = satellite->rt();
 
 	// First, we try solving iteratively
-	new_rt = solve_iterate( rt_it_solver, old_rt, 1, 0.0001, 1000 );
+	try
+	{
+	    new_rt = solve_iterate( rt_it_solver, old_rt, 1, 0.0001, 1000 );
+	}
+	catch(const std::exception & e)
+	{
+	    new_rt = 0; // signal that it failed.
+	}
 	if ( ( new_rt == 0 ) || ( isbad( new_rt ) ) )
 	{
 		// Iteratively didn't work, so we go to the grid option
@@ -1381,6 +1388,7 @@ void IceBRG::stripping_orbit_segment::calc( const bool silent ) const
 		}
 		catch ( const std::exception & e )
 		{
+		    const char* msg = e.what();
 			_calculated_ = true; // We know there's an issue, so we won't calculate again unless something changes
 			_bad_result_ = true;
 			throw;

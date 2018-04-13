@@ -30,11 +30,11 @@
 #include "IceBRG_main/common.hpp"
 #include "IceBRG_main/math/solvers/solvers.hpp"
 #include "IceBRG_physics/constants.hpp"
-#include "IceBRG_stripping/rm_conversions.hpp"
+#include "rm_conversions.hpp"
 
 using namespace IceBRG;
 
-flt_t get_delta_c(flt_t const & z)
+flt_t IceBRG::get_delta_c(flt_t const & z)
 {
     flt_t x = -1.0/(Omega_m/Omega_l*(1+z)*(1+z)*(1+z)+1.0);
     flt_t delta_c = 18*pi*pi+82*x-39*x*x;
@@ -42,7 +42,7 @@ flt_t get_delta_c(flt_t const & z)
     return delta_c;
 }
 
-std::tuple<flt_t,flt_t> calculate_RM_ratio(flt_t const & z, flt_t const & c)
+Eigen::Array2f IceBRG::calculate_RM_ratio(flt_t const & z, flt_t const & c)
 {
     /* compute the ratio R_a/R_b, so for instance to get R_200/R_100 set Delta_a = 200, Delta_b = 100
      * Delta_a and Delta_b can be relative to critical or background density; may need to provide Omega_M
@@ -66,6 +66,35 @@ std::tuple<flt_t,flt_t> calculate_RM_ratio(flt_t const & z, flt_t const & c)
 
     flt_t M_ratio = a_b * std::pow(R_ratio,3);
 
-    return std::tie(R_ratio,M_ratio);
+    Eigen::Array2f result;
+
+    result << R_ratio, M_ratio;
+
+    return result;
+}
+
+// Initialisation for caches
+DEFINE_BRG_CACHE_2D( rratio_cache, flt_t, flt_t, flt_t,
+        0, 5, 0.05, 3, 14, 0.1,
+            return calculate_RM_ratio(in_param_1, in_param_2)[0];
+        ,
+
+        ,
+)
+DEFINE_BRG_CACHE_2D( mratio_cache, flt_t, flt_t, flt_t,
+        0, 5, 0.05, 3, 14, 0.1,
+            return calculate_RM_ratio(in_param_1, in_param_2)[1];
+        ,
+
+        ,
+)
+
+flt_t IceBRG::get_R_ratio(flt_t const & z, flt_t const & c)
+{
+    return rratio_cache().get(z,c);
+}
+flt_t IceBRG::get_M_ratio(flt_t const & z, flt_t const & c)
+{
+    return mratio_cache().get(z,c);
 }
 
