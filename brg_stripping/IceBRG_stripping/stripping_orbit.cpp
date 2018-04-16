@@ -2476,55 +2476,119 @@ const IceBRG::density_profile * IceBRG::stripping_orbit::final_host() const
 		return _final_good_segment()->final_host();
 }
 
-const int IceBRG::stripping_orbit::get_quality_of_fit( double & Q, const bool use_virial,
-		const unsigned int samples)
+const int IceBRG::stripping_orbit::get_quality_of_fit( double & Q, double * scale,
+        double const & final_weight, const bool use_virial)
 {
-	if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
-	{
-		set_record_full_data( true );
-		try
-		{
-			calc();
-		}
-		catch(const std::runtime_error &e)
-		{
-			return 1;
-		}
-	}
-	if( _bad_result_ )
-	{
-		return 1;
-	}
-	double temp_Q = 0;
-	double t_step = (t_max()-t_min())/samples;
+    if ( ( !_calculated_ ) || ( !_record_full_data_ ) )
+    {
+        set_record_full_data( true );
+        try
+        {
+            calc();
+        }
+        catch(const std::runtime_error &e)
+        {
+            return 1;
+        }
+    }
+    if( _bad_result_ )
+    {
+        return 1;
+    }
 
-	interpolator * interp=NULL;
-	if(use_virial)
-		interp = &_m_vir_ret_interpolator_;
-	else
-		interp = &_m_ret_interpolator_;
+    std::vector<flt_t> test_times;
+    for ( size_t i = 0; i < _num_segments_; i++ )
+    {
+        int num_times = _orbit_segments_[i].phase_output_list().size();
+        for (size_t j = 0; j < num_times; ++j)
+        {
+            test_times.push_back(_orbit_segments_[i].phase_output_list()[j].t);
+        }
+    }
 
+    int num_times = test_times.size();
 
+    std::vector<flt_t> weights(test_times.size());
+    for (size_t j=0; j<num_times; ++j)
+    {
+        if(j==num_times-1)
+        {
+            weights[j] = weights[j-1];
+        }
+        else
+        {
+            weights[j] = test_times[j+1]-test_times[j];
+        }
+    }
 
-	for(double t=t_min(), tm=t_max(); t<tm; t+=t_step)
-	{
-		temp_Q += square(((*interp)(t) - _test_mass_interpolator_(t))
-				/safe_d( _test_mass_error_interpolator_(t) ));
-	}
+    interpolator * interp=NULL;
+    if(use_virial)
+        interp = &_m_vir_ret_interpolator_;
+    else
+        interp = &_m_ret_interpolator_;
 
-	Q = temp_Q/safe_d(samples);
+    // First, figure out the proper ratio to best normalize (to account for noise in initial mass)
 
-	return 0;
+    flt_t temp_inv_R = 0;
+    flt_t total_weight = 0;
+    for(size_t j=0; j<num_times; ++j)
+    {
+        flt_t t = test_times[j];
+        flt_t weight = weights[j];
+
+        flt_t m_ret = (*interp)(t);
+        flt_t comp_m_ret = safe_d(_test_mass_interpolator_(t));
+        flt_t new_inv_R = m_ret/comp_m_ret;
+        temp_inv_R += weight*new_inv_R;
+        total_weight += weight;
+    }
+    flt_t R;
+    if(scale != nullptr)
+    {
+        R = total_weight/safe_d(temp_inv_R);
+        *scale = R;
+    }
+    else
+    {
+        R = 1.;
+    }
+
+    flt_t temp_Q = 0;
+    for(size_t j=0; j<num_times; ++j)
+    {
+        flt_t t = test_times[j];
+        flt_t weight = weights[j];
+
+        double m_ret = (*interp)(t);
+        double comp_m_ret = _test_mass_interpolator_(t);
+        double comp_m_ret_err = safe_d(_test_mass_error_interpolator_(t));
+
+        double new_Q = square((R*m_ret - comp_m_ret)/safe_d( comp_m_ret_err ));
+
+        temp_Q += weight*new_Q;
+    }
+    double history_Q = temp_Q/safe_d(total_weight);
+
+    double m_ret = (*interp)(t_max());
+    double comp_m_ret = _test_mass_interpolator_(t_max());
+    double comp_m_ret_err = safe_d(_test_mass_error_interpolator_(t_max()));
+
+    // Find the contribution to Q from the final fraction
+    double final_frac_Q = square((R*m_ret - comp_m_ret)/safe_d( comp_m_ret_err ));
+
+    Q = (history_Q + final_weight*final_frac_Q)/(1+final_weight);
+
+    return 0;
 }
 
-const double IceBRG::stripping_orbit::quality_of_fit(const bool use_virial, const unsigned int samples)
+const double IceBRG::stripping_orbit::quality_of_fit(const bool use_virial)
 {
-	double Q=-1;
-	if(get_quality_of_fit(Q,use_virial,samples))
-	{
-		throw std::runtime_error("Cannot determine quality of fit for stripping_orbit.");
-	}
-	return Q;
+    double Q=-1;
+    if(get_quality_of_fit(Q,nullptr,0,use_virial))
+    {
+        throw std::runtime_error("Cannot determine quality of fit for stripping_orbit.");
+    }
+    return Q;
 }
 
 #endif // end IceBRG::stripping_orbit_segment class function definitions

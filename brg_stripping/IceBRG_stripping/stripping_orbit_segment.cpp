@@ -39,6 +39,7 @@
 #include "solve_rt_functors.h"
 
 #include "stripping_orbit_segment.h"
+#include "rm_conversions.hpp"
 
 using namespace IceBRG;
 
@@ -966,6 +967,12 @@ void IceBRG::stripping_orbit_segment::set_tNFW_init_satellite(
 	_using_private_init_satellite_ = true;
 	_private_tNFW_init_satellite_ = tNFW_profile( new_init_mvir0, z,
 			new_init_c, new_init_tau );
+
+	// Correct mass for r200 -> rvir
+	_private_tNFW_init_satellite_.set_mvir(new_init_mvir0 /
+	        get_M_ratio(_private_tNFW_init_satellite_.z(),
+	                    _private_tNFW_init_satellite_.c()));
+
 	_init_satellite_ptr_ = &_private_tNFW_init_satellite_;
 
 	if ( _current_satellite_in_use_ )
@@ -993,6 +1000,12 @@ void IceBRG::stripping_orbit_segment::set_tNFW_host(
 	_using_private_init_host_ = true;
 	_private_tNFW_init_host_ = tNFW_profile( new_init_mvir0, z, new_init_c,
 			new_init_tau );
+
+    // Correct mass for r200 -> rvir
+	_private_tNFW_init_host_.set_mvir(new_init_mvir0 /
+            get_M_ratio(_private_tNFW_init_host_.z(),
+                        _private_tNFW_init_host_.c()));
+
 	_init_host_ptr_ = &_private_tNFW_init_host_;
 
 	if ( _using_private_init_satellite_ )
