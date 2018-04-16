@@ -133,6 +133,83 @@ std::vector< std::vector<T> > reverse_vertical(const std::vector< std::vector<T>
 	return result;
 }
 
+template<typename T>
+std::vector<T> remove_outliers( std::vector<T> const & v_in, int const & min_remaining_members = 2 )
+{
+
+    assert(min_remaining_members>=2);
+
+    int num_tot = v_in.size();
+    int num_masked = 0;
+    bool outliers_found = true;
+
+    std::vector<bool> mask(v_in.size(),false);
+
+
+    while(outliers_found and ((num_tot-num_masked)>min_remaining_members))
+    {
+
+        outliers_found = false;
+
+        // Find any outliers and remove them
+
+        // Get the mean and sigma of the unmasked elements
+        double mean = 0;
+        for(int i=0; i<num_tot; ++i)
+        {
+            if(!mask[i])
+                mean += v_in[i];
+        }
+        mean /= (num_tot-num_masked);
+
+        double sigma = 0;
+        for(int i=0; i<num_tot; ++i)
+        {
+            if(!mask[i])
+                sigma += square(v_in[i]-mean);
+        }
+        sigma /= (num_tot-num_masked-1);
+        sigma = std::sqrt(sigma);
+
+        for(int i=0; i<num_tot; ++i)
+        {
+            if(mask[i])
+                continue;
+
+            double prob = 1-0.5 * std::erfc(-(std::abs(v_in[i] - mean) / sigma) * M_SQRT1_2);
+
+            if(prob*num_tot<0.5)
+            {
+                mask[i] = true;
+                outliers_found = true;
+                ++num_masked;
+            }
+        }
+    }
+
+    // Did we remove any at all?
+    if(num_masked==0)
+        return v_in;
+
+    // Did we remove too many?
+    if(num_tot-num_masked<min_remaining_members)
+    {
+        throw std::runtime_error("Too few elements left after removing outliers.");
+    }
+
+    std::vector<T> v_out;
+    v_out.reserve(num_tot);
+    for(int i=0; i<num_tot; ++i)
+    {
+        if(!mask[i])
+        {
+            v_out.push_back(v_in[i]);
+        }
+    }
+
+    return v_out;
+}
+
 } // namespace IceBRG
 
 #endif // _BRG_MANIPULATIONS_HPP_INCLUDED_
