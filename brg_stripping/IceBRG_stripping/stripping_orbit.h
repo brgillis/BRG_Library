@@ -1418,7 +1418,7 @@ public:
 	 * @param samples Number of sample points along the orbit to compare fmret values at.
 	 * @return Int flag - zero for success, otherwise for error.
 	 */
-	const int get_quality_of_fit( double & Q, double * scale, double const & final_weight, const bool use_virial);
+	const int get_quality_of_fit( double & Q, double * scale, double const & final_weight, const bool use_virial=false);
 	/**
 	 * Get a quality-of-fit estimate, comparing the calculated fmret to the comparison values and errors.
 	 * The value is taken at a number of sample points and normalized. An exception will be thrown on

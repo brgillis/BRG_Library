@@ -328,6 +328,9 @@ public:
 	double tidal_shocking_power() const {return _tidal_shocking_power_;}
 #endif
 
+    std::vector< IceBRG::phase > const & phase_list() const {return _phase_list_;}
+    std::vector< IceBRG::phase > const & phase_output_list() const {return _phase_output_list_;}
+
 	bool calculated() const {return _calculated_;};
 	bool bad_result() const {return _bad_result_;};
 	const density_profile * init_satellite_ptr() const {return _init_satellite_ptr_;};

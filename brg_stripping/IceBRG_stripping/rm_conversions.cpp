@@ -62,7 +62,7 @@ Eigen::Array2f IceBRG::calculate_RM_ratio(flt_t const & z, flt_t const & c)
         return square(std::pow(ra_rb,3) - (1.0/a_b) * (std::log(1+c)-c/(1+c))/(std::log(1+(1/ra_rb)*c)-c/(ra_rb+c)));
     };
 
-    flt_t R_ratio = solve_sd(f,1);
+    flt_t R_ratio = solve_sd(f,1.0);
 
     flt_t M_ratio = a_b * std::pow(R_ratio,3);
 
