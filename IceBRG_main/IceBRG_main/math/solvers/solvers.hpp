@@ -33,6 +33,7 @@
 #include "IceBRG_main/container/is_container.hpp"
 #include "IceBRG_main/container/generic_functions.hpp"
 #include "IceBRG_main/container/tuple.hpp"
+#include "IceBRG_main/math/calculus/differentiate.hpp"
 #include "IceBRG_main/math/misc_math.hpp"
 #include "IceBRG_main/math/random/random_functions.hpp"
 #include "IceBRG_main/units/units.hpp"
@@ -162,11 +163,9 @@ T solve_sd( const f & func, const T & init_in_params,
 	T last_in_params( 0 );
 	T in_params_to_use = init_in_params;
 	T lambda_norm( 0 );
-	T mag;
 
 	const int_t lambda_shortening_intervals = 10;
 	const flt_t & lambda_shortening_factor = 10;
-	int_t num_out_params = 0;
 	int_t num_steps_taken = 0;
 	bool converged_flag = false;
 
@@ -176,7 +175,7 @@ T solve_sd( const f & func, const T & init_in_params,
 	const int_t max_steps_to_use = (int_t)max( 1, max_steps );
 
 	// Get normalized step size
-	lambda_norm = lambda_to_use / safe_d(differentiate( func, in_params_to_use, 1, cusp_override_power ));
+	lambda_norm = lambda_to_use / safe_d(differentiate( &func, in_params_to_use ));
 
 	if ( in_params_to_use != 0 )
 		lambda_norm *= in_params_to_use;
@@ -193,13 +192,13 @@ T solve_sd( const f & func, const T & init_in_params,
 		last_in_params = current_in_params;
 
 		// Get derivative at current location
-		Jacobian = differentiate( func,	current_in_params, 1, cusp_override_power );
+		Jacobian = differentiate( &func,	current_in_params );
 
 		// Make a step
 		current_in_params -= lambda_norm * Jacobian;
 
 		// Check if we've converged
-		converged_flag = true;
+		converged_flag = false;
 
 		if ( isbad( current_in_params ) )
 		{
@@ -208,9 +207,9 @@ T solve_sd( const f & func, const T & init_in_params,
 		if ( abs(
 				2 * ( current_in_params - last_in_params )
 						/ safe_d( current_in_params + last_in_params ) )
-				> precision )
+				< precision )
 		{
-			converged_flag = false;
+			converged_flag = true;
 			break;
 		}
 
